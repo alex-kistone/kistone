@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Building2, User, Plus, Trash2, ChevronDown, GripVertical, Users, Award, CheckCircle2, Circle, Search, Filter, X, Star, AlertTriangle } from "lucide-react";
+import { Building2, User, Plus, Trash2, ChevronDown, GripVertical, Users, Award, CheckCircle2, Circle, Search, Filter, X, Star, AlertTriangle, Sparkles, Loader2 } from "lucide-react";
 import CreateMissionDialog from "./CreateMissionDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -189,6 +189,47 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
       setSuggestions((prev) =>
         prev.map((s) => (s.id === suggestionId ? { ...s, pipeline_status: newStatus } : s))
       );
+    }
+  };
+
+  const [matchingNeedId, setMatchingNeedId] = useState<string | null>(null);
+
+  /**
+   * Lance le matching hybride sur un besoin. Réservé à l'admin côté UI, mais
+   * c'est l'edge function qui fait autorité (elle revérifie le rôle).
+   * Les suggestions déjà avancées dans le pipeline ne sont pas rejouées.
+   */
+  const runMatching = async (needId: string) => {
+    setMatchingNeedId(needId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Session expirée");
+
+      const { data, error } = await supabase.functions.invoke("match-profiles", {
+        body: { need_id: needId },
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast({ title: "Matching impossible", description: data.error, variant: "destructive" });
+        return;
+      }
+
+      const added = data?.suggestions?.length ?? 0;
+      const kept = data?.skipped ?? 0;
+      toast({
+        title: added > 0 ? `${added} profil${added > 1 ? "s" : ""} suggéré${added > 1 ? "s" : ""}` : "Aucun nouveau profil",
+        description: [
+          kept > 0 ? `${kept} déjà dans le pipeline, conservé${kept > 1 ? "s" : ""}.` : null,
+          // Sans clé Anthropic le matching reste utilisable : autant le dire.
+          data?.ai_used === false ? "Classement par règles uniquement (IA indisponible)." : null,
+        ].filter(Boolean).join(" ") || undefined,
+      });
+      await loadData();
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    } finally {
+      setMatchingNeedId(null);
     }
   };
 
@@ -469,6 +510,19 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
             </div>
           )}
         </div>
+
+        {selectedNeedId && (
+          <Button
+            size="sm"
+            className="gap-1.5 shrink-0"
+            disabled={matchingNeedId === selectedNeedId}
+            onClick={() => runMatching(selectedNeedId)}
+          >
+            {matchingNeedId === selectedNeedId
+              ? <><Loader2 className="h-3.5 w-3.5 animate-spin" />Analyse…</>
+              : <><Sparkles className="h-3.5 w-3.5" />Lancer le matching</>}
+          </Button>
+        )}
 
         {selectedNeedId && (
           <Button
