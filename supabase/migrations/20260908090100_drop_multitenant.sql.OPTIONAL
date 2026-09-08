@@ -43,3 +43,33 @@ DROP FUNCTION IF EXISTS public.current_tenant_id()          CASCADE;
 DROP FUNCTION IF EXISTS public.get_user_tenant_id(uuid)     CASCADE;
 
 DROP TYPE IF EXISTS public.tenant_role;
+
+-- ============================================================================
+-- Les vues client_missions et freelance_missions sélectionnent missions.tenant_id :
+-- le DROP COLUMN ... CASCADE ci-dessus les emporte. On les reconstruit à
+-- l'identique, sans la colonne. Elles portent une vraie règle métier — le client
+-- ne voit que client_tjm, le freelance que recruiter_tjm — donc les perdre
+-- exposerait la marge des deux côtés.
+-- ============================================================================
+CREATE OR REPLACE VIEW public.client_missions AS
+  SELECT id, title, company_name, location,
+         client_tjm,
+         start_date, end_date, duration_text, status,
+         need_id, suggestion_id, recruiter_profile_id, created_at, updated_at
+    FROM public.missions m
+   WHERE need_id IN (SELECT cn.id FROM public.client_needs cn WHERE cn.user_id = auth.uid());
+
+CREATE OR REPLACE VIEW public.freelance_missions AS
+  SELECT id, title, company_name, location,
+         recruiter_tjm,
+         start_date, end_date, duration_text, status,
+         need_id, suggestion_id, recruiter_profile_id, created_at, updated_at
+    FROM public.missions m
+   WHERE recruiter_profile_id IN (SELECT rp.id FROM public.recruiter_profiles rp WHERE rp.user_id = auth.uid());
+
+GRANT SELECT ON public.client_missions    TO authenticated;
+GRANT SELECT ON public.freelance_missions TO authenticated;
+
+-- Tables du site vitrine, elles aussi hors périmètre de la plateforme RPO.
+DROP TABLE IF EXISTS public.studio_requests CASCADE;
+DROP TABLE IF EXISTS public.blog_articles   CASCADE;
