@@ -1,0 +1,1 @@
+ALTER TABLE public.timesheets ADD COLUMN recruitments_count integer NOT NULL DEFAULT 0;

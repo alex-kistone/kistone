@@ -1,0 +1,1 @@
+DELETE FROM public.blog_articles;

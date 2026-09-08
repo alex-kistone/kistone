@@ -1,0 +1,32 @@
+#connect2-import-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: all 0.2s;
+  z-index: 9999;
+}
+
+#connect2-import-btn:hover {
+  background: #4f46e5;
+  transform: scale(1.02);
+}
+
+#connect2-import-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+#connect2-import-btn.connect2-fixed {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  padding: 12px 20px;
+  font-size: 14px;
+}

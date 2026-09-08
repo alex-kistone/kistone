@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.enforce_support_human_role() FROM PUBLIC, anon, authenticated;

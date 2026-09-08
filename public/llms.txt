@@ -1,0 +1,21 @@
+# Kistone
+
+> Plateforme de recrutement freelance et studio IA pour recruteurs — RPO, Tech, Data, Product.
+
+Kistone connecte les entreprises aux meilleurs recruteurs freelances spécialisés (Tech, Data, Product, GTM, Corporate, Finance) pour piloter leurs recrutements du brief au closing. Kistone Studio conçoit des outils, connecteurs et automatisations IA sur-mesure pour booster la stack recrutement des cabinets, RPO et TA internes — livré en 15 jours, prix fixe.
+
+## Pages
+
+- [/](/): Accueil Kistone Studio — outils et automatisations IA sur-mesure pour recruteurs.
+- [/talent](/talent): Le réseau des recruteurs freelances RPO spécialisés par métier.
+- [/pourquoi-kistone](/pourquoi-kistone): L'origine du studio, la stack AI-native et la méthode Kistone.
+- [/blog](/blog): Articles et conseils sur le recrutement freelance, le RPO, l'IA et le sourcing.
+- [/blog/:slug](/blog/freelance-rpo-guide): Articles de blog détaillés sur les pratiques de recrutement.
+- [/open-needs](/open-needs): Missions et besoins de recrutement ouverts, accessibles aux freelances.
+- [/product-tour/gotam](/product-tour/gotam): Découverte de Gotam, solution de headcount planning et plan de recrutement.
+- [/product-tour/:slug](/product-tour/connect): Découverte des produits et outils de recrutement développés par Kistone.
+- [/privacy](/privacy): Politique de confidentialité et traitement des données.
+
+## Optional
+
+- [/studio](/studio): Présentation des services du studio Kistone (accès via navigation, page technique identique à l'accueil).

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+    h1 { font-size: 16px; margin-bottom: 4px; color: #fff; }
+    .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+    label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
+    input { width: 100%; padding: 8px 10px; border: 1px solid #334155; border-radius: 6px; background: #1e293b; color: #e2e8f0; font-size: 13px; outline: none; }
+    input:focus { border-color: #6366f1; }
+    button { width: 100%; margin-top: 16px; padding: 10px; border: none; border-radius: 8px; background: #6366f1; color: white; font-size: 13px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #4f46e5; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status { margin-top: 12px; font-size: 12px; padding: 8px; border-radius: 6px; display: none; }
+    .status.success { display: block; background: #064e3b; color: #6ee7b7; }
+    .status.error { display: block; background: #7f1d1d; color: #fca5a5; }
+    .logged-in { font-size: 12px; color: #6ee7b7; margin-bottom: 8px; }
+    .not-logged { font-size: 12px; color: #fca5a5; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🚀 Connect2 Importer</h1>
+  <p class="subtitle">Connectez-vous pour importer des profils LinkedIn</p>
+
+  <div id="auth-status"></div>
+
+  <div id="login-section">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="admin@connect2.ai">
+    <label>Mot de passe</label>
+    <input type="password" id="password" placeholder="••••••••">
+    <button id="login-btn">Se connecter</button>
+  </div>
+
+  <div id="logged-section" style="display:none">
+    <p class="logged-in">✓ Connecté en tant qu'admin</p>
+    <p style="font-size:12px;color:#94a3b8;">Rendez-vous sur un profil LinkedIn et cliquez sur le bouton <strong>Importer dans Connect2</strong>.</p>
+    <button id="logout-btn" style="background:#334155;">Se déconnecter</button>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

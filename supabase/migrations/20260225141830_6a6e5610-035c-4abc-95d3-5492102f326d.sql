@@ -1,0 +1,1 @@
+ALTER TABLE public.recruiter_profiles ADD COLUMN remote_preference text DEFAULT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE public.client_needs ADD COLUMN sectors TEXT[] NOT NULL DEFAULT '{}'::text[];

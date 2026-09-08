@@ -1,0 +1,1 @@
+ALTER TABLE public.profile_suggestions ADD COLUMN recruiter_first_name text;
