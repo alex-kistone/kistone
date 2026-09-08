@@ -140,160 +140,9 @@ const KistoneHeader = ({ onStartProject }: KistoneHeaderProps = {}) => {
             }
           `}</style>
 
-          <div
-            className="relative flex items-center"
-            onMouseEnter={() => {
-              if (dropdownTimerRef.current) {
-                clearTimeout(dropdownTimerRef.current);
-                dropdownTimerRef.current = null;
-              }
-              setDropdownOpen(true);
-            }}
-            onMouseLeave={() => {
-              dropdownTimerRef.current = setTimeout(() => {
-                setDropdownOpen(false);
-              }, 250);
-            }}
-          >
-            <Link to="/realisations" className="kh-navlink kh-navlink-studio">
-              <span style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                Nos réalisations
-              </span>
-              <span aria-hidden className="kh-underline" />
-            </Link>
-            {dropdownOpen && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 8px)",
-                  left: 0,
-                  background: "#F2EFE9",
-                  border: "2px solid #0A0A0A",
-                  borderRadius: 10,
-                  boxShadow: "4px 4px 0 0 #0A0A0A",
-                  padding: "8px 0",
-                  minWidth: 200,
-                  zIndex: 60,
-                }}
-              >
-                <Link
-                  to="/product-tour/gotam"
-                  style={{
-                    display: "block",
-                    padding: "10px 16px",
-                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                    fontSize: 12,
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                    color: "#14140F",
-                    textDecoration: "none",
-                    transition: "background 150ms ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  Hiring Plan
-                </Link>
-                <Link
-                  to="/product-tour/connect"
-                  style={{
-                    display: "block",
-                    padding: "10px 16px",
-                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                    fontSize: 12,
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                    color: "#14140F",
-                    textDecoration: "none",
-                    transition: "background 150ms ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  Plateforme Freelance
-                </Link>
-                <Link
-                  to="/product-tour/portail-client"
-                  style={{
-                    display: "block",
-                    padding: "10px 16px",
-                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                    fontSize: 12,
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                    color: "#14140F",
-                    textDecoration: "none",
-                    transition: "background 150ms ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  Plateforme CDI
-                </Link>
-                <Link
-                  to="/product-tour/le-kit"
-                  style={{
-                    display: "block",
-                    padding: "10px 16px",
-                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                    fontSize: 12,
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                    color: "#14140F",
-                    textDecoration: "none",
-                    transition: "background 150ms ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  Assistant sourcing
-                </Link>
-                {onStartProject && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onStartProject();
-                      setDropdownOpen(false);
-                    }}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      textAlign: "left",
-                      padding: "10px 16px",
-                      fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                      fontSize: 12,
-                      letterSpacing: "0.04em",
-                      textTransform: "uppercase",
-                      color: "#14140F",
-                      background: "transparent",
-                      border: "none",
-                      cursor: "pointer",
-                      transition: "background 150ms ease",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                  >
-                    Projet sur-mesure
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          <Link to="/pricing" className="kh-navlink kh-navlink-studio">
+          <Link to="/open-needs" className="kh-navlink kh-navlink-studio">
             <span style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-              Pricing
-            </span>
-            <span aria-hidden className="kh-underline" />
-          </Link>
-          <Link to="/pourquoi-kistone" className="kh-navlink kh-navlink-studio">
-            <span style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-              Pourquoi Kistone
-            </span>
-            <span aria-hidden className="kh-underline" />
-          </Link>
-          <Link to="/blog" className="kh-navlink kh-navlink-studio">
-            <span style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-              Blog
+              Besoins ouverts
             </span>
             <span aria-hidden className="kh-underline" />
           </Link>
@@ -312,11 +161,11 @@ const KistoneHeader = ({ onStartProject }: KistoneHeaderProps = {}) => {
               </>
             ) : onStartProject ? (
               <button type="button" onClick={onStartProject} style={{ ...ctaBtn, cursor: "pointer" }} className="kh-cta">
-                Démarrer un projet
+                Rejoindre le réseau
               </button>
             ) : (
-              <a href="/#contact" style={ctaBtn} className="kh-cta">
-                Démarrer un projet
+              <a href="/register" style={ctaBtn} className="kh-cta">
+                Rejoindre le réseau
               </a>
             )}
           </div>
@@ -363,20 +212,8 @@ const KistoneHeader = ({ onStartProject }: KistoneHeaderProps = {}) => {
                 padding: "8px",
               }}
             >
-              <span
-                style={{
-                  padding: "12px 14px 4px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 10,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "#6B6B5E",
-                }}
-              >
-                Nos réalisations
-              </span>
               <Link
-                to="/product-tour/gotam"
+                to="/open-needs"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
                   display: "block",
@@ -388,162 +225,9 @@ const KistoneHeader = ({ onStartProject }: KistoneHeaderProps = {}) => {
                   color: "#14140F",
                   textDecoration: "none",
                   borderRadius: 10,
-                  transition: "background 150ms ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
-                Hiring Plan
-              </Link>
-              <Link
-                to="/product-tour/connect"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 14px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 13,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  color: "#14140F",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "background 150ms ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                Plateforme Freelance
-              </Link>
-              <Link
-                to="/product-tour/portail-client"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 14px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 13,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  color: "#14140F",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "background 150ms ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                Plateforme CDI
-              </Link>
-              <Link
-                to="/product-tour/le-kit"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 14px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 13,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  color: "#14140F",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "background 150ms ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                Assistant sourcing
-              </Link>
-              {onStartProject && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onStartProject();
-                    setMobileMenuOpen(false);
-                  }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "12px 14px",
-                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                    fontSize: 13,
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                    color: "#14140F",
-                    background: "transparent",
-                    border: "none",
-                    borderRadius: 10,
-                    cursor: "pointer",
-                    transition: "background 150ms ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  Projet sur-mesure
-                </button>
-              )}
-              <div style={{ height: 1, background: "rgba(10,10,10,0.08)", margin: "8px 6px" }} />
-              <Link
-                to="/pricing"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 14px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 13,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  color: "#14140F",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "background 150ms ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                Pricing
-              </Link>
-              <Link
-                to="/pourquoi-kistone"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 14px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 13,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  color: "#14140F",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "background 150ms ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                Pourquoi Kistone
-              </Link>
-              <Link
-                to="/blog"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 14px",
-                  fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-                  fontSize: 13,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  color: "#14140F",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "background 150ms ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#E595001A")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                Blog
+                Besoins ouverts
               </Link>
             </div>
 
@@ -588,15 +272,15 @@ const KistoneHeader = ({ onStartProject }: KistoneHeaderProps = {}) => {
                   }}
                   style={{ ...ctaBtn, cursor: "pointer", width: "100%", textAlign: "center" }}
                 >
-                  Démarrer un projet
+                  Rejoindre le réseau
                 </button>
               ) : (
                 <a
-                  href="/#contact"
+                  href="/register"
                   onClick={() => setMobileMenuOpen(false)}
                   style={{ ...ctaBtn, width: "100%", textAlign: "center" }}
                 >
-                  Démarrer un projet
+                  Rejoindre le réseau
                 </a>
               )}
             </div>
