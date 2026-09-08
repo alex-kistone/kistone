@@ -104,11 +104,68 @@ supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 supabase functions deploy match-profiles
 ```
 
+## Base locale (Docker)
+
+La chaîne de migrations rejoue intégralement sur une base vierge — 55 migrations,
+25 tables, 3 vues, 82 policies :
+
+```bash
+npx supabase start     # démarre Postgres + Auth + Studio + Inbucket
+npx supabase status    # URLs et clés locales
+npx supabase db reset  # rejoue tout à neuf
+npx supabase stop      # arrête (--no-backup pour repartir vide)
+```
+
+Studio local : http://127.0.0.1:54323 · emails capturés : http://127.0.0.1:54324
+
+> Ça n'a pas toujours été le cas : 10 des 25 tables, leurs colonnes `tenant_id`
+> et 8 policies avaient été créées à la main dans le dashboard Lovable, jamais
+> versionnées. `20260604134900_repair_missing_tables.sql` répare ce trou.
+
+## Basculer sur un projet Supabase dédié
+
+Aujourd'hui `.env` pointe sur le Supabase de l'app Lovable — base *et* code sont
+partagés avec elle. Pour prendre son indépendance :
+
+1. Créer un projet sur https://supabase.com/dashboard (choisir la région UE).
+   Noter le **project ref** et la **clé anon** ; garder le mot de passe DB.
+2. Authentifier la CLI, une fois : `npx supabase login`
+3. Lier et pousser le schéma :
+
+```bash
+npx supabase link --project-ref <ref>
+npx supabase db push
+```
+
+4. Reporter `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` et
+   `VITE_SUPABASE_PROJECT_ID` dans `.env`, et `project_id` dans
+   `supabase/config.toml`.
+5. Déployer les fonctions et poser les secrets :
+
+```bash
+npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+npx supabase functions deploy match-profiles
+```
+
+6. Se créer un compte via `/register`, puis se donner le rôle admin :
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'admin' from auth.users where email = 'ton@email.fr';
+```
+
+7. Configurer Auth (Site URL, Redirect URLs, providers Google/LinkedIn) et
+   réactiver la confirmation d'email avec un SMTP avant la mise en production.
+
+Une base neuve démarre sans référentiels : `specialties` et `admin_qual_fields`
+sont vides, à alimenter depuis l'espace admin.
+
 ## Reste à faire
 
-- Appliquer `20260908090000_rpo_matching.sql` et déployer `match-profiles`.
-- Décider si la plateforme garde le projet Supabase partagé avec l'app Lovable
-  ou bascule sur le sien.
+- Décider du sort de `20260908090100_drop_multitenant.sql.OPTIONAL` (destructif,
+  lire son en-tête).
 - Les autres edge functions passent encore par la passerelle IA de Lovable
   (`LOVABLE_API_KEY`) : `parse-need`, `optimize-intro`, `support-assistant`.
   À recâbler sur l'API Anthropic comme `match-profiles`.
+- Le dépôt GitHub est synchronisé dans les deux sens avec Lovable : décider si
+  ce fork s'en détache (nouveau remote) ou reste couplé.
