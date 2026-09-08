@@ -1,0 +1,45 @@
+-- ============================================================================
+-- Nettoyage multi-tenant — DESTRUCTIF, à n'exécuter qu'après vérification.
+--
+-- La plateforme est mono-tenant : le front ne référence `tenant` que dans 4
+-- fichiers sur 209 (dont types.ts, généré). Ces tables et colonnes sont donc
+-- vestigiales. Elles ne coûtent rien : ce nettoyage est du confort, pas un
+-- prérequis.
+--
+-- ⚠️ `DROP COLUMN ... CASCADE` supprime aussi les policies RLS qui référencent
+-- la colonne. Avant de lancer ce script, liste ce qui va tomber :
+--
+--   SELECT schemaname, tablename, policyname
+--     FROM pg_policies
+--    WHERE qual::text LIKE '%tenant%' OR with_check::text LIKE '%tenant%';
+--
+-- Si une policy listée protège autre chose que le tenant, réécris-la d'abord.
+-- Renomme ce fichier en .sql pour l'activer.
+-- ============================================================================
+
+-- Colonnes tenant_id, sur toutes les tables qui en portent une.
+DO $$
+DECLARE r record;
+BEGIN
+  FOR r IN
+    SELECT table_name FROM information_schema.columns
+     WHERE table_schema = 'public' AND column_name = 'tenant_id'
+  LOOP
+    EXECUTE format('ALTER TABLE public.%I DROP COLUMN IF EXISTS tenant_id CASCADE', r.table_name);
+    RAISE NOTICE 'tenant_id supprimé de %', r.table_name;
+  END LOOP;
+END $$;
+
+DROP TABLE IF EXISTS public.tenant_billing          CASCADE;
+DROP TABLE IF EXISTS public.tenant_jarvi_config     CASCADE;
+DROP TABLE IF EXISTS public.tenant_candidate_fields CASCADE;
+DROP TABLE IF EXISTS public.tenant_settings         CASCADE;
+DROP TABLE IF EXISTS public.tenant_members          CASCADE;
+DROP TABLE IF EXISTS public.tenants                 CASCADE;
+
+DROP FUNCTION IF EXISTS public.has_tenant_role(uuid, text)  CASCADE;
+DROP FUNCTION IF EXISTS public.is_tenant_member(uuid)       CASCADE;
+DROP FUNCTION IF EXISTS public.current_tenant_id()          CASCADE;
+DROP FUNCTION IF EXISTS public.get_user_tenant_id(uuid)     CASCADE;
+
+DROP TYPE IF EXISTS public.tenant_role;

@@ -27,7 +27,6 @@ import AdminProfilePanel from "@/components/connect2/AdminProfilePanel";
 import ProfileDetailModal, { type FullProfile } from "@/components/connect2/ProfileDetailModal";
 import DashboardSkeletons from "@/components/connect2/DashboardSkeletons";
 import KanbanView from "@/components/connect2/KanbanView";
-import AdminBlogPanel from "@/components/connect2/AdminBlogPanel";
 import AdminClientsPanel from "@/components/connect2/AdminClientsPanel";
 import AdminTimesheetsPanel from "@/components/connect2/AdminTimesheetsPanel";
 import { WhatsAppDialog } from "@/components/connect2/WhatsAppDialog";
@@ -37,7 +36,6 @@ import AdminKPIPanel from "@/components/connect2/AdminKPIPanel";
 import AdminMessagesPanel from "@/components/connect2/AdminMessagesPanel";
 import AdminSupportPanel from "@/components/connect2/AdminSupportPanel";
 import AdminGlobalPipelinePanel from "@/components/connect2/AdminGlobalPipelinePanel";
-import AdminStudioPanel from "@/components/connect2/AdminStudioPanel";
 
 type Profile = FullProfile;
 
@@ -228,10 +226,6 @@ const Dashboard = () => {
               <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Pipeline global
             </TabsTrigger>
-            <TabsTrigger value="blog" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
-              <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              Blog
-            </TabsTrigger>
             <TabsTrigger value="clients" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Clients
@@ -243,10 +237,6 @@ const Dashboard = () => {
             <TabsTrigger value="timesheets" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Receipt className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               CRA
-            </TabsTrigger>
-            <TabsTrigger value="studio" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
-              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              Studio
             </TabsTrigger>
             <TabsTrigger value="assistant" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -453,9 +443,6 @@ const Dashboard = () => {
             <AdminGlobalPipelinePanel />
           </TabsContent>
 
-          <TabsContent value="blog">
-            <AdminBlogPanel />
-          </TabsContent>
 
           <TabsContent value="clients">
             <AdminClientsPanel onOpenChat={(userId, name) => { setClientChatTarget({ userId, name }); setClientChatOpen(true); }} />
@@ -469,9 +456,6 @@ const Dashboard = () => {
             <AdminTimesheetsPanel />
           </TabsContent>
 
-          <TabsContent value="studio">
-            <AdminStudioPanel />
-          </TabsContent>
 
           <TabsContent value="assistant">
             <AdminSupportPanel />

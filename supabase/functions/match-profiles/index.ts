@@ -114,10 +114,6 @@ Deno.serve(async (req) => {
       if (error) return json({ error: `Enregistrement des suggestions : ${error.message}` }, 500);
     }
 
-    if (need.status === "open") {
-      await admin.from("client_needs").update({ status: "matching" }).eq("id", need_id);
-    }
-
     return json({
       suggestions: toInsert,
       skipped: suggestions.length - toInsert.length,

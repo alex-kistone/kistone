@@ -13,7 +13,8 @@ export const MARGIN_EUR = 100;
 /** Tolérance de dépassement du budget max client avant exclusion. */
 const BUDGET_TOLERANCE = 0.1;
 
-export type RemotePolicy = "onsite" | "hybrid" | "remote" | "flexible";
+/** Vocabulaire de la base (cf. REMOTE_OPTIONS dans ClientNewNeed.tsx / Profile.tsx). */
+export type RemotePolicy = "on-site" | "hybrid" | "full-remote" | "flexible";
 
 export interface Need {
   id: string;
@@ -134,8 +135,8 @@ function scoreRemote(need: Need, r: Recruiter): { pts: number; note: string | nu
   const pref = r.remote_preference ?? "flexible";
   if (pref === "flexible") return { pts: MAX.remote * 0.85, note: null };
   if (pref === need.remote_policy) return { pts: MAX.remote, note: `Préférence remote alignée (${pref})` };
-  const opposed = (pref === "remote" && need.remote_policy === "onsite") ||
-                  (pref === "onsite" && need.remote_policy === "remote");
+  const opposed = (pref === "full-remote" && need.remote_policy === "on-site") ||
+                  (pref === "on-site" && need.remote_policy === "full-remote");
   if (opposed) return { pts: 0, note: `Incompatibilité remote (profil ${pref} / besoin ${need.remote_policy})` };
   return { pts: MAX.remote * 0.5, note: null };
 }
@@ -160,7 +161,7 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
     mentionedIn(profileTags, needText),
   );
   const sectorsRatio = overlap(r.sectors ?? [], need.sectors);
-  const locationRatio = need.remote_policy === "remote"
+  const locationRatio = need.remote_policy === "full-remote"
     ? 1
     : Math.max(overlap(r.mobility ?? [], [need.mission_location]), mentionedIn(r.mobility ?? [], need.mission_location));
 
