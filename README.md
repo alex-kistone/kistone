@@ -118,6 +118,18 @@ npx supabase stop      # arrête (--no-backup pour repartir vide)
 
 Studio local : http://127.0.0.1:54323 · emails capturés : http://127.0.0.1:54324
 
+Test de sécurité rejouable (transaction annulée, base intacte) :
+
+```bash
+docker exec -i $(docker ps --format '{{.Names}}' | grep '^supabase_db_') \
+  psql -U postgres -d postgres -q < supabase/tests/guard_admin_fields.sql
+```
+
+```
+OK   freelance : qualification verrouillee, TJM modifiable
+OK   admin     : qualification autorisee
+```
+
 > Ça n'a pas toujours été le cas : 10 des 25 tables, leurs colonnes `tenant_id`
 > et 8 policies avaient été créées à la main dans le dashboard Lovable, jamais
 > versionnées. `20260604134900_repair_missing_tables.sql` répare ce trou.
