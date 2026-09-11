@@ -223,18 +223,6 @@ const Profile = () => {
 
       if (error) throw error;
 
-      // Sync to Jarvi
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase.functions.invoke("sync-to-jarvi", {
-            headers: { Authorization: `Bearer ${session.access_token}` },
-          });
-        }
-      } catch (jarviErr) {
-        console.error("Jarvi sync error (non-blocking):", jarviErr);
-      }
-
       toast({
         title: existingId ? "Profil mis à jour !" : "Profil créé !",
         description: "Vos informations ont été sauvegardées avec succès.",
