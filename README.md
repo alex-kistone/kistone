@@ -134,50 +134,58 @@ OK   admin     : qualification autorisee
 > et 8 policies avaient été créées à la main dans le dashboard Lovable, jamais
 > versionnées. `20260604134900_repair_missing_tables.sql` répare ce trou.
 
-## Basculer sur un projet Supabase dédié
+## Projet Supabase
 
-Aujourd'hui `.env` pointe sur le Supabase de l'app Lovable — base *et* code sont
-partagés avec elle. Pour prendre son indépendance :
+La plateforme tourne sur son propre projet, **Plateforme-rpo**
+(`cqtrqkslzztceiuhhilo`, région `eu-west-1`), indépendant de l'app Lovable.
 
-1. Créer un projet sur https://supabase.com/dashboard (choisir la région UE).
-   Noter le **project ref** et la **clé anon** ; garder le mot de passe DB.
-2. Authentifier la CLI, une fois : `npx supabase login`
-3. Lier et pousser le schéma :
+- 57 migrations appliquées, alignées local = distant (`npx supabase migration list`).
+- Edge functions déployées — celles qui tournent sans clé externe :
+  `assign-client-role`, `match-profiles`, `get-suggestion-profile`,
+  `public-profiles`, `landing-stats`.
+- `onboarding_completed` est calculé par trigger (TJM + au moins une
+  compétence) : un profil entre dans le matching dès qu'il est exploitable.
+
+Pour pousser une nouvelle migration ou redéployer une fonction :
 
 ```bash
-npx supabase link --project-ref <ref>
 npx supabase db push
-```
-
-4. Reporter `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` et
-   `VITE_SUPABASE_PROJECT_ID` dans `.env`, et `project_id` dans
-   `supabase/config.toml`.
-5. Déployer les fonctions et poser les secrets :
-
-```bash
-npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 npx supabase functions deploy match-profiles
 ```
 
-6. Se créer un compte via `/register`, puis se donner le rôle admin :
+### À faire une fois, côté dashboard
 
-```sql
-insert into public.user_roles (user_id, role)
-select id, 'admin' from auth.users where email = 'ton@email.fr';
-```
+1. **Clé Anthropic** — sans elle `match-profiles` classe par règles seules :
+   `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
+2. **Ton compte admin** — s'inscrire via `/register`, puis dans le SQL editor :
 
-7. Configurer Auth (Site URL, Redirect URLs, providers Google/LinkedIn) et
-   réactiver la confirmation d'email avec un SMTP avant la mise en production.
+   ```sql
+   insert into public.user_roles (user_id, role)
+   select id, 'admin' from auth.users where email = 'ton@email.fr';
+   ```
 
-Une base neuve démarre sans référentiels : `specialties` et `admin_qual_fields`
-sont vides, à alimenter depuis l'espace admin.
+3. **Auth → URL Configuration** : Site URL et Redirect URLs (`http://localhost:8080/**`,
+   puis le domaine de prod).
+4. **Auth → Providers** : Google et LinkedIn, si tu gardes la connexion sociale.
+5. **Auth → SMTP** : le SMTP par défaut de Supabase est limité à quelques emails
+   par heure — suffisant pour tester, pas pour la production.
+
+### Fonctions non déployées
+
+| Fonction | Bloquée par | Effet dans l'app |
+|---|---|---|
+| `notify-shortlist`, `notify-suggestion` | `RESEND_API_KEY` | pas d'email au client / au freelance |
+| `parse-need`, `optimize-intro` | `LOVABLE_API_KEY` | pas d'aide IA à la rédaction |
+| `send-whatsapp` | `LOVABLE_API_KEY` + Twilio | pas de WhatsApp |
+
+`LOVABLE_API_KEY` n'existe que dans l'environnement Lovable : ces fonctions
+doivent être recâblées sur l'API Anthropic, comme `match-profiles`.
 
 ## Reste à faire
 
 - Décider du sort de `20260908090100_drop_multitenant.sql.OPTIONAL` (destructif,
   lire son en-tête).
-- Les autres edge functions passent encore par la passerelle IA de Lovable
-  (`LOVABLE_API_KEY`) : `parse-need`, `optimize-intro`, `support-assistant`.
-  À recâbler sur l'API Anthropic comme `match-profiles`.
+- Recâbler `parse-need`, `optimize-intro` et `support-assistant` sur l'API
+  Anthropic (voir « Fonctions non déployées »).
 - Le dépôt GitHub est synchronisé dans les deux sens avec Lovable : décider si
   ce fork s'en détache (nouveau remote) ou reste couplé.
