@@ -5,7 +5,6 @@ import thomasPhoto from "@/assets/candidate-thomas.jpg";
 import sarahPhoto from "@/assets/candidate-sarah.jpg";
 import ProfileShowcase from "@/components/connect2/ProfileShowcase";
 import OpenNeedsSection from "@/components/landing/OpenNeedsSection";
-import LatestArticlesSection from "@/components/landing/LatestArticlesSection";
 import KistoneHeader from "@/components/KistoneHeader";
 import kistoneLogoFull from "@/assets/kistone-logo-noir-full.png";
 import SEO from "@/components/SEO";
@@ -314,7 +313,6 @@ const Index = () => {
       {/* DERNIERS FREELANCES & MISSIONS */}
       <ProfileShowcase />
       <OpenNeedsSection />
-      <LatestArticlesSection />
 
       {/* CTA */}
       <section style={{ paddingTop: 80, paddingBottom: 120 }}>
