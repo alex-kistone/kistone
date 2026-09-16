@@ -249,8 +249,12 @@ const Index = () => {
                 Nous sommes <em style={{ color: "#E54D2A" }}>AI-first</em>.
               </h2>
               <div className="mt-10">
-                <Link
-                  to="/studio"
+                {/* Le studio est un site distinct : la route /studio a disparu avec la
+                    surface vitrine, ce lien sort donc de l'app. */}
+                <a
+                  href="https://kistone.fr"
+                  target="_blank"
+                  rel="noreferrer noopener"
                   className="kistone-btn-primary"
                   style={{
                     display: "inline-flex",
@@ -270,7 +274,7 @@ const Index = () => {
                   }}
                 >
                   Découvrir le Studio →
-                </Link>
+                </a>
               </div>
             </div>
             <div className="md:col-span-7">
@@ -399,7 +403,7 @@ const Index = () => {
           <div className="flex items-center gap-6">
             <Link to="/client" className="mono muted" style={footerLink()}>Espace Client</Link>
             <Link to="/register" className="mono muted" style={footerLink()}>Espace Freelance</Link>
-            <Link to="/studio" className="mono muted" style={footerLink()}>Le studio</Link>
+            <a href="https://kistone.fr" target="_blank" rel="noreferrer noopener" className="mono muted" style={footerLink()}>Le studio</a>
             <Link to="/privacy" className="mono muted" style={footerLink()}>Confidentialité</Link>
           </div>
           <div
