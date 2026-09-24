@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import Header from "@/components/KistoneHeader";
-import kistoneLogo from "@/assets/kistone_logo_black.png";
 
 type UserType = "client" | "recruiter";
 
@@ -209,10 +208,9 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto flex max-w-md flex-col items-center px-4 py-6">
-        <img src={kistoneLogo} alt="Kistone Studio" className="mb-3 h-20 dark:invert" />
+      <main className="mx-3 my-8 flex max-w-[480px] flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:mx-auto sm:my-16 sm:px-10 sm:py-12">
 
-        <h1 className="mb-1 text-center font-heading text-2xl font-bold">
+        <h1 className="mb-3 text-center font-heading text-[34px] font-bold leading-none tracking-[-0.045em] sm:text-[40px]">
           {isLogin ? "Connectez-vous" : "Créez votre compte"}
         </h1>
         <p className="mb-8 text-center text-sm text-muted-foreground">
@@ -220,7 +218,7 @@ const Login = () => {
         </p>
 
         {/* Toggle tabs */}
-        <div className="mb-8 flex w-full overflow-hidden rounded-xl border bg-muted/40 p-1">
+        <div className="mb-8 flex w-full overflow-hidden rounded-full bg-secondary p-1">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = userType === tab.key;
@@ -228,20 +226,18 @@ const Login = () => {
               <button
                 key={tab.key}
                 onClick={() => setUserType(tab.key)}
-                className={`relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
-                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground/70"
+                className={`relative flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all ${
+                  isActive ? "text-background" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeTab"
-                    className={`absolute inset-0 rounded-lg shadow-sm ${
-                      tab.key === "client" ? "bg-primary/10 border border-primary/20" : "bg-accent/10 border border-accent/20"
-                    }`}
+                    className="absolute inset-0 rounded-full bg-foreground"
                     transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                   />
                 )}
-                <Icon className={`relative z-10 h-4 w-4 ${isActive ? (tab.key === "client" ? "text-primary" : "text-accent") : ""}`} />
+                <Icon className="relative z-10 h-4 w-4" />
                 <span className="relative z-10">{tab.label}</span>
               </button>
             );

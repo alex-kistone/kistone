@@ -35,11 +35,11 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto flex max-w-md flex-col items-center px-4 py-20">
-        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
-          <KeyRound className="h-7 w-7 text-primary-foreground" />
+      <main className="mx-3 my-8 flex max-w-[480px] flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:mx-auto sm:my-16 sm:px-10 sm:py-12">
+        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[16px] bg-ks-pink-100">
+          <KeyRound className="h-6 w-6 text-foreground" strokeWidth={1.8} />
         </div>
-        <h1 className="mb-2 text-2xl font-bold">Mot de passe oublié</h1>
+        <h1 className="mb-3 text-center font-heading text-[34px] font-bold leading-none tracking-[-0.045em] sm:text-[40px]">Mot de passe oublié</h1>
         <p className="mb-8 text-center text-muted-foreground">
           Entrez votre adresse email pour recevoir un lien de réinitialisation.
         </p>

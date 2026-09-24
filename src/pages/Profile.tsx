@@ -272,7 +272,7 @@ const Profile = () => {
           <div className="flex items-center gap-2">
             <Button
               onClick={() => navigate("/open-needs")}
-              className="gap-2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:from-primary/90 hover:to-primary/70"
+              className="gap-2"
               size="sm"
             >
               <Rocket className="h-4 w-4" />

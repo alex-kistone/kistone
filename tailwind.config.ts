@@ -17,43 +17,10 @@ export default {
   			'ks-display': ['Outfit', 'DM Sans', 'system-ui', 'sans-serif'],
   			'ks-sans': ['Geist', 'system-ui', 'sans-serif'],
   			'ks-mono': ['"Geist Mono"', 'ui-monospace', 'monospace'],
-  			heading: [
-  				'Space Grotesk"',
-  				'sans-serif'
-  			],
-  			sans: [
-  				'Inter',
-  				'ui-sans-serif',
-  				'system-ui',
-  				'-apple-system',
-  				'BlinkMacSystemFont',
-  				'Segoe UI',
-  				'Roboto',
-  				'Helvetica Neue',
-  				'Arial',
-  				'Noto Sans',
-  				'sans-serif'
-  			],
-  			serif: [
-  				'Lora',
-  				'ui-serif',
-  				'Georgia',
-  				'Cambria',
-  				'Times New Roman',
-  				'Times',
-  				'serif'
-  			],
-  			mono: [
-  				'Space Mono',
-  				'ui-monospace',
-  				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
-  				'monospace'
-  			]
+  			heading: ['Outfit', 'DM Sans', 'system-ui', 'sans-serif'],
+  			sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			serif: ['Outfit', 'DM Sans', 'system-ui', 'sans-serif'],
+  			mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
   		},
   		colors: {
   			// Site vitrine (design system Kistone v2), isolé des tokens HSL de l'app
