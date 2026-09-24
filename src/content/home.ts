@@ -8,7 +8,7 @@ export const HERO = {
   // Un soulignement rose passe d'un métier à l'autre sous le titre
   functions: ["Tech", "GTM", "Finance", "Ops"],
   subtitle:
-    "Kistone vous connecte aux meilleurs recruteurs freelances spécialisés par métier. Le studio vous construit des outils RH sur mesure.",
+    "Kistone vous connecte aux meilleurs RPO freelances spécialisés par métier. Le studio vous construit des outils RH sur mesure.",
   primary: "Accéder à la plateforme",
   secondary: "Découvrir le studio",
   reassurance: "Sans engagement · Sans CDI · Réponse sous 48 h",
