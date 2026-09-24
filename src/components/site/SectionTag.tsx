@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /** Pill de section : puce rose + label mono en majuscules. */
-export default function SectionTag({ children, dark, className }: { children: ReactNode; dark?: boolean; className?: string }) {
+export default function SectionTag({ children, dark, studio, className }: { children: ReactNode; dark?: boolean; studio?: boolean; className?: string }) {
   return (
     <div
       className={cn(
@@ -11,7 +11,7 @@ export default function SectionTag({ children, dark, className }: { children: Re
         className,
       )}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-ks-pink" aria-hidden="true" />
+      <span className={cn("h-1.5 w-1.5 rounded-full", studio ? "ks-grad-dot" : "bg-ks-pink")} aria-hidden="true" />
       {children}
     </div>
   );

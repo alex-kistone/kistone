@@ -7,7 +7,7 @@ type Props = { tag: string; title: ReactNode; subtitle?: string };
 export default function SectionHeader({ tag, title, subtitle }: Props) {
   return (
     <div className="flex flex-col items-center text-center">
-      <SectionTag className="ks-reveal">{tag}</SectionTag>
+      <SectionTag studio className="ks-reveal">{tag}</SectionTag>
       <h2 className="ks-reveal mt-4 font-ks-display text-[40px] font-bold leading-[1.02] tracking-[-0.045em] md:mt-5 md:text-[56px] md:leading-none lg:text-[72px]">
         {title}
       </h2>

@@ -32,6 +32,19 @@
   box-decoration-break: clone;
 }
 
+/* Studio : dégradé rose → violet → bleu, réservé aux éléments du studio.
+   La marketplace et l'interface commune gardent le rose en aplat. */
+.ks-site { --ks-grad: linear-gradient(100deg, #FF2E6E 0%, #B14DF5 55%, #4C7DFF 100%); }
+.ks-grad-text { background-image: var(--ks-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ks-grad-bg { background-image: var(--ks-grad); }
+.ks-grad-dot { background: conic-gradient(#FF2E6E, #B14DF5, #4C7DFF, #FF2E6E); }
+.ks-grad-border {
+  border: 2px solid transparent;
+  background: linear-gradient(#141312, #141312) padding-box, var(--ks-grad) border-box;
+  color: #F5F1EA;
+  box-shadow: 0 14px 30px -14px rgba(120, 90, 220, 0.55);
+}
+
 /* Menus déroulants */
 .ks-drop { animation: ks-drop .2s ease both; }
 @keyframes ks-drop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }

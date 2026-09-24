@@ -43,7 +43,7 @@ export default function FAQ() {
     <section id="faq" className="mt-24 scroll-mt-24 px-5 md:mt-[140px] md:px-8">
       <div className="mx-auto grid max-w-ks items-start gap-7 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-20">
         <div className="ks-reveal lg:sticky lg:top-28">
-          <SectionTag>{CONTENT.tag}</SectionTag>
+          <SectionTag studio>{CONTENT.tag}</SectionTag>
           <h2 className="mt-4 font-ks-display text-[40px] font-bold leading-[1.02] tracking-[-0.045em] md:mt-5 md:text-[56px] md:leading-none lg:text-[60px]">
             {CONTENT.title}
           </h2>
@@ -58,7 +58,7 @@ export default function FAQ() {
         <div className="flex flex-col gap-8 md:gap-10">
           {CONTENT.groups.map((g) => (
             <div key={g.theme} className="ks-reveal flex flex-col gap-2.5 md:gap-3">
-              <h3 className="mb-0.5 font-ks-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ks-pink md:mb-1 md:text-xs">{g.theme}</h3>
+              <h3 className="mb-0.5 font-ks-mono text-[11px] font-medium uppercase tracking-[0.14em] ks-grad-text md:mb-1 md:text-xs">{g.theme}</h3>
               {g.items.map((item) => (
                 <Item key={item.id} item={item} open={open === item.id} onToggle={() => setOpen(open === item.id ? null : item.id)} />
               ))}

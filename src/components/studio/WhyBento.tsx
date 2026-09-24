@@ -10,7 +10,7 @@ export function PinkGlow({ className, strength = 0.35 }: { className: string; st
   return (
     <div
       className={`pointer-events-none absolute rounded-full ${className}`}
-      style={{ background: `radial-gradient(circle, rgba(255,46,110,${strength}), rgba(255,46,110,0) 70%)` }}
+      style={{ background: `radial-gradient(circle, rgba(177,77,245,${strength}), rgba(255,46,110,${strength / 3}) 45%, rgba(76,125,255,0) 72%)` }}
       aria-hidden="true"
     />
   );
@@ -44,7 +44,7 @@ export default function WhyBento() {
               className="ks-lift ks-reveal flex flex-col justify-between gap-8 rounded-[22px] border border-[rgba(20,19,18,0.06)] bg-white p-[18px] shadow-ks-card md:min-h-[240px] md:rounded-[28px] md:p-8 lg:[&:nth-child(2)]:min-h-[260px]"
             >
               <span
-                className={`flex h-[38px] w-[38px] items-center justify-center rounded-xl md:h-11 md:w-11 md:rounded-[14px] ${w.highlight ? "bg-ks-pink-100" : "bg-ks-muted"}`}
+                className={`flex h-[38px] w-[38px] items-center justify-center rounded-xl md:h-11 md:w-11 md:rounded-[14px] ${w.highlight ? "bg-[#F1E7FE]" : "bg-ks-muted"}`}
                 aria-hidden="true"
               >
                 <span className="font-ks-mono text-xs md:hidden">{w.num}</span>

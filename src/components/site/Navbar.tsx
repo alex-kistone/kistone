@@ -43,7 +43,7 @@ function DesktopMenus() {
   }, [open]);
 
   return (
-    <nav ref={navRef} aria-label="Navigation principale" className="hidden gap-1 lg:flex">
+    <nav ref={navRef} aria-label="Navigation principale" className="hidden gap-1 xl:flex">
       {MENUS.map((m) => {
         const isOpen = open === m.id;
         return (
@@ -54,7 +54,7 @@ function DesktopMenus() {
               aria-controls={`menu-${m.id}`}
               onClick={() => setOpen(isOpen ? null : m.id)}
               className={cn(
-                "flex h-10 items-center gap-1.5 rounded-full px-3.5 text-[15px] text-ks-ink-2 transition-colors hover:bg-[rgba(20,19,18,0.05)]",
+                "flex h-10 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-[15px] text-ks-ink-2 transition-colors hover:bg-[rgba(20,19,18,0.05)]",
                 isOpen && "bg-[rgba(20,19,18,0.05)]",
               )}
             >
@@ -98,7 +98,7 @@ function MobileMenu() {
         <button
           type="button"
           aria-label="Ouvrir le menu"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-ks-line-strong bg-white lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-ks-line-strong bg-white xl:hidden"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M4 7h16M4 12h16M4 17h16" />

@@ -14,7 +14,7 @@ export default function KeyFigures() {
           >
             <div className="whitespace-nowrap font-ks-display text-[80px] font-bold leading-[0.9] tracking-[-0.05em] xl:text-[112px]">
               {f.value}
-              <span className="text-[36px] tracking-[-0.03em] text-ks-pink xl:text-5xl"> {f.unit}</span>
+              <span className="text-[36px] tracking-[-0.03em] ks-grad-text xl:text-5xl"> {f.unit}</span>
             </div>
             <div className="text-[15px] text-ks-soft md:text-base">{f.label}</div>
           </div>

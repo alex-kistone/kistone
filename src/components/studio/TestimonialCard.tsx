@@ -9,7 +9,7 @@ export default function TestimonialCard({ t, className = "" }: { t: T; className
       <svg width="28" height="22" viewBox="0 0 28 22" className="h-[19px] w-6 md:h-[22px] md:w-7" aria-hidden="true">
         <path
           d="M0 22V13C0 5.8 3.6 1.4 10.8 0l1.4 3.4C8.3 4.6 6.4 7 6.2 10.4H11V22H0zm16 0V13C16 5.8 19.6 1.4 26.8 0l1.2 3.4c-3.9 1.2-5.8 3.6-6 7H27V22H16z"
-          fill="#FF2E6E"
+          fill="#B14DF5"
         />
       </svg>
       <blockquote className="grow text-base leading-[1.55] text-ks-ink md:text-lg">{t.quote}</blockquote>

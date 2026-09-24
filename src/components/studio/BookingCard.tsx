@@ -18,7 +18,7 @@ export default function BookingCard() {
     <button
       type="button"
       onClick={() => setAsked(true)}
-      className="ks-btn inline-flex h-[54px] w-full items-center justify-center gap-2.5 rounded-full bg-ks-pink px-7 text-base font-semibold text-white shadow-ks-pink md:h-14 md:w-auto"
+      className="ks-btn inline-flex h-[54px] w-full items-center justify-center gap-2.5 rounded-full ks-grad-border px-7 text-base font-semibold md:h-14 md:w-auto"
     >
       <span className="md:hidden">{labelShort}</span>
       <span className="hidden md:inline">{label}</span>
@@ -30,7 +30,7 @@ export default function BookingCard() {
     <section id="rdv" className="mt-[72px] scroll-mt-24 px-3 md:mt-[120px] md:px-8">
       <div className="ks-reveal mx-auto grid max-w-ks items-center gap-5 rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white px-5 py-7 shadow-[0_1px_2px_rgba(20,19,18,0.04),0_30px_60px_-32px_rgba(60,40,20,0.22)] md:gap-10 md:rounded-[36px] md:p-12 lg:grid-cols-2 lg:gap-14 lg:p-14">
         <div>
-          <div className="inline-flex h-[30px] items-center gap-1.5 rounded-full bg-ks-pink-100 px-3 text-xs font-medium text-ks-pink-ink md:h-8 md:gap-2 md:px-3.5 md:text-[13px]">
+          <div className="inline-flex h-[30px] items-center gap-1.5 rounded-full bg-[#F1E7FE] px-3 text-xs font-medium text-[#5B2A9E] md:h-8 md:gap-2 md:px-3.5 md:text-[13px]">
             <Timer className="hidden md:block" />
             {BOOKING.badge}
           </div>

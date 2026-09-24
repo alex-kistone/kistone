@@ -10,7 +10,7 @@
 .ks-site .ks-uc:hover .ks-arrow,
 .ks-site .ks-more:hover .ks-arrow { transform: translateX(4px); }
 .ks-site .ks-more { transition: color .2s ease; }
-.ks-site .ks-more:hover { color: #FF2E6E; }
+.ks-site .ks-more:hover { color: #8B3FE0; }
 
 /* Barres budget vs réel qui montent */
 .ks-site .ks-bar { transform-origin: bottom; animation: ks-grow 3.6s cubic-bezier(.2,.7,.2,1) infinite alternate; }

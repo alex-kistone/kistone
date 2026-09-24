@@ -7,6 +7,9 @@ export const ROUTES = {
   studio: "/studio",
 };
 
+/** Dégradé du studio, pour les fonds posés en style inline (barres, jauges). */
+export const STUDIO_GRADIENT = "linear-gradient(100deg, #FF2E6E 0%, #B14DF5 55%, #4C7DFF 100%)";
+
 export type MenuItem = { title: string; desc: string; href: string; dot: string };
 export type Menu = { id: string; label: string; items: MenuItem[] };
 

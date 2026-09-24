@@ -20,7 +20,7 @@ export default function PricingCard({ plan, className }: { plan: Plan; className
       <div className="relative flex items-center justify-between gap-3">
         <h3 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em] md:text-2xl">{plan.name}</h3>
         {plan.badge ? (
-          <span className="flex h-[26px] items-center rounded-full bg-ks-pink px-2.5 font-ks-mono text-[10px] uppercase tracking-[0.12em] text-white md:h-7 md:px-3">
+          <span className="flex h-[26px] items-center rounded-full ks-grad-bg px-2.5 font-ks-mono text-[10px] uppercase tracking-[0.12em] text-white md:h-7 md:px-3">
             {plan.badge}
           </span>
         ) : null}
@@ -41,7 +41,7 @@ export default function PricingCard({ plan, className }: { plan: Plan; className
       >
         {plan.items.map((it) => (
           <li key={it} className="flex items-center gap-2.5 text-[15px] md:gap-3">
-            <Check size={16} className={cn("shrink-0", dark ? "text-ks-pink" : "text-ks-ink")} />
+            <Check size={16} className={cn("shrink-0", dark ? "text-[#C9A2FF]" : "text-ks-ink")} />
             {it}
           </li>
         ))}
@@ -51,7 +51,7 @@ export default function PricingCard({ plan, className }: { plan: Plan; className
         className={cn(
           "relative mt-6 flex h-[52px] items-center justify-center rounded-full text-base font-semibold md:mt-8 md:h-[54px]",
           dark
-            ? "ks-btn bg-ks-pink text-white shadow-[0_14px_30px_-14px_rgba(255,46,110,0.7)]"
+            ? "ks-btn ks-grad-bg text-white shadow-[0_14px_30px_-14px_rgba(120,90,220,0.7)]"
             : "ks-ghost border border-[rgba(20,19,18,0.14)] bg-white text-ks-ink",
         )}
       >

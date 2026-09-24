@@ -14,11 +14,11 @@ export default function StudioReminder() {
       >
         <div
           className="pointer-events-none absolute -bottom-40 -left-[120px] h-[420px] w-[420px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(255,46,110,0.28), rgba(255,46,110,0) 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(177,77,245,0.3), rgba(255,46,110,0.1) 45%, rgba(76,125,255,0) 72%)" }}
           aria-hidden="true"
         />
         <div className="relative">
-          <SectionTag dark>We are AI-first</SectionTag>
+          <SectionTag dark studio>We are AI-first</SectionTag>
           <h2 id="studio-title" className="mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[60px]">
             Vos outils RH sur mesure. Livrés en 30 jours.
           </h2>
@@ -26,7 +26,7 @@ export default function StudioReminder() {
             Onboarding, assistant RH, tri de candidatures, budget, engagement. Un produit IA conçu pour vos équipes, sans DSI débordée.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Cta href={`${ROUTES.studio}#rdv`} size="lg" arrow>
+            <Cta href={`${ROUTES.studio}#rdv`} variant="studio-fill" size="lg" arrow>
               Créer mon outil RH sur mesure
             </Cta>
             <Cta href={ROUTES.studio} size="lg" variant="ghost-dark">

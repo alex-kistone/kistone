@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { STUDIO_GRADIENT } from "@/content/site";
 import { PRODUCTS, type Product, type ProductKind } from "@/content/studio";
 
 const Row = ({ children, last }: { children: ReactNode; last?: boolean }) => (
@@ -26,7 +27,7 @@ function Screen({ kind }: { kind: ProductKind }) {
         <div className="flex flex-col gap-3 p-4 text-xs md:gap-3.5 md:px-5 md:py-[18px] md:text-[13px]">
           <Progress label="Signature du contrat" value={100} color="#141312" />
           <Progress label="Matériel & accès" value={80} color="#141312" />
-          <Progress label="Rencontre équipe" value={45} color="#FF2E6E" />
+          <Progress label="Rencontre équipe" value={45} color={STUDIO_GRADIENT} />
         </div>
       );
     case "assistant":
@@ -75,7 +76,7 @@ function Screen({ kind }: { kind: ProductKind }) {
             <span className="text-ks-subtle">38 / 52</span>
           </div>
           <div className="grid grid-cols-7 gap-[5px] md:gap-1.5">
-            {["#141312", "#141312", "#141312", "#141312", "#FF2E6E", "#EDE7DC", "#EDE7DC"].map((c, i) => (
+            {["#141312", "#141312", "#141312", "#141312", STUDIO_GRADIENT, "#EDE7DC", "#EDE7DC"].map((c, i) => (
               <span key={i} className="h-6 rounded-[5px] md:h-7 md:rounded-md" style={{ background: c }} />
             ))}
           </div>
@@ -96,7 +97,7 @@ function Screen({ kind }: { kind: ProductKind }) {
               className={`${idx === 2 ? "hidden md:flex" : "flex"} items-center justify-between rounded-[10px] bg-[#F7F3EC] px-2.5 py-2 md:rounded-xl md:px-3 md:py-2.5`}
             >
               <span>{who}</span>
-              <span className={`rounded-full px-2 py-0.5 text-xs md:px-2.5 md:py-[3px] ${pending ? "bg-ks-pink-100 text-ks-pink-ink" : "bg-ks-dark text-ks-dark-fg"}`}>
+              <span className={`rounded-full px-2 py-0.5 text-xs md:px-2.5 md:py-[3px] ${pending ? "bg-[#F1E7FE] text-[#5B2A9E]" : "bg-ks-dark text-ks-dark-fg"}`}>
                 {status}
               </span>
             </div>

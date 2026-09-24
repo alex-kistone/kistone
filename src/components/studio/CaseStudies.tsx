@@ -16,7 +16,7 @@ export default function CaseStudies() {
 
       <div className="ks-reveal mt-12 flex flex-col gap-4 md:mt-20 md:flex-row md:items-end md:justify-between md:gap-10">
         <div>
-          <div className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">{USE_CASES.eyebrow}</div>
+          <div className="font-ks-mono text-[11px] uppercase tracking-[0.14em]"><span className="ks-grad-text">{USE_CASES.eyebrow}</span></div>
           <h3 className="mt-2.5 font-ks-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em] md:mt-3 md:text-[36px] md:leading-[1.02] lg:text-[44px]">
             {USE_CASES.title}
           </h3>

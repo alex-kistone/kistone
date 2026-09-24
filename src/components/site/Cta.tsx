@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import SmartLink from "./SmartLink";
 
-type Variant = "primary" | "secondary" | "dark" | "ghost-dark";
+type Variant = "primary" | "secondary" | "dark" | "ghost-dark" | "studio" | "studio-fill";
 type Size = "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
@@ -10,6 +10,9 @@ const VARIANTS: Record<Variant, string> = {
   secondary: "ks-ghost border border-ks-line-strong bg-white font-medium text-ks-ink",
   dark: "ks-btn bg-ks-dark font-semibold text-ks-dark-fg",
   "ghost-dark": "ks-ghost-dark border border-[rgba(245,241,234,0.22)] font-medium text-ks-dark-fg",
+  // Studio : noir à contour dégradé (fonds clairs) ou aplat dégradé (fonds sombres)
+  studio: "ks-btn ks-grad-border font-semibold",
+  "studio-fill": "ks-btn ks-grad-bg font-semibold text-white shadow-[0_14px_30px_-14px_rgba(120,90,220,0.6)]",
 };
 
 const SIZES: Record<Size, string> = {
