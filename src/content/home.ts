@@ -3,18 +3,18 @@ import { palettes, type PaletteName } from "@/lib/palettes";
 // Contenus de l'accueil. Les [placeholders] restent tels quels en attendant le vrai contenu.
 
 export const HERO = {
-  badge: "Partenaire RH augmenté",
-  badgeText: "All-in-one hiring solution",
-  titleLine1: "Recrutez vite.",
-  titleLine2: "Équipez bien.",
+  badge: "Plateforme Freelance RPO",
+  title: "Un recruteur expert embarqué dans vos équipes.",
+  // Un soulignement rose passe d'un métier à l'autre sous le titre
+  functions: ["Tech", "GTM", "Finance", "Ops"],
   subtitle:
-    "Des recruteurs RPO freelance vérifiés pour recruter vite, et un studio IA qui construit vos outils RH sur mesure.",
-  primary: "Partner with a Freelance RPO",
-  secondary: "Get a bespoke HR product",
+    "Kistone vous connecte aux meilleurs recruteurs freelances spécialisés par métier. Le studio vous construit des outils RH sur mesure.",
+  primary: "Accéder à la plateforme",
+  secondary: "Découvrir le studio",
   reassurance: "Sans engagement · Sans CDI · Réponse sous 48 h",
 };
 
-export const FILTERS = ["Tous", "Tech", "Sales", "Finance & Ops"] as const;
+export const FILTERS = ["Tous", "Tech", "GTM", "Finance", "Ops"] as const;
 export type Filter = (typeof FILTERS)[number];
 
 export type Recruiter = {
@@ -32,11 +32,11 @@ export type Recruiter = {
 // Fiches fictives en attendant les vrais profils de la marketplace.
 export const RECRUITERS: Recruiter[] = [
   { initials: "JM", name: "Julie M.", role: "Recruteuse Tech & Produit", domain: "Tech", dispo: "Dispo", xp: "9 ans", city: "Nantes · remote", tags: ["Scale-ups", "Dev & Data", "Produit"], palette: "lilac" },
-  { initials: "KB", name: "Karim B.", role: "Recruteur Sales & Revenue", domain: "Sales", dispo: "Dispo", xp: "12 ans", city: "Paris", tags: ["SaaS B2B", "Account Exec", "SDR"], palette: "apricot" },
-  { initials: "AL", name: "Anne L.", role: "Recruteuse Finance & Ops", domain: "Finance & Ops", dispo: "Dispo", xp: "7 ans", city: "Lyon · hybride", tags: ["PME", "Contrôle de gestion", "Ops"], palette: "sage" },
+  { initials: "KB", name: "Karim B.", role: "Recruteur GTM & Revenue", domain: "GTM", dispo: "Dispo", xp: "12 ans", city: "Paris", tags: ["SaaS B2B", "Account Exec", "SDR"], palette: "apricot" },
+  { initials: "AL", name: "Anne L.", role: "Recruteuse Finance", domain: "Finance", dispo: "Dispo", xp: "7 ans", city: "Lyon · hybride", tags: ["PME", "Contrôle de gestion", "Ops"], palette: "sage" },
   { initials: "TR", name: "Thomas R.", role: "Recruteur Tech", domain: "Tech", dispo: "Dispo", xp: "6 ans", city: "Rennes · remote", tags: ["Start-ups", "DevOps", "Mobile"], palette: "blue" },
-  { initials: "SD", name: "Sofia D.", role: "Recruteuse Sales", domain: "Sales", dispo: "Dispo", xp: "8 ans", city: "Télétravail", tags: ["Marketplace", "Customer Success"], palette: "sand" },
-  { initials: "LP", name: "Léo P.", role: "Recruteur Finance & Ops", domain: "Finance & Ops", dispo: "Dispo", xp: "10 ans", city: "Bordeaux", tags: ["Fintech", "RAF", "Supply"], palette: "teal" },
+  { initials: "SD", name: "Sofia D.", role: "Recruteuse GTM", domain: "GTM", dispo: "Dispo", xp: "8 ans", city: "Télétravail", tags: ["Marketplace", "Customer Success"], palette: "sand" },
+  { initials: "LP", name: "Léo P.", role: "Recruteur Ops", domain: "Ops", dispo: "Dispo", xp: "10 ans", city: "Bordeaux", tags: ["Supply", "Logistique", "Opérations"], palette: "teal" },
 ];
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
@@ -53,7 +53,7 @@ export const ASSETS = [
   { icon: "shield", title: "Recruteurs vérifiés", desc: "Identité, statut et références contrôlés avant la première mission.", featured: true },
   { icon: "clock", title: "Flexible", desc: "Quelques jours par semaine ou à plein temps. Vous ajustez selon vos besoins." },
   { icon: "team", title: "Intégré à votre équipe", desc: "Votre ATS, votre Slack, vos rituels. Il recrute en votre nom." },
-  { icon: "pulse", title: "Spécialisés par métier", desc: "Tech, Sales, Finance & Ops : un recruteur qui connaît vos profils." },
+  { icon: "pulse", title: "Spécialisés par métier", desc: "Tech, GTM, Finance, Ops : un recruteur qui connaît vos profils." },
 ] as const;
 
 export const FREELANCE_SPACE = [
