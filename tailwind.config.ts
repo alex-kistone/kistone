@@ -14,6 +14,9 @@ export default {
   	},
   	extend: {
   		fontFamily: {
+  			'ks-display': ['Outfit', 'DM Sans', 'system-ui', 'sans-serif'],
+  			'ks-sans': ['Geist', 'system-ui', 'sans-serif'],
+  			'ks-mono': ['"Geist Mono"', 'ui-monospace', 'monospace'],
   			heading: [
   				'Space Grotesk"',
   				'sans-serif'
@@ -53,6 +56,27 @@ export default {
   			]
   		},
   		colors: {
+  			// Site vitrine (design system Kistone v2), isolé des tokens HSL de l'app
+  			ks: {
+  				bg: '#F5F1EA',
+  				card: '#FFFFFF',
+  				muted: '#F3EEE6',
+  				secondary: '#EDE7DC',
+  				ink: '#141312',
+  				'ink-2': '#3D3A36',
+  				soft: '#5E5A54',
+  				subtle: '#6B665F',
+  				line: 'rgba(20,19,18,0.07)',
+  				'line-strong': 'rgba(20,19,18,0.12)',
+  				pink: '#FF2E6E',
+  				'pink-hover': '#ED2B66',
+  				'pink-100': '#FFE3EC',
+  				'pink-ink': '#8F1747',
+  				dark: '#141312',
+  				'dark-fg': '#F5F1EA',
+  				'dark-muted': '#B9B3AA',
+  				success: '#1F9D5B'
+  			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
@@ -97,6 +121,9 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+  		maxWidth: {
+  			ks: '1200px'
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
@@ -122,6 +149,12 @@ export default {
   			'scroll-x': 'scroll-x 30s linear infinite'
   		},
   		boxShadow: {
+  			'ks-card': '0 1px 2px rgba(20,19,18,0.04), 0 18px 40px -24px rgba(60,40,20,0.16)',
+  			'ks-card-hover': '0 2px 4px rgba(20,19,18,0.04), 0 28px 56px -24px rgba(60,40,20,0.26)',
+  			'ks-pop': '0 30px 60px -24px rgba(60,40,20,0.3)',
+  			'ks-window': '0 2px 4px rgba(20,19,18,0.04), 0 40px 80px -40px rgba(60,40,20,0.28)',
+  			'ks-pink': '0 14px 30px -12px rgba(255,46,110,0.6)',
+  			'ks-pink-sm': '0 8px 20px -10px rgba(255,46,110,0.6)',
   			'2xs': 'var(--shadow-2xs)',
   			xs: 'var(--shadow-xs)',
   			sm: 'var(--shadow-sm)',

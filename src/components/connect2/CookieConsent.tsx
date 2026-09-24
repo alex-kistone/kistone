@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const COOKIE_KEY = "connect2_cookie_consent";
@@ -24,22 +23,35 @@ const CookieConsent = () => {
 
   if (!visible) return null;
 
+  // Aux couleurs du site Kistone (tokens ks-*). Refuser et Accepter ont le même poids visuel.
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] border-t bg-card p-4 shadow-lg animate-in slide-in-from-bottom-4 duration-300">
-      <div className="container mx-auto flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-        <p className="text-sm text-foreground/80 text-center sm:text-left">
+    <div
+      role="region"
+      aria-label="Cookies"
+      className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-[720px] rounded-[20px] border border-ks-line bg-white p-4 font-ks-sans text-ks-ink shadow-ks-pop animate-in slide-in-from-bottom-4 duration-300 sm:inset-x-6 sm:bottom-6 sm:p-5"
+    >
+      <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+        <p className="text-center text-sm leading-[1.5] text-ks-soft sm:text-left">
           Nous utilisons des cookies essentiels pour le fonctionnement du site.{" "}
-          <Link to="/privacy" className="text-primary underline hover:text-primary/80">
+          <Link to="/privacy" className="font-medium text-ks-ink underline underline-offset-2 hover:text-black">
             En savoir plus
           </Link>
         </p>
-        <div className="flex gap-2 shrink-0">
-          <Button variant="outline" size="sm" onClick={refuse}>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={refuse}
+            className="h-10 rounded-full border border-ks-line-strong bg-white px-5 text-sm font-medium text-ks-ink transition-colors hover:bg-[#FBF8F3]"
+          >
             Refuser
-          </Button>
-          <Button size="sm" onClick={accept}>
+          </button>
+          <button
+            type="button"
+            onClick={accept}
+            className="h-10 rounded-full bg-ks-dark px-5 text-sm font-semibold text-ks-dark-fg transition-[filter] hover:brightness-110"
+          >
             Accepter
-          </Button>
+          </button>
         </div>
       </div>
     </div>

@@ -1,0 +1,62 @@
+/* Landing /studio : mini-interfaces animées, accordéon FAQ, créneaux.
+   Tout est scopé sous .ks-site ; la règle prefers-reduced-motion globale
+   de site.css coupe déjà animations et transitions, on neutralise en plus
+   les transformations de survol ci-dessous. */
+
+/* Cartes de cas d'usage : la mini-UI s'avance, la flèche glisse */
+.ks-site .ks-uc .ks-ui { transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease; }
+.ks-site .ks-uc:hover .ks-ui { transform: translateY(-6px) scale(1.03); }
+.ks-site .ks-arrow { transition: transform .25s ease; }
+.ks-site .ks-uc:hover .ks-arrow,
+.ks-site .ks-more:hover .ks-arrow { transform: translateX(4px); }
+.ks-site .ks-more { transition: color .2s ease; }
+.ks-site .ks-more:hover { color: #FF2E6E; }
+
+/* Barres budget vs réel qui montent */
+.ks-site .ks-bar { transform-origin: bottom; animation: ks-grow 3.6s cubic-bezier(.2,.7,.2,1) infinite alternate; }
+@keyframes ks-grow { 0%, 10% { transform: scaleY(.25); } 70%, 100% { transform: scaleY(1); } }
+
+/* Jauges qui se remplissent */
+.ks-site .ks-fill { transform-origin: left; animation: ks-fill 3.6s ease-in-out infinite alternate; }
+@keyframes ks-fill { 0%, 10% { transform: scaleX(.2); } 70%, 100% { transform: scaleX(1); } }
+
+/* Pastilles de statut qui apparaissent en séquence */
+.ks-site .ks-pop { animation: ks-pop 6s ease infinite both; }
+@keyframes ks-pop {
+  0%, 6% { opacity: 0; transform: scale(.5); }
+  14%, 88% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* Courbe du pulse qui se dessine */
+.ks-site .ks-draw { stroke-dasharray: 420; animation: ks-draw 5s ease-in-out infinite; }
+@keyframes ks-draw {
+  0% { stroke-dashoffset: 420; }
+  55%, 88% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* Point « En direct » qui pulse */
+.ks-site .ks-ping { animation: ks-ping 1.8s ease-out infinite; }
+@keyframes ks-ping { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.6); opacity: 0; } }
+
+/* Créneaux de la carte de réservation */
+.ks-site .ks-slot { transition: background-color .15s ease, border-color .15s ease, transform .15s ease; }
+.ks-site .ks-slot:hover { transform: translateY(-1px); border-color: rgba(20,19,18,.25); }
+.ks-site .ks-slot[aria-pressed="true"]:hover { border-color: #141312; }
+
+/* Accordéon FAQ : grid-template-rows 0fr → 1fr */
+.ks-site .ks-faq-q { transition: background-color .2s ease; }
+.ks-site .ks-faq-q:hover { background-color: #FBF8F3; }
+.ks-site .ks-faq-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.2,.7,.2,1); }
+.ks-site .ks-faq-panel[data-open="true"] { grid-template-rows: 1fr; }
+.ks-site .ks-faq-panel > div { overflow: hidden; }
+.ks-site .ks-faq-panel[data-open="false"] > div { visibility: hidden; transition: visibility 0s .35s; }
+.ks-site .ks-faq-icon { transition: transform .3s ease, background-color .3s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-site .ks-uc:hover .ks-ui,
+  .ks-site .ks-uc:hover .ks-arrow,
+  .ks-site .ks-more:hover .ks-arrow,
+  .ks-site .ks-slot:hover { transform: none; }
+}
