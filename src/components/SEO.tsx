@@ -17,7 +17,8 @@ export default function SEO({ title, description, path, type = "website", image,
   const safeDesc = description.length > 160 ? description.slice(0, 157) + "…" : description;
   return (
     <Helmet>
-      <title>{safeTitle}</title>
+      {/* L'onglet affiche toujours « Kistone » ; le titre de page sert au partage (og/twitter). */}
+      <title>Kistone</title>
       <meta name="description" content={safeDesc} />
       <link rel="canonical" href={url} />
       <meta property="og:title" content={safeTitle} />
