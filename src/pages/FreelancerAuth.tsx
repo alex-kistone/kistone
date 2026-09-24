@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Users, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -125,7 +125,7 @@ const FreelancerAuth = () => {
       <Header />
       <main className="mx-3 my-8 flex max-w-[480px] flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:mx-auto sm:my-16 sm:px-10 sm:py-12">
         <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[16px] bg-ks-pink-100">
-          <Users className="h-6 w-6 text-foreground" strokeWidth={1.8} />
+          <img src="/logos/bolt-black.png" alt="" aria-hidden="true" width={244} height={400} className="h-11 w-auto" />
         </div>
         <h1 className="mb-3 text-center font-heading text-[34px] font-bold leading-none tracking-[-0.045em] sm:text-[40px]">
           {isLogin ? "Connexion freelance" : "Rejoignez le réseau Kistone"}
