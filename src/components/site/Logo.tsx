@@ -17,7 +17,7 @@ export default function Logo({ tone = "light", className }: Props) {
         width={1200}
         height={377}
         // Le PNG a une marge transparente : on la compense pour aligner le logo sur la grille
-        className={cn("-ml-[5px] h-11 w-auto", className)}
+        className={cn("-ml-[8px] h-[66px] w-auto", className)}
       />
     </Link>
   );

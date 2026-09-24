@@ -31,7 +31,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-14 flex flex-col gap-4 border-t border-[rgba(245,241,234,0.12)] pt-6 text-sm text-ks-dark-muted sm:flex-row sm:items-center sm:justify-between">
-          <Logo tone="dark" className="h-12" />
+          <Logo tone="dark" className="h-[72px]" />
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <SmartLink href={ROUTES.login} className="hover:text-ks-dark-fg">Se connecter</SmartLink>
             <SmartLink href="/privacy" className="hover:text-ks-dark-fg">Confidentialité</SmartLink>
