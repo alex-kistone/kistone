@@ -55,18 +55,17 @@ function FunctionsUnderline({ words }: { words: string[] }) {
 export default function Hero() {
   return (
     <section className="flex flex-col items-center px-5 pt-14 text-center md:pt-[88px]">
-      <span className="ks-reveal inline-flex h-9 items-center gap-2 rounded-full bg-ks-dark px-4 font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-fg">
-        <span className="h-[7px] w-[7px] rounded-full bg-ks-pink" aria-hidden="true" />
-        {HERO.badge}
-      </span>
-
-      <h1 className="ks-reveal mt-8 max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px]">
+      <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px]">
         {HERO.title}
       </h1>
 
       <FunctionsUnderline words={HERO.functions} />
 
-      <p className="ks-reveal mt-6 max-w-[720px] text-lg leading-[1.5] text-ks-soft md:text-xl">{HERO.subtitle}</p>
+      <div className="ks-reveal mt-6 flex max-w-[760px] flex-col gap-3 text-lg leading-[1.5] text-ks-soft md:text-xl">
+        {HERO.subtitle.map((p) => (
+          <p key={p}>{p}</p>
+        ))}
+      </div>
 
       <div className="ks-reveal mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
         <Cta href={ROUTES.recruit} size="lg" arrow className="shadow-ks-pink">

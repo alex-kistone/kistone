@@ -3,15 +3,16 @@ import { palettes, type PaletteName } from "@/lib/palettes";
 // Contenus de l'accueil. Les [placeholders] restent tels quels en attendant le vrai contenu.
 
 export const HERO = {
-  badge: "Plateforme Freelance RPO",
-  title: "Un recruteur expert embarqué dans vos équipes.",
+  title: "Plateforme Freelance RPO",
   // Un soulignement rose passe d'un métier à l'autre sous le titre
   functions: ["Tech", "GTM", "Finance", "Ops"],
-  subtitle:
-    "Kistone vous connecte aux meilleurs RPO freelances spécialisés par métier. Le studio vous construit des outils RH sur mesure.",
+  subtitle: [
+    "Kistone est une plateforme freelance qui propose des missions RPO au sein de startups, PME, ETI et grands comptes.",
+    "Une technologie de matching associée à notre connaissance du métier de recruteur afin de vous connecter plus efficacement avec des experts disponibles et au bon tarif.",
+  ],
   primary: "Accéder à la plateforme",
   secondary: "Découvrir le studio",
-  reassurance: "Sans engagement · Sans CDI · Réponse sous 48 h",
+  reassurance: "Accédez dès maintenant à 700+ RPO qualifiés",
 };
 
 export const FILTERS = ["Tous", "Tech", "GTM", "Finance", "Ops"] as const;
