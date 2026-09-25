@@ -7,12 +7,11 @@ export const HERO = {
   // Un soulignement rose passe d'un métier à l'autre sous le titre
   functions: ["Tech", "GTM", "Finance", "Ops"],
   subtitle: [
-    "Kistone est une plateforme freelance qui propose des missions RPO au sein de startups, PME, ETI et grands comptes.",
-    "Une technologie de matching associée à notre connaissance du métier de recruteur afin de vous connecter plus efficacement avec des experts disponibles et au bon tarif.",
+    "En 48H, nous connectons les entreprises avec les meilleurs recruteurs freelances parmi une communauté de 700+ experts qualifiés.",
   ],
   primary: "Accéder à la plateforme",
   secondary: "Découvrir le studio",
-  reassurance: "Accédez dès maintenant à 700+ RPO qualifiés",
+  reassurance: "Bien recruter, bien équiper",
 };
 
 export const FILTERS = ["Tous", "Tech", "GTM", "Finance", "Ops"] as const;
