@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { MENUS, ROUTES } from "@/content/site";
+import { useAccount } from "@/hooks/useAccount";
 import Cta from "./Cta";
 import Logo from "./Logo";
 import SmartLink from "./SmartLink";
@@ -89,6 +90,42 @@ function DesktopMenus() {
   );
 }
 
+/** Boutons de droite : inscription si déconnecté, accès à l'espace et déconnexion si connecté. */
+function AccountActions({ size = "md", className, onDone }: { size?: "md" | "lg"; className?: string; onDone?: () => void }) {
+  const { loggedIn, spacePath, signOut } = useAccount();
+  const navigate = useNavigate();
+
+  if (loggedIn) {
+    const logout = async () => {
+      onDone?.();
+      await signOut();
+      navigate("/");
+    };
+    return (
+      <>
+        <Cta href={spacePath} size={size} onClick={onDone} className={className}>Accéder à mon espace</Cta>
+        <button
+          type="button"
+          onClick={logout}
+          className={cn(
+            "ks-ghost inline-flex items-center justify-center whitespace-nowrap rounded-full border border-ks-line-strong bg-white font-medium text-ks-ink",
+            size === "lg" ? "h-14 px-7 text-base" : "h-11 px-5 text-[15px]",
+            className,
+          )}
+        >
+          Me déconnecter
+        </button>
+      </>
+    );
+  }
+  return (
+    <>
+      <Cta href={ROUTES.freelance} size={size} variant="secondary" onClick={onDone} className={className}>Je suis freelance</Cta>
+      <Cta href={ROUTES.recruit} size={size} onClick={onDone} className={className}>Je recrute</Cta>
+    </>
+  );
+}
+
 function MobileMenu() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -129,8 +166,7 @@ function MobileMenu() {
           ))}
         </nav>
         <div className="mt-auto flex flex-col gap-2.5 pt-8">
-          <Cta href={ROUTES.recruit} onClick={close} size="lg">Je recrute</Cta>
-          <Cta href={ROUTES.freelance} onClick={close} variant="secondary" size="lg">Je suis freelance</Cta>
+          <AccountActions size="lg" onDone={close} />
         </div>
       </SheetContent>
     </Sheet>
@@ -146,8 +182,7 @@ export default function Navbar() {
           <DesktopMenus />
         </div>
         <div className="flex items-center gap-2.5">
-          <Cta href={ROUTES.freelance} variant="secondary" className="hidden sm:inline-flex">Je suis freelance</Cta>
-          <Cta href={ROUTES.recruit} className="hidden sm:inline-flex">Je recrute</Cta>
+          <AccountActions className="hidden sm:inline-flex" />
           <MobileMenu />
         </div>
       </div>

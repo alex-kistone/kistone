@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import Header from "@/components/KistoneHeader";
+import SignupSent from "@/components/auth/SignupSent";
 
 type UserType = "client" | "recruiter";
 
@@ -26,6 +27,10 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  // Adresse à qui le lien de confirmation vient d'être envoyé : remplace le formulaire
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  // Le lien ramène sur la page d'espace, qui attribue le rôle puis redirige
+  const confirmRedirect = `${window.location.origin}${userType === "client" ? "/client" : "/register"}`;
 
   const getDefaultRedirectPath = () => (userType === "client" ? "/client/dashboard" : "/profile");
 
@@ -162,9 +167,16 @@ const Login = () => {
         return;
       }
     } else {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: confirmRedirect },
+      });
       if (error) {
         toast({ title: "Erreur", description: error.message, variant: "destructive" });
+        setLoading(false);
+      } else if (!data.session) {
+        setSentTo(email);
         setLoading(false);
       } else {
         // Assign client role on signup only
@@ -204,6 +216,15 @@ const Login = () => {
   ];
 
   const activeTab = tabs.find((t) => t.key === userType)!;
+
+  if (sentTo) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <SignupSent email={sentTo} redirectTo={confirmRedirect} onBack={() => { setSentTo(null); setIsLogin(true); }} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

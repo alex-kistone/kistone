@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import Header from "@/components/KistoneHeader";
+import SignupSent from "@/components/auth/SignupSent";
 
 const FreelancerAuth = () => {
   const { toast } = useToast();
@@ -18,6 +19,9 @@ const FreelancerAuth = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
+  // Adresse à qui le lien de confirmation vient d'être envoyé : remplace le formulaire
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const confirmRedirect = `${window.location.origin}/register`;
 
 
   useEffect(() => {
@@ -109,16 +113,29 @@ const FreelancerAuth = () => {
         return;
       }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: confirmRedirect },
+      });
       if (error) {
         toast({ title: "Erreur", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Compte créé !", description: "Vérifiez votre email pour confirmer votre inscription." });
+      } else if (!data.session) {
+        setSentTo(email);
       }
     }
 
     setLoading(false);
   };
+
+  if (sentTo) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <SignupSent email={sentTo} redirectTo={confirmRedirect} onBack={() => { setSentTo(null); setIsLogin(true); }} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
