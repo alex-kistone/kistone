@@ -35,6 +35,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { METIERS } from "@/lib/taxonomy";
 
 interface ClientNeed {
   id: string;
@@ -80,11 +81,7 @@ interface RecruiterProfile {
   super_tam: boolean | null;
 }
 
-const SKILLS_OPTIONS = [
-  "Tech", "Data", "Product", "Sales", "Life Science", "Industrie",
-  "Energies", "Digital & Marketing", "Fonctions support", "CFO",
-  "Banque/Assurance", "Autre",
-];
+const SKILLS_OPTIONS = METIERS;
 
 const SECTORS_OPTIONS = [
   "Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie",

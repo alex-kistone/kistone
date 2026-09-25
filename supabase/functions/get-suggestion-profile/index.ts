@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { MARGIN_EUR } from "../_shared/matching.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -58,7 +59,7 @@ Deno.serve(async (req) => {
     // Fetch recruiter profile (anonymized fields only)
     const { data: profile } = await adminClient
       .from("recruiter_profiles")
-      .select("first_name, job_title, skills, clients, mobility, tjm, model, available, availability_date, admin_rating, super_tam, tech_specialties, intro_text, missions, languages, has_linkedin_license, sectors")
+      .select("first_name, job_title, skills, clients, mobility, tjm, model, available, availability_date, super_tam, tech_specialties, intro_text, missions, languages, has_linkedin_license, sectors")
       .eq("id", suggestion.recruiter_profile_id)
       .single();
 
@@ -75,11 +76,11 @@ Deno.serve(async (req) => {
       skills: profile.skills || [],
       clients: profile.clients || [],
       mobility: profile.mobility || [],
-      tjm: profile.tjm,
+      // Prix client (marge incluse) : le TJM du freelance ne sort jamais vers le client
+      tjm: profile.tjm != null ? profile.tjm + MARGIN_EUR : null,
       model: profile.model,
       available: profile.available,
       availability_date: profile.availability_date,
-      admin_rating: profile.admin_rating,
       super_tam: profile.super_tam,
       tech_specialties: profile.tech_specialties || [],
       intro_text: profile.intro_text,

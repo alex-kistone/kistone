@@ -41,7 +41,14 @@ Deno.serve(async (req) => {
 
     const roles = (existingRoles || []).map((r: any) => r.role);
 
-    if (roles.includes("user")) {
+    // Un profil freelance créé avant l'attribution des rôles compte aussi comme freelance
+    const { data: recruiterProfile } = await supabaseClient
+      .from("recruiter_profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (roles.includes("user") || (recruiterProfile && !roles.includes("admin"))) {
       return new Response(JSON.stringify({ error: "ROLE_CONFLICT", message: "Ce compte est déjà enregistré en tant que freelance. Vous ne pouvez pas créer un espace client avec la même adresse email." }), {
         status: 409,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

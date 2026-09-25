@@ -35,6 +35,7 @@ import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/connect2/FreelanceMissionsSection";
 import FreelanceAdminTab from "@/components/connect2/FreelanceAdminTab";
 import ProfileCompletionChecklist from "@/components/connect2/ProfileCompletionChecklist";
+import { METIERS } from "@/lib/taxonomy";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -574,7 +575,7 @@ const Profile = () => {
           <div className="space-y-3">
             <Label>Les métiers sur lesquels je recrute</Label>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {["Tech", "Data", "Product", "Sales", "Life Science", "Industrie", "Energies", "Digital & Marketing", "Fonctions support", "CFO", "Banque/Assurance", "Autre"].map((skill) => (
+              {METIERS.map((skill) => (
                 <label key={skill} className="flex items-center gap-2 cursor-pointer">
                   <Checkbox
                     checked={skills.includes(skill)}

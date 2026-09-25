@@ -71,11 +71,13 @@ const ClientAuth = () => {
         const res = await supabase.functions.invoke("assign-client-role", {
           headers: { Authorization: `Bearer ${session.access_token}` },
         });
-        if (res.data?.error === "ROLE_CONFLICT") {
+        // Un 409 arrive dans res.error (la réponse est dans son contexte), pas dans res.data
+        const body = res.data ?? (await res.error?.context?.json?.().catch(() => null));
+        if (body?.error === "ROLE_CONFLICT") {
           await supabase.auth.signOut();
           toast({
             title: "Compte freelance détecté",
-            description: res.data.message,
+            description: body.message,
             variant: "destructive",
           });
           return;

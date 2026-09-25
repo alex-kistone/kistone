@@ -18,12 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
 import TagInput from "@/components/connect2/TagInput";
+import { METIERS } from "@/lib/taxonomy";
 
-const PROFILE_TYPES = [
-  "Tech", "Data", "Product", "Sales", "Life Science",
-  "Industrie", "Energies", "Digital & Marketing",
-  "Fonctions support", "CFO", "Banque/Assurance", "Autre",
-];
+const PROFILE_TYPES = METIERS;
 
 const SECTORS = [
   "Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie", "Autre",

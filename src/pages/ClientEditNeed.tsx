@@ -16,12 +16,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
+import { METIERS } from "@/lib/taxonomy";
 
-const PROFILE_TYPES = [
-  "Tech", "Data", "Product", "Sales", "Life Science",
-  "Industrie", "Energies", "Digital & Marketing",
-  "Fonctions support", "CFO", "Banque/Assurance", "Autre",
-];
+const PROFILE_TYPES = METIERS;
 
 const REMOTE_OPTIONS = [
   { value: "on-site", label: "Sur site" },

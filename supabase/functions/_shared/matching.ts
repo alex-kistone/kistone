@@ -7,6 +7,8 @@
  * un résultat exploitable si l'appel IA échoue.
  */
 
+import { METIER_ALIASES, METIER_FAMILIES } from "./taxonomy.ts";
+
 /** Marge Gotam ajoutée au TJM recruteur pour obtenir le prix client. */
 export const MARGIN_EUR = 100;
 
@@ -70,9 +72,34 @@ export interface ScoredRecruiter {
   currentlyOnMission: boolean;
 }
 
-const MAX = { budget: 25, availability: 20, remote: 15, skills: 20, sectors: 10, location: 10, quality: 15 };
+// La spécialité métier est la promesse centrale : c'est le critère le plus lourd.
+const MAX = { budget: 25, availability: 20, remote: 15, skills: 35, sectors: 10, location: 10, quality: 15 };
+
+/** Score plafond d'un profil qui ne recrute sur aucun métier du besoin, même voisin. */
+const NO_METIER_CAP = 45;
+/** Crédit accordé à un métier voisin (même famille) plutôt qu'identique. */
+const FAMILY_CREDIT = 0.5;
 
 const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+const canon = (s: string) => METIER_ALIASES[s] ?? s;
+const familyOf = (m: string) => METIER_FAMILIES.findIndex((f) => f.some((x) => norm(x) === norm(canon(m))));
+
+/**
+ * Métiers du besoin couverts par le profil : identiques (crédit 1) ou voisins (crédit partiel).
+ * Retourne le ratio et les libellés, pour des raisons concrètes.
+ */
+function metierMatch(profileMetiers: string[], needMetiers: string[]) {
+  const exact: string[] = [];
+  const near: string[] = [];
+  const mine = (profileMetiers ?? []).map(canon);
+  for (const m of (needMetiers ?? []).map(canon)) {
+    if (mine.some((x) => norm(x) === norm(m))) exact.push(m);
+    else if (familyOf(m) >= 0 && mine.some((x) => familyOf(x) === familyOf(m))) near.push(m);
+  }
+  const total = needMetiers?.length ?? 0;
+  const ratio = total ? (exact.length + FAMILY_CREDIT * near.length) / total : 0;
+  return { ratio, exact, near };
+}
 
 /** Recouvrement de deux listes de tags, insensible à la casse et aux accents. */
 function overlap(a: string[], b: string[]): number {
@@ -145,21 +172,21 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
   // Note admin 1 = profil grillé, jamais suggéré.
   if ((r.admin_rating ?? 0) === 1) return null;
 
-  const notes: string[] = [];
   const budget = scoreBudget(need, r);
   const availability = scoreAvailability(r, onMission);
   if (budget.excluded || availability.excluded) return null;
 
   const remote = scoreRemote(need, r);
 
-  // Compétences : on croise les tags du profil avec les typologies demandées ET
-  // l'intitulé/description du besoin, qui portent souvent le vrai signal.
+  // Métiers : on croise les métiers recrutés par le profil avec ceux du besoin
+  // (identiques ou voisins), puis ses spécialités avec l'intitulé et la description.
   const needText = `${need.job_title} ${need.description ?? ""}`;
-  const profileTags = [...(r.skills ?? []), ...(r.tech_specialties ?? [])];
-  const skillsRatio = Math.max(
-    overlap(profileTags, need.profile_types),
-    mentionedIn(profileTags, needText),
-  );
+  const metiers = metierMatch(r.skills ?? [], need.profile_types);
+  const specialtiesInText = mentionedIn(r.tech_specialties ?? [], needText);
+  const skillsRatio = need.profile_types?.length
+    ? Math.min(1, metiers.ratio + 0.25 * specialtiesInText)
+    : mentionedIn([...(r.skills ?? []), ...(r.tech_specialties ?? [])], needText);
+  const noMetierInCommon = (need.profile_types?.length ?? 0) > 0 && metiers.exact.length === 0 && metiers.near.length === 0;
   const sectorsRatio = overlap(r.sectors ?? [], need.sectors);
   const locationRatio = need.remote_policy === "full-remote"
     ? 1
@@ -178,18 +205,26 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
     quality: Math.min(quality, MAX.quality),
   };
 
-  for (const n of [budget.note, availability.note, remote.note]) if (n) notes.push(n);
-  if (skillsRatio > 0.5) notes.push("Compétences alignées avec le poste");
-  if (sectorsRatio > 0) notes.push("Expérience sectorielle commune");
+  // Motifs lus par le client, du plus décisif au plus secondaire : le métier
+  // d'abord (c'est ce qui distingue les profils), puis secteur, budget, dispo, remote.
+  const commonSectors = (r.sectors ?? []).filter((x) => (need.sectors ?? []).some((y) => norm(x) === norm(y)));
+  const notes: string[] = [];
+  if (noMetierInCommon) notes.push(`Recrute surtout en ${(r.skills ?? []).join(", ") || "autre métier"}, pas en ${need.profile_types.join(", ")}`);
+  else if (metiers.exact.length) notes.push(`Recrute déjà des profils ${metiers.exact.join(", ")}`);
+  else notes.push(`Recrute sur un métier voisin (${(r.skills ?? []).join(", ")})`);
+  if (commonSectors.length) notes.push(`Expérience ${commonSectors.join(", ")}`);
   if (r.super_tam) notes.push("Badge Super TAM");
+  for (const n of [budget.note, availability.note, remote.note]) if (n) notes.push(n);
   if (onMission) notes.push("Actuellement en mission");
 
   const total = Object.values(breakdown).reduce((a, b) => a + b, 0);
   const maxTotal = Object.values(MAX).reduce((a, b) => a + b, 0);
+  const raw = Math.round((total / maxTotal) * 100);
 
   return {
     recruiter: r,
-    score: Math.round((total / maxTotal) * 100),
+    // Sans aucun métier commun, le profil reste visible mais ne peut pas passer devant un vrai spécialiste
+    score: noMetierInCommon ? Math.min(raw, NO_METIER_CAP) : raw,
     breakdown,
     notes,
     currentlyOnMission: onMission,

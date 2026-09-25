@@ -13,6 +13,7 @@
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MARGIN_EUR, prefilter, type Need, type Recruiter } from "../_shared/matching.ts";
+import { METIER_FAMILIES } from "../_shared/taxonomy.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -137,7 +138,7 @@ async function rankWithClaude(
     return {
       profile_id: r.id,
       job_title: r.job_title,
-      skills: r.skills ?? [],
+      metiers_recrutes: r.skills ?? [],
       tech_specialties: r.tech_specialties ?? [],
       sectors: r.sectors ?? [],
       mobility: r.mobility ?? [],
@@ -151,6 +152,13 @@ async function rankWithClaude(
       note_admin: r.admin_rating ?? 0,
       super_tam: r.super_tam,
       nb_missions_passees: pastMissions.length,
+      // Détail des missions pour juger l'expertise réelle ; le nom des clients reste en base
+      missions_passees: (pastMissions as Array<Record<string, unknown>>).slice(0, 5).map((m) => ({
+        profils_recrutes: m.profile_types ?? null,
+        resultats: m.kpis ?? null,
+        duree: m.duration ?? null,
+        outils: m.tools ?? [],
+      })),
       nb_clients: r.clients?.length ?? 0,
       langues: Array.isArray(r.languages)
         ? (r.languages as Array<{ language?: string; level?: string }>)
@@ -165,6 +173,11 @@ async function rankWithClaude(
   const system = `Tu es un expert du recrutement RPO chez Gotam. Tu classes des recruteurs freelances face à un besoin client.
 
 Ces profils ont DÉJÀ passé un filtre déterministe : budget, disponibilité et compatibilité remote sont vérifiés. Le champ "score_regles" (0-100) est ce filtre, et "signaux" en donne les motifs factuels. Ton rôle est d'apporter le jugement qualitatif que le filtre ne capte pas : adéquation réelle entre l'expérience du recruteur et le poste, pertinence sectorielle, solidité du parcours.
+
+Analyse des compétences :
+- Les métiers recrutés sont : ${METIER_FAMILIES.flat().join(", ")}. Familles voisines : ${METIER_FAMILIES.map((f) => f.join(" / ")).join(" ; ")}. Un recruteur d'une famille voisine peut convenir, un recruteur d'une autre famille rarement.
+- Ne te contente pas des cases cochées : lis l'intitulé du poste et la description du besoin (technos, séniorité, volume, délais), puis compare-les aux missions passées (profils recrutés, résultats, durée, outils), aux spécialités et à la présentation du recruteur.
+- Un profil avec des missions passées proches du besoin (mêmes profils, volumes comparables) doit passer devant un profil qui a seulement coché le bon métier.
 
 Règles :
 - "prix_client" = tarif recruteur + ${MARGIN_EUR} € de marge Gotam. C'est ce que paie le client.

@@ -19,12 +19,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { type FullProfile } from "@/components/connect2/ProfileDetailModal";
+import { METIERS } from "@/lib/taxonomy";
 
-const SKILLS_OPTIONS = [
-  "Tech", "Data", "Product", "Sales", "Life Science", "Industrie",
-  "Energies", "Digital & Marketing", "Fonctions support", "CFO",
-  "Banque/Assurance", "Autre",
-];
+const SKILLS_OPTIONS = METIERS;
 
 const SECTORS_OPTIONS = [
   "Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie",

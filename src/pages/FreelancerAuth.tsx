@@ -61,6 +61,27 @@ const FreelancerAuth = () => {
         // fallback
       }
 
+      // Rôle freelance : un compte ne peut pas être à la fois freelance et client
+      try {
+        const res = await supabase.functions.invoke("assign-freelance-role", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        const conflict = res.data?.error === "ROLE_CONFLICT" ||
+          (res.error && (await res.error.context?.json?.().catch(() => null))?.error === "ROLE_CONFLICT");
+        if (conflict) {
+          await supabase.auth.signOut();
+          hasRedirected = false;
+          toast({
+            title: "Compte client détecté",
+            description: "Cette adresse email est déjà utilisée pour un compte client. Connectez-vous via l'espace client.",
+            variant: "destructive",
+          });
+          return;
+        }
+      } catch (err) {
+        console.error("Attribution du rôle freelance :", err);
+      }
+
       window.location.replace("/profile");
     };
 

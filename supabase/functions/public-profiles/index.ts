@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { MARGIN_EUR } from "../_shared/matching.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -51,7 +52,8 @@ Deno.serve(async (req) => {
       job_title: p.job_title,
       skills: p.skills,
       mobility: p.mobility,
-      tjm: p.tjm,
+      // Prix client (marge incluse), jamais le TJM du freelance
+      tjm: p.tjm != null ? p.tjm + MARGIN_EUR : null,
       model: p.model,
       available: p.available,
       availability_date: p.availability_date,
