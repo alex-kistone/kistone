@@ -309,7 +309,7 @@ function purge(emailPattern) {
     delete from public.client_needs where id in (select id from tn);
     delete from public.kyc_documents where user_id in (select id from tu);
     delete from public.kyc_dossiers where user_id in (select id from tu);
-    delete from public.notifications where user_id in (select id from tu) or body like '%[E2E %';
+    delete from public.notifications where user_id in (select id from tu) or body like '%E2E%';
     delete from public.recruiter_profiles where user_id in (select id from tu);
     delete from public.client_profiles where user_id in (select id from tu);
     delete from public.user_roles where user_id in (select id from tu);
