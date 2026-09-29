@@ -57,7 +57,7 @@ const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionCh
     {
       key: "linkedin",
       label: "Profil LinkedIn",
-      description: "Liez votre profil LinkedIn pour plus de visibilité",
+      description: "Obligatoire pour être proposé sur des missions",
       completed: !!profile.linkedin_url,
       priority: "high",
     },

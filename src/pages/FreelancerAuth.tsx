@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
 import SignupSent from "@/components/auth/SignupSent";
+import LinkedInButton from "@/components/auth/LinkedInButton";
 
 const FreelancerAuth = () => {
   const { toast } = useToast();
@@ -191,6 +192,12 @@ const FreelancerAuth = () => {
           </svg>
           Continuer avec Google
         </Button>
+        <LinkedInButton
+          redirectTo={`${window.location.origin}${window.location.pathname}`}
+          disabled={loading}
+          onStart={() => setLoading(true)}
+          onError={() => setLoading(false)}
+        />
 
         <div className="mb-4 flex w-full items-center gap-4">
           <Separator className="flex-1" />

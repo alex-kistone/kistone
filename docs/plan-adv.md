@@ -115,6 +115,13 @@ plateforme fonctionne en mode manuel ; avec la clé, le même parcours s'automat
 - Secret : `PENNYLANE_API_KEY`. Sans clé : factures numérotées et PDF générés dans la
   plateforme, export CSV pour la comptabilité.
 
+### Jarvi (ATS) — à concevoir
+- L'URL LinkedIn du freelance est **obligatoire** (formulaire + règle en base, 2026-09-29) et
+  stockée sous forme canonique `https://www.linkedin.com/in/<identifiant>` : c'est la clé de
+  rapprochement avec les profils Jarvi.
+- Les anciennes tables Lovable `jarvi_*` (vides, inutilisées) ont été supprimées en phase 0 ;
+  la synchronisation sera reconstruite proprement (sens des échanges, champs, fréquence à définir).
+
 ### Frais de mission (phase 2)
 - Réglages par mission : frais autorisés, refacturables, plafond mensuel.
 - Table `expenses` rattachée au CRA (date, catégorie, montant TTC, TVA, justificatif dans un

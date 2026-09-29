@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
 import SignupSent from "@/components/auth/SignupSent";
+import LinkedInButton from "@/components/auth/LinkedInButton";
 
 type UserType = "client" | "recruiter";
 
@@ -263,6 +264,15 @@ const Login = () => {
               </svg>
               Continuer avec Google
             </Button>
+            {/* LinkedIn : réservé aux freelances ; le retour passe par /register qui attribue le rôle */}
+            {userType === "recruiter" && (
+              <LinkedInButton
+                redirectTo={`${window.location.origin}/register`}
+                disabled={loading}
+                onStart={() => setLoading(true)}
+                onError={() => setLoading(false)}
+              />
+            )}
 
             <div className="mb-4 flex w-full items-center gap-4">
               <Separator className="flex-1" />

@@ -29,6 +29,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
 import TagInput from "@/components/platform/TagInput";
+import LinkedinRequiredDialog from "@/components/platform/LinkedinRequiredDialog";
+import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +55,9 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [linkedin, setLinkedin] = useState("");
+  // Profil existant sans URL LinkedIn valide : fenêtre bloquante jusqu'à la saisie
+  const [linkedinGate, setLinkedinGate] = useState(false);
+  const [linkedinError, setLinkedinError] = useState<string | null>(null);
   const [jobTitle, setJobTitle] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [clients, setClients] = useState<string[]>([]);
@@ -109,6 +114,7 @@ const Profile = () => {
       setLastName(p.last_name || "");
       setPhone(p.phone || "");
       setLinkedin(p.linkedin_url || "");
+      if (!normalizeLinkedinUrl(p.linkedin_url)) setLinkedinGate(true);
       setJobTitle(p.job_title || "");
       setSkills(p.skills || []);
       setClients(p.clients || []);
@@ -158,6 +164,16 @@ const Profile = () => {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+
+    // URL LinkedIn obligatoire et normalisée (clé de synchronisation avec l'ATS)
+    const linkedinUrl = normalizeLinkedinUrl(linkedin);
+    if (!linkedinUrl) {
+      setLinkedinError(LINKEDIN_HINT);
+      document.getElementById("linkedin")?.focus();
+      toast({ title: "Profil LinkedIn requis", description: LINKEDIN_HINT, variant: "destructive" });
+      return;
+    }
+    setLinkedin(linkedinUrl);
     setSaving(true);
 
     try {
@@ -184,7 +200,7 @@ const Profile = () => {
         last_name: lastName,
         email,
         phone: phone || null,
-        linkedin_url: linkedin || null,
+        linkedin_url: linkedinUrl,
         photo_url: photoUrl,
         job_title: jobTitle || null,
         skills,
@@ -258,6 +274,13 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      {existingId && (
+        <LinkedinRequiredDialog
+          open={linkedinGate}
+          profileId={existingId}
+          onSaved={(url) => { setLinkedin(url); setLinkedinGate(false); }}
+        />
+      )}
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -420,11 +443,23 @@ const Profile = () => {
 
           {/* LinkedIn */}
           <div className="space-y-2">
-            <Label htmlFor="linkedin">Profil LinkedIn</Label>
+            <Label htmlFor="linkedin">Profil LinkedIn *</Label>
             <div className="relative">
               <Linkedin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input id="linkedin" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="https://linkedin.com/in/votre-profil" className="pl-10" />
+              <Input
+                id="linkedin"
+                value={linkedin}
+                onChange={(e) => { setLinkedin(e.target.value); setLinkedinError(null); }}
+                placeholder="https://www.linkedin.com/in/votre-profil"
+                className="pl-10"
+                required
+                aria-invalid={Boolean(linkedinError)}
+                aria-describedby="linkedin-help"
+              />
             </div>
+            <p id="linkedin-help" className={linkedinError ? "text-sm text-destructive" : "text-xs text-muted-foreground"}>
+              {linkedinError ?? "Obligatoire : il sert à synchroniser votre profil avec notre outil de recrutement."}
+            </p>
           </div>
 
           {/* Intitulé de poste */}
