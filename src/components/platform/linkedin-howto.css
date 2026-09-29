@@ -1,0 +1,35 @@
+/* Mini-animation « où copier son URL LinkedIn » (boucle de 5 s). */
+.li-howto-cursor { animation: li-cursor 5s ease-in-out infinite; }
+.li-howto-select { animation: li-select 5s ease-in-out infinite; }
+.li-howto-copied { animation: li-copied 5s ease-in-out infinite; }
+
+/* Le curseur part du bas de la carte, rejoint la barre d'adresse et clique */
+@keyframes li-cursor {
+  0%, 8%   { transform: translate(288px, 128px); opacity: 0; }
+  14%      { opacity: 1; }
+  34%      { transform: translate(178px, 19px) scale(1); }
+  38%      { transform: translate(178px, 19px) scale(0.85); }
+  42%, 80% { transform: translate(178px, 19px) scale(1); opacity: 1; }
+  90%, 100% { transform: translate(178px, 19px); opacity: 0; }
+}
+
+/* L'adresse se surligne après le clic, comme une sélection */
+@keyframes li-select {
+  0%, 40%  { background-size: 0% 100%; }
+  52%, 88% { background-size: 100% 100%; }
+  96%, 100% { background-size: 0% 100%; }
+}
+
+/* « Copié » apparaît une fois l'adresse sélectionnée */
+@keyframes li-copied {
+  0%, 56%  { opacity: 0; transform: translateY(4px); }
+  62%, 86% { opacity: 1; transform: none; }
+  94%, 100% { opacity: 0; transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .li-howto-cursor, .li-howto-select, .li-howto-copied { animation: none; }
+  .li-howto-select { background-size: 100% 100%; }
+  .li-howto-copied { opacity: 1; }
+  .li-howto-cursor { opacity: 0; }
+}

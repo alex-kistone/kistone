@@ -28,7 +28,7 @@ const CookieConsent = () => {
     <div
       role="region"
       aria-label="Cookies"
-      className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-[720px] rounded-[20px] border border-ks-line bg-white p-4 font-ks-sans text-ks-ink shadow-ks-pop animate-in slide-in-from-bottom-4 duration-300 sm:inset-x-6 sm:bottom-6 sm:p-5"
+      className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-[720px] rounded-[20px] border border-ks-line bg-white p-4 font-ks-sans text-ks-ink shadow-ks-pop animate-in slide-in-from-bottom-4 duration-300 sm:inset-x-6 sm:bottom-6 sm:p-5"
     >
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
         <p className="text-center text-sm leading-[1.5] text-ks-soft sm:text-left">

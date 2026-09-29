@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
+import LinkedinUrlHowTo from "./LinkedinUrlHowTo";
 
 type Props = {
   open: boolean;
@@ -38,19 +39,21 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
   return (
     <Dialog open={open}>
       <DialogContent
-        className="sm:max-w-md [&>button]:hidden"
+        className="max-h-[92vh] overflow-y-auto sm:max-w-md [&>button]:hidden"
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
       >
+        <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto self-start" />
         <DialogHeader>
           <DialogTitle>{firstVisit ? "Bienvenue sur Kistone" : "Ajoutez votre profil LinkedIn"}</DialogTitle>
           <DialogDescription>
             {firstVisit
-              ? "Pour commencer, collez l'URL de votre profil LinkedIn. Elle est obligatoire pour être proposé sur des missions."
+              ? "Pour commencer, collez l'URL de votre profil LinkedIn."
               : "Il est obligatoire pour être proposé sur des missions : il nous permet de synchroniser votre profil avec notre outil de recrutement."}
           </DialogDescription>
         </DialogHeader>
+        <LinkedinUrlHowTo />
         <div className="space-y-2">
           <Label htmlFor="linkedin-required">URL de votre profil LinkedIn</Label>
           <div className="relative">
@@ -68,12 +71,15 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
             />
           </div>
           <p id="linkedin-required-help" className={error ? "text-sm text-destructive" : "text-xs text-muted-foreground"}>
-            {error ?? "Sur LinkedIn : votre profil, puis copiez l'adresse affichée dans le navigateur."}
+            {error ?? "Collez l'adresse copiée depuis LinkedIn, puis validez."}
           </p>
         </div>
-        <Button onClick={save} disabled={saving || !value.trim()} className="w-full">
-          {saving ? "Enregistrement…" : firstVisit ? "Accéder à mon profil" : "Enregistrer et continuer"}
-        </Button>
+        {/* Dans un conteneur : la règle [&>button]:hidden ne doit masquer que la croix de fermeture */}
+        <div>
+          <Button onClick={save} disabled={saving || !value.trim()} className="w-full">
+            {saving ? "Enregistrement…" : "Valider"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
