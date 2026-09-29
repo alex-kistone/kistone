@@ -50,7 +50,7 @@ pour le client, le freelance et l'admin.
 - Réparer le trigger des messages (bon projet, un seul envoi) ou le couper.
 - Paramètres de la société (nom, SIREN, adresse, TVA, conditions de paiement) en base,
   à la place de l'identité codée en dur.
-- Coquille d'application : barre latérale par rôle, avec les onglets cibles.
+- Coquille d'application : barre latérale par rôle, avec les onglets cibles (fait : `AppShell`, onglets pilotés par `?tab=`).
 
 ### Phase 1 — Accord et mise en place de la mission
 - Acceptation d'un profil par le client → notification admin.
