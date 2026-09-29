@@ -164,6 +164,8 @@ async function run() {
   }).select("id").single();
   must("Admin · crée la mission (en préparation)", !mErr, mErr?.message);
   ids.mission = mission.id;
+  const { data: needAfter } = await admin.from("client_needs").select("status").eq("id", need.id).single();
+  check("Besoin passé « Pourvu » à la création de la mission", needAfter?.status === "staffed", needAfter?.status);
   const { data: dossiers } = await admin.from("kyc_dossiers").select("user_id, status").in("user_id", [users.client.id, users.freelance.id]);
   check("Dossiers client et freelance ouverts", dossiers?.length === 2, dossiers?.map((d) => d.status).join(", "));
   const early = await admin.rpc("activate_mission", { _mission_id: mission.id });
