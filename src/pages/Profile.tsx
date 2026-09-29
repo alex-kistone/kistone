@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { CalendarIcon, Upload, Linkedin, LogOut, MessageCircle, Briefcase, Plus, Trash2, Globe, X, Sparkles, Loader2, FileText, Rocket } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { CalendarIcon, Upload, Linkedin, LogOut, MessageCircle, Plus, Trash2, Globe, X, Sparkles, Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/KistoneHeader";
+import AppShell from "@/components/platform/AppShell";
 import TagInput from "@/components/platform/TagInput";
 import LinkedinRequiredDialog from "@/components/platform/LinkedinRequiredDialog";
 import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
@@ -79,7 +79,12 @@ const Profile = () => {
   const [recruiterCompanyAddress, setRecruiterCompanyAddress] = useState("");
   const [recruiterLegalForm, setRecruiterLegalForm] = useState("");
   const [recruiterTvaNumber, setRecruiterTvaNumber] = useState("");
-  const [activeTab, setActiveTab] = useState<"profile" | "missions" | "admin">("profile");
+  // Onglet piloté par le menu latéral (?tab=missions | admin)
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const requestedTab: "profile" | "missions" | "admin" = tabParam === "missions" || tabParam === "admin" ? tabParam : "profile";
+  // Missions et dossier n'existent qu'une fois le profil créé
+  const activeTab = existingId ? requestedTab : "profile";
   const [optimizing, setOptimizing] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [adminUserId, setAdminUserId] = useState<string | null>(null);
@@ -320,82 +325,35 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
+      <div className="min-h-screen bg-background lg:pl-[248px]">
+        <AppShell role="freelance" />
         <div className="flex items-center justify-center py-20 text-muted-foreground">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background lg:pl-[248px]">
+      <AppShell role="freelance" />
       <LinkedinRequiredDialog open={linkedinGate} firstVisit={firstVisit} onSubmit={saveLinkedinUrl} />
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
+              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon dossier" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
             </h1>
             <p className="mt-1 text-muted-foreground">
-              {existingId && !firstVisit
+              {activeTab === "missions"
+                ? "Vos missions en cours et vos comptes rendus d'activité."
+                : activeTab === "admin"
+                ? "Les informations et documents administratifs de votre société."
+                : existingId && !firstVisit
                 ? "Modifiez vos informations à tout moment."
                 : "Renseignez vos informations pour intégrer le réseau Kistone."}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => navigate("/open-needs")}
-              className="gap-2"
-              size="sm"
-            >
-              <Rocket className="h-4 w-4" />
-              Opportunités de missions
-            </Button>
-          </div>
         </div>
 
-        {/* Tabs */}
-        {existingId && (
-          <div className="mb-6 flex gap-1 rounded-lg border border-border bg-muted/50 p-1">
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === "profile"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Mon profil
-            </button>
-            <button
-              onClick={() => setActiveTab("missions")}
-              className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === "missions"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <span className="flex items-center justify-center gap-1.5">
-                <Briefcase className="h-4 w-4" />
-                Missions
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveTab("admin")}
-              className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === "admin"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <span className="flex items-center justify-center gap-1.5">
-                <FileText className="h-4 w-4" />
-                Mon administratif
-              </span>
-            </button>
-          </div>
-        )}
 
         {activeTab === "missions" && userId ? (
           <FreelanceMissionsSection userId={userId} />

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/KistoneHeader";
+import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import AdminNeedsPanel from "@/components/platform/AdminNeedsPanel";
 import AdminProfilePanel from "@/components/platform/AdminProfilePanel";
@@ -37,6 +37,19 @@ import AdminSupportPanel from "@/components/platform/AdminSupportPanel";
 import AdminGlobalPipelinePanel from "@/components/platform/AdminGlobalPipelinePanel";
 
 type Profile = FullProfile;
+
+/** Titre de la page selon l'entrée du menu latéral. */
+const ADMIN_TITLES: Record<string, string> = {
+  kpi: "Vue d'ensemble",
+  needs: "Besoins",
+  pipeline: "Pipeline",
+  recruiters: "Freelances",
+  clients: "Clients",
+  missions: "Missions",
+  timesheets: "CRA",
+  messages: "Messages",
+  assistant: "Assistant",
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -193,13 +206,13 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background lg:pl-[248px]">
+      <AppShell role="admin" />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold sm:text-3xl">Dashboard Admin</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Gérez les freelances et les besoins clients.</p>
+            <h1 className="text-2xl font-bold sm:text-3xl">{ADMIN_TITLES[activeTab] ?? "Administration"}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Gérez les freelances, les besoins clients et les missions.</p>
           </div>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
@@ -209,7 +222,8 @@ const Dashboard = () => {
         </div>
 
         <Tabs value={activeTab} className="w-full" onValueChange={(v) => { const next = new URLSearchParams(searchParams); next.set("tab", v); setSearchParams(next, { replace: true }); }}>
-          <TabsList className="mb-6 w-full justify-start overflow-x-auto">
+          {/* Navigation par le menu latéral : la barre d'onglets est masquée */}
+          <TabsList className="hidden">
             <TabsTrigger value="kpi" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               KPI

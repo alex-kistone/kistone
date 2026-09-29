@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/KistoneHeader";
+import AppShell from "@/components/platform/AppShell";
 import { METIERS } from "@/lib/taxonomy";
 
 const PROFILE_TYPES = METIERS;
@@ -113,16 +113,16 @@ const ClientEditNeed = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
+      <div className="min-h-screen bg-background lg:pl-[248px]">
+        <AppShell role="client" />
         <div className="flex items-center justify-center py-20 text-muted-foreground">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background lg:pl-[248px]">
+      <AppShell role="client" />
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <Button
           variant="ghost"

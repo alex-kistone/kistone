@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/KistoneHeader";
+import AppShell from "@/components/platform/AppShell";
 import TagInput from "@/components/platform/TagInput";
 import { METIERS } from "@/lib/taxonomy";
 
@@ -192,8 +192,8 @@ const ClientNewNeed = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background lg:pl-[248px]">
+      <AppShell role="client" />
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <Button
           variant="ghost"

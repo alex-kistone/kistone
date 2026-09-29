@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Star, Medal, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/KistoneHeader";
+import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import ClientMissionsSection from "@/components/platform/ClientMissionsSection";
@@ -273,7 +273,9 @@ const ClientDashboard = () => {
   const unreadCount = useUnreadCount(userId);
   const [selectedProfile, setSelectedProfile] = useState<AnonymizedProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"needs" | "missions">("needs");
+  // Onglet piloté par le menu latéral (?tab=missions)
+  const [searchParams] = useSearchParams();
+  const activeTab: "needs" | "missions" = searchParams.get("tab") === "missions" ? "missions" : "needs";
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -431,22 +433,22 @@ const ClientDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
+      <div className="min-h-screen bg-background lg:pl-[248px]">
+        <AppShell role="client" />
         <div className="flex items-center justify-center py-20 text-muted-foreground">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-background lg:pl-[248px]">
+      <AppShell role="client" />
       <main className="container mx-auto max-w-4xl px-4 py-12">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold sm:text-3xl">Mon espace recrutement</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">{activeTab === "missions" ? "Missions & CRA" : "Mes besoins"}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Gérez vos besoins, missions et CRA.
+              {activeTab === "missions" ? "Vos missions en cours et les CRA à valider." : "Vos besoins de recrutement et les profils proposés."}
             </p>
           </div>
           <div className="flex gap-2">
@@ -454,39 +456,9 @@ const ClientDashboard = () => {
               <Plus className="h-4 w-4" />
               <span className="sm:inline">Nouveau besoin</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate("/client/profile")} className="gap-2">
-              <Building2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Mon profil</span>
-            </Button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="mb-6 flex gap-1 rounded-lg border border-border bg-muted/50 p-1">
-          <button
-            onClick={() => setActiveTab("needs")}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === "needs"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Mes besoins
-          </button>
-          <button
-            onClick={() => setActiveTab("missions")}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === "missions"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <span className="flex items-center justify-center gap-1.5">
-              <Briefcase className="h-4 w-4" />
-              Missions en cours
-            </span>
-          </button>
-        </div>
 
         {activeTab === "missions" ? (
           userId ? <ClientMissionsSection userId={userId} /> : null

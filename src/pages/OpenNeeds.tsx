@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, MapPin, Monitor, Euro, Send, Check, ArrowLeft } from "lucide-react";
+import { Briefcase, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import Header from "@/components/KistoneHeader";
+import AppShell from "@/components/platform/AppShell";
 import SEO from "@/components/SEO";
 
 interface OpenNeed {
@@ -109,27 +109,24 @@ const OpenNeeds = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
+      <div className="min-h-screen bg-background lg:pl-[248px]">
+        <AppShell role="freelance" />
         <div className="flex items-center justify-center py-20 text-muted-foreground">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background lg:pl-[248px]">
       <SEO
         title="Missions ouvertes — Kistone Talent"
         description="Découvrez les missions de recrutement ouvertes chez Kistone : RPO, sourcing Tech, Data, Product. Postulez en quelques clics si votre profil correspond."
         path="/open-needs"
       />
-      <Header />
+      <AppShell role="freelance" />
       <main className="container mx-auto max-w-3xl px-4 py-8">
         <div className="mb-8">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="mb-4 gap-1">
-            <ArrowLeft className="h-4 w-4" /> Retour au profil
-          </Button>
-          <h1 className="text-3xl font-bold">Missions ouvertes</h1>
+          <h1 className="text-3xl font-bold">Mes opportunités</h1>
           <p className="mt-1 text-muted-foreground">
             Consultez les besoins clients et positionnez-vous sur ceux qui vous intéressent.
           </p>
