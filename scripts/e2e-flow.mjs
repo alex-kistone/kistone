@@ -288,34 +288,59 @@ async function run() {
 }
 
 // ── Nettoyage ──────────────────────────────────────────────────────────────────
-function cleanup() {
-  const uids = Object.values(users).map((u) => u.id).filter(Boolean);
-  if (!uids.length) return;
-  const list = uids.map(q).join(",");
-  // Les factures émises sont indélébiles par conception : leur garde est suspendue le temps de
-  // les supprimer, puis tout le reste part normalement (suppressions en cascade actives).
-  sql(`set session_replication_role = replica;
-    delete from public.client_invoices where client_user_id in (${list});
+/** Supprime tout ce qui dépend des comptes dont l'email correspond au motif (LIKE). */
+function purge(emailPattern) {
+  sql(`begin;
+    create temp table tu as select id from auth.users where email like ${q(emailPattern)};
+    create temp table tn as select id from public.client_needs where user_id in (select id from tu);
+    create temp table tm as select id from public.missions where need_id in (select id from tn)
+      or recruiter_profile_id in (select id from public.recruiter_profiles where user_id in (select id from tu));
+    create temp table tt as select id from public.timesheets where mission_id in (select id from tm);
+    -- Les factures émises sont indélébiles par conception : garde suspendue le temps de les supprimer.
+    set session_replication_role = replica;
+    delete from public.client_invoices where client_user_id in (select id from tu) or timesheet_id in (select id from tt);
     set session_replication_role = origin;
-    delete from public.freelance_invoices where freelance_user_id in (${list});
-    ${ids.mission ? `delete from public.timesheets where mission_id = ${q(ids.mission)};
-    delete from public.contracts where mission_id = ${q(ids.mission)};
-    delete from public.missions where id = ${q(ids.mission)};` : ""}
-    ${ids.need ? `delete from public.profile_suggestions where need_id = ${q(ids.need)}; delete from public.client_needs where id = ${q(ids.need)};` : ""}
-    delete from public.kyc_documents where user_id in (${list});
-    delete from public.kyc_dossiers where user_id in (${list});
-    delete from public.notifications where user_id in (${list})
-      or (created_at >= ${q(startedAt)} and user_id in (select user_id from public.user_roles where role = 'admin')
-          and kind in ('kyc_submitted', 'cra_approved', 'freelance_invoice_submitted'));
-    delete from public.recruiter_profiles where user_id in (${list});
-    delete from public.client_profiles where user_id in (${list});
-    delete from public.user_roles where user_id in (${list});
+    delete from public.freelance_invoices where freelance_user_id in (select id from tu) or timesheet_id in (select id from tt);
+    delete from public.timesheets where id in (select id from tt);
+    delete from public.contracts where mission_id in (select id from tm);
+    delete from public.missions where id in (select id from tm);
+    delete from public.profile_suggestions where need_id in (select id from tn)
+      or recruiter_profile_id in (select id from public.recruiter_profiles where user_id in (select id from tu));
+    delete from public.client_needs where id in (select id from tn);
+    delete from public.kyc_documents where user_id in (select id from tu);
+    delete from public.kyc_dossiers where user_id in (select id from tu);
+    delete from public.notifications where user_id in (select id from tu) or body like '%[E2E %';
+    delete from public.recruiter_profiles where user_id in (select id from tu);
+    delete from public.client_profiles where user_id in (select id from tu);
+    delete from public.user_roles where user_id in (select id from tu);
     set storage.allow_delete_query = 'true';
-    delete from storage.objects where (bucket_id in ('admin-documents', 'freelance-invoices', 'invoices', 'timesheet-proofs') and (storage.foldername(name))[1] in (${list}))
-      ${ids.mission ? `or (bucket_id = 'contracts' and (storage.foldername(name))[1] = ${q(ids.mission)})` : ""}
-      ${ids.timesheet ? `or (bucket_id = 'expense-receipts' and (storage.foldername(name))[1] = ${q(ids.timesheet)})` : ""};
-    delete from auth.users where id in (${list});`);
+    delete from storage.objects where
+      (bucket_id in ('admin-documents', 'freelance-invoices', 'invoices', 'timesheet-proofs') and (storage.foldername(name))[1] in (select id::text from tu))
+      or (bucket_id = 'contracts' and (storage.foldername(name))[1] in (select id::text from tm))
+      or (bucket_id = 'expense-receipts' and (storage.foldername(name))[1] in (select id::text from tt));
+    delete from auth.users where id in (select id from tu);
+    commit;`);
 }
+// Notifications envoyées aux vrais admins pendant le test (sans marqueur dans leur texte).
+const purgeAdminNotifications = () => sql(`delete from public.notifications where created_at >= ${q(startedAt)}
+  and user_id in (select user_id from public.user_roles where role = 'admin')
+  and kind in ('kyc_submitted', 'cra_approved', 'freelance_invoice_submitted');`);
+
+let cleaned = false;
+function cleanup() {
+  if (cleaned || KEEP) return;
+  cleaned = true;
+  purge(`e2e-%-${STAMP}@${DOMAIN}`);
+  purgeAdminNotifications();
+}
+// Interruption (Ctrl-C) : on nettoie quand même.
+process.on("SIGINT", () => {
+  console.log("\nInterrompu : nettoyage…");
+  try { cleanup(); } finally { process.exit(130); }
+});
+
+// Restes d'un test précédent interrompu brutalement.
+purge(`e2e-%@${DOMAIN}`);
 
 let failed = false;
 try {
