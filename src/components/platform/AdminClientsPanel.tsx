@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MessageCircle, Building2, MapPin, Mail, Phone, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import KycStatusPill from "./admin/KycStatusPill";
 import { useKycStatuses } from "./admin/kycDossiers";
+import ClientDetail from "./admin/ClientDetail";
+
+/** Paramètre d'URL de l'onglet Clients qui ouvre la fiche d'un client (identifiant du compte). */
+export const CLIENT_PARAM = "client";
 
 interface ClientProfile {
   id: string;
@@ -38,6 +43,18 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
   const isKycToReview = (c: ClientProfile) => kycStatuses.get(c.user_id) === "submitted";
   const kycToReviewCount = clients.filter(isKycToReview).length;
 
+  // Fiche client : /dashboard?tab=clients&client=<user_id>
+  const [searchParams, setSearchParams] = useSearchParams();
+  const openClientId = searchParams.get(CLIENT_PARAM);
+  const setOpenClient = (userId: string | null) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (userId) next.set(CLIENT_PARAM, userId);
+      else next.delete(CLIENT_PARAM);
+      return next;
+    });
+  };
+
   useEffect(() => {
     loadClients();
   }, []);
@@ -52,7 +69,7 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
     if (error) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
-      setClients((data as any) || []);
+      setClients(data ?? []);
     }
     setLoading(false);
   };
@@ -72,8 +89,12 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
   const renderKycPill = (c: ClientProfile) => {
     const status = kycStatuses.get(c.user_id);
     if (!status) return null;
-    return <KycStatusPill userId={c.user_id} status={status} name={`${c.first_name ?? ""} ${c.last_name ?? ""}`.trim() || c.company_name || c.email} className="mt-1" />;
+    return <KycStatusPill userId={c.user_id} status={status} name={`${c.first_name ?? ""} ${c.last_name ?? ""}`.trim() || c.company_name || c.email} className="relative z-10 mt-1" />;
   };
+
+  if (openClientId) {
+    return <ClientDetail userId={openClientId} onBack={() => setOpenClient(null)} onOpenChat={onOpenChat} />;
+  }
 
   if (loading) {
     return <div className="py-12 text-center text-muted-foreground">Chargement des clients…</div>;
@@ -112,7 +133,7 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((client) => (
-            <Card key={client.id} className="transition-shadow hover:shadow-md">
+            <Card key={client.id} className="relative transition-shadow focus-within:ring-2 focus-within:ring-ring hover:shadow-md">
               <CardContent className="p-4 sm:p-5">
                 <div className="mb-3 flex items-center gap-3">
                   <Avatar className="h-10 w-10">
@@ -121,7 +142,17 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-semibold">{client.first_name} {client.last_name}</h3>
+                    <h3 className="truncate text-sm font-semibold">
+                      {/* Toute la carte ouvre la fiche (le bouton s'étend sur la carte) ; dossier et chat restent au-dessus */}
+                      <button
+                        type="button"
+                        onClick={() => setOpenClient(client.user_id)}
+                        aria-label={`Voir la fiche client ${client.company_name || `${client.first_name} ${client.last_name}`}`}
+                        className="text-left after:absolute after:inset-0 after:rounded-lg after:content-[''] focus:outline-none"
+                      >
+                        {client.first_name} {client.last_name}
+                      </button>
+                    </h3>
                     <p className="truncate text-xs text-muted-foreground">{client.job_title}</p>
                     {renderKycPill(client)}
                   </div>
@@ -161,8 +192,8 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="gap-1.5 text-xs"
-                    onClick={() => onOpenChat(client.user_id, `${client.first_name} ${client.last_name}`)}
+                    className="relative z-10 gap-1.5 text-xs"
+                    onClick={(e) => { e.stopPropagation(); onOpenChat(client.user_id, `${client.first_name} ${client.last_name}`); }}
                   >
                     <MessageCircle className="h-3.5 w-3.5" />
                     Chat

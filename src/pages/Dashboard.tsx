@@ -64,7 +64,6 @@ const Dashboard = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "kpi";
-  const initialNeedId = searchParams.get("need");
   const { toast } = useToast();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -496,7 +495,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="needs">
-            <AdminNeedsPanel initialNeedId={initialNeedId} />
+            <AdminNeedsPanel />
           </TabsContent>
 
           <TabsContent value="pipeline">

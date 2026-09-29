@@ -326,6 +326,15 @@ const MissionDetail = ({ missionId, onBack }: Props) => {
           <p className="mt-1 line-clamp-3 whitespace-pre-line break-words text-sm text-muted-foreground">
             {detail.needDescription ?? [mission.company_name, mission.location].filter(Boolean).join(" · ")}
           </p>
+          {mission.need_id && (
+            <button
+              type="button"
+              onClick={() => navigate(`/dashboard?tab=needs&need=${mission.need_id}`)}
+              className="mt-1 inline-flex items-center gap-0.5 rounded-sm text-xs font-medium underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Voir le besoin d'origine <ChevronRight className="h-3 w-3" aria-hidden="true" />
+            </button>
+          )}
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
           {canGenerate && (
