@@ -4,6 +4,7 @@ import { LogOut, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import NotificationBell from "@/components/platform/NotificationBell";
 import { DEFAULT_TAB, PLATFORM_NAV, SPACE_LABEL, type NavItem, type PlatformRole } from "@/content/platformNav";
 
 /** Largeur du menu latéral : les pages décalent leur contenu d'autant (lg:pl-[248px]). */
@@ -49,17 +50,21 @@ function NavLinks({ role, onNavigate }: { role: PlatformRole; onNavigate?: () =>
   );
 }
 
-function SidebarBody({ role, email, onNavigate, onSignOut }: {
+function SidebarBody({ role, email, onNavigate, onSignOut, bell = false }: {
   role: PlatformRole;
   email: string | null;
   onNavigate?: () => void;
   onSignOut: () => void;
+  bell?: boolean;
 }) {
   return (
     <div className="flex h-full flex-col">
-      <Link to="/" aria-label="Kistone, retour au site" className="px-2 pt-1">
-        <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto" />
-      </Link>
+      <div className="flex items-start justify-between gap-2">
+        <Link to="/" aria-label="Kistone, retour au site" className="px-2 pt-1">
+          <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto" />
+        </Link>
+        {bell ? <NotificationBell className="h-10 w-10" /> : null}
+      </div>
       <p className="mt-5 px-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{SPACE_LABEL[role]}</p>
       <div className="mt-2">
         <NavLinks role={role} onNavigate={onNavigate} />
@@ -103,13 +108,15 @@ export default function AppShell({ role }: { role: PlatformRole }) {
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] border-r border-border bg-card px-3 py-5 lg:block">
-        <SidebarBody role={role} email={email} onSignOut={signOut} />
+        <SidebarBody role={role} email={email} onSignOut={signOut} bell />
       </aside>
 
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur lg:hidden">
         <Link to="/" aria-label="Kistone, retour au site">
           <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-11 w-auto" />
         </Link>
+        <div className="flex items-center gap-2">
+        <NotificationBell />
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <button
@@ -125,6 +132,7 @@ export default function AppShell({ role }: { role: PlatformRole }) {
             <SidebarBody role={role} email={email} onNavigate={() => setOpen(false)} onSignOut={signOut} />
           </SheetContent>
         </Sheet>
+        </div>
       </header>
     </>
   );

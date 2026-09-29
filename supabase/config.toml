@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.remind-invoices]
 verify_jwt = false
+
+[functions.notify-dispatch]
+verify_jwt = false
