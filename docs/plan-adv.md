@@ -52,7 +52,8 @@ pour le client, le freelance et l'admin.
   à la place de l'identité codée en dur.
 - Coquille d'application : barre latérale par rôle, avec les onglets cibles (fait : `AppShell`, onglets pilotés par `?tab=`).
 
-### Phase 1 — Accord et mise en place de la mission
+### Phase 1 — Accord et mise en place de la mission (fait le 2026-09-30, migration `20260930090000`)
+Reste : contrats en PDF pour Yousign (nouveaux modèles d'Alex), test réel de Yousign, notifications (phase 4).
 - Acceptation d'un profil par le client → notification admin.
 - Création de mission par l'admin (marge modifiable), statut `onboarding`.
 - Dossier KYC : table `documents`, statuts `pending/approved/rejected`, SIRET, IBAN/BIC,
