@@ -4,22 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
 
 type Props = {
   open: boolean;
-  profileId: string;
-  onSaved: (url: string) => void;
+  /** Première connexion (profil pas encore créé) ou profil existant sans URL. */
+  firstVisit: boolean;
+  /** Enregistre l'URL canonique ; renvoie un message d'erreur, ou null si tout va bien. */
+  onSubmit: (url: string) => Promise<string | null>;
 };
 
 /**
- * Fenêtre bloquante pour un freelance déjà inscrit sans URL LinkedIn : elle ne se
- * ferme qu'une fois l'URL enregistrée (clé de synchronisation avec l'ATS).
+ * Fenêtre bloquante : le freelance doit coller son URL LinkedIn avant d'accéder à son
+ * profil. L'URL est la clé de synchronisation avec l'ATS (Jarvi).
  */
-export default function LinkedinRequiredDialog({ open, profileId, onSaved }: Props) {
-  const { toast } = useToast();
+export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: Props) {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -31,13 +30,9 @@ export default function LinkedinRequiredDialog({ open, profileId, onSaved }: Pro
       return;
     }
     setSaving(true);
-    const { error: dbError } = await supabase.from("recruiter_profiles").update({ linkedin_url: url }).eq("id", profileId);
+    const failure = await onSubmit(url);
     setSaving(false);
-    if (dbError) {
-      toast({ title: "Erreur", description: dbError.message, variant: "destructive" });
-      return;
-    }
-    onSaved(url);
+    if (failure) setError(failure);
   };
 
   return (
@@ -49,10 +44,11 @@ export default function LinkedinRequiredDialog({ open, profileId, onSaved }: Pro
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Ajoutez votre profil LinkedIn</DialogTitle>
+          <DialogTitle>{firstVisit ? "Bienvenue sur Kistone" : "Ajoutez votre profil LinkedIn"}</DialogTitle>
           <DialogDescription>
-            Il est obligatoire pour être proposé sur des missions : il nous permet de synchroniser votre profil avec notre outil de
-            recrutement.
+            {firstVisit
+              ? "Pour commencer, collez l'URL de votre profil LinkedIn. Elle est obligatoire pour être proposé sur des missions."
+              : "Il est obligatoire pour être proposé sur des missions : il nous permet de synchroniser votre profil avec notre outil de recrutement."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
@@ -67,14 +63,16 @@ export default function LinkedinRequiredDialog({ open, profileId, onSaved }: Pro
               placeholder="https://www.linkedin.com/in/votre-profil"
               className="pl-10"
               aria-invalid={Boolean(error)}
-              aria-describedby="linkedin-required-error"
+              aria-describedby="linkedin-required-help"
               autoFocus
             />
           </div>
-          {error ? <p id="linkedin-required-error" className="text-sm text-destructive">{error}</p> : null}
+          <p id="linkedin-required-help" className={error ? "text-sm text-destructive" : "text-xs text-muted-foreground"}>
+            {error ?? "Sur LinkedIn : votre profil, puis copiez l'adresse affichée dans le navigateur."}
+          </p>
         </div>
         <Button onClick={save} disabled={saving || !value.trim()} className="w-full">
-          {saving ? "Enregistrement…" : "Enregistrer et continuer"}
+          {saving ? "Enregistrement…" : firstVisit ? "Accéder à mon profil" : "Enregistrer et continuer"}
         </Button>
       </DialogContent>
     </Dialog>

@@ -58,6 +58,7 @@ const Profile = () => {
   // Profil existant sans URL LinkedIn valide : fenêtre bloquante jusqu'à la saisie
   const [linkedinGate, setLinkedinGate] = useState(false);
   const [linkedinError, setLinkedinError] = useState<string | null>(null);
+  const [firstVisit, setFirstVisit] = useState(false);
   const [jobTitle, setJobTitle] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [clients, setClients] = useState<string[]>([]);
@@ -99,6 +100,16 @@ const Profile = () => {
     }
     setUserId(session.user.id);
     setEmail(session.user.email || "");
+
+    // /profile est l'espace freelance : l'admin et le client sont renvoyés vers le leur
+    const [{ data: isAdmin }, { data: isClient }] = await Promise.all([
+      supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" }),
+      supabase.rpc("has_role", { _user_id: session.user.id, _role: "client" }),
+    ]);
+    if (isAdmin || isClient) {
+      navigate(isAdmin ? "/dashboard" : "/client/dashboard", { replace: true });
+      return;
+    }
 
     // Load existing profile
     const { data } = await supabase
@@ -145,6 +156,15 @@ const Profile = () => {
       setUrssafDocUrl(p.urssaf_document_url || null);
       setInsuranceDocUrl(p.insurance_document_url || null);
       setRibDocUrl(p.rib_document_url || null);
+    } else {
+      // Première connexion : on pré-remplit avec le compte LinkedIn / Google, puis
+      // on exige l'URL LinkedIn avant d'accéder au profil.
+      const meta = (session.user.user_metadata ?? {}) as Record<string, string | undefined>;
+      const fullName = (meta.full_name ?? meta.name ?? "").trim();
+      setFirstName(meta.given_name ?? fullName.split(" ")[0] ?? "");
+      setLastName(meta.family_name ?? fullName.split(" ").slice(1).join(" "));
+      setFirstVisit(true);
+      setLinkedinGate(true);
     }
 
     // Load admin user_id for chat
@@ -152,6 +172,41 @@ const Profile = () => {
     if (adminId) setAdminUserId(adminId as string);
 
     setLoading(false);
+  };
+
+  /**
+   * Enregistre l'URL LinkedIn dès la saisie (clé de synchronisation Jarvi). À la
+   * première visite, crée le profil freelance, encore incomplet : il n'entre dans le
+   * matching qu'une fois le TJM et les métiers renseignés.
+   */
+  const saveLinkedinUrl = async (url: string): Promise<string | null> => {
+    if (existingId) {
+      const { error } = await supabase.from("recruiter_profiles").update({ linkedin_url: url }).eq("id", existingId);
+      if (error) return error.message;
+    } else {
+      const { data, error } = await supabase
+        .from("recruiter_profiles")
+        .insert({ user_id: userId, email, first_name: firstName, last_name: lastName, linkedin_url: url })
+        .select("id")
+        .single();
+      if (error) return error.message.includes("ROLE_CONFLICT")
+        ? "Cette adresse est déjà utilisée pour un espace client."
+        : error.message;
+      setExistingId(data.id);
+      importAccountPhoto(data.id);
+    }
+    setLinkedin(url);
+    setLinkedinGate(false);
+    return null;
+  };
+
+  /** Copie la photo du compte LinkedIn / Google dans notre stockage (le lien d'origine expire). */
+  const importAccountPhoto = async (profileId: string) => {
+    const { data } = await supabase.functions.invoke("import-oauth-avatar");
+    const url = (data as { photo_url?: string | null } | null)?.photo_url;
+    if (!url) return;
+    await supabase.from("recruiter_profiles").update({ photo_url: url }).eq("id", profileId);
+    setPhotoPreview(url);
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,9 +296,10 @@ const Profile = () => {
       if (error) throw error;
 
       toast({
-        title: existingId ? "Profil mis à jour !" : "Profil créé !",
+        title: existingId && !firstVisit ? "Profil mis à jour !" : "Profil créé !",
         description: "Vos informations ont été sauvegardées avec succès.",
       });
+      setFirstVisit(false);
 
       if (!existingId) loadProfile();
     } catch (err: any) {
@@ -274,21 +330,15 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      {existingId && (
-        <LinkedinRequiredDialog
-          open={linkedinGate}
-          profileId={existingId}
-          onSaved={(url) => { setLinkedin(url); setLinkedinGate(false); }}
-        />
-      )}
+      <LinkedinRequiredDialog open={linkedinGate} firstVisit={firstVisit} onSubmit={saveLinkedinUrl} />
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {existingId ? "Mon profil" : "Complétez votre profil"}
+              {existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
             </h1>
             <p className="mt-1 text-muted-foreground">
-              {existingId
+              {existingId && !firstVisit
                 ? "Modifiez vos informations à tout moment."
                 : "Renseignez vos informations pour intégrer le réseau Kistone."}
             </p>
