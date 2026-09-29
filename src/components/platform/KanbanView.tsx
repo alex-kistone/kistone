@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Star, MessageCircle, Settings2, Linkedin, CheckCircle2, Calendar, Clock, MessageSquare } from "lucide-react";
-import type { FullProfile } from "@/components/connect2/ProfileDetailModal";
+import { Star, MessageCircle, Settings2, Linkedin, CheckCircle2, Calendar, Clock } from "lucide-react";
+import type { FullProfile } from "@/components/platform/ProfileDetailModal";
 
 type Profile = FullProfile;
 
@@ -10,7 +10,6 @@ interface KanbanViewProps {
   onClickProfile: (p: Profile) => void;
   onOpenChat: (p: Profile) => void;
   onOpenAdmin: (p: Profile) => void;
-  onOpenWhatsApp?: (p: Profile) => void;
 }
 
 type Column = {
@@ -55,13 +54,11 @@ const KanbanCard = ({
   onClick,
   onChat,
   onAdmin,
-  onWhatsApp,
 }: {
   profile: Profile;
   onClick: () => void;
   onChat: () => void;
   onAdmin: () => void;
-  onWhatsApp?: () => void;
 }) => (
   <div
     onClick={onClick}
@@ -124,15 +121,6 @@ const KanbanCard = ({
           <MessageCircle className="h-3.5 w-3.5" />
         </button>
       )}
-      {profile.phone && onWhatsApp && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onWhatsApp(); }}
-          className="rounded-md p-1 text-muted-foreground hover:bg-green-500/10 hover:text-green-600"
-          title="Envoyer un WhatsApp"
-        >
-          <MessageSquare className="h-3.5 w-3.5" />
-        </button>
-      )}
       {profile.linkedin_url && (
         <a
           href={profile.linkedin_url}
@@ -148,7 +136,7 @@ const KanbanCard = ({
   </div>
 );
 
-const KanbanView = ({ profiles, onClickProfile, onOpenChat, onOpenAdmin, onOpenWhatsApp }: KanbanViewProps) => {
+const KanbanView = ({ profiles, onClickProfile, onOpenChat, onOpenAdmin }: KanbanViewProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {columns.map((col) => {
@@ -168,7 +156,6 @@ const KanbanView = ({ profiles, onClickProfile, onOpenChat, onOpenAdmin, onOpenW
                   onClick={() => onClickProfile(p)}
                   onChat={() => onOpenChat(p)}
                   onAdmin={() => onOpenAdmin(p)}
-                  onWhatsApp={onOpenWhatsApp ? () => onOpenWhatsApp(p) : undefined}
                 />
               ))}
               {items.length === 0 && (

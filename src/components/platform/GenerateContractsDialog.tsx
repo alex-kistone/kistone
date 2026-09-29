@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { generateClientContract, generateContractorContract } from "@/lib/contracts";
+import { fetchCompanySettings } from "@/lib/companySettings";
 import type { ContractData } from "@/lib/contracts";
 
 interface Props {
@@ -77,7 +78,10 @@ const GenerateContractsDialog = ({ open, onClose, mission }: Props) => {
       clientProfile = cp;
     }
 
+    const provider = await fetchCompanySettings();
+
     const data: ContractData = {
+      provider,
       missionTitle: mission.title,
       missionLocation: mission.location,
       startDate: mission.start_date,

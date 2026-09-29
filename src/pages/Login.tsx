@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import Header from "@/components/KistoneHeader";
 import SignupSent from "@/components/auth/SignupSent";
 
@@ -94,44 +93,17 @@ const Login = () => {
 
   const handleGoogle = async () => {
     setLoading(true);
-
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}${window.location.pathname}${window.location.search}`,
-        extraParams: { prompt: "select_account" },
-      });
-
-      if (result.error) {
-        toast({ title: "Erreur", description: String(result.error), variant: "destructive" });
-        setLoading(false);
-        return;
-      }
-
-      if (result.redirected) return;
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        // Assign client role if signing in via client tab
-        if (userType === "client") {
-          try {
-            await supabase.functions.invoke("assign-client-role", {
-              headers: { Authorization: `Bearer ${session.access_token}` },
-            });
-          } catch (err) {
-            console.error("Role assignment error:", err);
-          }
-        }
-        const path = await getRedirectPath(session.user.id);
-        navigate(path);
-        return;
-      }
-
-      toast({
-        title: "Connexion incomplète",
-        description: "La session Google n'a pas pu être récupérée. Réessayez.",
-        variant: "destructive",
-      });
-    } finally {
+    // Redirection vers Google puis retour sur cette page : l'effet ci-dessus
+    // récupère la session et redirige selon le rôle.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}${window.location.pathname}${window.location.search}`,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
       setLoading(false);
     }
   };

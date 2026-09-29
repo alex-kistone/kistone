@@ -3,7 +3,7 @@ import {
   AlignmentType, BorderStyle, Table, TableRow, TableCell,
   WidthType, PageBreak,
 } from "docx";
-import type { ContractData } from "./types";
+import { providerClause, type ContractData } from "./types";
 
 const FONT = "Calibri";
 const SIZE = 22;
@@ -48,7 +48,7 @@ export async function generateContractorContract(data: ContractData): Promise<Bl
 
         // Parties
         p("Entre les soussignés :"),
-        p("Connect2, société par actions simplifiée, inscrite auprès du RCS de Rennes sous le numéro SIREN 845 060 193 et située au 18/20 Boulevard de Beaumont, 35000 Rennes, représentée par Monsieur Dylan DAHYOT en qualité de Directeur Général."),
+        p(providerClause(data.provider)),
         p("Ci-après dénommé le « Cabinet » d'une part,"),
         p("Et"),
         new Paragraph({
@@ -82,7 +82,7 @@ export async function generateContractorContract(data: ContractData): Promise<Bl
 
         heading("4. CONDITIONS FINANCIÈRES", HeadingLevel.HEADING_2),
         p(`Le Cabinet s'engage à régler au Prestataire la somme de ${data.recruiterTjm}€ HT par jour presté, sur la base des rapports de suivi validés.`),
-        p("Le règlement s'effectue dans un délai de 30 jours à compter de la réception de la facture, à la fin de chaque mois."),
+        p(`Le règlement s'effectue dans un délai de ${data.provider.freelancePaymentTermsDays} jours à compter de la réception de la facture, à la fin de chaque mois.`),
 
         heading("5. OBLIGATIONS DU PRESTATAIRE", HeadingLevel.HEADING_2),
         p("Le Prestataire s'engage à exécuter les Services avec diligence, professionnalisme et dans le respect des règles déontologiques de la profession."),
@@ -115,8 +115,8 @@ export async function generateContractorContract(data: ContractData): Promise<Bl
                   width: { size: 50, type: WidthType.PERCENTAGE },
                   borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } },
                   children: [
-                    p("Connect2 :", { bold: true }),
-                    field("Nom du signataire", "Dylan DAHYOT"),
+                    p(`${data.provider.legalName} :`, { bold: true }),
+                    field("Nom du signataire", data.provider.representativeName || ""),
                     field("Date", ""),
                     p("Signature :", { bold: true }),
                   ],
@@ -160,7 +160,7 @@ export async function generateContractorContract(data: ContractData): Promise<Bl
         field("Date de fin estimée", formatDate(data.endDate)),
         field("Taux de facturation", `${data.recruiterTjm}€ HT par journée prestée`),
         field("Période de préavis", "15 jours"),
-        field("Périodes de facturation", "Mensuelle - À la fin de chaque mois (paiement à 30 jours)"),
+        field("Périodes de facturation", `Mensuelle - À la fin de chaque mois (paiement à ${data.provider.freelancePaymentTermsDays} jours)`),
 
         new Paragraph({ spacing: { after: 200 }, children: [] }),
 
@@ -174,8 +174,8 @@ export async function generateContractorContract(data: ContractData): Promise<Bl
                   width: { size: 50, type: WidthType.PERCENTAGE },
                   borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } },
                   children: [
-                    p("Connect2 :", { bold: true }),
-                    field("Nom du signataire", "Dylan DAHYOT"),
+                    p(`${data.provider.legalName} :`, { bold: true }),
+                    field("Nom du signataire", data.provider.representativeName || ""),
                     field("Date", ""),
                     p("Signature :", { bold: true }),
                   ],

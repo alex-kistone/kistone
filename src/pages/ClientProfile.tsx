@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import DeleteAccountButton from "@/components/connect2/DeleteAccountButton";
-import ExportDataButton from "@/components/connect2/ExportDataButton";
+import DeleteAccountButton from "@/components/platform/DeleteAccountButton";
+import ExportDataButton from "@/components/platform/ExportDataButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
-import CompanySearch, { type CompanyData } from "@/components/connect2/CompanySearch";
+import CompanySearch, { type CompanyData } from "@/components/platform/CompanySearch";
 
 const ClientProfile = () => {
   const navigate = useNavigate();

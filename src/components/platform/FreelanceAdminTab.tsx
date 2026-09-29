@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import CompanySearch, { type CompanyData } from "@/components/connect2/CompanySearch";
+import CompanySearch, { type CompanyData } from "@/components/platform/CompanySearch";
 
 interface DocumentUploadProps {
   label: string;

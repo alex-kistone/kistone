@@ -1,11 +1,13 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Kistone <notifications@kistone.fr>";
+const APP_URL = (Deno.env.get("APP_URL") ?? "https://kistone.fr").replace(/\/$/, "");
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -18,7 +20,6 @@ serve(async (req) => {
     const resendKey = Deno.env.get("RESEND_API_KEY");
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const resend = resendKey ? new Resend(resendKey) : null;
 
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -117,21 +118,33 @@ serve(async (req) => {
           <p style="color: #555; line-height: 1.6;">
             Connectez-vous à votre espace pour compléter votre compte-rendu d'activité.
           </p>
+          <a href="${APP_URL}/profile" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 8px;">Remplir mon CRA</a>
           <p style="color: #999; font-size: 12px; margin-top: 30px;">
-            Cet email est envoyé automatiquement par Connect2.
+            Cet email est envoyé automatiquement par Kistone.
           </p>
         </div>
       `;
 
-      if (resend) {
+      if (resendKey) {
         try {
-          await resend.emails.send({
-            from: "Connect2 <noreply@connect2.io>",
-            to: [profile.email],
-            subject,
-            html,
+          const emailRes = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${resendKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              from: EMAIL_FROM,
+              to: [profile.email],
+              subject,
+              html,
+            }),
           });
-          emailsSent.push(profile.email);
+          if (!emailRes.ok) {
+            errors.push(`${profile.email}: Resend ${emailRes.status} ${await emailRes.text()}`);
+          } else {
+            emailsSent.push(profile.email);
+          }
         } catch (e: any) {
           errors.push(`${profile.email}: ${e.message}`);
         }

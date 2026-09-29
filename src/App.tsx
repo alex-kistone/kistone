@@ -17,11 +17,9 @@ import ClientNewNeed from "./pages/ClientNewNeed";
 import ClientEditNeed from "./pages/ClientEditNeed";
 import ClientProfile from "./pages/ClientProfile";
 import OpenNeeds from "./pages/OpenNeeds";
-import FreelanceTimesheets from "./pages/FreelanceTimesheets";
-import ClientTimesheets from "./pages/ClientTimesheets";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import CookieConsent from "./components/connect2/CookieConsent";
+import CookieConsent from "./components/platform/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -45,9 +43,7 @@ const App = () => (
           <Route path="/client/new-need" element={<ClientNewNeed />} />
           <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
           <Route path="/client/profile" element={<ClientProfile />} />
-          <Route path="/client/timesheets" element={<ClientTimesheets />} />
           <Route path="/open-needs" element={<OpenNeeds />} />
-          <Route path="/timesheets" element={<FreelanceTimesheets />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

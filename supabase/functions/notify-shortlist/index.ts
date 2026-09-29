@@ -6,6 +6,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Kistone <notifications@kistone.fr>";
+const APP_URL = (Deno.env.get("APP_URL") ?? "https://kistone.fr").replace(/\/$/, "");
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -87,8 +90,7 @@ Deno.serve(async (req) => {
     const needTitle = need?.job_title || "Besoin";
     const company = need?.company_name || "";
     const clientName = need?.contact_name || "Un client";
-    const appUrl = Deno.env.get("APP_URL") || "https://freeconnect.lovable.app";
-    const dashboardUrl = `${appUrl}/dashboard?tab=needs&need=${encodeURIComponent(need_id)}`;
+    const dashboardUrl = `${APP_URL}/dashboard?tab=needs&need=${encodeURIComponent(need_id)}`;
 
     const emailRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -97,7 +99,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Kistone <onboarding@resend.dev>",
+        from: EMAIL_FROM,
         to: adminEmails,
         subject: `🔔 ${clientName} souhaite en savoir plus sur ${freelancerName}`,
         html: `

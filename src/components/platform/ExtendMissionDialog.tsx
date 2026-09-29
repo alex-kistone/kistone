@@ -38,7 +38,8 @@ const ExtendMissionDialog = ({ open, onClose, mission, onExtended }: ExtendMissi
   );
   const [newDurationText, setNewDurationText] = useState(mission.duration_text || "");
   const [newTjmRecruiter, setNewTjmRecruiter] = useState(mission.recruiter_tjm);
-  const margin = 100;
+  // La prolongation conserve la marge négociée sur la mission
+  const margin = (mission.client_tjm ?? 0) - (mission.recruiter_tjm ?? 0);
   const newTjmClient = newTjmRecruiter + margin;
   const [reason, setReason] = useState("");
 

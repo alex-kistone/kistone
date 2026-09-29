@@ -1,5 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { METIERS } from "../_shared/taxonomy.ts";
+import {
+  ANTHROPIC_MODEL,
+  ANTHROPIC_URL,
+  anthropicHeaders,
+  missingKeyResponse,
+  upstreamErrorResponse,
+} from "../_shared/anthropic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,104 +31,78 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey) return missingKeyResponse(corsHeaders);
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch(ANTHROPIC_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
+      headers: anthropicHeaders(apiKey),
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content: `Tu es un assistant RH expert. À partir d'une description libre d'un besoin en recrutement, extrais les informations structurées suivantes. Réponds UNIQUEMENT via l'appel de fonction fourni.
+        model: ANTHROPIC_MODEL,
+        max_tokens: 2048,
+        system: `Tu es un assistant RH expert. À partir d'une description libre d'un besoin en recrutement, extrais les informations structurées suivantes. Réponds UNIQUEMENT via l'outil fourni.
 
 Les typologies de profils possibles sont : ${PROFILE_TYPES.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
 
-Si une information n'est pas mentionnée, retourne null ou un tableau vide pour les arrays.`,
-          },
-          { role: "user", content: freeText },
-        ],
+Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide pour les arrays).`,
+        messages: [{ role: "user", content: freeText }],
         tools: [
           {
-            type: "function",
-            function: {
-              name: "extract_need",
-              description: "Extraire les informations structurées d'un besoin en recrutement",
-              parameters: {
-                type: "object",
-                properties: {
-                  job_title: {
-                    type: "string",
-                    description: "Intitulé du poste recherché",
-                  },
-                  profile_types: {
-                    type: "array",
-                    items: { type: "string" },
-                    description: `Typologies de profils parmi: ${PROFILE_TYPES.join(", ")}`,
-                  },
-                  budget_tjm_min: {
-                    type: "number",
-                    description: "Budget TJM minimum en euros/jour",
-                    nullable: true,
-                  },
-                  budget_tjm_max: {
-                    type: "number",
-                    description: "Budget TJM maximum en euros/jour",
-                    nullable: true,
-                  },
-                  mission_location: {
-                    type: "string",
-                    description: "Lieu de la mission (ville)",
-                  },
-                  remote_policy: {
-                    type: "string",
-                    enum: ["on-site", "hybrid", "full-remote", "flexible"],
-                    description: "Politique de remote",
-                  },
-                  description: {
-                    type: "string",
-                    description: "Description complète et reformulée du besoin",
-                  },
+            name: "extract_need",
+            description: "Extraire les informations structurées d'un besoin en recrutement",
+            input_schema: {
+              type: "object",
+              properties: {
+                job_title: {
+                  type: "string",
+                  description: "Intitulé du poste recherché",
                 },
-                required: ["job_title", "description"],
-                additionalProperties: false,
+                profile_types: {
+                  type: "array",
+                  items: { type: "string" },
+                  description: `Typologies de profils parmi: ${PROFILE_TYPES.join(", ")}`,
+                },
+                budget_tjm_min: {
+                  type: "number",
+                  description: "Budget TJM minimum en euros/jour",
+                },
+                budget_tjm_max: {
+                  type: "number",
+                  description: "Budget TJM maximum en euros/jour",
+                },
+                mission_location: {
+                  type: "string",
+                  description: "Lieu de la mission (ville)",
+                },
+                remote_policy: {
+                  type: "string",
+                  enum: ["on-site", "hybrid", "full-remote", "flexible"],
+                  description: "Politique de remote",
+                },
+                description: {
+                  type: "string",
+                  description: "Description complète et reformulée du besoin",
+                },
               },
+              required: ["job_title", "description"],
             },
           },
         ],
-        tool_choice: { type: "function", function: { name: "extract_need" } },
+        tool_choice: { type: "tool", name: "extract_need" },
       }),
     });
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques instants." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Crédits IA insuffisants." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      throw new Error("AI gateway error");
+      console.error("Anthropic error:", response.status, await response.text());
+      return upstreamErrorResponse(response.status, corsHeaders);
     }
 
     const data = await response.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) throw new Error("No tool call in response");
+    const block = data.content?.find((c: { type: string }) => c.type === "tool_use");
+    if (!block) throw new Error("Réponse IA inattendue (pas d'extraction).");
 
-    const parsed = JSON.parse(toolCall.function.arguments);
+    const parsed = block.input;
 
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

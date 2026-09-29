@@ -7,6 +7,8 @@ const corsHeaders = {
 };
 
 const NOTIFY_TO = "aguego@kistone.fr";
+const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Kistone <notifications@kistone.fr>";
+const APP_URL = (Deno.env.get("APP_URL") ?? "https://kistone.fr").replace(/\/$/, "");
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -70,7 +72,7 @@ Deno.serve(async (req) => {
         <p><strong>Conversation :</strong> ${esc(thread?.title)}</p>
         <div style="background:#f4f4f5;border-radius:8px;padding:14px;">${transcript}</div>
         <p style="margin-top:16px;">
-          <a href="https://kistone.fr/dashboard?tab=assistant">Répondre depuis le dashboard</a>
+          <a href="${APP_URL}/dashboard?tab=assistant">Répondre depuis le dashboard</a>
         </p>
       </div>
     `;
@@ -82,7 +84,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Assistant Kistone <no-reply@connect2.ai>",
+        from: EMAIL_FROM,
         to: [NOTIFY_TO],
         subject: "🙋 Un visiteur demande un humain (assistant)",
         html,

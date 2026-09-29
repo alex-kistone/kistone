@@ -39,7 +39,7 @@ const PIPELINE_STEPS = [
   { key: "suggested", label: "Suggéré", icon: Circle, color: "text-muted-foreground", bg: "bg-muted/50", stale: 5 },
   { key: "shortlisted", label: "Shortlisté", icon: Award, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-950/30", stale: 5 },
   { key: "interview", label: "Entretien", icon: Users, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/30", stale: 7 },
-  { key: "validated", label: "Validé", icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50 dark:bg-green-950/30", stale: 14 },
+  { key: "accepted", label: "Accepté", icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50 dark:bg-green-950/30", stale: 14 },
 ];
 
 const daysSince = (iso: string | null) => {
@@ -110,7 +110,7 @@ const AdminGlobalPipelinePanel = () => {
 
   // Global stats
   const stats = useMemo(() => {
-    const out: Record<string, number> = { suggested: 0, shortlisted: 0, interview: 0, validated: 0, stale: 0 };
+    const out: Record<string, number> = { suggested: 0, shortlisted: 0, interview: 0, accepted: 0, stale: 0 };
     suggestions.forEach((s) => {
       out[s.pipeline_status] = (out[s.pipeline_status] || 0) + 1;
       const step = PIPELINE_STEPS.find((p) => p.key === s.pipeline_status);

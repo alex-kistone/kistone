@@ -22,7 +22,6 @@ interface KPIData {
   statusDistribution: { name: string; value: number; color: string }[];
 }
 
-const MARGIN_PER_DAY = 100;
 
 const AdminKPIPanel = () => {
   const [data, setData] = useState<KPIData | null>(null);
@@ -61,7 +60,7 @@ const AdminKPIPanel = () => {
         const mission = missions.find(m => m.id === ts.mission_id);
         if (mission) {
           totalCA += (mission.client_tjm || 0) * (ts.total_days || 0);
-          totalMarge += MARGIN_PER_DAY * (ts.total_days || 0);
+          totalMarge += ((mission.client_tjm || 0) - (mission.recruiter_tjm || 0)) * (ts.total_days || 0);
         }
       }
 
@@ -132,7 +131,7 @@ const AdminKPIPanel = () => {
         completedMissions: completedMissions.length,
         totalCA,
         totalMarge,
-        avgMargePerDay: totalDaysWorked > 0 ? Math.round(totalMarge / totalDaysWorked) : MARGIN_PER_DAY,
+        avgMargePerDay: totalDaysWorked > 0 ? Math.round(totalMarge / totalDaysWorked) : 0,
         totalNeeds: needs.length,
         staffedNeeds,
         conversionRate,
@@ -185,7 +184,7 @@ const AdminKPIPanel = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Marge totale</p>
                 <p className="text-2xl font-bold">{formatCurrency(data.totalMarge)}</p>
-                <p className="text-xs text-muted-foreground">{MARGIN_PER_DAY}€/jour travaillé</p>
+                <p className="text-xs text-muted-foreground">{data.avgMargePerDay} € de marge moyenne par jour travaillé</p>
               </div>
               <TrendingUp className="h-8 w-8 text-primary opacity-70" />
             </div>

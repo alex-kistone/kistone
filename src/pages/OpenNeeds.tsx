@@ -100,7 +100,7 @@ const OpenNeeds = () => {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
       setAppliedNeedIds((prev) => new Set([...prev, needId]));
-      toast({ title: "Candidature envoyée !", description: "L'équipe Connect2 reviendra vers vous." });
+      toast({ title: "Candidature envoyée !", description: "L'équipe Kistone reviendra vers vous." });
       setApplyingToId(null);
       setMotivation("");
     }

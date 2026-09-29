@@ -2,8 +2,8 @@
 
 Plateforme **mono-tenant** de Gotam : les entreprises clientes déposent un besoin,
 les recruteurs RPO freelances remplissent leur profil, et le matching rapproche
-les deux. Fork local du projet Lovable `kistone-connect`, recentré sur l'app
-(la surface vitrine Kistone Studio a été retirée).
+les deux. Fork de `kistone-connect`, recentré sur l'app ; la vitrine (accueil
+et `/studio`) vit dans le même dépôt.
 
 ## Stack
 
@@ -85,7 +85,7 @@ statut `suggested` : celles engagées dans le pipeline sont de l'historique.
 
 ## Migrations
 
-54 migrations héritées de Lovable, plus :
+54 migrations héritées du projet d'origine, plus :
 
 - `20260908090000_rpo_matching.sql` — **additive, à appliquer**. Ajoute
   `onboarding_completed` (avec backfill), `rule_score`, et un trigger qui
@@ -131,13 +131,13 @@ OK   admin     : qualification autorisee
 ```
 
 > Ça n'a pas toujours été le cas : 10 des 25 tables, leurs colonnes `tenant_id`
-> et 8 policies avaient été créées à la main dans le dashboard Lovable, jamais
+> et 8 policies avaient été créées à la main dans le dashboard du projet d'origine, jamais
 > versionnées. `20260604134900_repair_missing_tables.sql` répare ce trou.
 
 ## Projet Supabase
 
 La plateforme tourne sur son propre projet, **Plateforme-rpo**
-(`cqtrqkslzztceiuhhilo`, région `eu-west-1`), indépendant de l'app Lovable.
+(`cqtrqkslzztceiuhhilo`, région `eu-west-1`), indépendant de l'app d'origine.
 
 - 57 migrations appliquées, alignées local = distant (`npx supabase migration list`).
 - Edge functions déployées — celles qui tournent sans clé externe :
@@ -170,22 +170,24 @@ npx supabase functions deploy match-profiles
 5. **Auth → SMTP** : le SMTP par défaut de Supabase est limité à quelques emails
    par heure — suffisant pour tester, pas pour la production.
 
-### Fonctions non déployées
+### Secrets des edge functions
 
-| Fonction | Bloquée par | Effet dans l'app |
+| Secret | Fonctions | Sans lui |
 |---|---|---|
-| `notify-shortlist`, `notify-suggestion` | `RESEND_API_KEY` | pas d'email au client / au freelance |
-| `parse-need`, `optimize-intro` | `LOVABLE_API_KEY` | pas d'aide IA à la rédaction |
-| `send-whatsapp` | `LOVABLE_API_KEY` + Twilio | pas de WhatsApp |
+| `ANTHROPIC_API_KEY` | `match-profiles`, `parse-need`, `optimize-intro`, `support-assistant` | matching par règles seules ; les trois autres répondent 503 |
+| `RESEND_API_KEY` | `notify-shortlist`, `notify-suggestion`, `notify-new-message`, `notify-support-escalation`, `remind-cra` | pas d'email (`remind-cra` passe en dry run) |
+| `EMAIL_FROM` *(optionnel)* | fonctions email | `Kistone <notifications@kistone.fr>` — le domaine doit être vérifié chez Resend |
+| `APP_URL` *(optionnel)* | fonctions email (liens) | `https://kistone.fr` |
 
-`LOVABLE_API_KEY` n'existe que dans l'environnement Lovable : ces fonctions
-doivent être recâblées sur l'API Anthropic, comme `match-profiles`.
+```bash
+npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-... RESEND_API_KEY=re_...
+```
 
 ## Reste à faire
 
 - Décider du sort de `20260908090100_drop_multitenant.sql.OPTIONAL` (destructif,
   lire son en-tête).
-- Recâbler `parse-need`, `optimize-intro` et `support-assistant` sur l'API
-  Anthropic (voir « Fonctions non déployées »).
-- Le dépôt GitHub est synchronisé dans les deux sens avec Lovable : décider si
-  ce fork s'en détache (nouveau remote) ou reste couplé.
+- Déployer `parse-need`, `optimize-intro`, `support-assistant` et les
+  fonctions email une fois les secrets posés (voir « Secrets des edge functions »).
+- Vérifier que le dépôt GitHub n'est plus synchronisé avec l'outil d'origine
+  (nouveau remote si besoin).

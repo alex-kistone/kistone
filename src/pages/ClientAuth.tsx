@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import Header from "@/components/KistoneHeader";
 import SignupSent from "@/components/auth/SignupSent";
 
@@ -171,13 +170,16 @@ const ClientAuth = () => {
           className="mb-4 w-full gap-3"
           onClick={async () => {
             setLoading(true);
-            const { error } = await lovable.auth.signInWithOAuth("google", {
-              redirect_uri: `${window.location.origin}${window.location.pathname}`,
-              extraParams: { prompt: "select_account" },
+            const { error } = await supabase.auth.signInWithOAuth({
+              provider: "google",
+              options: {
+                redirectTo: `${window.location.origin}${window.location.pathname}`,
+                queryParams: { prompt: "select_account" },
+              },
             });
             if (error) {
               setLoading(false);
-              toast({ title: "Erreur", description: String(error), variant: "destructive" });
+              toast({ title: "Erreur", description: error.message, variant: "destructive" });
             }
           }}
         >

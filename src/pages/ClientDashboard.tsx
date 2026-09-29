@@ -8,9 +8,9 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
-import ChatPanel from "@/components/connect2/ChatPanel";
+import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
-import ClientMissionsSection from "@/components/connect2/ClientMissionsSection";
+import ClientMissionsSection from "@/components/platform/ClientMissionsSection";
 
 interface ClientNeed {
   id: string;
@@ -80,7 +80,7 @@ const PIPELINE_STEPS = [
   { key: "suggested", label: "Suggéré", icon: Circle, color: "text-muted-foreground" },
   { key: "shortlisted", label: "Shortlisté", icon: Award, color: "text-purple-500" },
   { key: "interview", label: "Entretien", icon: Users, color: "text-amber-500" },
-  { key: "validated", label: "Validé", icon: CheckCircle2, color: "text-green-500" },
+  { key: "accepted", label: "Accepté", icon: CheckCircle2, color: "text-green-500" },
 ];
 
 const getPipelineStep = (status: string) => {
@@ -409,7 +409,7 @@ const ClientDashboard = () => {
       return updated;
     });
 
-    toast({ title: "Profil shortlisté !", description: "L'équipe Connect2 va revenir vers vous rapidement." });
+    toast({ title: "Profil shortlisté !", description: "L'équipe Kistone va revenir vers vous rapidement." });
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -720,7 +720,7 @@ const ClientDashboard = () => {
             onOpenChange={setChatOpen}
             currentUserId={userId}
             otherUserId={adminUserId}
-            otherUserName="Connect2"
+            otherUserName="Kistone"
           />
         </>
       )}

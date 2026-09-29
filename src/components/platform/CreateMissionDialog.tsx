@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarIcon, MapPin, Euro, Clock, Briefcase } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { fetchCompanySettings } from "@/lib/companySettings";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CreateMissionDialogProps {
@@ -46,8 +47,14 @@ const CreateMissionDialog = ({
   const [durationText, setDurationText] = useState("");
   const [location, setLocation] = useState(missionLocation);
   const [tjmRecruiter, setTjmRecruiter] = useState(recruiterTjm || 0);
-  const margin = 100;
-  const tjmClient = tjmRecruiter + margin;
+  // Prix client = TJM freelance + marge par défaut (paramètres société), ajustable par l'admin
+  const [defaultMargin, setDefaultMargin] = useState(100);
+  const [tjmClientOverride, setTjmClientOverride] = useState<number | null>(null);
+  useEffect(() => {
+    fetchCompanySettings().then((s) => setDefaultMargin(s.defaultMarginEur));
+  }, []);
+  const tjmClient = tjmClientOverride ?? tjmRecruiter + defaultMargin;
+  const margin = tjmClient - tjmRecruiter;
 
   const handleSubmit = async () => {
     if (!startDate) {
@@ -87,10 +94,10 @@ const CreateMissionDialog = ({
         .update({ status: "staffed" })
         .eq("id", needId);
 
-      // 3. Update pipeline status to "validated"
+      // 3. La suggestion passe à « accepté »
       await supabase
         .from("profile_suggestions" as any)
-        .update({ pipeline_status: "validated", status_updated_at: new Date().toISOString() })
+        .update({ pipeline_status: "accepted", status_updated_at: new Date().toISOString() })
         .eq("id", suggestionId);
 
       toast({ title: "Mission créée !", description: `${recruiterName} est staffé(e) sur ${needTitle}.` });
@@ -144,8 +151,8 @@ const CreateMissionDialog = ({
                 <Input
                   type="number"
                   value={tjmClient}
-                  readOnly
-                  className="pl-9 bg-muted"
+                  onChange={(e) => setTjmClientOverride(e.target.value === "" ? null : Number(e.target.value))}
+                  className="pl-9"
                 />
               </div>
             </div>

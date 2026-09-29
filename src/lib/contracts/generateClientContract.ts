@@ -3,7 +3,7 @@ import {
   AlignmentType, BorderStyle, Table, TableRow, TableCell,
   WidthType, ShadingType, PageBreak,
 } from "docx";
-import type { ContractData } from "./types";
+import { providerClause, type ContractData } from "./types";
 
 const FONT = "Calibri";
 const SIZE = 22; // 11pt
@@ -55,7 +55,7 @@ export async function generateClientContract(data: ContractData): Promise<Blob> 
         }),
         p("Ci-après dénommée le « Client » d'autre part,"),
         p("Et"),
-        p("Connect2, société par actions simplifiée, inscrite auprès du RCS de Rennes sous le numéro SIREN 845 060 193 et située au 18/20 Boulevard de Beaumont, 35000 Rennes, représentée par Monsieur Dylan DAHYOT en qualité de Directeur Général."),
+        p(providerClause(data.provider)),
         p("Ci-après dénommée le « Prestataire » d'une part,"),
         p("Ci-après individuellement désignée la « Partie » et collectivement les « Parties »."),
 
@@ -78,7 +78,7 @@ export async function generateClientContract(data: ContractData): Promise<Blob> 
 
         heading("Article 3 – CONDITIONS FINANCIÈRES", HeadingLevel.HEADING_2),
         p(`Le Client s'engage à régler au Prestataire la somme de ${data.clientTjm}€ HT par jour presté. La facturation est mensuelle, sur la base des rapports de suivi dûment validés par le Client.`),
-        p("Le règlement s'effectue dans un délai de 30 jours à compter de la réception de la facture."),
+        p(`Le règlement s'effectue dans un délai de ${data.provider.clientPaymentTermsDays} jours à compter de la réception de la facture.`),
 
         heading("Article 4 – OBLIGATIONS DU PRESTATAIRE", HeadingLevel.HEADING_2),
         p("Le Prestataire s'engage à exécuter les Services avec diligence et professionnalisme. Il s'assure que le personnel affecté dispose des compétences nécessaires."),
@@ -113,8 +113,8 @@ export async function generateClientContract(data: ContractData): Promise<Blob> 
                   width: { size: 50, type: WidthType.PERCENTAGE },
                   borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } },
                   children: [
-                    p("Connect2 :", { bold: true }),
-                    field("Nom du signataire", "Dylan DAHYOT"),
+                    p(`${data.provider.legalName} :`, { bold: true }),
+                    field("Nom du signataire", data.provider.representativeName || ""),
                     field("Date", ""),
                     p("Signature :", { bold: true }),
                   ],
@@ -141,9 +141,9 @@ export async function generateClientContract(data: ContractData): Promise<Blob> 
         new Paragraph({ spacing: { after: 200 }, children: [] }),
 
         heading("Informations relatives au Prestataire :", HeadingLevel.HEADING_2),
-        field("Société du Prestataire", "Connect2 (SAS)"),
-        field("Numéro SIREN", "845 060 193"),
-        field("Adresse", "18/20 Boulevard de Beaumont, 35000 Rennes"),
+        field("Société du Prestataire", data.provider.legalName),
+        field("Numéro SIREN", data.provider.siren || "___"),
+        field("Adresse", data.provider.address || "___"),
         field("Individu intervenant", `${data.recruiterFirstName} ${data.recruiterLastName}`),
         field("Description des services", data.needDescription || data.needJobTitle),
 
@@ -170,8 +170,8 @@ export async function generateClientContract(data: ContractData): Promise<Blob> 
                   width: { size: 50, type: WidthType.PERCENTAGE },
                   borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } },
                   children: [
-                    p("Connect2 :", { bold: true }),
-                    field("Nom du signataire", "Dylan DAHYOT"),
+                    p(`${data.provider.legalName} :`, { bold: true }),
+                    field("Nom du signataire", data.provider.representativeName || ""),
                     field("Date", ""),
                     p("Signature :", { bold: true }),
                   ],

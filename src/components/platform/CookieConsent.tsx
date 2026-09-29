@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const COOKIE_KEY = "connect2_cookie_consent";
+const COOKIE_KEY = "kistone_cookie_consent";
 
 const CookieConsent = () => {
   const [visible, setVisible] = useState(false);

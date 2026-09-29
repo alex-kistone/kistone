@@ -21,21 +21,20 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
-import ChatPanel from "@/components/connect2/ChatPanel";
-import AdminNeedsPanel from "@/components/connect2/AdminNeedsPanel";
-import AdminProfilePanel from "@/components/connect2/AdminProfilePanel";
-import ProfileDetailModal, { type FullProfile } from "@/components/connect2/ProfileDetailModal";
-import DashboardSkeletons from "@/components/connect2/DashboardSkeletons";
-import KanbanView from "@/components/connect2/KanbanView";
-import AdminClientsPanel from "@/components/connect2/AdminClientsPanel";
-import AdminTimesheetsPanel from "@/components/connect2/AdminTimesheetsPanel";
-import { WhatsAppDialog } from "@/components/connect2/WhatsAppDialog";
-import AdminMissionsPanel from "@/components/connect2/AdminMissionsPanel";
-import DashboardFilters from "@/components/connect2/DashboardFilters";
-import AdminKPIPanel from "@/components/connect2/AdminKPIPanel";
-import AdminMessagesPanel from "@/components/connect2/AdminMessagesPanel";
-import AdminSupportPanel from "@/components/connect2/AdminSupportPanel";
-import AdminGlobalPipelinePanel from "@/components/connect2/AdminGlobalPipelinePanel";
+import ChatPanel from "@/components/platform/ChatPanel";
+import AdminNeedsPanel from "@/components/platform/AdminNeedsPanel";
+import AdminProfilePanel from "@/components/platform/AdminProfilePanel";
+import ProfileDetailModal, { type FullProfile } from "@/components/platform/ProfileDetailModal";
+import DashboardSkeletons from "@/components/platform/DashboardSkeletons";
+import KanbanView from "@/components/platform/KanbanView";
+import AdminClientsPanel from "@/components/platform/AdminClientsPanel";
+import AdminTimesheetsPanel from "@/components/platform/AdminTimesheetsPanel";
+import AdminMissionsPanel from "@/components/platform/AdminMissionsPanel";
+import DashboardFilters from "@/components/platform/DashboardFilters";
+import AdminKPIPanel from "@/components/platform/AdminKPIPanel";
+import AdminMessagesPanel from "@/components/platform/AdminMessagesPanel";
+import AdminSupportPanel from "@/components/platform/AdminSupportPanel";
+import AdminGlobalPipelinePanel from "@/components/platform/AdminGlobalPipelinePanel";
 
 type Profile = FullProfile;
 
@@ -59,8 +58,6 @@ const Dashboard = () => {
   const [viewMode, setViewMode] = useState<"grid" | "kanban">("grid");
   const [clientChatOpen, setClientChatOpen] = useState(false);
   const [clientChatTarget, setClientChatTarget] = useState<{ userId: string; name: string } | null>(null);
-  const [whatsappOpen, setWhatsappOpen] = useState(false);
-  const [whatsappTarget, setWhatsappTarget] = useState<Profile | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -319,7 +316,6 @@ const Dashboard = () => {
                 onClickProfile={(p) => setDetailProfile(p)}
                 onOpenChat={(p) => { setChatTarget(p); setChatOpen(true); }}
                 onOpenAdmin={(p) => { setAdminPanelProfile(p); setAdminPanelOpen(true); }}
-                onOpenWhatsApp={(p) => { setWhatsappTarget(p); setWhatsappOpen(true); }}
               />
             ) : (
               <>
@@ -409,11 +405,6 @@ const Dashboard = () => {
                               <MessageCircle className="h-4 w-4" />
                             </button>
                           )}
-                          {profile.phone && (
-                            <button onClick={(e) => { e.stopPropagation(); setWhatsappTarget(profile); setWhatsappOpen(true); }} className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-green-500/10 hover:text-green-600" title="Envoyer un WhatsApp">
-                              <MessageSquare className="h-4 w-4" />
-                            </button>
-                          )}
                           {profile.phone && <span className="text-xs text-muted-foreground">{profile.phone}</span>}
                           {profile.linkedin_url && (
                             <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80" onClick={(e) => e.stopPropagation()}>
@@ -477,15 +468,6 @@ const Dashboard = () => {
 
       {adminPanelProfile && (
         <AdminProfilePanel profileId={adminPanelProfile.id} profileName={`${adminPanelProfile.first_name} ${adminPanelProfile.last_name}`} open={adminPanelOpen} onClose={() => setAdminPanelOpen(false)} onSaved={() => loadProfiles()} />
-      )}
-
-      {whatsappTarget && (
-        <WhatsAppDialog
-          open={whatsappOpen}
-          onOpenChange={(o) => { setWhatsappOpen(o); if (!o) setWhatsappTarget(null); }}
-          recipientName={`${whatsappTarget.first_name} ${whatsappTarget.last_name}`}
-          recipientPhone={whatsappTarget.phone}
-        />
       )}
 
       {detailProfile && (

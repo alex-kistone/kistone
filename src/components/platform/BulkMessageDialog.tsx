@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Send, Users, Filter, CheckSquare, Square, Loader2, MessageCircle, MessageSquare } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Send, Users, CheckSquare, Square, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +34,6 @@ interface FreelanceProfile {
   available: boolean | null;
   model: string | null;
   sectors: string[] | null;
-  phone: string | null;
 }
 
 interface BulkMessageDialogProps {
@@ -54,7 +52,6 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
   const [filterAvailability, setFilterAvailability] = useState<string>("all");
   const [filterModel, setFilterModel] = useState<string>("all");
   const [loading, setLoading] = useState(false);
-  const [channel, setChannel] = useState<"chat" | "whatsapp">("chat");
 
   useEffect(() => {
     if (!open) return;
@@ -62,7 +59,7 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
       setLoading(true);
       const { data } = await supabase
         .from("recruiter_profiles")
-        .select("id, user_id, first_name, last_name, email, photo_url, available, model, sectors, phone")
+        .select("id, user_id, first_name, last_name, email, photo_url, available, model, sectors")
         .order("first_name");
       setProfiles((data as FreelanceProfile[]) || []);
       setLoading(false);
@@ -78,13 +75,11 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
       setSearch("");
       setFilterAvailability("all");
       setFilterModel("all");
-      setChannel("chat");
     }
   }, [open]);
 
   const filtered = profiles.filter((p) => {
     if (!p.user_id) return false;
-    if (channel === "whatsapp" && !p.phone) return false;
     const matchSearch =
       `${p.first_name} ${p.last_name} ${p.email}`.toLowerCase().includes(search.toLowerCase());
     const matchAvail =
@@ -95,8 +90,6 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
       filterModel === "all" || p.model === filterModel;
     return matchSearch && matchAvail && matchModel;
   });
-
-  const withoutPhoneCount = profiles.filter((p) => p.user_id && !p.phone).length;
 
   const models = [...new Set(profiles.map((p) => p.model).filter(Boolean))] as string[];
 
@@ -124,50 +117,27 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
     let sent = 0;
     let errors = 0;
 
-    if (channel === "chat") {
-      for (const userId of selected) {
-        const conversationId = [adminId, userId].sort().join("_");
-        const { error } = await supabase.from("messages" as any).insert({
-          conversation_id: conversationId,
-          sender_id: adminId,
-          receiver_id: userId,
-          content: message.trim(),
-        });
-        if (error) {
-          errors++;
-          console.error("Bulk message error:", error);
-        } else {
-          sent++;
-        }
-      }
-    } else {
-      // WhatsApp: invoke send-whatsapp edge function per recipient
-      const selectedProfiles = profiles.filter((p) => p.user_id && selected.has(p.user_id));
-      for (const p of selectedProfiles) {
-        if (!p.phone) {
-          errors++;
-          continue;
-        }
-        try {
-          const { data, error } = await supabase.functions.invoke("send-whatsapp", {
-            body: { to: p.phone, message: message.trim() },
-          });
-          if (error) throw error;
-          if ((data as any)?.error) throw new Error((data as any).error);
-          sent++;
-        } catch (err) {
-          errors++;
-          console.error("Bulk WhatsApp error for", p.email, err);
-        }
+    for (const userId of selected) {
+      const conversationId = [adminId, userId].sort().join("_");
+      const { error } = await supabase.from("messages" as any).insert({
+        conversation_id: conversationId,
+        sender_id: adminId,
+        receiver_id: userId,
+        content: message.trim(),
+      });
+      if (error) {
+        errors++;
+        console.error("Bulk message error:", error);
+      } else {
+        sent++;
       }
     }
 
     setSending(false);
 
-    const channelLabel = channel === "whatsapp" ? "WhatsApp" : "Messages";
     if (errors === 0) {
       toast({
-        title: `${channelLabel} envoyé${sent > 1 ? "s" : ""} ✅`,
+        title: `Message${sent > 1 ? "s" : ""} envoyé${sent > 1 ? "s" : ""} ✅`,
         description: `${sent} freelance${sent > 1 ? "s" : ""} contacté${sent > 1 ? "s" : ""}.`,
       });
     } else {
@@ -192,45 +162,19 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
             Message groupé
           </DialogTitle>
           <DialogDescription>
-            {channel === "chat"
-              ? "Envoyez un message à plusieurs freelances dans leur conversation privée."
-              : "Envoyez un WhatsApp à plusieurs freelances. Seuls ceux ayant un numéro renseigné apparaissent."}
+            Envoyez un message à plusieurs freelances dans leur conversation privée.
           </DialogDescription>
         </DialogHeader>
-
-        {/* Channel switcher */}
-        <Tabs value={channel} onValueChange={(v) => { setChannel(v as "chat" | "whatsapp"); setSelected(new Set()); }}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="chat" className="gap-2">
-              <MessageCircle className="h-4 w-4" /> Chat in-app
-            </TabsTrigger>
-            <TabsTrigger value="whatsapp" className="gap-2">
-              <MessageSquare className="h-4 w-4" /> WhatsApp
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {channel === "whatsapp" && withoutPhoneCount > 0 && (
-          <p className="text-xs text-muted-foreground -mt-1">
-            {withoutPhoneCount} freelance{withoutPhoneCount > 1 ? "s" : ""} sans numéro masqué{withoutPhoneCount > 1 ? "s" : ""}.
-          </p>
-        )}
 
         {/* Message */}
         <div>
           <Textarea
-            placeholder={channel === "whatsapp"
-              ? "Votre message WhatsApp… (max 1500 caractères)"
-              : "Votre message… ex: Pensez à mettre à jour votre disponibilité 📅"}
+            placeholder="Votre message… ex: Pensez à mettre à jour votre disponibilité 📅"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={3}
-            maxLength={channel === "whatsapp" ? 1500 : undefined}
             className="resize-none"
           />
-          {channel === "whatsapp" && (
-            <p className="text-xs text-muted-foreground mt-1 text-right">{message.length} / 1500</p>
-          )}
         </div>
 
         {/* Filters */}
@@ -343,8 +287,8 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
             </>
           ) : (
             <>
-              {channel === "whatsapp" ? <MessageSquare className="h-4 w-4" /> : <Send className="h-4 w-4" />}
-              {channel === "whatsapp" ? "Envoyer WhatsApp" : "Envoyer"} à {selected.size} freelance{selected.size > 1 ? "s" : ""}
+              <Send className="h-4 w-4" />
+              Envoyer à {selected.size} freelance{selected.size > 1 ? "s" : ""}
             </>
           )}
         </Button>

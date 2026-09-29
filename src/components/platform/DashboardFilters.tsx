@@ -18,7 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { type FullProfile } from "@/components/connect2/ProfileDetailModal";
+import { type FullProfile } from "@/components/platform/ProfileDetailModal";
 import { METIERS } from "@/lib/taxonomy";
 
 const SKILLS_OPTIONS = METIERS;

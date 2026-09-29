@@ -91,7 +91,7 @@ const PIPELINE_STEPS = [
   { key: "suggested", label: "Suggéré", icon: Circle, color: "text-muted-foreground", bg: "bg-muted/50" },
   { key: "shortlisted", label: "Shortlisté", icon: Award, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-950/30" },
   { key: "interview", label: "Entretien", icon: Users, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/30" },
-  { key: "validated", label: "Validé", icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50 dark:bg-green-950/30" },
+  { key: "accepted", label: "Accepté", icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50 dark:bg-green-950/30" },
 ];
 
 interface AdminNeedsPanelProps {
@@ -426,7 +426,7 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
   const handleDrop = (e: React.DragEvent, stepKey: string) => {
     e.preventDefault();
     if (dragItem) {
-      if (stepKey === "validated") {
+      if (stepKey === "accepted") {
         // Open mission creation dialog instead of directly updating
         const suggestion = suggestions.find((s) => s.id === dragItem);
         if (suggestion) {
@@ -888,9 +888,9 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
           companyName={missionDialogData.companyName}
           missionLocation={missionDialogData.missionLocation}
           onMissionCreated={() => {
-            // Update local state: suggestion to validated, need to staffed
+            // État local : suggestion acceptée, besoin pourvu
             setSuggestions((prev) =>
-              prev.map((s) => s.id === missionDialogData.suggestionId ? { ...s, pipeline_status: "validated" } : s)
+              prev.map((s) => s.id === missionDialogData.suggestionId ? { ...s, pipeline_status: "accepted" } : s)
             );
             setNeeds((prev) =>
               prev.map((n) => n.id === missionDialogData.needId ? { ...n, status: "staffed" } : n)

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Briefcase, MapPin, Calendar, Clock, Check, X, ArrowLeft, Pencil, User, Euro, MessageSquare } from "lucide-react";
+import { Briefcase, MapPin, Calendar, Clock, Check, X, ArrowLeft, User, Euro, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -20,13 +19,9 @@ interface ClientMission {
   status: string;
   need_id: string;
   recruiter_profile_id: string;
-  // Consultant info (non-anonymized)
+  // Consultant : prénom et intitulé seulement (fournis par la vue client_missions)
   consultant_first_name: string;
-  consultant_last_name: string;
-  consultant_email: string;
-  consultant_phone: string | null;
   consultant_job_title: string | null;
-  consultant_photo_url: string | null;
 }
 
 interface TimesheetForReview {
@@ -85,9 +80,6 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
   const [processing, setProcessing] = useState(false);
 
   // Edit title
-  const [editingTitle, setEditingTitle] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [savingTitle, setSavingTitle] = useState(false);
 
   useEffect(() => {
     loadMissions();
@@ -104,34 +96,18 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
 
     const { data: missionsData } = await supabase
       .from("client_missions")
-      .select("id, title, company_name, location, client_tjm, start_date, end_date, duration_text, status, recruiter_profile_id, need_id")
+      .select("id, title, company_name, location, client_tjm, start_date, end_date, duration_text, status, recruiter_profile_id, need_id, consultant_first_name, consultant_job_title")
       .in("need_id", needIds)
       .order("created_at", { ascending: false });
 
     if (!missionsData || missionsData.length === 0) { setLoading(false); return; }
 
-    // Get full consultant profiles (non-anonymized)
-    const profileIds = [...new Set(missionsData.map((m) => m.recruiter_profile_id))];
-    const { data: profiles } = await supabase
-      .from("recruiter_profiles")
-      .select("id, first_name, last_name, email, phone, job_title, photo_url")
-      .in("id", profileIds);
-
-    const profileMap: Record<string, any> = {};
-    (profiles || []).forEach((p) => { profileMap[p.id] = p; });
-
-    const list: ClientMission[] = missionsData.map((m) => {
-      const p = profileMap[m.recruiter_profile_id] || {};
-      return {
-        ...m,
-        consultant_first_name: p.first_name || "Freelance",
-        consultant_last_name: p.last_name || "",
-        consultant_email: p.email || "",
-        consultant_phone: p.phone || null,
-        consultant_job_title: p.job_title || null,
-        consultant_photo_url: p.photo_url || null,
-      };
-    });
+    // Le client ne lit pas recruiter_profiles : prénom et intitulé viennent de la vue
+    const list: ClientMission[] = (missionsData as any[]).map((m) => ({
+      ...m,
+      consultant_first_name: m.consultant_first_name || "Freelance",
+      consultant_job_title: m.consultant_job_title || null,
+    }));
 
     setMissions(list);
 
@@ -174,7 +150,6 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
   const handleOpenMission = (m: ClientMission) => {
     setSelectedMission(m);
     setView("detail");
-    setEditingTitle(false);
   };
 
   const handleOpenCra = async (ts: TimesheetForReview) => {
@@ -199,26 +174,6 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
   const handleBack = () => {
     if (view === "cra") { setView("detail"); setSelectedTs(null); }
     else { setView("list"); setSelectedMission(null); }
-  };
-
-  const handleSaveTitle = async () => {
-    if (!selectedMission || !editTitle.trim()) return;
-    setSavingTitle(true);
-    const { error } = await supabase
-      .from("missions")
-      .update({ title: editTitle.trim() } as any)
-      .eq("id", selectedMission.id);
-
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      const updated = { ...selectedMission, title: editTitle.trim() };
-      setSelectedMission(updated);
-      setMissions((prev) => prev.map((m) => m.id === updated.id ? updated : m));
-      setEditingTitle(false);
-      toast({ title: "Nom mis à jour" });
-    }
-    setSavingTitle(false);
   };
 
   const handleApprove = async () => {
@@ -330,7 +285,7 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold">
-              {selectedMission.consultant_first_name} {selectedMission.consultant_last_name}
+              {selectedMission.consultant_first_name}
             </h3>
             <p className="text-sm text-muted-foreground">
               {MONTH_NAMES[selectedTs.month - 1]} {selectedTs.year}
@@ -420,38 +375,12 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
         <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              {editingTitle ? (
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    className="text-lg font-semibold"
-                    autoFocus
-                    onKeyDown={(e) => { if (e.key === "Enter") handleSaveTitle(); if (e.key === "Escape") setEditingTitle(false); }}
-                  />
-                  <Button size="sm" onClick={handleSaveTitle} disabled={savingTitle || !editTitle.trim()}>
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setEditingTitle(false)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold">{selectedMission.title}</h2>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                    onClick={() => { setEditTitle(selectedMission.title); setEditingTitle(true); }}
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Badge className={MISSION_STATUS_LABELS[selectedMission.status]?.color || ""}>
-                    {MISSION_STATUS_LABELS[selectedMission.status]?.label || selectedMission.status}
-                  </Badge>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold">{selectedMission.title}</h2>
+                <Badge className={MISSION_STATUS_LABELS[selectedMission.status]?.color || ""}>
+                  {MISSION_STATUS_LABELS[selectedMission.status]?.label || selectedMission.status}
+                </Badge>
+              </div>
 
               <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
                 {selectedMission.location && (
@@ -476,28 +405,17 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
           <div>
             <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Consultant</h3>
             <div className="flex items-center gap-4">
-              {selectedMission.consultant_photo_url ? (
-                <img
-                  src={selectedMission.consultant_photo_url}
-                  alt={selectedMission.consultant_first_name}
-                  className="h-14 w-14 rounded-full border border-border object-cover"
-                />
-              ) : (
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <User className="h-6 w-6" />
-                </div>
-              )}
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <User className="h-6 w-6" />
+              </div>
               <div>
                 <p className="font-semibold text-base">
-                  {selectedMission.consultant_first_name} {selectedMission.consultant_last_name}
+                  {selectedMission.consultant_first_name}
                 </p>
                 {selectedMission.consultant_job_title && (
                   <p className="text-sm text-muted-foreground">{selectedMission.consultant_job_title}</p>
                 )}
-                <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                  {selectedMission.consultant_email && <span>{selectedMission.consultant_email}</span>}
-                  {selectedMission.consultant_phone && <span>· {selectedMission.consultant_phone}</span>}
-                </div>
+
               </div>
             </div>
           </div>
@@ -582,7 +500,7 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {m.consultant_first_name} {m.consultant_last_name}
+                  {m.consultant_first_name}
                   {m.consultant_job_title && <span className="ml-1 text-xs">· {m.consultant_job_title}</span>}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-3 text-sm text-muted-foreground">

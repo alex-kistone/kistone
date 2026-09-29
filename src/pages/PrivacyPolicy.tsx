@@ -24,8 +24,8 @@ const PrivacyPolicy = () => {
         <div className="prose prose-sm max-w-none space-y-8 text-foreground/90">
           <section>
             <h2 className="text-xl font-semibold text-foreground">1. Responsable du traitement</h2>
-            <p>Connect2 SAS est responsable du traitement des données personnelles collectées via la plateforme Connect2 (ci-après « la Plateforme »).</p>
-            <p>Pour toute question relative à la protection de vos données, vous pouvez nous contacter à l'adresse : <a href="mailto:contact@connect2.fr" className="text-primary hover:underline">contact@connect2.fr</a></p>
+            <p>Kistone SAS, [Adresse du siège], immatriculée sous le numéro [SIREN], est responsable du traitement des données personnelles collectées via la plateforme Kistone (ci-après « la Plateforme »).</p>
+            <p>Pour toute question relative à la protection de vos données, vous pouvez nous contacter à l'adresse : [Email de contact RGPD]</p>
           </section>
 
           <section>
@@ -96,7 +96,7 @@ const PrivacyPolicy = () => {
               <li><strong>Droit d'opposition</strong> : vous opposer au traitement de vos données</li>
               <li><strong>Droit de limitation</strong> : demander la limitation du traitement</li>
             </ul>
-            <p>Pour exercer ces droits, contactez-nous à <a href="mailto:contact@connect2.fr" className="text-primary hover:underline">contact@connect2.fr</a>.</p>
+            <p>Pour exercer ces droits, contactez-nous à [Email de contact RGPD].</p>
             <p>Vous pouvez également introduire une réclamation auprès de la <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">CNIL</a>.</p>
           </section>
 

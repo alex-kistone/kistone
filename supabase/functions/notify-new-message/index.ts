@@ -6,6 +6,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Kistone <notifications@kistone.fr>";
+const APP_URL = (Deno.env.get("APP_URL") ?? "https://kistone.fr").replace(/\/$/, "");
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -37,6 +40,8 @@ Deno.serve(async (req) => {
     // Look up receiver email from recruiter_profiles OR client_profiles
     let receiverEmail: string | null = null;
     let recipientName = "Utilisateur";
+    // Espace où le destinataire retrouve sa messagerie
+    let replyPath = "/profile";
 
     const { data: recruiterReceiver } = await supabase
       .from("recruiter_profiles")
@@ -57,18 +62,20 @@ Deno.serve(async (req) => {
       if (clientReceiver?.email) {
         receiverEmail = clientReceiver.email;
         recipientName = clientReceiver.first_name || "Client";
+        replyPath = "/client";
       } else {
         // Check if receiver is an admin via auth.users
         const { data: { user: adminUser } } = await supabase.auth.admin.getUserById(receiver_id);
         if (adminUser?.email) {
           receiverEmail = adminUser.email;
           recipientName = "Admin";
+          replyPath = "/dashboard";
         }
       }
     }
 
     // Look up sender name from recruiter_profiles OR client_profiles
-    let senderName = "Connect2";
+    let senderName = "Kistone";
 
     const { data: recruiterSender } = await supabase
       .from("recruiter_profiles")
@@ -106,7 +113,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Connect2 <no-reply@connect2.ai>",
+        from: EMAIL_FROM,
         to: [receiverEmail],
         subject: `Nouveau message de ${senderName}`,
         html: `
@@ -116,7 +123,7 @@ Deno.serve(async (req) => {
             <div style="background: #f4f4f5; border-radius: 8px; padding: 16px; margin: 16px 0;">
               <p style="margin: 0; color: #333;">${content}</p>
             </div>
-            <a href="https://connect2.ai/profile" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 8px;">Répondre sur Connect2</a>
+            <a href="${APP_URL}${replyPath}" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 8px;">Répondre sur Kistone</a>
           </div>
         `,
       }),

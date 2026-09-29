@@ -8,8 +8,8 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import DeleteAccountButton from "@/components/connect2/DeleteAccountButton";
-import ExportDataButton from "@/components/connect2/ExportDataButton";
+import DeleteAccountButton from "@/components/platform/DeleteAccountButton";
+import ExportDataButton from "@/components/platform/ExportDataButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -28,13 +28,13 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
-import TagInput from "@/components/connect2/TagInput";
-import ChatPanel from "@/components/connect2/ChatPanel";
+import TagInput from "@/components/platform/TagInput";
+import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import { Badge } from "@/components/ui/badge";
-import FreelanceMissionsSection from "@/components/connect2/FreelanceMissionsSection";
-import FreelanceAdminTab from "@/components/connect2/FreelanceAdminTab";
-import ProfileCompletionChecklist from "@/components/connect2/ProfileCompletionChecklist";
+import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
+import FreelanceAdminTab from "@/components/platform/FreelanceAdminTab";
+import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
 import { METIERS } from "@/lib/taxonomy";
 
 const Profile = () => {
@@ -267,7 +267,7 @@ const Profile = () => {
             <p className="mt-1 text-muted-foreground">
               {existingId
                 ? "Modifiez vos informations à tout moment."
-                : "Renseignez vos informations pour intégrer le réseau Connect2."}
+                : "Renseignez vos informations pour intégrer le réseau Kistone."}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -731,7 +731,7 @@ const Profile = () => {
                             }
                           }
                         }}
-                        placeholder="Ex : LinkedIn Recruiter, Teamtailor, Jarvi, Kalent..."
+                        placeholder="Ex : LinkedIn Recruiter, Teamtailor, Kalent..."
                       />
                     </div>
                     {(mission.tools || []).length > 0 && (
@@ -855,7 +855,7 @@ const Profile = () => {
             onOpenChange={setChatOpen}
             currentUserId={userId}
             otherUserId={adminUserId}
-            otherUserName="Connect2"
+            otherUserName="Kistone"
           />
         </>
       )}

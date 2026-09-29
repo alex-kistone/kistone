@@ -6,6 +6,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Kistone <notifications@kistone.fr>";
+const APP_URL = (Deno.env.get("APP_URL") ?? "https://kistone.fr").replace(/\/$/, "");
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -69,7 +72,7 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Connect2 <no-reply@connect2.ai>",
+          from: EMAIL_FROM,
           to: [client.email],
           subject: `Nouveau profil suggéré pour votre besoin`,
           html: `
@@ -77,7 +80,7 @@ Deno.serve(async (req) => {
               <h2 style="color: #1a1a1a;">Bonjour ${client.name} 👋</h2>
               <p style="color: #444;">Un nouveau profil (<strong>${profile_first_name}</strong>) vient d'être suggéré pour :</p>
               <ul style="color: #333; margin: 12px 0;">${jobList}</ul>
-              <a href="https://connect2.ai/client" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 8px;">Voir les suggestions</a>
+              <a href="${APP_URL}/client" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 8px;">Voir les suggestions</a>
             </div>
           `,
         }),

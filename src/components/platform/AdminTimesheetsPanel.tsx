@@ -22,7 +22,10 @@ interface AdminTimesheet {
   recruiter_name: string;
   client_name: string;
   job_title: string;
+  /** TJM client de la mission (montant facturé) */
   tjm: number | null;
+  /** Marge par jour de la mission (TJM client − TJM freelance) */
+  margin_per_day: number;
   freelancer_comment: string | null;
   client_comment: string | null;
   rejection_reason: string | null;
@@ -73,11 +76,19 @@ const AdminTimesheetsPanel = () => {
     const profileIds = [...new Set((ts as any[]).map((t: any) => t.recruiter_profile_id))];
     const { data: profiles } = await supabase
       .from("recruiter_profiles")
-      .select("id, first_name, last_name, tjm")
+      .select("id, first_name, last_name")
       .in("id", profileIds);
 
-    const profileMap: Record<string, { name: string; tjm: number | null }> = {};
-    (profiles || []).forEach((p) => { profileMap[p.id] = { name: `${p.first_name} ${p.last_name}`, tjm: p.tjm }; });
+    const profileMap: Record<string, { name: string }> = {};
+    (profiles || []).forEach((p) => { profileMap[p.id] = { name: `${p.first_name} ${p.last_name}` }; });
+
+    const missionIds = [...new Set((ts as any[]).map((t: any) => t.mission_id).filter(Boolean))];
+    const { data: missionRows } = await supabase
+      .from("missions")
+      .select("id, client_tjm, recruiter_tjm")
+      .in("id", missionIds);
+    const missionMap: Record<string, { client_tjm: number; recruiter_tjm: number }> = {};
+    (missionRows || []).forEach((m: any) => { missionMap[m.id] = m; });
 
     const needIds = [...new Set((ts as any[]).map((t: any) => t.need_id))];
     const { data: needs } = await supabase
@@ -91,7 +102,8 @@ const AdminTimesheetsPanel = () => {
     const list: AdminTimesheet[] = (ts as any[]).map((t: any) => ({
       ...t,
       recruiter_name: profileMap[t.recruiter_profile_id]?.name || "Inconnu",
-      tjm: profileMap[t.recruiter_profile_id]?.tjm || null,
+      tjm: missionMap[t.mission_id]?.client_tjm ?? null,
+      margin_per_day: missionMap[t.mission_id] ? missionMap[t.mission_id].client_tjm - missionMap[t.mission_id].recruiter_tjm : 0,
       client_name: needMap[t.need_id]?.company_name || "Inconnu",
       job_title: needMap[t.need_id]?.job_title || "Mission",
     }));
@@ -171,9 +183,8 @@ const AdminTimesheetsPanel = () => {
     const caTotal = monthTimesheets.reduce((sum, t) => sum + (t.tjm ? t.total_days * t.tjm : 0), 0);
     const submissionRate = total > 0 ? Math.round((submitted / total) * 100) : 0;
     const totalRecruitments = monthTimesheets.reduce((sum, t) => sum + (t.recruitments_count || 0), 0);
-    const margin = 100;
-    const marginTotal = monthTimesheets.reduce((sum, t) => sum + t.total_days * margin, 0);
-    const marginInvoiced = invoiced.reduce((sum, t) => sum + t.total_days * margin, 0);
+    const marginTotal = monthTimesheets.reduce((sum, t) => sum + t.total_days * t.margin_per_day, 0);
+    const marginInvoiced = invoiced.reduce((sum, t) => sum + t.total_days * t.margin_per_day, 0);
 
     return { total, submitted, pending, caInvoiced, caTotal, submissionRate, totalRecruitments, marginTotal, marginInvoiced };
   }, [monthTimesheets]);

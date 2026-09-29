@@ -141,7 +141,7 @@ const CompanySearch = ({ onSelect }: CompanySearchProps) => {
             onChange={(e) => handleChange(e.target.value)}
             onFocus={() => results.length > 0 && setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 200)}
-            placeholder="Ex : Connect2, 123 456 789..."
+            placeholder="Ex : Kistone, 123 456 789..."
             className="pl-9"
           />
           {loading && (

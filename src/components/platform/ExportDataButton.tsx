@@ -36,8 +36,9 @@ const ExportDataButton = ({ userId, profileType }: ExportDataButtonProps) => {
             .eq("recruiter_profile_id", profileId);
           data.comptes_rendus = timesheets;
 
+          // Vue freelance : le freelance ne voit jamais le TJM client
           const { data: missions } = await supabase
-            .from("missions")
+            .from("freelance_missions")
             .select("*")
             .eq("recruiter_profile_id", profileId);
           data.missions = missions;
@@ -68,7 +69,7 @@ const ExportDataButton = ({ userId, profileType }: ExportDataButtonProps) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `connect2-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `kistone-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
 

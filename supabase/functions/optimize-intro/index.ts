@@ -1,4 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import {
+  ANTHROPIC_MODEL,
+  ANTHROPIC_URL,
+  anthropicHeaders,
+  missingKeyResponse,
+  upstreamErrorResponse,
+} from "../_shared/anthropic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,8 +19,8 @@ serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey) return missingKeyResponse(corsHeaders);
 
     const { profile } = await req.json();
 
@@ -46,44 +53,30 @@ La présentation doit :
 
 Réponds UNIQUEMENT avec le texte de la présentation, sans guillemets ni préfixe.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch(ANTHROPIC_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
+      headers: anthropicHeaders(apiKey),
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: ANTHROPIC_MODEL,
+        max_tokens: 1024,
+        system: systemPrompt,
         messages: [
-          { role: "system", content: systemPrompt },
           { role: "user", content: `Voici les informations du profil :\n\n${profileContext}\n\nRédige une présentation optimisée.` },
         ],
       }),
     });
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques instants." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      return new Response(JSON.stringify({ error: "Erreur du service IA" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      console.error("Anthropic error:", response.status, await response.text());
+      return upstreamErrorResponse(response.status, corsHeaders);
     }
 
     const data = await response.json();
-    const intro = data.choices?.[0]?.message?.content?.trim() || "";
+    const intro = (data.content ?? [])
+      .filter((c: { type: string }) => c.type === "text")
+      .map((c: { text: string }) => c.text)
+      .join("")
+      .trim();
 
     return new Response(JSON.stringify({ intro }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -91,7 +84,7 @@ Réponds UNIQUEMENT avec le texte de la présentation, sans guillemets ni préfi
   } catch (e) {
     console.error("optimize-intro error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: e instanceof Error ? e.message : "Erreur inconnue" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

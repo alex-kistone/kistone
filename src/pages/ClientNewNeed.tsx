@@ -17,7 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
-import TagInput from "@/components/connect2/TagInput";
+import TagInput from "@/components/platform/TagInput";
 import { METIERS } from "@/lib/taxonomy";
 
 const PROFILE_TYPES = METIERS;
