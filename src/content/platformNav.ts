@@ -13,6 +13,7 @@ import {
   Sparkles,
   UserRound,
   Users,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -57,6 +58,7 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
     { label: "Missions", path: "/dashboard", tab: "missions", icon: Briefcase },
     { label: "CRA", path: "/dashboard", tab: "timesheets", icon: CalendarCheck },
     { label: "Factures", path: "/dashboard", tab: "invoices", icon: Receipt },
+    { label: "Trésorerie", path: "/dashboard", tab: "treasury", icon: Wallet },
     { label: "Messages", path: "/dashboard", tab: "messages", icon: MessageSquare },
     { label: "Assistant", path: "/dashboard", tab: "assistant", icon: Sparkles },
   ],

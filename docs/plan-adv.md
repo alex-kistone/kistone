@@ -88,10 +88,13 @@ Reste : contrats en PDF pour Yousign (nouveaux modèles d'Alex), test réel de Y
 - Export comptable CSV (clients et freelances) ; Pennylane prêt mais **non testé** (clé à poser,
   `pennylane_enabled` à activer).
 
-### Phase 4 — Pilotage
-- Centre de notifications (table + cloche), emails transactionnels (Resend, domaine kistone.fr).
-- Trésorerie (encaissements, décaissements, frais fixes, TVA, projection) et stats (volume,
-  marge, consultants en mission, prévisionnel).
+### Phase 4 — Pilotage (fait le 2026-09-29, migration `20261003090000`)
+- Notifications (`notifications`) créées par déclencheurs sur tous les événements, cloche en
+  temps réel dans les trois espaces, emails groupés par `notify-dispatch` (pg_cron, 5 min).
+- Onglet admin « Trésorerie » : tableau de bord (CA, marge, missions, prévisionnel du mois,
+  12 mois), flux réalisés et prévus avec projection à 3 mois et seuil, à encaisser / à
+  décaisser, TVA du mois, frais fixes (`fixed_costs`). Code couleur repris d'ADV-Freelance.
+- Emails : tout est prêt, rien ne part tant que `RESEND_API_KEY` n'est pas posée.
 
 ### Phase 5 — Qualité
 - Script de test de bout en bout (inscription → matching → mission → CRA → factures), comme
