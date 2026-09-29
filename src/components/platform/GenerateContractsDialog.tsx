@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -41,6 +45,8 @@ const GenerateContractsDialog = ({ open, onClose, onSaved, mission }: Props) => 
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [existing, setExisting] = useState<MissionContract[]>([]);
+  // Régénération d'un contrat déjà envoyé ou signé : en attente de confirmation.
+  const [confirmReplace, setConfirmReplace] = useState<{ parties: KycParty[]; engaged: MissionContract[] } | null>(null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [contractData, setContractData] = useState<ContractData | null>(null);
 
@@ -217,6 +223,7 @@ const GenerateContractsDialog = ({ open, onClose, onSaved, mission }: Props) => 
         });
       }
       onSaved?.();
+      if (!failures.length) onClose();
     } catch (err) {
       toast({ title: "Erreur", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
     } finally {
@@ -224,11 +231,29 @@ const GenerateContractsDialog = ({ open, onClose, onSaved, mission }: Props) => 
     }
   };
 
-  const handleDownloadClient = () => run(["client"]);
-  const handleDownloadContractor = () => run(["freelance"]);
-  const handleDownloadBoth = () => run(["client", "freelance"]);
+  const isEngaged = (c: MissionContract) => c.status === "sent" || c.status === "signed";
 
-  const alreadyEngaged = existing.filter((c) => c.status === "sent" || c.status === "signed");
+  /** Relit l'état en base juste avant d'écraser : une signature ne s'efface jamais sans confirmation. */
+  const request = async (parties: KycParty[]) => {
+    setBusy(true);
+    const { data, error } = await supabase.from("contracts" as never).select("*").eq("mission_id", mission.id);
+    setBusy(false);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    const rows = (data ?? []) as unknown as MissionContract[];
+    setExisting(rows);
+    const engaged = rows.filter((c) => parties.includes(c.party) && isEngaged(c));
+    if (engaged.length) setConfirmReplace({ parties, engaged });
+    else await run(parties);
+  };
+
+  const handleDownloadClient = () => request(["client"]);
+  const handleDownloadContractor = () => request(["freelance"]);
+  const handleDownloadBoth = () => request(["client", "freelance"]);
+
+  const alreadyEngaged = existing.filter(isEngaged);
 
   const missingFields = dataLoaded ? Object.entries(overrides).filter(([, v]) => !v) : [];
 
@@ -369,6 +394,31 @@ const GenerateContractsDialog = ({ open, onClose, onSaved, mission }: Props) => 
           </div>
         )}
       </DialogContent>
+
+      <AlertDialog open={!!confirmReplace} onOpenChange={(v) => !v && setConfirmReplace(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remplacer un contrat déjà engagé ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmReplace?.engaged.map((c) => `${PARTY_LABEL[c.party]} : ${CONTRACT_STATUS[c.status].label.toLowerCase()}`).join(" · ")}.
+              {" "}Le nouveau document repasse « À signer » : la signature ou la demande en cours sera annulée.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Garder l'existant</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                const parties = confirmReplace?.parties ?? [];
+                setConfirmReplace(null);
+                run(parties);
+              }}
+            >
+              Oui, remplacer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };
