@@ -15,7 +15,18 @@ export interface InvoicingSettings {
   client_payment_terms_days: number;
   freelance_payment_terms_days: number;
   vat_rate: number;
+  /** Absent tant que la migration Pennylane n'est pas appliquée. */
+  invoicing_mode?: InvoicingMode;
 }
+
+/** Pennylane : factures client émises et numérotées dans Pennylane ; platform : numérotation KS. */
+export type InvoicingMode = "pennylane" | "platform";
+
+export const invoicingModeOf = (s: InvoicingSettings | null): InvoicingMode =>
+  s?.invoicing_mode === "platform" ? "platform" : "pennylane";
+
+/** La colonne invoicing_mode existe-t-elle (migration appliquée) ? */
+export const hasInvoicingMode = (s: InvoicingSettings | null) => Boolean(s && "invoicing_mode" in s);
 
 export async function fetchInvoicingSettings(): Promise<InvoicingSettings | null> {
   const { data } = await supabase.from("company_settings" as never).select("*").eq("id", 1).maybeSingle();

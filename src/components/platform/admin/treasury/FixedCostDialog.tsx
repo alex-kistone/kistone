@@ -1,164 +1,152 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  FIXED_COST_CATEGORIES, FIXED_COST_FREQUENCIES, localIso,
-  type FixedCost, type FixedCostCategory, type FixedCostFrequency,
+  chargeToFixedCost, fixedCostToCharge, monthKeyOf, localIso, validateCharge, FIXED_COST_CATEGORIES, FIXED_COST_FREQUENCIES,
+  type FixedCost, type FixedCostCategory,
 } from "@/lib/treasury";
+import { parseAmount } from "./usePersistentInput";
 
-/** Ajout / modification d'un frais fixe (table admin fixed_costs, hors types générés). */
+/**
+ * Charge interne saisie comme dans ADV-Freelance : montant TTC, dont TVA, premier et dernier mois.
+ * Enregistrée dans fixed_costs (HT = TTC − TVA ; même mois de début et de fin = ponctuelle).
+ */
 
-interface FormState {
-  label: string;
-  category: FixedCostCategory;
-  amount_ht: string;
-  vat_amount: string;
-  frequency: FixedCostFrequency;
-  start_date: string;
-  end_date: string;
-  notes: string;
-}
+interface FormState { label: string; category: FixedCostCategory; ttc: string; vat: string; firstMonth: string; lastMonth: string }
 
-const toForm = (c: FixedCost | null): FormState => ({
-  label: c?.label ?? "",
-  category: c?.category ?? "logiciels",
-  amount_ht: c ? String(c.amount_ht).replace(".", ",") : "",
-  vat_amount: c ? String(c.vat_amount).replace(".", ",") : "",
-  frequency: c?.frequency ?? "monthly",
-  start_date: c?.start_date ?? localIso(),
-  end_date: c?.end_date ?? "",
-  notes: c?.notes ?? "",
-});
+const frNum = (n: number) => String(n).replace(".", ",");
+const toForm = (c: FixedCost | null): FormState => {
+  if (!c) return { label: "", category: "logiciels", ttc: "", vat: "", firstMonth: monthKeyOf(localIso()), lastMonth: "" };
+  const ch = fixedCostToCharge(c);
+  return { label: c.label, category: c.category, ttc: frNum(ch.ttc), vat: frNum(ch.vat), firstMonth: ch.firstMonth, lastMonth: ch.lastMonth ?? "" };
+};
 
-const num = (v: string) => Number(v.replace(/\s/g, "").replace(",", "."));
-
-export const FixedCostDialog = ({ open, cost, onOpenChange, onSaved }: {
-  open: boolean;
+export const ChargeForm = ({ cost, idPrefix, onSaved, onCancel }: {
+  /** Charge à modifier ; null pour une nouvelle charge. */
   cost: FixedCost | null;
-  onOpenChange: (open: boolean) => void;
-  onSaved: () => void;
+  idPrefix: string;
+  onSaved: () => void | Promise<void>;
+  onCancel?: () => void;
 }) => {
   const { toast } = useToast();
-  const [form, setForm] = useState<FormState>(toForm(cost));
+  const [form, setForm] = useState<FormState>(() => toForm(cost));
+  const [touched, setTouched] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (open) setForm(toForm(cost)); }, [open, cost]);
+  useEffect(() => { setForm(toForm(cost)); setTouched(false); }, [cost]);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => setForm((f) => ({ ...f, [key]: value }));
-
-  const amount = num(form.amount_ht);
-  const vat = form.vat_amount.trim() === "" ? 0 : num(form.vat_amount);
-  const errors = {
-    label: !form.label.trim() ? "Libellé obligatoire" : null,
-    amount_ht: !Number.isFinite(amount) || form.amount_ht.trim() === "" || amount < 0 ? "Montant HT invalide" : null,
-    vat_amount: !Number.isFinite(vat) || vat < 0 ? "TVA invalide" : null,
-    end_date: form.frequency !== "once" && form.end_date && form.end_date < form.start_date ? "La fin doit suivre le début" : null,
-  };
-  const invalid = Object.values(errors).some(Boolean) || !form.start_date;
+  const ttc = parseAmount(form.ttc);
+  const vat = form.vat.trim() === "" ? 0 : parseAmount(form.vat);
+  const input = { ttc: ttc ?? Number.NaN, vat: vat ?? Number.NaN, firstMonth: form.firstMonth, lastMonth: form.lastMonth || null };
+  const errors = { ...validateCharge(input), ...(form.label.trim() ? {} : { label: "Libellé obligatoire" }) };
+  const invalid = Object.keys(errors).length > 0;
+  const show = (k: keyof typeof errors) => (touched || (k === "vat" && form.vat) || (k === "lastMonth" && form.lastMonth) ? errors[k] : undefined);
+  const kept = cost && (cost.frequency === "quarterly" || cost.frequency === "yearly") && form.firstMonth !== form.lastMonth ? cost.frequency : null;
+  const kind = form.lastMonth && form.lastMonth === form.firstMonth ? "Ponctuelle" : form.lastMonth ? "Mensuelle, avec fin" : "Récurrente mensuelle";
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setTouched(true);
     if (invalid) return;
     setSaving(true);
-    const payload = {
-      label: form.label.trim(),
-      category: form.category,
-      amount_ht: Math.round(amount * 100) / 100,
-      vat_amount: Math.round(vat * 100) / 100,
-      frequency: form.frequency,
-      start_date: form.start_date,
-      end_date: form.frequency === "once" ? null : form.end_date || null,
-      notes: form.notes.trim() || null,
-    };
+    const payload = { label: form.label.trim(), category: form.category, ...chargeToFixedCost(input, cost) };
     const table = supabase.from("fixed_costs" as never);
-    const { error } = cost
-      ? await table.update(payload as never).eq("id", cost.id)
-      : await table.insert(payload as never);
+    const { error } = cost ? await table.update(payload as never).eq("id", cost.id) : await table.insert(payload as never);
     setSaving(false);
     if (error) {
       toast({ title: "Enregistrement impossible", description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: cost ? "Frais fixe modifié" : "Frais fixe ajouté" });
-    onOpenChange(false);
-    onSaved();
+    toast({ title: cost ? "Charge modifiée" : "Charge ajoutée", description: `${payload.label} · ${kind.toLowerCase()}` });
+    if (!cost) { setForm(toForm(null)); setTouched(false); }
+    await onSaved();
   };
 
-  const fieldError = (key: keyof typeof errors) =>
-    errors[key] && (key !== "label" || form.label !== "") && (key !== "amount_ht" || form.amount_ht !== "")
-      ? <p id={`fc-${key}-error`} className="text-xs text-destructive">{errors[key]}</p>
-      : null;
+  const id = (k: string) => `${idPrefix}-${k}`;
+  const err = (k: keyof typeof errors) => {
+    const m = show(k);
+    return m ? <p id={id(`${k}-error`)} className="text-xs text-destructive">{m}</p> : null;
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{cost ? "Modifier le frais fixe" : "Nouveau frais fixe"}</DialogTitle>
-          <DialogDescription>Charge récurrente ou ponctuelle, prise en compte dans la trésorerie et la TVA déductible.</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={submit} className="space-y-4" noValidate>
-          <div className="space-y-1.5">
-            <Label htmlFor="fc-label">Libellé</Label>
-            <Input id="fc-label" value={form.label} onChange={(e) => set("label", e.target.value)} placeholder="Ex. Abonnement Pennylane" required aria-invalid={Boolean(fieldError("label"))} />
-            {fieldError("label")}
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="fc-category">Catégorie</Label>
-              <Select value={form.category} onValueChange={(v) => set("category", v as FixedCostCategory)}>
-                <SelectTrigger id="fc-category"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {Object.entries(FIXED_COST_CATEGORIES).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="fc-frequency">Fréquence</Label>
-              <Select value={form.frequency} onValueChange={(v) => set("frequency", v as FixedCostFrequency)}>
-                <SelectTrigger id="fc-frequency"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {Object.entries(FIXED_COST_FREQUENCIES).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="fc-amount">Montant HT (€)</Label>
-              <Input id="fc-amount" inputMode="decimal" value={form.amount_ht} onChange={(e) => set("amount_ht", e.target.value)} placeholder="0,00" required aria-invalid={Boolean(fieldError("amount_ht"))} />
-              {fieldError("amount_ht")}
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="fc-vat">TVA (€)</Label>
-              <Input id="fc-vat" inputMode="decimal" value={form.vat_amount} onChange={(e) => set("vat_amount", e.target.value)} placeholder="0,00" aria-invalid={Boolean(fieldError("vat_amount"))} />
-              {fieldError("vat_amount")}
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="fc-start">{form.frequency === "once" ? "Date" : "Première échéance"}</Label>
-              <Input id="fc-start" type="date" value={form.start_date} onChange={(e) => set("start_date", e.target.value)} required />
-            </div>
-            {form.frequency !== "once" && (
-              <div className="space-y-1.5">
-                <Label htmlFor="fc-end">Fin (facultatif)</Label>
-                <Input id="fc-end" type="date" value={form.end_date} min={form.start_date} onChange={(e) => set("end_date", e.target.value)} aria-invalid={Boolean(errors.end_date)} />
-                {fieldError("end_date")}
-              </div>
-            )}
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="fc-notes">Notes</Label>
-            <Textarea id="fc-notes" value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2} />
-          </div>
-          <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
-            <Button type="submit" disabled={invalid || saving}>{saving ? "Enregistrement…" : "Enregistrer"}</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <form onSubmit={submit} className="space-y-4" noValidate>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+          <Label htmlFor={id("label")}>Libellé</Label>
+          <Input id={id("label")} value={form.label} onChange={(e) => set("label", e.target.value)} placeholder="Ex. Loyer bureau" required aria-invalid={Boolean(show("label"))} aria-describedby={show("label") ? id("label-error") : undefined} />
+          {err("label")}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={id("category")}>Catégorie</Label>
+          <Select value={form.category} onValueChange={(v) => set("category", v as FixedCostCategory)}>
+            <SelectTrigger id={id("category")}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {Object.entries(FIXED_COST_CATEGORIES).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={id("ttc")}>Montant TTC (€)</Label>
+          <Input id={id("ttc")} inputMode="decimal" value={form.ttc} onChange={(e) => set("ttc", e.target.value)} placeholder="0,00" className="text-right tabular-nums" required aria-invalid={Boolean(show("ttc"))} aria-describedby={show("ttc") ? id("ttc-error") : undefined} />
+          {err("ttc")}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={id("vat")}>dont TVA (€)</Label>
+          <Input id={id("vat")} inputMode="decimal" value={form.vat} onChange={(e) => set("vat", e.target.value)} placeholder="0,00" className="text-right tabular-nums" aria-invalid={Boolean(show("vat"))} aria-describedby={show("vat") ? id("vat-error") : undefined} />
+          {err("vat")}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={id("first")}>Premier mois</Label>
+          <Input id={id("first")} type="month" value={form.firstMonth} onChange={(e) => set("firstMonth", e.target.value)} placeholder="AAAA-MM" required aria-invalid={Boolean(show("firstMonth"))} />
+          {err("firstMonth")}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={id("last")}>Dernier mois (facultatif)</Label>
+          <Input id={id("last")} type="month" value={form.lastMonth} min={form.firstMonth} onChange={(e) => set("lastMonth", e.target.value)} placeholder="AAAA-MM" aria-invalid={Boolean(show("lastMonth"))} aria-describedby={show("lastMonth") ? id("lastMonth-error") : undefined} />
+          {err("lastMonth")}
+        </div>
+      </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-muted-foreground" aria-live="polite">
+          {kind}{kept ? ` (fréquence ${FIXED_COST_FREQUENCIES[kept].toLowerCase()} conservée)` : ""}
+          {ttc != null && vat != null && ttc >= vat ? ` · ${(Math.round((ttc - vat) * 100) / 100).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} € HT` : ""}
+        </p>
+        <div className="flex gap-2 sm:justify-end">
+          {onCancel && <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>Annuler</Button>}
+          <Button type="submit" disabled={saving}>{saving ? "Enregistrement…" : cost ? "Enregistrer" : "Ajouter la charge"}</Button>
+        </div>
+      </div>
+    </form>
   );
 };
+
+/** Modification d'une charge existante. */
+export const FixedCostDialog = ({ open, cost, onOpenChange, onSaved }: {
+  open: boolean;
+  cost: FixedCost | null;
+  onOpenChange: (open: boolean) => void;
+  onSaved: () => void;
+}) => (
+  <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogHeader>
+        <DialogTitle>Modifier la charge</DialogTitle>
+        <DialogDescription>Montant TTC mensuel. Sans mois de fin, la charge est récurrente ; même mois de début et de fin pour une charge ponctuelle.</DialogDescription>
+      </DialogHeader>
+      {cost && (
+        <ChargeForm
+          cost={cost}
+          idPrefix="fc-edit"
+          onCancel={() => onOpenChange(false)}
+          onSaved={() => { onOpenChange(false); onSaved(); }}
+        />
+      )}
+    </DialogContent>
+  </Dialog>
+);

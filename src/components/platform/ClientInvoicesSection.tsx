@@ -23,10 +23,7 @@ export default function ClientInvoicesSection({ userId }: { userId: string }) {
   }, [userId, toast]);
 
   const openPdf = async (inv: ClientInvoice) => {
-    if (!inv.pdf_path) {
-      toast({ title: "PDF en préparation", description: "Réessayez dans quelques minutes." });
-      return;
-    }
+    if (!inv.pdf_path) return;
     const err = await openPrivateFile("invoices", inv.pdf_path);
     if (err) toast({ title: "Ouverture impossible", description: err, variant: "destructive" });
   };
@@ -86,9 +83,13 @@ export default function ClientInvoicesSection({ userId }: { userId: string }) {
                   <span className="block font-semibold tabular-nums">{eur(inv.total_ttc)} TTC</span>
                   <span className="block text-xs text-muted-foreground tabular-nums">{eur(inv.total_ht)} HT</span>
                 </span>
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openPdf(inv)} aria-label={`Télécharger ${inv.kind === "credit_note" ? "l'avoir" : "la facture"} ${inv.number}`}>
-                  <Download className="h-3.5 w-3.5" aria-hidden="true" /> PDF
-                </Button>
+{inv.pdf_path ? (
+                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openPdf(inv)} aria-label={`Télécharger ${inv.kind === "credit_note" ? "l'avoir" : "la facture"} ${inv.number}`}>
+                    <Download className="h-3.5 w-3.5" aria-hidden="true" /> PDF
+                  </Button>
+                ) : (
+                  <span className="max-w-[9rem] text-right text-xs text-muted-foreground">PDF envoyé par email par Kistone</span>
+                )}
               </div>
             </li>
           );

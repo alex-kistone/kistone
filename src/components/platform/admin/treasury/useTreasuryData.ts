@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { ClientInvoice, FreelanceInvoice } from "@/lib/invoices";
-import type { FixedCost, FrozenRates, MissionLike } from "@/lib/treasury";
+import type { CashBalance, FixedCost, FrozenRates, MissionLike } from "@/lib/treasury";
 
 /**
  * Données du pilotage (admin). Les tables des phases 2 à 4 ne sont pas dans les types générés ;
@@ -23,12 +23,22 @@ export interface TreasuryData {
   suggestions: { created_at: string }[];
   fixedCosts: FixedCost[];
   fixedCostsError: boolean;
+  /** Soldes bancaires de référence (table cash_balances, migration Pennylane). */
+  cashBalances: CashBalance[];
+  cashBalancesError: boolean;
 }
 
 const EMPTY: TreasuryData = {
   missions: [], timesheets: [], rates: {}, clientInvoices: [], freelanceInvoices: [],
   openNeeds: 0, suggestions: [], fixedCosts: [], fixedCostsError: false,
+  cashBalances: [], cashBalancesError: false,
 };
+
+export async function fetchCashBalances(): Promise<{ rows: CashBalance[]; error: boolean }> {
+  const { data, error } = await supabase.from("cash_balances" as never).select("month, amount, note").order("month", { ascending: false });
+  if (error) return { rows: [], error: true };
+  return { rows: ((data as CashBalance[] | null) ?? []).map((b) => ({ ...b, amount: Number(b.amount) })), error: false };
+}
 
 export async function fetchFixedCosts(): Promise<{ rows: FixedCost[]; error: boolean }> {
   const { data, error } = await supabase
@@ -40,7 +50,7 @@ export async function fetchFixedCosts(): Promise<{ rows: FixedCost[]; error: boo
 }
 
 async function load(): Promise<TreasuryData> {
-  const [ms, ts, rt, ci, fi, nd, sg, fc] = await Promise.all([
+  const [ms, ts, rt, ci, fi, nd, sg, fc, cb] = await Promise.all([
     supabase.from("missions").select("id, status, client_tjm, start_date, end_date, recruiter_profile_id"),
     supabase.from("timesheets").select("id, month, year, status, mission_id"),
     supabase.from("timesheet_rates" as never).select("timesheet_id, client_amount, freelance_amount, expenses_ht, expenses_vat"),
@@ -49,6 +59,7 @@ async function load(): Promise<TreasuryData> {
     supabase.from("client_needs").select("id", { count: "exact", head: true }).in("status", ["pending", "active"]),
     supabase.from("profile_suggestions").select("created_at").gte("created_at", new Date(Date.now() - 400 * 86_400_000).toISOString()),
     fetchFixedCosts(),
+    fetchCashBalances(),
   ]);
   const freelanceInvoices = (fi.data as FreelanceInvoice[] | null) ?? [];
   const userIds = [...new Set(freelanceInvoices.map((i) => i.freelance_user_id))];
@@ -67,6 +78,8 @@ async function load(): Promise<TreasuryData> {
     suggestions: (sg.data as { created_at: string }[] | null) ?? [],
     fixedCosts: fc.rows,
     fixedCostsError: fc.error,
+    cashBalances: cb.rows,
+    cashBalancesError: cb.error,
   };
 }
 
@@ -84,7 +97,12 @@ export function useTreasuryData() {
     setData((d) => ({ ...d, fixedCosts: fc.rows, fixedCostsError: fc.error }));
   }, []);
 
+  const reloadCashBalances = useCallback(async () => {
+    const cb = await fetchCashBalances();
+    setData((d) => ({ ...d, cashBalances: cb.rows, cashBalancesError: cb.error }));
+  }, []);
+
   useEffect(() => { reload(); }, [reload]);
 
-  return { data, loading, reload, reloadFixedCosts };
+  return { data, loading, reload, reloadFixedCosts, reloadCashBalances };
 }

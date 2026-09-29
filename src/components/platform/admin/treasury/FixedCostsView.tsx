@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DatabaseZap, Pencil, Plus, Trash2, WalletCards } from "lucide-react";
+import { DatabaseZap, Pencil, Trash2, WalletCards } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
@@ -12,10 +12,10 @@ import { frDate } from "@/components/platform/admin/adv";
 import {
   FIXED_COST_CATEGORIES, FIXED_COST_FREQUENCIES, isFixedCostActive, localIso, monthlyEquivalent, type FixedCost,
 } from "@/lib/treasury";
-import { Amount, Cell, EmptyState, StatusPill } from "./shared";
-import { FixedCostDialog } from "./FixedCostDialog";
+import { Amount, Cell, EmptyState, Section, StatusPill } from "./shared";
+import { ChargeForm, FixedCostDialog } from "./FixedCostDialog";
 
-/** Frais fixes : liste, ajout / modification, suppression, équivalent mensuel. */
+/** Charges internes (frais fixes) : saisie à la ADV-Freelance, liste, modification, suppression, équivalent mensuel. */
 
 export const FixedCostsView = ({ costs, unavailable, onChanged }: { costs: FixedCost[]; unavailable: boolean; onChanged: () => void }) => {
   const { toast } = useToast();
@@ -30,7 +30,7 @@ export const FixedCostsView = ({ costs, unavailable, onChanged }: { costs: Fixed
 
   const monthlyTotal = costs.filter((c) => isFixedCostActive(c, today)).reduce((s, c) => s + monthlyEquivalent(c), 0);
 
-  const openDialog = (c: FixedCost | null) => {
+  const openDialog = (c: FixedCost) => {
     setEditing(c);
     setDialogOpen(true);
   };
@@ -49,17 +49,19 @@ export const FixedCostsView = ({ costs, unavailable, onChanged }: { costs: Fixed
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
-          Frais récurrents en cours : <span className="font-semibold text-foreground tabular-nums">≈ {eur(monthlyTotal)} HT / mois</span>
-        </p>
-        <Button size="sm" className="w-fit gap-1.5" onClick={() => openDialog(null)}>
-          <Plus className="h-3.5 w-3.5" /> Ajouter un frais
-        </Button>
-      </div>
+      <Section
+        title="Charges internes"
+        description="Montants TTC mensuels (loyer, salaires, outils…). Sans mois de fin, la charge est récurrente ; même mois de début et de fin pour une charge ponctuelle."
+      >
+        <ChargeForm cost={null} idPrefix="fc-new" onSaved={onChanged} />
+      </Section>
+
+      <p className="text-sm text-muted-foreground">
+        Charges récurrentes en cours : <span className="font-semibold text-foreground tabular-nums">≈ {eur(monthlyTotal)} HT / mois</span>
+      </p>
 
       {costs.length === 0 ? (
-        <EmptyState icon={WalletCards}>Aucun frais fixe enregistré. Ajoutez logiciels, assurances, comptable… pour affiner la trésorerie.</EmptyState>
+        <EmptyState icon={WalletCards}>Aucune charge enregistrée. Ajoutez loyer, salaires, logiciels, comptable… pour affiner la trésorerie.</EmptyState>
       ) : (
         <div className="rounded-xl border border-border bg-card">
           <div aria-hidden="true" className="hidden gap-3 border-b border-border px-4 py-2 text-xs font-medium text-muted-foreground md:grid md:grid-cols-[1.6fr_0.9fr_0.8fr_0.7fr_0.8fr_1fr_auto]">

@@ -20,6 +20,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { clientInvoiceState, eur, invoicesFn, type ClientInvoice } from "@/lib/invoices";
 import { frDate, openPrivateFile } from "@/components/platform/admin/adv";
+import type { InvoicingMode } from "@/components/platform/admin/invoicingSettings";
+import { AttachPdfButton, PennylanePill, RecordPennylaneCreditNoteDialog, RecordPennylaneInvoiceDialog } from "@/components/platform/admin/PennylaneInvoiceDialogs";
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
@@ -32,6 +34,10 @@ interface Props {
   originalNumber: string | null;
   /** Identité de Kistone incomplète : émission bloquée. */
   settingsIncomplete: boolean;
+  /** Mode de facturation : Pennylane (numéro reporté) ou plateforme (numérotation KS). */
+  mode: InvoicingMode;
+  /** Délai de paiement client (jours), pour l'échéance par défaut. */
+  paymentTermsDays: number;
   onBack: () => void;
   onChanged: () => void | Promise<void>;
   onOpenSettings: () => void;
@@ -39,7 +45,7 @@ interface Props {
 
 interface IssueResult { number: string; emailed: boolean }
 
-export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, originalNumber, settingsIncomplete, onBack, onChanged, onOpenSettings }: Props) {
+export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, originalNumber, settingsIncomplete, mode, paymentTermsDays, onBack, onChanged, onOpenSettings }: Props) {
   const { toast } = useToast();
   const state = clientInvoiceState(inv);
   const [notes, setNotes] = useState(inv.notes ?? "");
@@ -119,6 +125,7 @@ export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, or
   });
 
   const isInvoice = inv.kind === "invoice";
+  const fromPennylane = inv.source === "pennylane";
   const title = inv.number ? `${isInvoice ? "Facture" : "Avoir"} ${inv.number}` : isInvoice ? "Brouillon de facture" : "Brouillon d'avoir";
   const period = inv.period_month && inv.period_year
     ? new Date(inv.period_year, inv.period_month - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })
@@ -136,6 +143,7 @@ export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, or
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-lg font-semibold">{title}</h3>
               <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${state.tone}`}>{state.label}</span>
+              {fromPennylane && <PennylanePill />}
             </div>
             <p className="mt-1 break-words text-sm text-muted-foreground">
               {clientName}{missionTitle ? ` · ${missionTitle}` : ""}{period ? ` · ${period}` : ""}
@@ -254,7 +262,9 @@ export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, or
                 </AlertDialogContent>
               </AlertDialog>
 
-              {settingsIncomplete ? (
+              {mode === "pennylane" ? (
+                <RecordPennylaneInvoiceDialog invoice={inv} paymentTermsDays={paymentTermsDays} disabled={busy !== null} onDone={onChanged} />
+              ) : settingsIncomplete ? (
                 <Button size="sm" variant="outline" onClick={onOpenSettings}>Compléter l'identité de Kistone</Button>
               ) : (
                 <AlertDialog>
@@ -286,6 +296,8 @@ export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, or
               <Button variant="outline" size="sm" className="gap-2" onClick={openPdf}>
                 <FileText className="h-4 w-4" /> Voir le PDF
               </Button>
+            ) : fromPennylane ? (
+              <AttachPdfButton invoice={inv} disabled={busy !== null} onDone={onChanged} />
             ) : (
               <Button variant="outline" size="sm" className="gap-2" onClick={render} disabled={busy !== null}>
                 <FileDown className="h-4 w-4" /> {busy === "render" ? "Production…" : "Produire le PDF"}
@@ -294,7 +306,9 @@ export function ClientInvoiceDetail({ invoice: inv, clientName, missionTitle, or
           )}
 
           {isInvoice && (inv.status === "issued" || inv.status === "paid") && (
-            <CreditNoteDialog invoice={inv} disabled={busy !== null} onDone={onChanged} />
+            fromPennylane
+              ? <RecordPennylaneCreditNoteDialog invoice={inv} disabled={busy !== null} onDone={onChanged} />
+              : <CreditNoteDialog invoice={inv} disabled={busy !== null} onDone={onChanged} />
           )}
 
           {inv.status === "paid" && (

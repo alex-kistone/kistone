@@ -35,6 +35,8 @@ export interface ClientInvoice {
   last_reminded_at: string | null;
   pennylane_id: string | null;
   pennylane_error: string | null;
+  /** Absent tant que la migration Pennylane n'est pas appliquée (= plateforme). */
+  source?: "platform" | "pennylane";
   created_at: string;
 }
 
@@ -92,3 +94,29 @@ export async function invoicesFn<T = Record<string, unknown>>(body: Record<strin
   if (data?.error) throw new Error(String(data.error));
   return data as T;
 }
+
+const num2 = (n: number) => Number(n).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/** Lignes d'une facture en texte brut (tabulations) à coller dans Pennylane. */
+export function invoiceLinesText(inv: Pick<ClientInvoice, "lines" | "total_ht" | "vat_rate" | "total_vat" | "total_ttc">) {
+  const rows = inv.lines.map((l) =>
+    [l.label, `${Number(l.quantity).toLocaleString("fr-FR")} ${l.unit}`, `${num2(l.unit_price_ht)} € HT`, `${num2(l.total_ht)} € HT`].join("\t"));
+  return [
+    ["Libellé", "Quantité", "PU HT", "Total HT"].join("\t"),
+    ...rows,
+    "",
+    `Total HT\t${num2(inv.total_ht)} €`,
+    `TVA ${Number(inv.vat_rate).toLocaleString("fr-FR")} %\t${num2(inv.total_vat)} €`,
+    `Total TTC\t${num2(inv.total_ttc)} €`,
+  ].join("\n");
+}
+
+/** Nom de fichier sûr tiré d'un numéro de facture. */
+export const sanitizeFileName = (s: string) => s.trim().replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "facture";
+
+/** Erreur due à une migration non appliquée (colonne, table ou fonction absente). */
+export const isMissingSchema = (msg: string) =>
+  /schema cache|does not exist|Could not find|PGRST20[0-9]|42703|42P01|42883/i.test(msg);
+
+/** Message d'erreur complété d'un indice « migration à appliquer » si pertinent. */
+export const withMigrationHint = (msg: string) => (isMissingSchema(msg) ? `${msg} — migration à appliquer.` : msg);

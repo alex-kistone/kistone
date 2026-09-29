@@ -9,6 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { eur, FREELANCE_INVOICE_STATUS, invoiceGap, type FreelanceInvoice } from "@/lib/invoices";
 import { frDate, openPrivateFile } from "@/components/platform/admin/adv";
+import { FreelanceEmailInvoiceDialog, type EmailInvoiceCandidate } from "@/components/platform/admin/FreelanceEmailInvoiceDialog";
+
+export type { EmailInvoiceCandidate };
 
 /** Facture freelance enrichie pour l'affichage (nom, mission, mois du CRA). */
 export interface FreelanceInvoiceRow extends FreelanceInvoice {
@@ -47,7 +50,13 @@ export function GapBadge({ gap }: { gap: number }) {
   );
 }
 
-export function FreelanceInvoicesAdmin({ rows, onChanged }: { rows: FreelanceInvoiceRow[]; onChanged: () => void | Promise<void> }) {
+export function FreelanceInvoicesAdmin({ rows, candidates, freelancePaymentTermsDays, onChanged }: {
+  rows: FreelanceInvoiceRow[];
+  /** CRA validés sans facture : dépôt d'une facture reçue par mail. */
+  candidates: EmailInvoiceCandidate[];
+  freelancePaymentTermsDays: number;
+  onChanged: () => void | Promise<void>;
+}) {
   const { toast } = useToast();
   const [filter, setFilter] = useState<Filter>("all");
   const [busy, setBusy] = useState<string | null>(null);
@@ -78,15 +87,18 @@ export function FreelanceInvoicesAdmin({ rows, onChanged }: { rows: FreelanceInv
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filtrer les factures freelance">
-        {FILTERS.map((f) => {
-          const count = f.key === "all" ? rows.length : rows.filter((r) => r.status === f.key).length;
-          return (
-            <Button key={f.key} size="sm" variant={filter === f.key ? "default" : "outline"} aria-pressed={filter === f.key} onClick={() => setFilter(f.key)}>
-              {f.label}{count > 0 ? ` (${count})` : ""}
-            </Button>
-          );
-        })}
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer les factures freelance">
+          {FILTERS.map((f) => {
+            const count = f.key === "all" ? rows.length : rows.filter((r) => r.status === f.key).length;
+            return (
+              <Button key={f.key} size="sm" variant={filter === f.key ? "default" : "outline"} aria-pressed={filter === f.key} onClick={() => setFilter(f.key)}>
+                {f.label}{count > 0 ? ` (${count})` : ""}
+              </Button>
+            );
+          })}
+        </div>
+        <FreelanceEmailInvoiceDialog candidates={candidates} paymentTermsDays={freelancePaymentTermsDays} onDone={onChanged} />
       </div>
 
       {list.length === 0 ? (

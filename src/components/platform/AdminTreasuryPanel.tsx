@@ -13,14 +13,14 @@ type View = "dashboard" | "cash" | "fixed";
 const VIEWS: { key: View; label: string }[] = [
   { key: "dashboard", label: "Tableau de bord" },
   { key: "cash", label: "Trésorerie" },
-  { key: "fixed", label: "Frais fixes" },
+  { key: "fixed", label: "Charges internes" },
 ];
 
 const AdminTreasuryPanel = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const viewParam = searchParams.get("view");
   const view: View = VIEWS.some((v) => v.key === viewParam) ? (viewParam as View) : "dashboard";
-  const { data, loading, reloadFixedCosts } = useTreasuryData();
+  const { data, loading, reloadFixedCosts, reloadCashBalances } = useTreasuryData();
 
   const setView = (v: View) => {
     setSearchParams((prev) => {
@@ -56,7 +56,7 @@ const AdminTreasuryPanel = () => {
       ) : view === "dashboard" ? (
         <TreasuryDashboard data={data} />
       ) : view === "cash" ? (
-        <TreasuryCashView data={data} />
+        <TreasuryCashView data={data} onBalancesChanged={reloadCashBalances} />
       ) : (
         <FixedCostsView costs={data.fixedCosts} unavailable={data.fixedCostsError} onChanged={reloadFixedCosts} />
       )}

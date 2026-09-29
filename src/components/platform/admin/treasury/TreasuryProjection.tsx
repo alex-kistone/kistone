@@ -3,7 +3,7 @@ import { eur } from "@/lib/invoices";
 import { monthLabel, type ProjectionRow } from "@/lib/treasury";
 import { Amount, Cell, Section } from "./shared";
 
-/** Projection sur 3 mois à partir d'une trésorerie saisie (mémorisée dans ce navigateur). */
+/** Projection sur 3 mois, enchaînée depuis le solde de départ enregistré (cash_balances). */
 
 const MoneyInput = ({ id, label, value, onChange }: { id: string; label: string; value: string; onChange: (v: string) => void }) => (
   <div className="flex items-center gap-2">
@@ -23,10 +23,10 @@ const MoneyInput = ({ id, label, value, onChange }: { id: string; label: string;
   </div>
 );
 
-export const TreasuryProjection = ({ rows, cash, onCashChange, threshold, onThresholdChange, thresholdValue }: {
+export const TreasuryProjection = ({ rows, anchored, threshold, onThresholdChange, thresholdValue }: {
   rows: ProjectionRow[];
-  cash: string;
-  onCashChange: (v: string) => void;
+  /** Un solde réel de référence existe ; sinon le calcul part de 0 € au 1er du mois en cours. */
+  anchored: boolean;
   threshold: string;
   onThresholdChange: (v: string) => void;
   thresholdValue: number | null;
@@ -35,12 +35,11 @@ export const TreasuryProjection = ({ rows, cash, onCashChange, threshold, onThre
   return (
     <Section
       title="Projection sur 3 mois"
-      description="Trésorerie actuelle + factures client à encaisser − factures freelance validées et frais fixes à venir. Les retards comptent sur le mois en cours."
+      description="Solde de départ enchaîné + encaissements − décaissements (réalisés du mois, puis factures client à encaisser, factures freelance validées et frais fixes à venir). Les retards comptent sur le mois en cours."
       action={
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <MoneyInput id="treasury-starting-cash" label="Trésorerie actuelle" value={cash} onChange={onCashChange} />
           <MoneyInput id="treasury-threshold" label="Seuil d'alerte" value={threshold} onChange={onThresholdChange} />
-          <span id="treasury-inputs-hint" className="sr-only">Montant mémorisé dans ce navigateur uniquement</span>
+          <span id="treasury-inputs-hint" className="sr-only">Seuil mémorisé dans ce navigateur uniquement</span>
         </div>
       }
     >
@@ -72,7 +71,10 @@ export const TreasuryProjection = ({ rows, cash, onCashChange, threshold, onThre
           );
         })}
       </ul>
-      <p className="mt-2 text-xs text-muted-foreground">Hors CRA pas encore facturés et hors TVA à reverser. Les montants saisis restent dans ce navigateur.</p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        {anchored ? "" : "Sans solde de départ enregistré, le calcul part de 0 € au 1er du mois en cours. "}
+        Hors CRA pas encore facturés et hors TVA à reverser. Le seuil d'alerte reste dans ce navigateur.
+      </p>
     </Section>
   );
 };

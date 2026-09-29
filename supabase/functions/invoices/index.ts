@@ -7,6 +7,7 @@
  *   - credit_note : avoir sur une facture émise (motif obligatoire), mêmes étapes pour l'avoir.
  *   - render      : reproduit le PDF d'une facture émise (si la production avait échoué).
  *
+ * Refusé en mode Pennylane (company_settings.invoicing_mode) : les numéros viennent de Pennylane.
  * L'émission est refusée tant que l'identité de Kistone (SIREN, adresse, IBAN) n'est pas
  * complète dans company_settings : un numéro de facture ne se rend pas.
  */
@@ -218,6 +219,11 @@ Deno.serve(async (req) => {
     if (!invoice_id) throw new Refusal("invoice_id requis");
 
     if (action === "issue" || action === "credit_note") {
+      // En mode Pennylane, les numéros viennent de Pennylane : jamais de double numérotation.
+      const { data: mode } = await db.from("company_settings").select("invoicing_mode").eq("id", 1).maybeSingle();
+      if ((mode?.invoicing_mode ?? "pennylane") === "pennylane") {
+        throw new Refusal("Facturation en mode Pennylane : créez la facture ou l'avoir dans Pennylane, puis enregistrez son numéro.");
+      }
       const missing = await sellerMissing(db);
       if (missing.length) {
         throw new Refusal(`Identité de Kistone incomplète (${missing.join(", ")}) : complétez les paramètres avant d'émettre une facture.`);

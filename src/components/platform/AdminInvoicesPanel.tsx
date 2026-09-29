@@ -9,9 +9,10 @@ import { clientInvoiceState, eur, FREELANCE_INVOICE_STATUS, invoiceGap, type Cli
 import { frDate } from "@/components/platform/admin/adv";
 import type { TimesheetRates } from "@/components/platform/admin/TimesheetValidationSections";
 import { ClientInvoiceDetail } from "@/components/platform/admin/ClientInvoiceDetail";
-import { FreelanceInvoicesAdmin, type FreelanceInvoiceRow } from "@/components/platform/admin/FreelanceInvoicesAdmin";
+import { FreelanceInvoicesAdmin, type EmailInvoiceCandidate, type FreelanceInvoiceRow } from "@/components/platform/admin/FreelanceInvoicesAdmin";
+import { PennylanePill } from "@/components/platform/admin/PennylaneInvoiceDialogs";
 import { InvoiceSettingsDialog } from "@/components/platform/admin/InvoiceSettingsDialog";
-import { fetchInvoicingSettings, invoicingIncomplete, type InvoicingSettings } from "@/components/platform/admin/invoicingSettings";
+import { fetchInvoicingSettings, invoicingIncomplete, invoicingModeOf, type InvoicingSettings } from "@/components/platform/admin/invoicingSettings";
 
 /**
  * Facturation (admin) : CRA à facturer, factures client (brouillon → émission → paiement / avoir),
@@ -155,6 +156,8 @@ const Cell = ({ label, children, className = "" }: { label: string; children: Re
   </span>
 );
 
+const profileName = (p?: ProfileRow) => (p ? `${p.first_name} ${p.last_name}`.trim() : "");
+
 const AdminInvoicesPanel = () => {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -197,7 +200,6 @@ const AdminInvoicesPanel = () => {
       || (inv.mission_id ? data.missions[inv.mission_id]?.company_name : undefined)
       || "Client", [data]);
   const clientSirenOf = (inv: ClientInvoice) => (inv.buyer?.siren as string | undefined) || data.clients[inv.client_user_id]?.siren || "";
-  const profileName = (p?: ProfileRow) => (p ? `${p.first_name} ${p.last_name}`.trim() : "");
 
   const liveInvoiceTs = useMemo(
     () => new Set(data.clientInvoices.filter((i) => i.kind === "invoice" && i.status !== "cancelled" && i.timesheet_id).map((i) => i.timesheet_id as string)),
@@ -224,7 +226,29 @@ const AdminInvoicesPanel = () => {
   const numberById = useMemo(() => Object.fromEntries(data.clientInvoices.map((i) => [i.id, i.number])), [data.clientInvoices]);
   const clientList = data.clientInvoices.filter((i) => matchesFilter(i, clientFilter));
   const selected = selectedId ? data.clientInvoices.find((i) => i.id === selectedId) ?? null : null;
-  const incomplete = invoicingIncomplete(settings);
+  const mode = invoicingModeOf(settings);
+  // En mode Pennylane, l'identité de Kistone vit dans Pennylane : pas de blocage ici.
+  const incomplete = mode === "platform" && invoicingIncomplete(settings);
+
+  // CRA validés sans facture freelance : dépôt par l'admin d'une facture reçue par mail.
+  const emailCandidates: EmailInvoiceCandidate[] = useMemo(() => {
+    const invoiced = new Set(data.freelanceInvoices.map((i) => i.timesheet_id));
+    return data.timesheets.flatMap((t) => {
+      const p = data.profiles[t.recruiter_profile_id];
+      if (invoiced.has(t.id) || !p?.user_id) return [];
+      const r = data.rates[t.id];
+      const m = t.mission_id ? data.missions[t.mission_id] : undefined;
+      return [{
+        timesheet_id: t.id,
+        freelance_user_id: p.user_id,
+        mission_id: t.mission_id,
+        freelance_name: profileName(p) || "Freelance",
+        mission_title: m?.title ?? data.needs[t.need_id]?.job_title ?? "Mission",
+        month_label: monthLabel(t.month, t.year),
+        expected_ht: r ? Number(r.freelance_amount) + Number(r.expenses_ht) : null,
+      }];
+    });
+  }, [data]);
 
   // ── Actions « À facturer » ──
   const prepare = async (tsId: string) => {
@@ -235,7 +259,7 @@ const AdminInvoicesPanel = () => {
     setPreparing(t.id);
     try {
       await prepare(t.id);
-      toast({ title: "Brouillon créé", description: "À vérifier puis émettre depuis l'onglet Clients." });
+      toast({ title: "Brouillon créé", description: mode === "pennylane" ? "À reporter dans Pennylane depuis l'onglet Clients." : "À vérifier puis émettre depuis l'onglet Clients." });
     } catch (e) {
       toast({ title: "Préparation impossible", description: e instanceof Error ? e.message : String(e), variant: "destructive" });
     }
@@ -423,6 +447,8 @@ const AdminInvoicesPanel = () => {
           missionTitle={selected.mission_id ? data.missions[selected.mission_id]?.title ?? null : null}
           originalNumber={selected.credit_note_of ? numberById[selected.credit_note_of] ?? null : null}
           settingsIncomplete={incomplete}
+          mode={mode}
+          paymentTermsDays={settings?.client_payment_terms_days ?? 30}
           onBack={() => setSelectedId(null)}
           onChanged={reload}
           onOpenSettings={() => setSettingsOpen(true)}
@@ -462,7 +488,10 @@ const AdminInvoicesPanel = () => {
                         aria-label={`${label}, ${clientNameOf(inv)}, ${eur(inv.total_ttc)} TTC, ${st.label}`}
                         className="grid w-full grid-cols-2 gap-3 p-4 text-left transition-colors hover:bg-accent/5 md:grid-cols-[1fr_1.4fr_0.9fr_0.9fr_0.8fr_0.8fr_auto] md:items-center"
                       >
-                        <Cell label="Numéro"><span className={inv.number ? "font-semibold" : "italic text-muted-foreground"}>{label}</span></Cell>
+                        <Cell label="Numéro">
+                          <span className={inv.number ? "font-semibold" : "italic text-muted-foreground"}>{label}</span>
+                          {inv.source === "pennylane" && <span className="mt-1 block"><PennylanePill /></span>}
+                        </Cell>
                         <span className="flex justify-end md:hidden">
                           <span className={`h-fit rounded-full px-2 py-0.5 text-xs font-medium ${st.tone}`}>{st.label}</span>
                         </span>
@@ -484,7 +513,14 @@ const AdminInvoicesPanel = () => {
         </section>
       )}
 
-      {view === "freelances" && <FreelanceInvoicesAdmin rows={freelanceRows} onChanged={reload} />}
+      {view === "freelances" && (
+        <FreelanceInvoicesAdmin
+          rows={freelanceRows}
+          candidates={emailCandidates}
+          freelancePaymentTermsDays={settings?.freelance_payment_terms_days ?? 30}
+          onChanged={reload}
+        />
+      )}
 
       {view === "export" && (
         <section aria-labelledby="export-title" className="rounded-xl border border-border bg-card p-4 sm:p-6">

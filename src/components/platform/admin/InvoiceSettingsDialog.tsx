@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { isValidIban } from "@/lib/kyc";
-import type { InvoicingSettings } from "@/components/platform/admin/invoicingSettings";
+import { hasInvoicingMode, invoicingModeOf, type InvoicingMode, type InvoicingSettings } from "@/components/platform/admin/invoicingSettings";
 
-type Form = Record<keyof InvoicingSettings, string>;
+type Form = Record<Exclude<keyof InvoicingSettings, "invoicing_mode">, string>;
 
 const toForm = (s: InvoicingSettings | null): Form => ({
   legal_name: s?.legal_name ?? "Kistone SAS",
@@ -59,9 +60,11 @@ export function InvoiceSettingsDialog({ open, onOpenChange, settings, onSaved }:
   const [form, setForm] = useState<Form>(() => toForm(settings));
   const [touched, setTouched] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [mode, setMode] = useState<InvoicingMode>(() => invoicingModeOf(settings));
+  const modeAvailable = hasInvoicingMode(settings);
 
   useEffect(() => {
-    if (open) { setForm(toForm(settings)); setTouched(false); }
+    if (open) { setForm(toForm(settings)); setTouched(false); setMode(invoicingModeOf(settings)); }
   }, [open, settings]);
 
   const errors = validate(form);
@@ -87,6 +90,8 @@ export function InvoiceSettingsDialog({ open, onOpenChange, settings, onSaved }:
       client_payment_terms_days: Number(form.client_payment_terms_days),
       freelance_payment_terms_days: Number(form.freelance_payment_terms_days),
       vat_rate: Number(form.vat_rate.replace(",", ".")),
+      // Colonne ajoutée par la migration Pennylane : envoyée seulement si elle existe.
+      ...(modeAvailable ? { invoicing_mode: mode } : {}),
     };
     const { error } = await supabase.from("company_settings" as never).update(payload as never).eq("id", 1);
     setSaving(false);
@@ -133,6 +138,27 @@ export function InvoiceSettingsDialog({ open, onOpenChange, settings, onSaved }:
             Identité de Kistone reprise sur chaque facture. Les factures déjà émises gardent les informations du jour de leur émission.
           </DialogDescription>
         </DialogHeader>
+
+        <fieldset className="space-y-2 rounded-lg border border-border p-3">
+          <legend className="px-1 text-sm font-semibold">Émission des factures</legend>
+          <RadioGroup value={mode} onValueChange={(v) => setMode(v as InvoicingMode)} disabled={!modeAvailable} className="gap-3">
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="pennylane" id="invoicing-mode-pennylane" className="mt-0.5" />
+              <Label htmlFor="invoicing-mode-pennylane" className="font-normal leading-snug">
+                <span className="font-medium">Pennylane</span> (recommandé)
+                <span className="block text-xs text-muted-foreground">La facture est créée et numérotée dans Pennylane ; la plateforme en reporte le numéro et suit le paiement.</span>
+              </Label>
+            </div>
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="platform" id="invoicing-mode-platform" className="mt-0.5" />
+              <Label htmlFor="invoicing-mode-platform" className="font-normal leading-snug">
+                <span className="font-medium">Plateforme</span> (numérotation KS)
+                <span className="block text-xs text-muted-foreground">La plateforme numérote, produit le PDF et l'envoie au client. Identité complète requise.</span>
+              </Label>
+            </div>
+          </RadioGroup>
+          {!modeAvailable && <p className="text-xs text-muted-foreground">Migration à appliquer : mode Pennylane utilisé par défaut.</p>}
+        </fieldset>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {field("legal_name", "Raison sociale")}

@@ -333,3 +333,188 @@ export function backfillBalances(current: number, nets: number[]): number[] {
   }
   return out;
 }
+
+// ── Soldes bancaires de référence ──
+export interface CashBalance { month: string; amount: number; note: string | null }
+
+/** Solde de référence le plus récent (mois le plus tardif), ou null. */
+export function latestBalance<T extends Pick<CashBalance, "month" | "amount">>(rows: T[]): T | null {
+  let best: T | null = null;
+  for (const r of rows) if (!best || r.month > best.month) best = r;
+  return best;
+}
+
+export interface ChainedMonth { month: MonthKey; opening: number; net: number; closing: number }
+
+/**
+ * Soldes enchaînés à partir d'un solde réel au 1er d'un mois (ouverture de ce mois) :
+ * clôture = ouverture + flux net, puis ouverture du mois suivant = clôture. Les mois antérieurs
+ * au solde de référence sont reconstitués à rebours. `months` doit être consécutif.
+ */
+export function chainBalances(opts: {
+  anchor: { month: MonthKey; amount: number } | null;
+  months: MonthKey[];
+  netOf: (m: MonthKey) => number;
+}): ChainedMonth[] | null {
+  const { anchor, months, netOf } = opts;
+  if (!anchor || !months.length) return null;
+  const a = monthKeyOf(anchor.month);
+  const first = monthDiff(a, months[0]) < 0 ? months[0] : a;
+  const last = monthDiff(a, months[months.length - 1]) > 0 ? months[months.length - 1] : a;
+  const res = new Map<MonthKey, ChainedMonth>();
+  // Vers l'avant depuis le mois de référence
+  let balance = Number(anchor.amount);
+  for (let m = a; monthDiff(m, last) >= 0; m = shiftMonth(m, 1)) {
+    const net = netOf(m);
+    res.set(m, { month: m, opening: balance, net, closing: balance + net });
+    balance += net;
+  }
+  // À rebours avant le mois de référence
+  balance = Number(anchor.amount);
+  for (let m = shiftMonth(a, -1); monthDiff(first, m) >= 0; m = shiftMonth(m, -1)) {
+    const net = netOf(m);
+    res.set(m, { month: m, opening: balance - net, net, closing: balance });
+    balance -= net;
+  }
+  return months.map((m) => res.get(m) as ChainedMonth);
+}
+
+// ── Détail des flux par partie ──
+export interface FlowItem { party: string; date: string | null; amount: number }
+export interface PartyFlowRow { party: string; cells: Record<MonthKey, number>; total: number }
+
+/**
+ * Tableau « partie × mois » : une ligne par partie, une colonne par mois, et les totaux.
+ * Les flux hors fenêtre sont ignorés, sauf `clampEarlier` qui range les plus anciens dans le premier mois.
+ */
+export function flowsByParty(items: FlowItem[], months: MonthKey[], opts: { clampEarlier?: boolean } = {}) {
+  const empty = () => Object.fromEntries(months.map((m) => [m, 0])) as Record<MonthKey, number>;
+  const byParty = new Map<string, PartyFlowRow>();
+  const totals = empty();
+  let total = 0;
+  if (!months.length) return { rows: [] as PartyFlowRow[], totals, total, clamped: false };
+  let clamped = false;
+  for (const it of items) {
+    if (!it.date) continue;
+    let k = monthKeyOf(it.date);
+    if (monthDiff(k, months[0]) > 0) {
+      if (!opts.clampEarlier) continue;
+      k = months[0];
+      clamped = true;
+    }
+    if (!(k in totals)) continue;
+    let row = byParty.get(it.party);
+    if (!row) {
+      row = { party: it.party, cells: empty(), total: 0 };
+      byParty.set(it.party, row);
+    }
+    const amount = Number(it.amount);
+    row.cells[k] += amount;
+    row.total += amount;
+    totals[k] += amount;
+    total += amount;
+  }
+  const rows = [...byParty.values()].sort((x, y) => y.total - x.total || x.party.localeCompare(y.party, "fr"));
+  return { rows, totals, total, clamped };
+}
+
+/** Cash in : factures client payées (date de paiement) ou émises non réglées (échéance). */
+export function cashInItems<T extends InvoiceLike>(invoices: T[], partyOf: (i: T) => string): FlowItem[] {
+  const out: FlowItem[] = [];
+  for (const i of invoices) {
+    if (i.kind !== "invoice") continue;
+    if (i.paid_at) out.push({ party: partyOf(i), date: i.paid_at, amount: Number(i.paid_amount ?? i.total_ttc) });
+    else if (i.status === "issued") out.push({ party: partyOf(i), date: i.due_date, amount: Number(i.total_ttc) - Number(i.paid_amount ?? 0) });
+  }
+  return out;
+}
+
+export interface FreelanceInvoiceLike {
+  status: "submitted" | "approved" | "rejected" | "paid";
+  due_date: string | null;
+  paid_at: string | null;
+  amount_ttc: number;
+}
+
+/** Cash out : factures freelance payées (date de paiement) ou reçues / validées non payées (échéance). */
+export function cashOutItems<T extends FreelanceInvoiceLike>(invoices: T[], partyOf: (i: T) => string): FlowItem[] {
+  const out: FlowItem[] = [];
+  for (const i of invoices) {
+    if (i.paid_at) out.push({ party: partyOf(i), date: i.paid_at, amount: Number(i.amount_ttc) });
+    else if (i.status === "approved" || i.status === "submitted") out.push({ party: partyOf(i), date: i.due_date, amount: Number(i.amount_ttc) });
+  }
+  return out;
+}
+
+export interface LateFlow<C, F> {
+  source: "client" | "freelance";
+  invoice: C | F;
+  due: string;
+  amount: number;
+  daysLate: number;
+}
+
+/** Retards : factures client émises échues non réglées et factures freelance validées échues non payées. */
+export function lateFlows<C extends InvoiceLike, F extends FreelanceInvoiceLike>(clients: C[], freelances: F[], today: string): LateFlow<C, F>[] {
+  const out: LateFlow<C, F>[] = [];
+  for (const i of clients) {
+    if (i.kind !== "invoice" || i.status !== "issued" || i.paid_at || !i.due_date) continue;
+    const d = overdueDays(i.due_date, today);
+    if (d > 0) out.push({ source: "client", invoice: i, due: i.due_date, amount: Number(i.total_ttc) - Number(i.paid_amount ?? 0), daysLate: d });
+  }
+  for (const i of freelances) {
+    if (i.status !== "approved" || i.paid_at || !i.due_date) continue;
+    const d = overdueDays(i.due_date, today);
+    if (d > 0) out.push({ source: "freelance", invoice: i, due: i.due_date, amount: Number(i.amount_ttc), daysLate: d });
+  }
+  return out.sort((a, b) => b.daysLate - a.daysLate);
+}
+
+// ── Charges internes (saisie à la ADV : TTC mensuel, premier / dernier mois) ──
+export interface ChargeInput {
+  ttc: number;
+  vat: number;
+  firstMonth: MonthKey;
+  /** null : récurrente sans fin ; égal au premier mois : ponctuelle. */
+  lastMonth: MonthKey | null;
+}
+
+/** Contrôle de la saisie ; renvoie un message par champ fautif. */
+export function validateCharge(c: ChargeInput): Partial<Record<"ttc" | "vat" | "firstMonth" | "lastMonth", string>> {
+  const errors: Partial<Record<"ttc" | "vat" | "firstMonth" | "lastMonth", string>> = {};
+  if (!Number.isFinite(c.ttc) || c.ttc < 0) errors.ttc = "Montant TTC invalide";
+  if (!Number.isFinite(c.vat) || c.vat < 0) errors.vat = "TVA invalide";
+  else if (Number.isFinite(c.ttc) && c.vat > c.ttc) errors.vat = "La TVA dépasse le montant TTC";
+  if (!/^\d{4}-\d{2}$/.test(c.firstMonth)) errors.firstMonth = "Premier mois obligatoire";
+  else if (c.lastMonth && monthDiff(c.firstMonth, c.lastMonth) < 0) errors.lastMonth = "Le dernier mois doit suivre le premier";
+  return errors;
+}
+
+/**
+ * Charge saisie → colonnes de fixed_costs : HT = TTC − TVA, début au 1er du premier mois,
+ * fin au dernier jour du dernier mois, ponctuelle si premier = dernier mois, sinon mensuelle
+ * (une charge trimestrielle ou annuelle existante garde sa fréquence et ses jours).
+ */
+export function chargeToFixedCost(c: ChargeInput, previous?: Pick<FixedCost, "frequency" | "start_date" | "end_date"> | null) {
+  const once = c.lastMonth !== null && c.lastMonth === c.firstMonth;
+  const keep = previous && (previous.frequency === "quarterly" || previous.frequency === "yearly") ? previous.frequency : null;
+  const frequency: FixedCostFrequency = once ? "once" : keep ?? "monthly";
+  const start_date = previous && monthKeyOf(previous.start_date) === c.firstMonth ? previous.start_date.slice(0, 10) : `${c.firstMonth}-01`;
+  const lastKey = c.lastMonth ?? null;
+  const end_date = lastKey === null ? null
+    : previous?.end_date && monthKeyOf(previous.end_date) === lastKey ? previous.end_date.slice(0, 10)
+    : lastDayOf(lastKey);
+  const round = (n: number) => Math.round(n * 100) / 100;
+  return { amount_ht: round(c.ttc - c.vat), vat_amount: round(c.vat), frequency, start_date, end_date };
+}
+
+/** fixed_costs → saisie à la ADV (inverse de chargeToFixedCost). */
+export function fixedCostToCharge(cost: Pick<FixedCost, "amount_ht" | "vat_amount" | "frequency" | "start_date" | "end_date">): ChargeInput {
+  const firstMonth = monthKeyOf(cost.start_date);
+  return {
+    ttc: Math.round((Number(cost.amount_ht) + Number(cost.vat_amount)) * 100) / 100,
+    vat: Number(cost.vat_amount),
+    firstMonth,
+    lastMonth: cost.frequency === "once" ? firstMonth : cost.end_date ? monthKeyOf(cost.end_date) : null,
+  };
+}

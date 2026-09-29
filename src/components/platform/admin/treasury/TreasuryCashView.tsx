@@ -3,43 +3,52 @@ import { ArrowDownLeft, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { eur } from "@/lib/invoices";
 import { frDate } from "@/components/platform/admin/adv";
 import {
-  backfillBalances, fixedCostOccurrences, fixedCostsByMonth, localIso, monthKeyOf, monthLabel, monthShortLabel,
-  monthsEndingAt, monthsFrom, overdueDays, projectBalance, receiptsByMonth, sumByMonth, unpaidInvoices,
-  FIXED_COST_CATEGORIES,
+  chainBalances, fixedCostOccurrences, fixedCostsByMonth, latestBalance, localIso, monthDiff, monthKeyOf, monthLabel,
+  monthShortLabel, monthsEndingAt, monthsFrom, overdueDays, projectBalance, receiptsByMonth, shiftMonth, sumByMonth,
+  unpaidInvoices, FIXED_COST_CATEGORIES, type MonthKey, type ProjectionRow,
 } from "@/lib/treasury";
 import type { TreasuryData } from "./useTreasuryData";
 import { Amount, Cell, EmptyState, KpiCard, Section, StatusPill } from "./shared";
 import { TreasuryCashChart, type CashChartRow } from "./TreasuryCashChart";
 import { TreasuryProjection } from "./TreasuryProjection";
 import { TreasuryVat } from "./TreasuryVat";
+import { TreasuryFlowDetail } from "./TreasuryFlowDetail";
+import { CashBalancesCard } from "./CashBalancesCard";
 import { parseAmount, usePersistentInput } from "./usePersistentInput";
+import { signedEur } from "./format";
 
-/** Trésorerie : flux réalisés et prévus, à encaisser / à décaisser, projection et TVA. */
+/**
+ * Trésorerie : flux réalisés et prévus, détail par partie, à encaisser / à décaisser,
+ * solde de départ (cash_balances), projection et TVA.
+ */
 
 const DueStatus = ({ late, due }: { late: number; due: string | null }) =>
   late > 0 ? <StatusPill tone="warning">En retard de {late} j</StatusPill>
     : due ? <StatusPill tone="neutral">Échéance {frDate(due)}</StatusPill>
     : <StatusPill tone="neutral">Sans échéance</StatusPill>;
 
-export const TreasuryCashView = ({ data }: { data: TreasuryData }) => {
+export const TreasuryCashView = ({ data, onBalancesChanged }: { data: TreasuryData; onBalancesChanged: () => void | Promise<void> }) => {
   const today = localIso();
   const current = monthKeyOf(today);
-  const [cash, setCash] = usePersistentInput("kistone.treasury.startingCash");
   const [threshold, setThreshold] = usePersistentInput("kistone.treasury.alertThreshold");
-  const cashValue = parseAmount(cash);
   const thresholdValue = parseAmount(threshold);
+  const anchor = useMemo(() => latestBalance(data.cashBalances), [data.cashBalances]);
 
-  // Réalisé : 6 derniers mois, mois en cours à date
-  const flows = useMemo(() => {
-    const months = monthsEndingAt(current, 6);
+  // Réalisé mois par mois, depuis le solde de référence s'il est plus ancien que la fenêtre de 6 mois
+  const realized = useMemo(() => {
+    const windowStart = shiftMonth(current, -5);
+    const anchorMonth = anchor ? monthKeyOf(anchor.month) : windowStart;
+    const first = monthDiff(anchorMonth, windowStart) > 0 ? anchorMonth : windowStart;
+    const months = monthsFrom(first, monthDiff(first, current) + 1);
     const receipts = receiptsByMonth(data.clientInvoices, months);
     const freelances = sumByMonth(data.freelanceInvoices.filter((i) => i.paid_at), months, (i) => i.paid_at, (i) => Number(i.amount_ttc));
     const fixed = fixedCostsByMonth(data.fixedCosts, months, { to: today });
-    return months.map((m) => {
+    return Object.fromEntries(months.map((m) => {
       const out = freelances[m] + fixed[m].ttc;
-      return { month: m, receipts: receipts[m], freelances: freelances[m], fixed: fixed[m].ttc, out, net: receipts[m] - out };
-    });
-  }, [data, current, today]);
+      return [m, { month: m, receipts: receipts[m], freelances: freelances[m], fixed: fixed[m].ttc, out, net: receipts[m] - out }];
+    })) as Record<MonthKey, { month: MonthKey; receipts: number; freelances: number; fixed: number; out: number; net: number }>;
+  }, [data, current, today, anchor]);
+  const flows = useMemo(() => monthsEndingAt(current, 6).map((m) => realized[m]), [realized, current]);
 
   const receivables = useMemo(() =>
     unpaidInvoices(data.clientInvoices)
@@ -56,34 +65,59 @@ export const TreasuryCashView = ({ data }: { data: TreasuryData }) => {
       .map((i) => ({ key: i.id, label: i.freelance_name, detail: `Facture ${i.invoice_number}`, due: i.due_date, amount: Number(i.amount_ttc), fixed: false }));
     const fixed = data.fixedCosts.flatMap((c) =>
       fixedCostOccurrences(c, months[0], months[months.length - 1])
-        .filter((o) => o.date >= today)
+        .filter((o) => o.date > today)
         .map((o) => ({ key: `${c.id}-${o.date}`, label: c.label, detail: FIXED_COST_CATEGORIES[c.category] ?? "Frais fixe", due: o.date, amount: Number(c.amount_ht) + Number(c.vat_amount), fixed: true })));
     return { months, freelances, fixed, all: [...freelances, ...fixed].sort((a, b) => (a.due ?? "").localeCompare(b.due ?? "")) };
   }, [data, current, today]);
   const payableFreelances = payables.freelances.reduce((s, i) => s + i.amount, 0);
   const payableFixed = payables.fixed.reduce((s, i) => s + i.amount, 0);
 
-  const projection = useMemo(() => projectBalance({
-    start: cashValue ?? 0,
+  // Prévu : échéances à venir (les retards comptent sur le mois en cours), sans solde de départ
+  const forecast = useMemo(() => projectBalance({
+    start: 0,
     months: payables.months,
     receipts: receivables.map((i) => ({ due: i.due_date, amount: i.amount })),
     payments: payables.all.map((p) => ({ due: p.due, amount: p.amount })),
-  }), [cashValue, payables, receivables]);
+  }), [payables, receivables]);
+  const forecastOf = useMemo(() => Object.fromEntries(forecast.map((f) => [f.month, f])), [forecast]);
+
+  // Soldes enchaînés depuis le solde réel le plus récent (ouverture de son mois) ; à défaut, 0 € au 1er du mois en cours.
+  const chain = useMemo(() => {
+    const months = monthsFrom(shiftMonth(current, -5), 8);
+    const netOf = (m: MonthKey) => {
+      const r = realized[m];
+      const f = forecastOf[m];
+      return (r?.net ?? 0) + (f ? f.receipts - f.payments : 0);
+    };
+    const rows = chainBalances({ anchor: anchor ?? { month: current, amount: 0 }, months, netOf }) ?? [];
+    return Object.fromEntries(rows.map((r) => [r.month, r]));
+  }, [anchor, current, realized, forecastOf]);
+
+  const projection = useMemo<ProjectionRow[]>(() => payables.months.map((m) => {
+    const r = realized[m];
+    const f = forecastOf[m];
+    const c = chain[m];
+    return {
+      month: m,
+      opening: c?.opening ?? 0,
+      receipts: (r?.receipts ?? 0) + (f?.receipts ?? 0),
+      payments: (r?.out ?? 0) + (f?.payments ?? 0),
+      closing: c?.closing ?? 0,
+    };
+  }), [payables.months, realized, forecastOf, chain]);
 
   const chartRows = useMemo<CashChartRow[]>(() => {
-    const past = backfillBalances(cashValue ?? 0, flows.map((f) => f.net));
-    const rows: CashChartRow[] = flows.map((f, i) => ({
-      label: monthShortLabel(f.month), inDone: f.receipts, outDone: f.out, inForecast: 0, outForecast: 0, balance: past[i],
+    const rows: CashChartRow[] = flows.map((f) => ({
+      label: monthShortLabel(f.month), inDone: f.receipts, outDone: f.out, inForecast: 0, outForecast: 0, balance: chain[f.month]?.closing ?? null,
     }));
     const now = rows[rows.length - 1];
-    now.inForecast = projection[0]?.receipts ?? 0;
-    now.outForecast = projection[0]?.payments ?? 0;
-    now.balance = projection[0]?.closing ?? now.balance;
-    for (const p of projection.slice(1)) {
-      rows.push({ label: monthShortLabel(p.month), inDone: 0, outDone: 0, inForecast: p.receipts, outForecast: p.payments, balance: p.closing });
+    now.inForecast = forecastOf[current]?.receipts ?? 0;
+    now.outForecast = forecastOf[current]?.payments ?? 0;
+    for (const p of forecast.slice(1)) {
+      rows.push({ label: monthShortLabel(p.month), inDone: 0, outDone: 0, inForecast: p.receipts, outForecast: p.payments, balance: chain[p.month]?.closing ?? null });
     }
     return rows;
-  }, [flows, projection, cashValue]);
+  }, [flows, forecast, forecastOf, chain, current]);
 
   return (
     <div className="space-y-4">
@@ -91,8 +125,14 @@ export const TreasuryCashView = ({ data }: { data: TreasuryData }) => {
         title="Flux de trésorerie"
         description="Réalisé sur 6 mois (barres pleines) puis prévu sur les 3 prochains (hachuré). Encaissements : factures client payées ; décaissements : factures freelance payées et frais fixes TTC échus."
       >
-        <TreasuryCashChart rows={chartRows} threshold={cashValue != null ? thresholdValue : null} showBalance={cashValue != null} />
-        {cashValue == null && <p className="mt-2 text-xs text-muted-foreground">Saisissez la trésorerie actuelle (projection ci-dessous) pour tracer le solde.</p>}
+        <TreasuryCashChart rows={chartRows} threshold={anchor ? thresholdValue : null} showBalance={Boolean(anchor)} />
+        {anchor ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Solde tracé à partir du solde réel du 1er {monthLabel(monthKeyOf(anchor.month)).toLowerCase()} ({signedEur(anchor.amount)}).
+          </p>
+        ) : (
+          <p className="mt-2 text-xs text-muted-foreground">Enregistrez un solde de départ (ci-dessous) pour tracer le solde.</p>
+        )}
 
         <div aria-hidden="true" className="mt-4 hidden gap-3 border-b border-border px-2 pb-2 text-xs font-medium text-muted-foreground md:grid md:grid-cols-5">
           <span>Mois</span><span className="text-right">Encaissements</span><span className="text-right">Freelances</span><span className="text-right">Frais fixes</span><span className="text-right">Net</span>
@@ -116,6 +156,8 @@ export const TreasuryCashView = ({ data }: { data: TreasuryData }) => {
         </ul>
         {data.fixedCostsError && <p className="mt-2 text-xs text-muted-foreground">Frais fixes non comptés : table indisponible (migration à appliquer).</p>}
       </Section>
+
+      <TreasuryFlowDetail data={data} today={today} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="À encaisser" description="Factures client émises non réglées, par échéance.">
@@ -168,10 +210,11 @@ export const TreasuryCashView = ({ data }: { data: TreasuryData }) => {
         </Section>
       </div>
 
+      <CashBalancesCard balances={data.cashBalances} unavailable={data.cashBalancesError} currentMonth={current} onChanged={onBalancesChanged} />
+
       <TreasuryProjection
         rows={projection}
-        cash={cash}
-        onCashChange={setCash}
+        anchored={Boolean(anchor)}
         threshold={threshold}
         onThresholdChange={setThreshold}
         thresholdValue={thresholdValue}
