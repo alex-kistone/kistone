@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Linkedin, Calendar, LogOut, Trash2, MessageCircle, Building2, Star, Settings2, CheckCircle2, FileText, Users, Receipt, Briefcase, BarChart3, Send, X, MessageSquare, Sparkles, Bot } from "lucide-react";
+import { Linkedin, Calendar, LogOut, Trash2, MessageCircle, Building2, Star, Settings2, CheckCircle2, FileText, Users, Receipt, Briefcase, BarChart3, Send, X, MessageSquare, Sparkles, Bot, ShieldCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,12 +31,15 @@ import AdminClientsPanel from "@/components/platform/AdminClientsPanel";
 import AdminTimesheetsPanel from "@/components/platform/AdminTimesheetsPanel";
 import AdminInvoicesPanel from "@/components/platform/AdminInvoicesPanel";
 import AdminMissionsPanel from "@/components/platform/AdminMissionsPanel";
-import AdminKycPanel from "@/components/platform/AdminKycPanel";
 import DashboardFilters from "@/components/platform/DashboardFilters";
 import AdminKPIPanel from "@/components/platform/AdminKPIPanel";
 import AdminMessagesPanel from "@/components/platform/AdminMessagesPanel";
 import AdminSupportPanel from "@/components/platform/AdminSupportPanel";
 import AdminGlobalPipelinePanel from "@/components/platform/AdminGlobalPipelinePanel";
+import DossierSheet from "@/components/platform/admin/DossierSheet";
+import KycStatusPill from "@/components/platform/admin/KycStatusPill";
+import PendingDossiersCard from "@/components/platform/admin/PendingDossiersCard";
+import { DOSSIER_PARAM, useKycStatuses } from "@/components/platform/admin/kycDossiers";
 
 type Profile = FullProfile;
 
@@ -48,7 +51,6 @@ const ADMIN_TITLES: Record<string, string> = {
   recruiters: "Freelances",
   clients: "Clients",
   missions: "Missions",
-  kyc: "Dossiers",
   timesheets: "CRA",
   invoices: "Factures",
   messages: "Messages",
@@ -81,10 +83,33 @@ const Dashboard = () => {
   const [bulkMessage, setBulkMessage] = useState("");
   const [bulkBarOpen, setBulkBarOpen] = useState(false);
   const [bulkSending, setBulkSending] = useState(false);
+  // Dossiers KYC : statut par compte, filtre « à vérifier » sur les freelances
+  const { statuses: kycStatuses } = useKycStatuses();
+  const [kycToReviewOnly, setKycToReviewOnly] = useState(false);
+  const kycStatusOf = (p: Profile) => (p.user_id ? kycStatuses.get(p.user_id) : undefined);
+  const isKycToReview = (p: Profile) => kycStatusOf(p) === "submitted";
+  const renderKycPill = (p: Profile) => {
+    const status = kycStatusOf(p);
+    if (!p.user_id || !status) return null;
+    return <KycStatusPill userId={p.user_id} status={status} name={`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || p.email || "ce freelance"} className="mt-1" />;
+  };
+  const kycToReviewCount = profiles.filter(isKycToReview).length;
+  const visibleProfiles = kycToReviewOnly ? filteredProfiles.filter(isKycToReview) : filteredProfiles;
 
   useEffect(() => {
     checkAuthAndLoad();
   }, []);
+
+  // Ancien onglet « Dossiers » : on bascule sur la vue d'ensemble, dossier ouvert dans le panneau
+  useEffect(() => {
+    if (searchParams.get("tab") !== "kyc") return;
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", "kpi");
+    const user = next.get("user");
+    next.delete("user");
+    if (user) next.set(DOSSIER_PARAM, user);
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   // Fetch unread messages count
   useEffect(() => {
@@ -175,10 +200,10 @@ const Dashboard = () => {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === filteredProfiles.length) {
+    if (selectedIds.size === visibleProfiles.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredProfiles.map((p) => p.id)));
+      setSelectedIds(new Set(visibleProfiles.map((p) => p.id)));
     }
   };
 
@@ -249,7 +274,6 @@ const Dashboard = () => {
               <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Missions
             </TabsTrigger>
-            <TabsTrigger value="kyc" className="text-xs sm:text-sm">Dossiers</TabsTrigger>
             <TabsTrigger value="timesheets" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Receipt className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               CRA
@@ -274,6 +298,7 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="kpi">
+            <PendingDossiersCard />
             <AdminKPIPanel />
           </TabsContent>
 
@@ -291,8 +316,18 @@ const Dashboard = () => {
 
             {/* Selection bar */}
             <div className="mb-4 flex flex-wrap items-center gap-2">
+              <Button
+                variant={kycToReviewOnly ? "default" : "outline"}
+                size="sm"
+                className="gap-2 text-xs"
+                aria-pressed={kycToReviewOnly}
+                onClick={() => setKycToReviewOnly((v) => !v)}
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Dossier à vérifier ({kycToReviewCount})
+              </Button>
               <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={toggleSelectAll}>
-                <Checkbox checked={filteredProfiles.length > 0 && selectedIds.size === filteredProfiles.length} className="pointer-events-none" />
+                <Checkbox checked={visibleProfiles.length > 0 && selectedIds.size === visibleProfiles.length} className="pointer-events-none" />
                 {selectedIds.size > 0 ? `${selectedIds.size} sélectionné${selectedIds.size > 1 ? "s" : ""}` : "Tout sélectionner"}
               </Button>
               {selectedIds.size > 0 && (
@@ -335,7 +370,7 @@ const Dashboard = () => {
               <DashboardSkeletons />
             ) : viewMode === "kanban" ? (
               <KanbanView
-                profiles={filteredProfiles}
+                profiles={visibleProfiles}
                 onClickProfile={(p) => setDetailProfile(p)}
                 onOpenChat={(p) => { setChatTarget(p); setChatOpen(true); }}
                 onOpenAdmin={(p) => { setAdminPanelProfile(p); setAdminPanelOpen(true); }}
@@ -343,7 +378,7 @@ const Dashboard = () => {
             ) : (
               <>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredProfiles.map((profile) => (
+                  {visibleProfiles.map((profile) => (
                     <Card key={profile.id} className={`group relative cursor-pointer transition-shadow hover:shadow-lg ${selectedIds.has(profile.id) ? "ring-2 ring-primary" : ""}`} onClick={() => setDetailProfile(profile)}>
                       <div className="absolute left-3 top-3 z-10" onClick={(e) => e.stopPropagation()}>
                         <Checkbox
@@ -372,6 +407,7 @@ const Dashboard = () => {
                               {profile.super_tam && <span title="Super TAM">🥇</span>}
                             </h3>
                             <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
+                            {renderKycPill(profile)}
                             <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground sm:gap-2 sm:text-sm">
                               {profile.model && (
                                 <Badge variant={profile.model === "RPO" ? "default" : "secondary"} className="text-[10px] sm:text-xs">{profile.model}</Badge>
@@ -440,9 +476,13 @@ const Dashboard = () => {
                   ))}
                 </div>
 
-                {filteredProfiles.length === 0 && (
+                {visibleProfiles.length === 0 && (
                   <div className="py-12 text-center text-muted-foreground">
-                    {profiles.length === 0 ? "Aucun freelance inscrit pour le moment." : "Aucun freelance ne correspond à vos critères."}
+                    {profiles.length === 0
+                      ? "Aucun freelance inscrit pour le moment."
+                      : kycToReviewOnly && filteredProfiles.length > 0
+                        ? "Aucun dossier freelance à vérifier dans cette sélection."
+                        : "Aucun freelance ne correspond à vos critères."}
                   </div>
                 )}
               </>
@@ -466,10 +506,6 @@ const Dashboard = () => {
             <AdminMissionsPanel />
           </TabsContent>
 
-          <TabsContent value="kyc">
-            <AdminKycPanel />
-          </TabsContent>
-
           <TabsContent value="timesheets">
             <AdminTimesheetsPanel />
           </TabsContent>
@@ -488,6 +524,8 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      <DossierSheet />
 
       {adminId && chatTarget?.user_id && (
         <ChatPanel open={chatOpen} onOpenChange={setChatOpen} currentUserId={adminId} otherUserId={chatTarget.user_id} otherUserName={`${chatTarget.first_name} ${chatTarget.last_name}`} />

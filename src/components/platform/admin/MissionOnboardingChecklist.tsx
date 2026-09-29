@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   CheckCircle2, Circle, Download, FileSignature, FolderOpen, Loader2, PlayCircle, Send, Upload,
 } from "lucide-react";
@@ -15,6 +14,7 @@ import { KYC_STATUS, type KycDossier, type KycParty } from "@/lib/kyc";
 import {
   CONTRACT_STATUS, PARTY_LABEL, frDate, functionErrorMessage, openPrivateFile, todayStamp, type MissionContract,
 } from "./adv";
+import { useOpenDossier } from "./kycDossiers";
 
 const SIGNED_MAX_BYTES = 10 * 1024 * 1024;
 const SIGNED_TYPES: Record<string, string> = {
@@ -37,7 +37,7 @@ interface Props {
 /** Checklist de mise en place d'une mission : deux dossiers validés, deux contrats signés, puis démarrage. */
 const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabled, onGenerate, onChanged }: Props) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const openDossier = useOpenDossier();
   const [busy, setBusy] = useState<string | null>(null);
   const [confirmStart, setConfirmStart] = useState(false);
   const fileInputs = useRef<Record<KycParty, HTMLInputElement | null>>({ client: null, freelance: null });
@@ -144,7 +144,7 @@ const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabl
             size="sm"
             variant="ghost"
             className="gap-1 self-start text-xs sm:self-auto"
-            onClick={() => navigate(`/dashboard?tab=kyc&user=${uid}`)}
+            onClick={() => openDossier(uid)}
           >
             <FolderOpen className="h-3.5 w-3.5" /> Voir le dossier
           </Button>

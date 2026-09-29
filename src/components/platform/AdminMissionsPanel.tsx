@@ -19,6 +19,7 @@ import ExtendMissionDialog from "./ExtendMissionDialog";
 import GenerateContractsDialog from "./GenerateContractsDialog";
 import MissionOnboardingChecklist from "./admin/MissionOnboardingChecklist";
 import type { MissionContract } from "./admin/adv";
+import { KYC_CHANGED_EVENT } from "./admin/kycDossiers";
 import { fetchCompanySettings } from "@/lib/companySettings";
 import type { KycDossier } from "@/lib/kyc";
 
@@ -74,6 +75,12 @@ const AdminMissionsPanel = () => {
   const [yousignEnabled, setYousignEnabled] = useState(false);
 
   useEffect(() => { loadMissions(); }, []);
+  // Un dossier validé ou refusé depuis le panneau latéral met la checklist à jour
+  useEffect(() => {
+    const onKycChanged = () => { loadMissions(); };
+    window.addEventListener(KYC_CHANGED_EVENT, onKycChanged);
+    return () => window.removeEventListener(KYC_CHANGED_EVENT, onKycChanged);
+  }, []);
 
   const loadMissions = async () => {
     const { data: missionsData } = await supabase

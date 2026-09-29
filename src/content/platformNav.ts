@@ -54,7 +54,6 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
     { label: "Pipeline", path: "/dashboard", tab: "pipeline", icon: GitBranch },
     { label: "Freelances", path: "/dashboard", tab: "recruiters", icon: Users },
     { label: "Clients", path: "/dashboard", tab: "clients", icon: Building2 },
-    { label: "Dossiers", path: "/dashboard", tab: "kyc", icon: ShieldCheck },
     { label: "Missions", path: "/dashboard", tab: "missions", icon: Briefcase },
     { label: "CRA", path: "/dashboard", tab: "timesheets", icon: CalendarCheck },
     { label: "Factures", path: "/dashboard", tab: "invoices", icon: Receipt },

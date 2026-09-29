@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MessageCircle, Building2, MapPin, Mail, Phone } from "lucide-react";
+import { MessageCircle, Building2, MapPin, Mail, Phone, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import KycStatusPill from "./admin/KycStatusPill";
+import { useKycStatuses } from "./admin/kycDossiers";
 
 interface ClientProfile {
   id: string;
@@ -30,6 +32,11 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
   const [clients, setClients] = useState<ClientProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  // Dossiers KYC : statut par compte, filtre « à vérifier »
+  const { statuses: kycStatuses } = useKycStatuses();
+  const [kycToReviewOnly, setKycToReviewOnly] = useState(false);
+  const isKycToReview = (c: ClientProfile) => kycStatuses.get(c.user_id) === "submitted";
+  const kycToReviewCount = clients.filter(isKycToReview).length;
 
   useEffect(() => {
     loadClients();
@@ -51,6 +58,7 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
   };
 
   const filtered = clients.filter((c) => {
+    if (kycToReviewOnly && !isKycToReview(c)) return false;
     const q = search.toLowerCase();
     return (
       !q ||
@@ -61,22 +69,45 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
     );
   });
 
+  const renderKycPill = (c: ClientProfile) => {
+    const status = kycStatuses.get(c.user_id);
+    if (!status) return null;
+    return <KycStatusPill userId={c.user_id} status={status} name={`${c.first_name ?? ""} ${c.last_name ?? ""}`.trim() || c.company_name || c.email} className="mt-1" />;
+  };
+
   if (loading) {
     return <div className="py-12 text-center text-muted-foreground">Chargement des clients…</div>;
   }
 
   return (
     <div className="space-y-4">
-      <Input
-        placeholder="Rechercher un client…"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="max-w-sm"
-      />
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input
+          placeholder="Rechercher un client…"
+          aria-label="Rechercher un client"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="sm:max-w-sm"
+        />
+        <Button
+          variant={kycToReviewOnly ? "default" : "outline"}
+          size="sm"
+          className="gap-2 self-start text-xs sm:self-auto"
+          aria-pressed={kycToReviewOnly}
+          onClick={() => setKycToReviewOnly((v) => !v)}
+        >
+          <ShieldCheck className="h-3.5 w-3.5" />
+          Dossier à vérifier ({kycToReviewCount})
+        </Button>
+      </div>
 
       {filtered.length === 0 ? (
         <div className="py-12 text-center text-muted-foreground">
-          {clients.length === 0 ? "Aucun client inscrit pour le moment." : "Aucun client ne correspond à votre recherche."}
+          {clients.length === 0
+            ? "Aucun client inscrit pour le moment."
+            : kycToReviewOnly && !search
+              ? "Aucun dossier client à vérifier."
+              : "Aucun client ne correspond à votre recherche."}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -92,6 +123,7 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate text-sm font-semibold">{client.first_name} {client.last_name}</h3>
                     <p className="truncate text-xs text-muted-foreground">{client.job_title}</p>
+                    {renderKycPill(client)}
                   </div>
                 </div>
 
