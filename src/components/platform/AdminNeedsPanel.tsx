@@ -482,7 +482,7 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <Select value={selectedNeedId || ""} onValueChange={setSelectedNeedId}>
-            <SelectTrigger className="max-w-md">
+            <SelectTrigger className="h-auto min-h-10 max-w-md py-2 text-left [&>span]:line-clamp-2">
               <SelectValue placeholder="Sélectionner un besoin..." />
             </SelectTrigger>
             <SelectContent>
@@ -490,7 +490,7 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
                 const count = suggestions.filter((s) => s.need_id === n.id).length;
                 return (
                   <SelectItem key={n.id} value={n.id}>
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 text-left">
                       {n.job_title} — {n.company_name}
                       {count > 0 && (
                         <Badge variant="secondary" className="text-[10px] ml-1">{count}</Badge>

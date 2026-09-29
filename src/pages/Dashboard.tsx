@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Linkedin, Calendar, LogOut, Trash2, MessageCircle, Building2, Star, Settings2, CheckCircle2, FileText, Users, Receipt, Briefcase, BarChart3, Send, X, MessageSquare, Sparkles, Bot, ShieldCheck } from "lucide-react";
+import { Linkedin, Calendar, LogOut, Trash2, MessageCircle, Building2, Star, Settings2, CheckCircle2, FileText, Users, Receipt, Briefcase, BarChart3, Send, X, MessageSquare, Sparkles, Bot, ShieldCheck, Check } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -330,7 +330,10 @@ const Dashboard = () => {
                 Dossier à vérifier ({kycToReviewCount})
               </Button>
               <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={toggleSelectAll}>
-                <Checkbox checked={visibleProfiles.length > 0 && selectedIds.size === visibleProfiles.length} className="pointer-events-none" />
+                {/* Case visuelle seulement : une vraie case (bouton) ne peut pas être dans un bouton. */}
+                <span aria-hidden="true" className={`flex h-4 w-4 items-center justify-center rounded-sm border border-primary ${visibleProfiles.length > 0 && selectedIds.size === visibleProfiles.length ? "bg-primary text-primary-foreground" : ""}`}>
+                  {visibleProfiles.length > 0 && selectedIds.size === visibleProfiles.length ? <Check className="h-3 w-3" /> : null}
+                </span>
                 {selectedIds.size > 0 ? `${selectedIds.size} sélectionné${selectedIds.size > 1 ? "s" : ""}` : "Tout sélectionner"}
               </Button>
               {selectedIds.size > 0 && (
