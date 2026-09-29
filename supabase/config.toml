@@ -1,1 +1,4 @@
 project_id = "cqtrqkslzztceiuhhilo"
+# Appelée par Yousign (pas de session Supabase) : l'authenticité est vérifiée par signature HMAC
+[functions.yousign-webhook]
+verify_jwt = false

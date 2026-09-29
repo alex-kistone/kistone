@@ -30,6 +30,7 @@ import KanbanView from "@/components/platform/KanbanView";
 import AdminClientsPanel from "@/components/platform/AdminClientsPanel";
 import AdminTimesheetsPanel from "@/components/platform/AdminTimesheetsPanel";
 import AdminMissionsPanel from "@/components/platform/AdminMissionsPanel";
+import AdminKycPanel from "@/components/platform/AdminKycPanel";
 import DashboardFilters from "@/components/platform/DashboardFilters";
 import AdminKPIPanel from "@/components/platform/AdminKPIPanel";
 import AdminMessagesPanel from "@/components/platform/AdminMessagesPanel";
@@ -46,6 +47,7 @@ const ADMIN_TITLES: Record<string, string> = {
   recruiters: "Freelances",
   clients: "Clients",
   missions: "Missions",
+  kyc: "Dossiers",
   timesheets: "CRA",
   messages: "Messages",
   assistant: "Assistant",
@@ -245,6 +247,7 @@ const Dashboard = () => {
               <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Missions
             </TabsTrigger>
+            <TabsTrigger value="kyc" className="text-xs sm:text-sm">Dossiers</TabsTrigger>
             <TabsTrigger value="timesheets" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Receipt className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               CRA
@@ -455,6 +458,10 @@ const Dashboard = () => {
 
           <TabsContent value="missions">
             <AdminMissionsPanel />
+          </TabsContent>
+
+          <TabsContent value="kyc">
+            <AdminKycPanel />
           </TabsContent>
 
           <TabsContent value="timesheets">

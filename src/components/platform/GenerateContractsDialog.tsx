@@ -11,10 +11,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { generateClientContract, generateContractorContract } from "@/lib/contracts";
 import { fetchCompanySettings } from "@/lib/companySettings";
 import type { ContractData } from "@/lib/contracts";
+import type { KycParty } from "@/lib/kyc";
+import { CONTRACT_STATUS, PARTY_LABEL, todayStamp, type MissionContract } from "./admin/adv";
+
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  /** Appelé après l'enregistrement d'un contrat dans le bucket (pour rafraîchir la checklist). */
+  onSaved?: () => void;
   mission: {
     id: string;
     title: string;
@@ -30,9 +36,11 @@ interface Props {
   };
 }
 
-const GenerateContractsDialog = ({ open, onClose, mission }: Props) => {
+const GenerateContractsDialog = ({ open, onClose, onSaved, mission }: Props) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [existing, setExisting] = useState<MissionContract[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [contractData, setContractData] = useState<ContractData | null>(null);
 
@@ -79,6 +87,13 @@ const GenerateContractsDialog = ({ open, onClose, mission }: Props) => {
     }
 
     const provider = await fetchCompanySettings();
+
+    // Contrats déjà enregistrés (pour prévenir avant d'écraser une version envoyée ou signée)
+    const { data: contractRows } = await supabase
+      .from("contracts" as never)
+      .select("*")
+      .eq("mission_id" as never, mission.id as never);
+    setExisting((contractRows ?? []) as unknown as MissionContract[]);
 
     const data: ContractData = {
       provider,
@@ -143,30 +158,77 @@ const GenerateContractsDialog = ({ open, onClose, mission }: Props) => {
     URL.revokeObjectURL(url);
   };
 
-  const handleDownloadClient = async () => {
+  /**
+   * Range le contrat dans le bucket privé `contracts/<mission>/<partie>/contrat-<date>.docx`
+   * et enregistre la ligne `contracts` en brouillon. Un nouveau document annule toute
+   * signature ou demande Yousign précédente. Renvoie un message d'erreur, ou null.
+   */
+  const saveContract = async (party: KycParty, blob: Blob): Promise<string | null> => {
+    const path = `${mission.id}/${party}/contrat-${todayStamp()}.docx`;
+    const { error: uploadError } = await supabase.storage
+      .from("contracts")
+      .upload(path, blob, { upsert: true, contentType: DOCX_MIME });
+    if (uploadError) return uploadError.message;
+    const { error } = await supabase.from("contracts" as never).upsert(
+      {
+        mission_id: mission.id,
+        party,
+        status: "draft",
+        document_path: path,
+        signed_document_path: null,
+        signed_at: null,
+        sent_at: null,
+        yousign_request_id: null,
+      } as never,
+      { onConflict: "mission_id,party" },
+    );
+    return error?.message ?? null;
+  };
+
+  const generate = async (party: KycParty) => {
+    const data = getMergedData();
+    const blob = party === "client" ? await generateClientContract(data) : await generateContractorContract(data);
+    const filename = party === "client"
+      ? `Contrat_Client_${contractData!.clientCompanyName.replace(/\s+/g, "_")}.docx`
+      : `Contrat_Consultant_${contractData!.recruiterFirstName}_${contractData!.recruiterLastName}.docx`;
+    downloadBlob(blob, filename);
+    const saveError = await saveContract(party, blob);
+    return saveError;
+  };
+
+  const run = async (parties: KycParty[]) => {
+    setBusy(true);
+    const failures: string[] = [];
     try {
-      const blob = await generateClientContract(getMergedData());
-      downloadBlob(blob, `Contrat_Client_${contractData!.clientCompanyName.replace(/\s+/g, "_")}.docx`);
-      toast({ title: "Contrat client téléchargé !" });
-    } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      for (const party of parties) {
+        const saveError = await generate(party);
+        if (saveError) failures.push(`${PARTY_LABEL[party]} : ${saveError}`);
+      }
+      if (failures.length) {
+        toast({
+          title: "Contrat téléchargé mais non enregistré",
+          description: failures.join(" · "),
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: parties.length > 1 ? "Contrats enregistrés et téléchargés" : `Contrat ${PARTY_LABEL[parties[0]].toLowerCase()} enregistré et téléchargé`,
+          description: "Ils sont à faire signer depuis la fiche de la mission.",
+        });
+      }
+      onSaved?.();
+    } catch (err) {
+      toast({ title: "Erreur", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleDownloadContractor = async () => {
-    try {
-      const blob = await generateContractorContract(getMergedData());
-      downloadBlob(blob, `Contrat_Consultant_${contractData!.recruiterFirstName}_${contractData!.recruiterLastName}.docx`);
-      toast({ title: "Contrat consultant téléchargé !" });
-    } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
-    }
-  };
+  const handleDownloadClient = () => run(["client"]);
+  const handleDownloadContractor = () => run(["freelance"]);
+  const handleDownloadBoth = () => run(["client", "freelance"]);
 
-  const handleDownloadBoth = async () => {
-    await handleDownloadClient();
-    setTimeout(() => handleDownloadContractor(), 500);
-  };
+  const alreadyEngaged = existing.filter((c) => c.status === "sent" || c.status === "signed");
 
   const missingFields = dataLoaded ? Object.entries(overrides).filter(([, v]) => !v) : [];
 
@@ -274,19 +336,34 @@ const GenerateContractsDialog = ({ open, onClose, mission }: Props) => {
               </div>
             </div>
 
+            {alreadyEngaged.length > 0 && (
+              <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-sm text-orange-700 dark:border-orange-800 dark:bg-orange-900/20 dark:text-orange-300">
+                <p className="flex items-center gap-1.5 font-medium">
+                  <AlertCircle className="h-4 w-4" /> Contrat déjà engagé
+                </p>
+                <p className="mt-1">
+                  {alreadyEngaged.map((c) => `${PARTY_LABEL[c.party]} : ${CONTRACT_STATUS[c.status].label.toLowerCase()}`).join(" · ")}.
+                  {" "}Le régénérer le repasse en « À signer » et annule la signature ou la demande en cours.
+                </p>
+              </div>
+            )}
+
             {/* Download buttons */}
+            <p className="text-xs text-muted-foreground">
+              Chaque contrat généré est téléchargé et enregistré sur la mission, prêt à être signé.
+            </p>
             <div className="flex flex-col sm:flex-row gap-2">
-              <Button onClick={handleDownloadClient} variant="outline" className="flex-1 gap-2">
+              <Button onClick={handleDownloadClient} variant="outline" className="flex-1 gap-2" disabled={busy}>
                 <Download className="h-4 w-4" />
                 Contrat Client (DOCX)
               </Button>
-              <Button onClick={handleDownloadContractor} variant="outline" className="flex-1 gap-2">
+              <Button onClick={handleDownloadContractor} variant="outline" className="flex-1 gap-2" disabled={busy}>
                 <Download className="h-4 w-4" />
                 Contrat Consultant (DOCX)
               </Button>
-              <Button onClick={handleDownloadBoth} className="flex-1 gap-2">
-                <Download className="h-4 w-4" />
-                Télécharger les 2
+              <Button onClick={handleDownloadBoth} className="flex-1 gap-2" disabled={busy}>
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                Générer les 2
               </Button>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import MissionOnboardingCard from "@/components/platform/MissionOnboardingCard";
 import { Briefcase, MapPin, Calendar, Clock, ChevronLeft, ChevronRight, Send, Check, ArrowLeft, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ interface TimesheetData {
 }
 
 const MISSION_STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  onboarding: { label: "En préparation", color: "bg-[#EDF3FB] text-[#1E4F8F]" },
   active: { label: "En cours", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
   completed: { label: "Terminée", color: "bg-muted text-muted-foreground" },
   cancelled: { label: "Annulée", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
@@ -273,7 +275,10 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
           </div>
         </div>
 
-        {/* CRA Section */}
+        {/* Mission en préparation : dossier et contrat avant le démarrage, pas encore de CRA */}
+        {selectedMission.status === "onboarding" ? (
+          <MissionOnboardingCard missionId={selectedMission.id} party="freelance" userId={userId} dossierHref="/profile?tab=admin" />
+        ) : (
         <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <h3 className="mb-4 text-lg font-semibold flex items-center gap-2">
             <Briefcase className="h-5 w-5 text-primary" />
@@ -394,6 +399,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             )}
           </div>
         </div>
+        )}
 
         {/* Timesheet history */}
         {timesheetHistory.length > 0 && (

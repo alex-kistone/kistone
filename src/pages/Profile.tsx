@@ -35,7 +35,7 @@ import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
-import FreelanceAdminTab from "@/components/platform/FreelanceAdminTab";
+import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
 import { METIERS } from "@/lib/taxonomy";
 
@@ -74,11 +74,9 @@ const Profile = () => {
   const [sectors, setSectors] = useState<string[]>([]);
   const [remotePreference, setRemotePreference] = useState<string>("");
   const [sectorOther, setSectorOther] = useState("");
+  // Informations société : gérées par « Mon dossier » ; lues ici pour la liste de complétion
   const [recruiterCompanyName, setRecruiterCompanyName] = useState("");
   const [recruiterSiren, setRecruiterSiren] = useState("");
-  const [recruiterCompanyAddress, setRecruiterCompanyAddress] = useState("");
-  const [recruiterLegalForm, setRecruiterLegalForm] = useState("");
-  const [recruiterTvaNumber, setRecruiterTvaNumber] = useState("");
   // Onglet piloté par le menu latéral (?tab=missions | admin)
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
@@ -88,9 +86,6 @@ const Profile = () => {
   const [optimizing, setOptimizing] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [adminUserId, setAdminUserId] = useState<string | null>(null);
-  const [urssafDocUrl, setUrssafDocUrl] = useState<string | null>(null);
-  const [insuranceDocUrl, setInsuranceDocUrl] = useState<string | null>(null);
-  const [ribDocUrl, setRibDocUrl] = useState<string | null>(null);
   const unreadCount = useUnreadCount(userId);
 
   useEffect(() => {
@@ -155,12 +150,6 @@ const Profile = () => {
       setRemotePreference(p.remote_preference || "");
       setRecruiterCompanyName(p.company_name || "");
       setRecruiterSiren(p.siren || "");
-      setRecruiterCompanyAddress(p.company_address || "");
-      setRecruiterLegalForm(p.legal_form || "");
-      setRecruiterTvaNumber(p.tva_number || "");
-      setUrssafDocUrl(p.urssaf_document_url || null);
-      setInsuranceDocUrl(p.insurance_document_url || null);
-      setRibDocUrl(p.rib_document_url || null);
     } else {
       // Première connexion : on pré-remplit avec le compte LinkedIn / Google, puis
       // on exige l'URL LinkedIn avant d'accéder au profil.
@@ -276,14 +265,6 @@ const Profile = () => {
         has_linkedin_license: hasLinkedinLicense,
         sectors: sectors.map((s) => s === "Autre" && sectorOther.trim() ? sectorOther.trim() : s).filter((s) => s !== "Autre"),
         remote_preference: remotePreference || null,
-        company_name: recruiterCompanyName || null,
-        siren: recruiterSiren || null,
-        company_address: recruiterCompanyAddress || null,
-        legal_form: recruiterLegalForm || null,
-        tva_number: recruiterTvaNumber || null,
-        urssaf_document_url: urssafDocUrl || null,
-        insurance_document_url: insuranceDocUrl || null,
-        rib_document_url: ribDocUrl || null,
       };
 
       let error;
@@ -358,28 +339,7 @@ const Profile = () => {
         {activeTab === "missions" && userId ? (
           <FreelanceMissionsSection userId={userId} />
         ) : activeTab === "admin" && userId ? (
-          <FreelanceAdminTab
-            userId={userId}
-            profileId={existingId}
-            companyName={recruiterCompanyName}
-            setCompanyName={setRecruiterCompanyName}
-            legalForm={recruiterLegalForm}
-            setLegalForm={setRecruiterLegalForm}
-            siren={recruiterSiren}
-            setSiren={setRecruiterSiren}
-            tvaNumber={recruiterTvaNumber}
-            setTvaNumber={setRecruiterTvaNumber}
-            companyAddress={recruiterCompanyAddress}
-            setCompanyAddress={setRecruiterCompanyAddress}
-            urssafDocUrl={urssafDocUrl}
-            setUrssafDocUrl={setUrssafDocUrl}
-            insuranceDocUrl={insuranceDocUrl}
-            setInsuranceDocUrl={setInsuranceDocUrl}
-            ribDocUrl={ribDocUrl}
-            setRibDocUrl={setRibDocUrl}
-            onSave={() => handleSubmit()}
-            saving={saving}
-          />
+          <KycDossierPanel party="freelance" userId={userId} email={email} />
         ) : (
         <>
         {existingId && (

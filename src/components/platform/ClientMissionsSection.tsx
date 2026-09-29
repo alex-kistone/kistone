@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import MissionOnboardingCard from "@/components/platform/MissionOnboardingCard";
 import { Briefcase, MapPin, Calendar, Clock, Check, X, ArrowLeft, User, Euro, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ interface TimesheetForReview {
 }
 
 const MISSION_STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  onboarding: { label: "En préparation", color: "bg-[#EDF3FB] text-[#1E4F8F]" },
   active: { label: "En cours", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
   completed: { label: "Terminée", color: "bg-muted text-muted-foreground" },
   cancelled: { label: "Annulée", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
@@ -399,9 +401,15 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
             </div>
           </div>
 
+          {selectedMission.status === "onboarding" ? (
+            <div className="mt-4">
+              <MissionOnboardingCard missionId={selectedMission.id} party="client" userId={userId} dossierHref="/client/profile" />
+            </div>
+          ) : null}
+
           <Separator className="my-4" />
 
-          {/* Consultant info (non-anonymized) */}
+          {/* Consultant (prénom et intitulé) */}
           <div>
             <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Consultant</h3>
             <div className="flex items-center gap-4">

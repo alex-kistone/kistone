@@ -11,6 +11,16 @@ import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import ClientMissionsSection from "@/components/platform/ClientMissionsSection";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ClientNeed {
   id: string;
@@ -390,6 +400,30 @@ const ClientDashboard = () => {
     }
   };
 
+  // Profil à retenir, en attente de confirmation
+  const [toAccept, setToAccept] = useState<{ id: string; needId: string; label: string } | null>(null);
+
+  /** Le client retient (accepted) ou écarte (rejected) un profil présélectionné. */
+  const handleDecision = async (suggestionId: string, needId: string, status: "accepted" | "rejected") => {
+    const { error } = await supabase
+      .from("profile_suggestions" as any)
+      .update({ pipeline_status: status, status_updated_at: new Date().toISOString() })
+      .eq("id", suggestionId);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    setSuggestions((prev) => ({
+      ...prev,
+      [needId]: (prev[needId] ?? []).map((s) => (s.id === suggestionId ? { ...s, pipeline_status: status } : s)),
+    }));
+    toast(
+      status === "accepted"
+        ? { title: "Profil retenu", description: "L'équipe Kistone prépare la mission : vous serez invité à compléter votre dossier et à signer le contrat." }
+        : { title: "Profil écarté" },
+    );
+  };
+
   const handleShortlist = async (suggestionId: string, needId: string, anonymousLabel: string) => {
     const { error } = await supabase
       .from("profile_suggestions" as any)
@@ -480,7 +514,8 @@ const ClientDashboard = () => {
           <div className="space-y-4">
             {needs.map((need) => {
               const statusInfo = statusLabels[need.status] || statusLabels.pending;
-              const needSuggestions = suggestions[need.id] || [];
+              // Les profils écartés disparaissent de la vue client (l'admin les garde dans son pipeline)
+              const needSuggestions = (suggestions[need.id] || []).filter((s) => s.pipeline_status !== "rejected");
               const isExpanded = expandedNeedId === need.id;
               const isMatching = matchingNeedId === need.id;
 
@@ -649,6 +684,30 @@ const ClientDashboard = () => {
                                       Je souhaite en savoir plus
                                     </Button>
                                   )}
+                                  {(s.pipeline_status === "shortlisted" || s.pipeline_status === "interview") && (
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                      <Button
+                                        size="sm"
+                                        className="gap-2"
+                                        onClick={(e) => { e.stopPropagation(); setToAccept({ id: s.id, needId: need.id, label: s.anonymous_label }); }}
+                                      >
+                                        <CheckCircle2 className="h-4 w-4" />
+                                        Retenir ce profil
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={(e) => { e.stopPropagation(); handleDecision(s.id, need.id, "rejected"); }}
+                                      >
+                                        Écarter
+                                      </Button>
+                                    </div>
+                                  )}
+                                  {s.pipeline_status === "accepted" && (
+                                    <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#E8F5EE] px-2.5 py-1 text-xs font-medium text-[#17663F]">
+                                      <CheckCircle2 className="h-3.5 w-3.5" /> Retenu · mission en préparation
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                               {profileLoading === s.id && (
@@ -668,6 +727,26 @@ const ClientDashboard = () => {
         </>
         )}
       </main>
+
+      <AlertDialog open={Boolean(toAccept)} onOpenChange={(o) => { if (!o) setToAccept(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Retenir {toAccept?.label} ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              L'équipe Kistone prépare la mission. Vous serez ensuite invité à compléter le dossier de votre entreprise et à
+              signer le contrat avant le démarrage.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => { if (toAccept) handleDecision(toAccept.id, toAccept.needId, "accepted"); setToAccept(null); }}
+            >
+              Retenir ce profil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Profile detail popup */}
       <ProfileDetailPopup profile={selectedProfile} open={!!selectedProfile} onClose={() => setSelectedProfile(null)} />

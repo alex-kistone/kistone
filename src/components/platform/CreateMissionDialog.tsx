@@ -82,7 +82,8 @@ const CreateMissionDialog = ({
           start_date: format(startDate, "yyyy-MM-dd"),
           end_date: endDate ? format(endDate, "yyyy-MM-dd") : null,
           duration_text: durationText || null,
-          status: "active",
+          // Mise en place : dossiers KYC et contrats à finaliser avant le démarrage
+          status: "onboarding",
           created_by: session.user.id,
         });
 
@@ -100,7 +101,10 @@ const CreateMissionDialog = ({
         .update({ pipeline_status: "accepted", status_updated_at: new Date().toISOString() })
         .eq("id", suggestionId);
 
-      toast({ title: "Mission créée !", description: `${recruiterName} est staffé(e) sur ${needTitle}.` });
+      toast({
+        title: "Mission créée : les dossiers et contrats sont à finaliser avant le démarrage",
+        description: `${recruiterName} sur ${needTitle}.`,
+      });
       onMissionCreated();
       onClose();
     } catch (err: any) {

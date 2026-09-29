@@ -9,6 +9,7 @@ interface CompanyResult {
   nom_raison_sociale: string;
   nature_juridique: string;
   siege: {
+    siret: string;
     adresse: string;
     code_postal: string;
     libelle_commune: string;
@@ -49,6 +50,8 @@ function computeTvaNumber(siren: string): string {
 export interface CompanyData {
   companyName: string;
   siren: string;
+  /** SIRET du siège */
+  siret: string;
   legalForm: string;
   companyAddress: string;
   tvaNumber: string;
@@ -86,6 +89,7 @@ const CompanySearch = ({ onSelect }: CompanySearchProps) => {
         nature_juridique: r.nature_juridique,
         categorie_juridique: r.categorie_juridique,
         siege: {
+          siret: r.siege?.siret || "",
           adresse: r.siege?.adresse || "",
           code_postal: r.siege?.code_postal || "",
           libelle_commune: r.siege?.libelle_commune || "",
@@ -115,6 +119,7 @@ const CompanySearch = ({ onSelect }: CompanySearchProps) => {
     onSelect({
       companyName: r.nom_complet || r.nom_raison_sociale,
       siren: r.siren,
+      siret: r.siege.siret,
       legalForm: getLegalFormLabel(r.categorie_juridique),
       companyAddress: address,
       tvaNumber: computeTvaNumber(r.siren),

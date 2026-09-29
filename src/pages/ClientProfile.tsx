@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteAccountButton from "@/components/platform/DeleteAccountButton";
 import ExportDataButton from "@/components/platform/ExportDataButton";
@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import AppShell from "@/components/platform/AppShell";
-import CompanySearch, { type CompanyData } from "@/components/platform/CompanySearch";
+import KycDossierPanel from "@/components/platform/KycDossierPanel";
 
 const ClientProfile = () => {
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ const ClientProfile = () => {
   const [isNew, setIsNew] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const [companyName, setCompanyName] = useState("");
   const [cities, setCities] = useState<string[]>([]);
   const [cityInput, setCityInput] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -28,11 +27,6 @@ const ClientProfile = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [siren, setSiren] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
-  const [legalForm, setLegalForm] = useState("");
-  const [representativeName, setRepresentativeName] = useState("");
-  const [representativeTitle, setRepresentativeTitle] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -48,18 +42,12 @@ const ClientProfile = () => {
 
       if (data) {
         const p = data as any;
-        setCompanyName(p.company_name || "");
         setCities(p.cities || []);
         setFirstName(p.first_name || "");
         setLastName(p.last_name || "");
         setJobTitle(p.job_title || "");
         setPhone(p.phone || "");
         setEmail(p.email || session.user.email || "");
-        setSiren(p.siren || "");
-        setCompanyAddress(p.company_address || "");
-        setLegalForm(p.legal_form || "");
-        setRepresentativeName(p.representative_name || "");
-        setRepresentativeTitle(p.representative_title || "");
       } else {
         setIsNew(true);
         setEmail(session.user.email || "");
@@ -95,30 +83,17 @@ const ClientProfile = () => {
 
     const payload = {
       user_id: userId,
-      company_name: companyName,
       cities,
       first_name: firstName,
       last_name: lastName,
       job_title: jobTitle,
       phone: phone || null,
       email,
-      siren: siren || null,
-      company_address: companyAddress || null,
-      legal_form: legalForm || null,
-      representative_name: representativeName || null,
-      representative_title: representativeTitle || null,
     };
 
     try {
-      let error;
-      if (isNew) {
-        ({ error } = await supabase.from("client_profiles" as any).insert(payload));
-      } else {
-        ({ error } = await supabase
-          .from("client_profiles" as any)
-          .update(payload)
-          .eq("user_id", userId));
-      }
+      // Le dossier (KYC) peut avoir créé la ligne : upsert sur user_id
+      const { error } = await supabase.from("client_profiles" as any).upsert(payload, { onConflict: "user_id" });
       if (error) throw error;
 
       setIsNew(false);
@@ -143,71 +118,15 @@ const ClientProfile = () => {
     <div className="min-h-screen bg-background lg:pl-[248px]">
       <AppShell role="client" />
       <main className="container mx-auto max-w-2xl px-4 py-12">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate("/client/dashboard")}
-          className="mb-6 gap-2 text-muted-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Retour au tableau de bord
-        </Button>
 
-        <h1 className="mb-2 text-3xl font-bold">Mon profil entreprise</h1>
+        <h1 className="mb-2 text-3xl font-bold">Mon dossier</h1>
         <p className="mb-8 text-muted-foreground">
-          Ces informations seront pré-remplies lors de la création de vos besoins.
+          Vos coordonnées, puis les informations de votre entreprise pour les contrats et la facturation.
         </p>
 
+        <h2 className="mb-4 text-xl font-semibold">Vos coordonnées</h2>
+
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Company */}
-          <div className="space-y-2">
-            <Label htmlFor="companyName">Nom de l'entreprise</Label>
-            <Input
-              id="companyName"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Ex : Acme Corp"
-              required
-            />
-          </div>
-
-          {/* Legal info */}
-          <div className="space-y-4 rounded-lg border border-border p-4">
-            <h3 className="text-sm font-semibold text-muted-foreground">Informations légales (pour les contrats)</h3>
-
-            <CompanySearch
-              onSelect={(data: CompanyData) => {
-                setCompanyName(data.companyName);
-                setSiren(data.siren);
-                setLegalForm(data.legalForm);
-                setCompanyAddress(data.companyAddress);
-              }}
-            />
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="legalForm">Forme juridique</Label>
-                <Input id="legalForm" value={legalForm} onChange={(e) => setLegalForm(e.target.value)} placeholder="SAS, SARL, SA..." />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="siren">SIREN</Label>
-                <Input id="siren" value={siren} onChange={(e) => setSiren(e.target.value)} placeholder="XXX XXX XXX" />
-              </div>
-              <div className="sm:col-span-2 space-y-2">
-                <Label htmlFor="companyAddress">Adresse du siège</Label>
-                <Input id="companyAddress" value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} placeholder="Adresse complète" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="representativeName">Représentant légal</Label>
-                <Input id="representativeName" value={representativeName} onChange={(e) => setRepresentativeName(e.target.value)} placeholder="Nom complet" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="representativeTitle">Qualité</Label>
-                <Input id="representativeTitle" value={representativeTitle} onChange={(e) => setRepresentativeTitle(e.target.value)} placeholder="DG, PDG, DRH..." />
-              </div>
-            </div>
-          </div>
-
           {/* Cities */}
           <div className="space-y-2">
             <Label>Villes</Label>
@@ -305,6 +224,12 @@ const ClientProfile = () => {
             {saving ? "Enregistrement..." : "Enregistrer mon profil"}
           </Button>
         </form>
+
+        {userId ? (
+          <section aria-label="Dossier entreprise" className="mt-12 border-t border-border pt-10">
+            <KycDossierPanel party="client" userId={userId} email={email} />
+          </section>
+        ) : null}
 
         {!isNew && (
           <div className="mt-8 flex items-center justify-between">

@@ -17,6 +17,10 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ExtendMissionDialog from "./ExtendMissionDialog";
 import GenerateContractsDialog from "./GenerateContractsDialog";
+import MissionOnboardingChecklist from "./admin/MissionOnboardingChecklist";
+import type { MissionContract } from "./admin/adv";
+import { fetchCompanySettings } from "@/lib/companySettings";
+import type { KycDossier } from "@/lib/kyc";
 
 interface Mission {
   id: string;
@@ -34,6 +38,8 @@ interface Mission {
   recruiter_profile_id: string;
   need_id: string;
   extensions_count: number;
+  client_user_id: string | null;
+  freelance_user_id: string | null;
 }
 
 interface MissionExtension {
@@ -47,6 +53,7 @@ interface MissionExtension {
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  onboarding: { label: "En mise en place", color: "bg-[#EDF3FB] text-[#1E4F8F]" },
   active: { label: "En cours", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
   completed: { label: "Terminée", color: "bg-muted text-muted-foreground" },
   cancelled: { label: "Annulée", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
@@ -61,6 +68,10 @@ const AdminMissionsPanel = () => {
   const [contractMission, setContractMission] = useState<Mission | null>(null);
   const [historyMission, setHistoryMission] = useState<string | null>(null);
   const [extensions, setExtensions] = useState<MissionExtension[]>([]);
+  // Mise en place (phase 1 ADV) : dossiers KYC par compte, contrats par mission
+  const [dossiers, setDossiers] = useState<Record<string, KycDossier>>({});
+  const [contracts, setContracts] = useState<MissionContract[]>([]);
+  const [yousignEnabled, setYousignEnabled] = useState(false);
 
   useEffect(() => { loadMissions(); }, []);
 
@@ -75,11 +86,21 @@ const AdminMissionsPanel = () => {
     const profileIds = [...new Set((missionsData as any[]).map((m: any) => m.recruiter_profile_id))];
     const { data: profiles } = await supabase
       .from("recruiter_profiles")
-      .select("id, first_name, last_name")
+      .select("id, first_name, last_name, user_id")
       .in("id", profileIds);
 
     const nameMap: Record<string, string> = {};
-    (profiles || []).forEach((p) => { nameMap[p.id] = `${p.first_name} ${p.last_name}`; });
+    const freelanceUserMap: Record<string, string | null> = {};
+    (profiles || []).forEach((p) => {
+      nameMap[p.id] = `${p.first_name} ${p.last_name}`;
+      freelanceUserMap[p.id] = p.user_id ?? null;
+    });
+
+    // Compte client de chaque mission (via le besoin)
+    const needIds = [...new Set((missionsData as unknown as { need_id: string }[]).map((m) => m.need_id))];
+    const { data: needs } = await supabase.from("client_needs").select("id, user_id").in("id", needIds);
+    const clientUserMap: Record<string, string | null> = {};
+    (needs || []).forEach((n) => { clientUserMap[n.id] = n.user_id ?? null; });
 
     // Count extensions per mission
     const missionIds = (missionsData as any[]).map((m: any) => m.id);
@@ -97,7 +118,27 @@ const AdminMissionsPanel = () => {
       ...m,
       recruiter_name: nameMap[m.recruiter_profile_id] || "Inconnu",
       extensions_count: extCountMap[m.id] || 0,
+      client_user_id: clientUserMap[m.need_id] ?? null,
+      freelance_user_id: freelanceUserMap[m.recruiter_profile_id] ?? null,
     }));
+
+    // Checklist de mise en place : dossiers des parties et contrats des missions en onboarding
+    const onboarding = list.filter((m) => m.status === "onboarding");
+    if (onboarding.length > 0) {
+      const userIds = [...new Set(onboarding.flatMap((m) => [m.client_user_id, m.freelance_user_id]).filter(Boolean))] as string[];
+      const [dossierRes, contractRes, settings] = await Promise.all([
+        userIds.length
+          ? supabase.from("kyc_dossiers" as never).select("*").in("user_id" as never, userIds as never)
+          : Promise.resolve({ data: [] }),
+        supabase.from("contracts" as never).select("*").in("mission_id" as never, onboarding.map((m) => m.id) as never),
+        fetchCompanySettings(),
+      ]);
+      const byUser: Record<string, KycDossier> = {};
+      ((dossierRes.data ?? []) as unknown as KycDossier[]).forEach((d) => { byUser[d.user_id] = d; });
+      setDossiers(byUser);
+      setContracts((contractRes.data ?? []) as unknown as MissionContract[]);
+      setYousignEnabled(settings.yousignEnabled);
+    }
 
     setMissions(list);
     setLoading(false);
@@ -206,6 +247,16 @@ const AdminMissionsPanel = () => {
                     </Button>
                   </div>
                 )}
+                {m.status === "onboarding" && (
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => setContractMission(m)}>
+                      <FileText className="h-3.5 w-3.5" /> Générer les contrats
+                    </Button>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs text-destructive" onClick={() => setConfirmAction({ missionId: m.id, action: "cancelled" })}>
+                      <XCircle className="h-3.5 w-3.5" /> Annuler
+                    </Button>
+                  </div>
+                )}
                 {m.status !== "active" && m.extensions_count > 0 && (
                   <Button size="sm" variant="ghost" className="gap-1 text-xs" onClick={() => loadExtensionHistory(m.id)}>
                     <History className="h-3.5 w-3.5" /> Historique
@@ -213,6 +264,17 @@ const AdminMissionsPanel = () => {
                 )}
               </div>
             </div>
+
+            {m.status === "onboarding" && (
+              <MissionOnboardingChecklist
+                mission={m}
+                dossiers={dossiers}
+                contracts={contracts.filter((c) => c.mission_id === m.id)}
+                yousignEnabled={yousignEnabled}
+                onGenerate={() => setContractMission(m)}
+                onChanged={loadMissions}
+              />
+            )}
 
             {/* Extension history inline */}
             {historyMission === m.id && extensions.length > 0 && (
@@ -295,6 +357,7 @@ const AdminMissionsPanel = () => {
           open={!!contractMission}
           onClose={() => setContractMission(null)}
           mission={contractMission}
+          onSaved={loadMissions}
         />
       )}
     </TooltipProvider>
