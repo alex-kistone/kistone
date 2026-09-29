@@ -6,6 +6,18 @@ import { getFrenchHolidays } from "@/lib/frenchHolidays";
 
 export const MONTH_NAMES = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
+/** Statuts d'un CRA vus par l'administration (libellé et pastille). */
+export const ADMIN_TIMESHEET_STATUS: Record<string, { label: string; color: string }> = {
+  draft: { label: "Brouillon", color: "bg-muted text-muted-foreground" },
+  submitted: { label: "Soumis", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
+  client_approved: { label: "Validé", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
+  client_rejected: { label: "Refusé client", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
+  admin_invoiced: { label: "Facturé", color: "bg-accent text-accent-foreground" },
+};
+
+/** CRA validé par le client (ou par l'administration), facturé ou non. */
+export const isValidatedTimesheet = (status: string) => status === "client_approved" || status === "admin_invoiced";
+
 export type ExpenseCategory = "transport" | "hebergement" | "repas" | "autre";
 export const EXPENSE_CATEGORIES: Record<ExpenseCategory, string> = {
   transport: "Transport",

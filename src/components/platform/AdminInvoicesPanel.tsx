@@ -184,6 +184,18 @@ const AdminInvoicesPanel = () => {
 
   useEffect(() => { reload(); }, [reload]);
 
+  // Lien profond ?invoice=<id> (depuis le détail d'une mission) : ouvre cette facture client.
+  const invoiceParam = searchParams.get("invoice");
+  useEffect(() => {
+    if (!invoiceParam) return;
+    setSelectedId(invoiceParam);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("invoice");
+      return next;
+    }, { replace: true });
+  }, [invoiceParam, setSearchParams]);
+
   const setView = (v: View) => {
     setSelectedId(null);
     setSearchParams((prev) => {

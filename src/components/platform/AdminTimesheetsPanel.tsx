@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Check, FileText, Receipt, ArrowLeft, MessageSquare, ChevronLeft, ChevronRight, Download, TrendingUp, Clock, AlertCircle, Euro } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getFrenchHolidays, getFrenchHolidayName } from "@/lib/frenchHolidays";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { TimesheetExpense, TimesheetSignature } from "@/lib/cra";
+import { ADMIN_TIMESHEET_STATUS, type TimesheetExpense, type TimesheetSignature } from "@/lib/cra";
 import { frDate } from "@/components/platform/admin/adv";
 import {
   AdminApproveDialog,
@@ -49,13 +49,7 @@ interface AdminTimesheet {
 const MONTH_NAMES = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 const WEEKDAY_NAMES = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  draft: { label: "Brouillon", color: "bg-muted text-muted-foreground" },
-  submitted: { label: "Soumis", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
-  client_approved: { label: "Validé", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
-  client_rejected: { label: "Refusé client", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
-  admin_invoiced: { label: "Facturé", color: "bg-accent text-accent-foreground" },
-};
+const STATUS_LABELS = ADMIN_TIMESHEET_STATUS;
 
 const getDaysInMonth = (month: number, year: number) => new Date(year, month, 0).getDate();
 const getFirstDayOfWeek = (month: number, year: number) => {
@@ -209,6 +203,28 @@ const AdminTimesheetsPanel = () => {
     const fresh = list?.find((t) => t.id === selectedTs?.id);
     if (fresh) await handleSelectTs(fresh);
   };
+
+  // Lien profond ?ts=<id> (depuis le détail d'une mission) : ouvre ce CRA, puis retire le paramètre.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tsParam = searchParams.get("ts");
+  useEffect(() => {
+    if (!tsParam || loading) return;
+    const target = timesheets.find((t) => t.id === tsParam);
+    if (target) {
+      setSelectedMonth(target.month);
+      setSelectedYear(target.year);
+      handleSelectTs(target);
+    } else {
+      toast({ title: "CRA introuvable", description: "Il a peut-être été supprimé.", variant: "destructive" });
+    }
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("ts");
+      return next;
+    }, { replace: true });
+    // handleSelectTs et toast sont recréés à chaque rendu ; seul le paramètre compte ici.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tsParam, loading, timesheets, setSearchParams]);
 
   // CSV Export
   const handleExportCSV = () => {

@@ -1,23 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Briefcase, MapPin, Euro, Calendar, CheckCircle2, XCircle, RefreshCw, History, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ExtendMissionDialog from "./ExtendMissionDialog";
 import GenerateContractsDialog from "./GenerateContractsDialog";
 import MissionOnboardingChecklist from "./admin/MissionOnboardingChecklist";
+import MissionDetail from "./admin/MissionDetail";
+import MissionEndDialog from "./admin/MissionEndDialog";
+import { MISSION_PARAM, MISSION_STATUS, setMissionStatus, type MissionEndAction } from "./admin/missionStatus";
 import type { MissionContract } from "./admin/adv";
 import { KYC_CHANGED_EVENT } from "./admin/kycDossiers";
 import { fetchCompanySettings } from "@/lib/companySettings";
@@ -53,18 +47,13 @@ interface MissionExtension {
   created_at: string;
 }
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  onboarding: { label: "En mise en place", color: "bg-[#EDF3FB] text-[#1E4F8F]" },
-  active: { label: "En cours", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
-  completed: { label: "Terminée", color: "bg-muted text-muted-foreground" },
-  cancelled: { label: "Annulée", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
-};
+const STATUS_LABELS = MISSION_STATUS;
 
 const AdminMissionsPanel = () => {
   const { toast } = useToast();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [confirmAction, setConfirmAction] = useState<{ missionId: string; action: string } | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ missionId: string; action: MissionEndAction } | null>(null);
   const [extendMission, setExtendMission] = useState<Mission | null>(null);
   const [contractMission, setContractMission] = useState<Mission | null>(null);
   const [historyMission, setHistoryMission] = useState<string | null>(null);
@@ -74,7 +63,19 @@ const AdminMissionsPanel = () => {
   const [contracts, setContracts] = useState<MissionContract[]>([]);
   const [yousignEnabled, setYousignEnabled] = useState(false);
 
-  useEffect(() => { loadMissions(); }, []);
+  // Détail d'une mission : /dashboard?tab=missions&mission=<id> ; la liste se recharge au retour.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const openMissionId = searchParams.get(MISSION_PARAM);
+  const setOpenMission = (id: string | null) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (id) next.set(MISSION_PARAM, id);
+      else next.delete(MISSION_PARAM);
+      return next;
+    });
+  };
+
+  useEffect(() => { if (!openMissionId) loadMissions(); }, [openMissionId]);
   // Un dossier validé ou refusé depuis le panneau latéral met la checklist à jour
   useEffect(() => {
     const onKycChanged = () => { loadMissions(); };
@@ -151,14 +152,11 @@ const AdminMissionsPanel = () => {
     setLoading(false);
   };
 
-  const updateStatus = async (missionId: string, newStatus: string) => {
-    const { error } = await supabase
-      .from("missions" as any)
-      .update({ status: newStatus })
-      .eq("id", missionId);
+  const updateStatus = async (missionId: string, newStatus: MissionEndAction) => {
+    const error = await setMissionStatus(missionId, newStatus);
 
     if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      toast({ title: "Erreur", description: error, variant: "destructive" });
     } else {
       setMissions((prev) => prev.map((m) => m.id === missionId ? { ...m, status: newStatus } : m));
       toast({ title: "Statut mis à jour" });
@@ -188,6 +186,17 @@ const AdminMissionsPanel = () => {
     return months > 0 ? `${months} mois` : "< 1 mois";
   };
 
+  // Clic sur la carte (hors boutons, liens, champs et fenêtres ouvertes depuis la carte) : ouvre le détail.
+  const onCardClick = (e: MouseEvent<HTMLDivElement>, id: string) => {
+    const target = e.target as HTMLElement;
+    if (!e.currentTarget.contains(target)) return; // clic dans une fenêtre en portail
+    if (target.closest("button, a, input, select, textarea, label, [role='button']")) return;
+    if (window.getSelection()?.toString()) return; // sélection de texte
+    setOpenMission(id);
+  };
+
+  if (openMissionId) return <MissionDetail missionId={openMissionId} onBack={() => setOpenMission(null)} />;
+
   if (loading) return <div className="py-8 text-center text-muted-foreground">Chargement des missions...</div>;
 
   if (missions.length === 0) {
@@ -204,18 +213,31 @@ const AdminMissionsPanel = () => {
     <TooltipProvider>
       <div className="space-y-4">
         {missions.map((m) => (
-          <div key={m.id} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+          <div
+            key={m.id}
+            onClick={(e) => onCardClick(e, m.id)}
+            className="cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20 hover:bg-accent/5 focus-within:border-foreground/20 sm:p-5"
+          >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <h3 className="font-semibold text-base">{m.title}</h3>
+                  <h3 className="font-semibold text-base">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setOpenMission(m.id); }}
+                      aria-label={`Voir le détail de la mission ${m.title}`}
+                      className="rounded-sm text-left hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {m.title}
+                    </button>
+                  </h3>
                   <Badge className={STATUS_LABELS[m.status]?.color || ""}>
                     {STATUS_LABELS[m.status]?.label || m.status}
                   </Badge>
                   {m.extensions_count > 0 && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Badge variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={() => loadExtensionHistory(m.id)}>
+                        <Badge variant="secondary" className="gap-1 text-xs cursor-pointer" onClick={(e) => { e.stopPropagation(); loadExtensionHistory(m.id); }}>
                           <RefreshCw className="h-3 w-3" /> {m.extensions_count} renouvellement{m.extensions_count > 1 ? "s" : ""}
                         </Badge>
                       </TooltipTrigger>
@@ -240,32 +262,32 @@ const AdminMissionsPanel = () => {
                 </div>
                 {m.status === "active" && (
                   <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => setContractMission(m)}>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); setContractMission(m); }}>
                       <FileText className="h-3.5 w-3.5" /> Contrats
                     </Button>
-                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => setExtendMission(m)}>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); setExtendMission(m); }}>
                       <RefreshCw className="h-3.5 w-3.5" /> Prolonger
                     </Button>
-                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => setConfirmAction({ missionId: m.id, action: "completed" })}>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); setConfirmAction({ missionId: m.id, action: "completed" }); }}>
                       <CheckCircle2 className="h-3.5 w-3.5" /> Terminer
                     </Button>
-                    <Button size="sm" variant="outline" className="gap-1 text-xs text-destructive" onClick={() => setConfirmAction({ missionId: m.id, action: "cancelled" })}>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs text-destructive" onClick={(e) => { e.stopPropagation(); setConfirmAction({ missionId: m.id, action: "cancelled" }); }}>
                       <XCircle className="h-3.5 w-3.5" /> Annuler
                     </Button>
                   </div>
                 )}
                 {m.status === "onboarding" && (
                   <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={() => setContractMission(m)}>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); setContractMission(m); }}>
                       <FileText className="h-3.5 w-3.5" /> Générer les contrats
                     </Button>
-                    <Button size="sm" variant="outline" className="gap-1 text-xs text-destructive" onClick={() => setConfirmAction({ missionId: m.id, action: "cancelled" })}>
+                    <Button size="sm" variant="outline" className="gap-1 text-xs text-destructive" onClick={(e) => { e.stopPropagation(); setConfirmAction({ missionId: m.id, action: "cancelled" }); }}>
                       <XCircle className="h-3.5 w-3.5" /> Annuler
                     </Button>
                   </div>
                 )}
                 {m.status !== "active" && m.extensions_count > 0 && (
-                  <Button size="sm" variant="ghost" className="gap-1 text-xs" onClick={() => loadExtensionHistory(m.id)}>
+                  <Button size="sm" variant="ghost" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); loadExtensionHistory(m.id); }}>
                     <History className="h-3.5 w-3.5" /> Historique
                   </Button>
                 )}
@@ -273,6 +295,8 @@ const AdminMissionsPanel = () => {
             </div>
 
             {m.status === "onboarding" && (
+              // La checklist garde ses propres actions : un clic dedans n'ouvre pas le détail.
+              <div className="cursor-auto" onClick={(e) => e.stopPropagation()}>
               <MissionOnboardingChecklist
                 mission={m}
                 dossiers={dossiers}
@@ -281,16 +305,17 @@ const AdminMissionsPanel = () => {
                 onGenerate={() => setContractMission(m)}
                 onChanged={loadMissions}
               />
+              </div>
             )}
 
             {/* Extension history inline */}
             {historyMission === m.id && extensions.length > 0 && (
-              <div className="mt-4 border-t border-border pt-3">
+              <div className="mt-4 cursor-auto border-t border-border pt-3" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
                     <History className="h-3.5 w-3.5" /> Historique des renouvellements
                   </h4>
-                  <Button variant="ghost" size="sm" className="text-xs h-6" onClick={() => setHistoryMission(null)}>
+                  <Button variant="ghost" size="sm" className="text-xs h-6" onClick={(e) => { e.stopPropagation(); setHistoryMission(null); }}>
                     Fermer
                   </Button>
                 </div>
@@ -324,29 +349,11 @@ const AdminMissionsPanel = () => {
       </div>
 
       {/* Confirm dialog for terminate/cancel */}
-      <AlertDialog open={!!confirmAction} onOpenChange={(v) => !v && setConfirmAction(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {confirmAction?.action === "completed" ? "Terminer la mission ?" : "Annuler la mission ?"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {confirmAction?.action === "completed"
-                ? "Cette action marquera la mission comme terminée. Le freelance sera de nouveau marqué comme disponible."
-                : "Cette action annulera la mission. Cette opération est irréversible."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Non, revenir</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmedAction}
-              className={confirmAction?.action === "cancelled" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}
-            >
-              {confirmAction?.action === "completed" ? "Oui, terminer" : "Oui, annuler"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <MissionEndDialog
+        action={confirmAction?.action ?? null}
+        onCancel={() => setConfirmAction(null)}
+        onConfirm={handleConfirmedAction}
+      />
 
       {/* Extend mission dialog */}
       {extendMission && (
