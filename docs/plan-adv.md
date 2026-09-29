@@ -96,9 +96,14 @@ Reste : contrats en PDF pour Yousign (nouveaux modèles d'Alex), test réel de Y
   décaisser, TVA du mois, frais fixes (`fixed_costs`). Code couleur repris d'ADV-Freelance.
 - Emails : tout est prêt, rien ne part tant que `RESEND_API_KEY` n'est pas posée.
 
-### Phase 5 — Qualité
-- Script de test de bout en bout (inscription → matching → mission → CRA → factures), comme
-  `adv-freelance/scripts/e2e-flow.mjs`.
+### Phase 5 — Qualité (fait le 2026-09-29)
+- `npm run e2e` (`scripts/e2e-flow.mjs`) : 68 vérifications sur le projet lié, chaque acteur
+  avec sa propre session — comptes et rôles, profil et besoin, matching, accord, mission
+  (dossiers, contrats, démarrage), CRA (saisie, frais, refus, signature par code, preuve,
+  taux figés), facturation en mode Pennylane et factures freelance, notifications, et les
+  cloisonnements (marge, pièces, contrats, preuves, factures). Comptes fictifs
+  `e2e-*@test.kistone.invalid`, tout est supprimé à la fin (`--keep` pour conserver).
+  Prérequis : `.env` et la CLI Supabase liée (aucune clé secrète).
 
 ## Décisions (2026-09-29)
 
