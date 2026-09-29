@@ -29,6 +29,7 @@ import DashboardSkeletons from "@/components/platform/DashboardSkeletons";
 import KanbanView from "@/components/platform/KanbanView";
 import AdminClientsPanel from "@/components/platform/AdminClientsPanel";
 import AdminTimesheetsPanel from "@/components/platform/AdminTimesheetsPanel";
+import AdminInvoicesPanel from "@/components/platform/AdminInvoicesPanel";
 import AdminMissionsPanel from "@/components/platform/AdminMissionsPanel";
 import AdminKycPanel from "@/components/platform/AdminKycPanel";
 import DashboardFilters from "@/components/platform/DashboardFilters";
@@ -49,6 +50,7 @@ const ADMIN_TITLES: Record<string, string> = {
   missions: "Missions",
   kyc: "Dossiers",
   timesheets: "CRA",
+  invoices: "Factures",
   messages: "Messages",
   assistant: "Assistant",
 };
@@ -251,6 +253,10 @@ const Dashboard = () => {
             <TabsTrigger value="timesheets" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Receipt className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               CRA
+            </TabsTrigger>
+            <TabsTrigger value="invoices" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
+              <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              Factures
             </TabsTrigger>
             <TabsTrigger value="assistant" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -466,6 +472,10 @@ const Dashboard = () => {
 
           <TabsContent value="timesheets">
             <AdminTimesheetsPanel />
+          </TabsContent>
+
+          <TabsContent value="invoices">
+            <AdminInvoicesPanel />
           </TabsContent>
 
 

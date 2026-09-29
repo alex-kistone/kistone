@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.remind-cra]
 verify_jwt = false
+
+[functions.remind-invoices]
+verify_jwt = false

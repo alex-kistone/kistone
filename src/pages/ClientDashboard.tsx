@@ -11,6 +11,7 @@ import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import ClientMissionsSection from "@/components/platform/ClientMissionsSection";
+import ClientInvoicesSection from "@/components/platform/ClientInvoicesSection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -285,7 +286,8 @@ const ClientDashboard = () => {
   const [profileLoading, setProfileLoading] = useState<string | null>(null);
   // Onglet piloté par le menu latéral (?tab=missions)
   const [searchParams] = useSearchParams();
-  const activeTab: "needs" | "missions" = searchParams.get("tab") === "missions" ? "missions" : "needs";
+  const tabParam = searchParams.get("tab");
+  const activeTab: "needs" | "missions" | "invoices" = tabParam === "missions" || tabParam === "invoices" ? tabParam : "needs";
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -480,12 +482,12 @@ const ClientDashboard = () => {
       <main className="container mx-auto max-w-4xl px-4 py-12">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold sm:text-3xl">{activeTab === "missions" ? "Missions & CRA" : "Mes besoins"}</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">{activeTab === "missions" ? "Missions & CRA" : activeTab === "invoices" ? "Factures" : "Mes besoins"}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {activeTab === "missions" ? "Vos missions en cours et les CRA à valider." : "Vos besoins de recrutement et les profils proposés."}
+              {activeTab === "missions" ? "Vos missions en cours et les CRA à valider." : activeTab === "invoices" ? "Vos factures Kistone et leur règlement." : "Vos besoins de recrutement et les profils proposés."}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className={activeTab === "invoices" ? "hidden" : "flex gap-2"}>
             <Button onClick={() => navigate("/client/new-need")} className="gap-2" size="sm">
               <Plus className="h-4 w-4" />
               <span className="sm:inline">Nouveau besoin</span>
@@ -494,7 +496,9 @@ const ClientDashboard = () => {
         </div>
 
 
-        {activeTab === "missions" ? (
+        {activeTab === "invoices" ? (
+          userId ? <ClientInvoicesSection userId={userId} /> : null
+        ) : activeTab === "missions" ? (
           userId ? <ClientMissionsSection userId={userId} /> : null
         ) : (
         <>

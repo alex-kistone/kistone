@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import MissionOnboardingCard from "@/components/platform/MissionOnboardingCard";
 import TimesheetExpenses from "@/components/platform/TimesheetExpenses";
+import FreelanceInvoiceCard from "@/components/platform/FreelanceInvoiceCard";
 import { dayIsWorkable, monthIsOpen } from "@/lib/cra";
 import { getFrenchHolidayName } from "@/lib/frenchHolidays";
 import { Briefcase, MapPin, Calendar, Clock, ChevronLeft, ChevronRight, Send, Check, ArrowLeft, Building2 } from "lucide-react";
@@ -76,6 +77,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
   const [saving, setSaving] = useState(false);
   const [timesheetHistory, setTimesheetHistory] = useState<TimesheetData[]>([]);
   const [freelancerComment, setFreelancerComment] = useState("");
+  const [expensesHt, setExpensesHt] = useState(0);
 
   useEffect(() => {
     loadMissions();
@@ -399,6 +401,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             ensureTimesheet={ensureTimesheet}
             month={currentMonth}
             year={currentYear}
+            onChange={(list) => setExpensesHt(list.reduce((sum, e) => sum + e.amount_ht, 0))}
           />
 
           {/* Total & submit */}
@@ -426,6 +429,14 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
               </div>
             )}
           </div>
+          {timesheet && ["client_approved", "admin_invoiced"].includes(timesheet.status) && (
+            <FreelanceInvoiceCard
+              timesheetId={timesheet.id}
+              userId={userId}
+              expectedHt={totalDays * selectedMission.recruiter_tjm + expensesHt}
+              detail={`${String(totalDays).replace(".", ",")} j × ${selectedMission.recruiter_tjm} €${expensesHt > 0 ? ` + ${expensesHt.toLocaleString("fr-FR")} € de frais` : ""}`}
+            />
+          )}
         </div>
         )}
 

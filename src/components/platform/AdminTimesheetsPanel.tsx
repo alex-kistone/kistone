@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Check, FileText, Receipt, ArrowLeft, MessageSquare, ChevronLeft, ChevronRight, Download, TrendingUp, Clock, AlertCircle, Euro } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getFrenchHolidays, getFrenchHolidayName } from "@/lib/frenchHolidays";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -68,8 +70,14 @@ const clientAmountOf = (t: AdminTimesheet, r?: TimesheetRates) =>
 const marginOf = (t: AdminTimesheet, r?: TimesheetRates) =>
   r ? Number(r.client_amount) - Number(r.freelance_amount) : t.total_days * t.margin_per_day;
 
+/** Facture client vivante d'un CRA (brouillon ou émise). */
+interface TimesheetInvoice { number: string | null; status: string }
+
 const AdminTimesheetsPanel = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [invoices, setInvoices] = useState<Record<string, TimesheetInvoice>>({});
+  const [preparing, setPreparing] = useState(false);
   const [timesheets, setTimesheets] = useState<AdminTimesheet[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
@@ -126,6 +134,18 @@ const AdminTimesheetsPanel = () => {
     ((rateRows as TimesheetRates[] | null) || []).forEach((r) => { rateMap[r.timesheet_id] = r; });
     setRates(rateMap);
 
+    // Factures client vivantes (numéro affiché sur les CRA facturés)
+    const { data: invRows } = await supabase
+      .from("client_invoices" as never)
+      .select("timesheet_id, number, status")
+      .eq("kind", "invoice")
+      .neq("status", "cancelled");
+    const invMap: Record<string, TimesheetInvoice> = {};
+    ((invRows as (TimesheetInvoice & { timesheet_id: string | null })[] | null) || []).forEach((i) => {
+      if (i.timesheet_id) invMap[i.timesheet_id] = { number: i.number, status: i.status };
+    });
+    setInvoices(invMap);
+
     const list: AdminTimesheet[] = (ts as any[]).map((t: any) => ({
       ...t,
       recruiter_name: profileMap[t.recruiter_profile_id]?.name || "Inconnu",
@@ -140,19 +160,22 @@ const AdminTimesheetsPanel = () => {
     return list;
   };
 
-  const handleMarkInvoiced = async (tsId: string) => {
-    const { error } = await supabase
-      .from("timesheets" as any)
-      .update({ status: "admin_invoiced", admin_invoiced_at: new Date().toISOString() })
-      .eq("id", tsId);
+  const goToInvoices = () => navigate("/dashboard?tab=invoices&view=clients");
 
+  // Brouillon de facture depuis les taux figés ; l'émission se fait depuis l'onglet Factures.
+  const handlePrepareInvoice = async (tsId: string) => {
+    setPreparing(true);
+    const { error } = await supabase.rpc("create_invoice_draft" as never, { _timesheet_id: tsId } as never);
+    setPreparing(false);
     if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      setTimesheets((prev) => prev.map((t) => t.id === tsId ? { ...t, status: "admin_invoiced" } : t));
-      if (selectedTs?.id === tsId) setSelectedTs({ ...selectedTs, status: "admin_invoiced" });
-      toast({ title: "CRA marqué comme facturé" });
+      toast({ title: "Préparation impossible", description: error.message, variant: "destructive" });
+      return;
     }
+    setInvoices((prev) => ({ ...prev, [tsId]: { number: null, status: "draft" } }));
+    toast({
+      title: "Brouillon créé, à émettre depuis Factures",
+      action: <ToastAction altText="Ouvrir les factures" onClick={goToInvoices}>Factures</ToastAction>,
+    });
   };
 
   const handleSelectTs = async (ts: AdminTimesheet) => {
@@ -412,9 +435,29 @@ const AdminTimesheetsPanel = () => {
           )}
 
           {selectedTs.status === "client_approved" && (
-            <div className="mt-4 flex justify-end">
-              <Button size="sm" className="gap-2" onClick={() => handleMarkInvoiced(selectedTs.id)}>
-                <Receipt className="h-4 w-4" /> Marquer facturé
+            <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
+              {invoices[selectedTs.id] ? (
+                <>
+                  <p className="text-sm text-muted-foreground">Brouillon de facture prêt, à émettre.</p>
+                  <Button size="sm" variant="outline" className="gap-2" onClick={goToInvoices}>
+                    <Receipt className="h-4 w-4" /> Ouvrir dans Factures
+                  </Button>
+                </>
+              ) : (
+                <Button size="sm" className="gap-2" disabled={preparing} onClick={() => handlePrepareInvoice(selectedTs.id)}>
+                  <Receipt className="h-4 w-4" /> {preparing ? "Préparation…" : "Préparer la facture"}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {selectedTs.status === "admin_invoiced" && invoices[selectedTs.id]?.number && (
+            <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
+              <p className="text-sm text-muted-foreground">
+                Facture <span className="font-medium text-foreground">{invoices[selectedTs.id].number}</span>
+              </p>
+              <Button size="sm" variant="outline" className="gap-2" onClick={goToInvoices}>
+                <Receipt className="h-4 w-4" /> Voir dans Factures
               </Button>
             </div>
           )}
@@ -559,6 +602,12 @@ const AdminTimesheetsPanel = () => {
                   <p className="mt-0.5 text-sm text-muted-foreground">
                     {ts.job_title} — {ts.client_name}
                   </p>
+                  {ts.status === "admin_invoiced" && invoices[ts.id]?.number && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">Facture {invoices[ts.id].number}</p>
+                  )}
+                  {ts.status === "client_approved" && invoices[ts.id]?.status === "draft" && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">Brouillon de facture à émettre</p>
+                  )}
                   {ts.status === "submitted" && ts.client_reminded_at && (
                     <p className="mt-0.5 text-xs text-muted-foreground">Relancé le {frDate(ts.client_reminded_at)}</p>
                   )}

@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   ShieldCheck,
   MessageSquare,
+  Receipt,
   Search,
   Sparkles,
   UserRound,
@@ -44,6 +45,7 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
     { label: "Déposer un besoin", path: "/client/new-need", icon: FilePlus2 },
     { label: "Mes besoins", path: "/client/dashboard", icon: ClipboardList, alsoActive: ["/client/edit-need"] },
     { label: "Missions & CRA", path: "/client/dashboard", tab: "missions", icon: CalendarCheck },
+    { label: "Factures", path: "/client/dashboard", tab: "invoices", icon: Receipt },
     { label: "Mon dossier", path: "/client/profile", icon: ShieldCheck },
   ],
   admin: [
@@ -55,6 +57,7 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
     { label: "Dossiers", path: "/dashboard", tab: "kyc", icon: ShieldCheck },
     { label: "Missions", path: "/dashboard", tab: "missions", icon: Briefcase },
     { label: "CRA", path: "/dashboard", tab: "timesheets", icon: CalendarCheck },
+    { label: "Factures", path: "/dashboard", tab: "invoices", icon: Receipt },
     { label: "Messages", path: "/dashboard", tab: "messages", icon: MessageSquare },
     { label: "Assistant", path: "/dashboard", tab: "assistant", icon: Sparkles },
   ],

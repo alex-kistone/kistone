@@ -75,10 +75,18 @@ Reste : contrats en PDF pour Yousign (nouveaux modèles d'Alex), test réel de Y
 - **Reste à brancher : `RESEND_API_KEY`** (et le domaine d'envoi kistone.fr). Sans elle, aucun
   email ne part et le client ne peut pas recevoir de code : seule la validation de secours marche.
 
-### Phase 3 — Facturation
-- Facture client numérotée (jours validés × TJM client), échéances, paiement, relances.
-- Facture freelance déposée par le freelance, contrôle d'écart avec jours × TJM freelance.
-- Synchronisation comptable (Pennylane) si retenue.
+### Phase 3 — Facturation (fait le 2026-09-29, migrations `20261002090000` et `20261002120000`)
+- Factures client (`client_invoices`) : brouillon depuis un CRA validé (taux figés + frais,
+  TVA de `company_settings`), émission par la fonction `invoices` (numéro KS-AAAA-NNNN sans trou
+  via `invoice_counters`, identités figées, PDF dans le bucket `invoices`, email au client),
+  facture figée une fois émise, annulation par avoir AV-AAAA-NNNN, paiement enregistré par l'admin.
+  L'émission est refusée tant que SIREN, adresse et IBAN de Kistone manquent.
+- Relances d'impayés : `remind-invoices` via pg_cron (J+1, J+8, J+15, 5 jours minimum entre deux,
+  admin en copie de la dernière).
+- Factures freelance (`freelance_invoices`) : dépôt PDF sur un CRA validé, montant attendu calculé
+  en base, écart signalé, validation / refus motivé / paiement par l'admin.
+- Export comptable CSV (clients et freelances) ; Pennylane prêt mais **non testé** (clé à poser,
+  `pennylane_enabled` à activer).
 
 ### Phase 4 — Pilotage
 - Centre de notifications (table + cloche), emails transactionnels (Resend, domaine kistone.fr).
