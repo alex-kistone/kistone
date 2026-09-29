@@ -111,6 +111,8 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
   const [dragItem, setDragItem] = useState<string | null>(null);
   // Mission creation dialog
   const [missionDialogOpen, setMissionDialogOpen] = useState(false);
+  // Suggestions déjà transformées en mission (pour ne proposer « Créer la mission » qu'une fois)
+  const [missionSuggestionIds, setMissionSuggestionIds] = useState<Set<string>>(new Set());
   const [missionDialogData, setMissionDialogData] = useState<{
     suggestionId: string;
     needId: string;
@@ -155,11 +157,13 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
   }, [initialNeedId, needs]);
 
   const loadData = async () => {
-    const [needsRes, suggestionsRes, profilesRes] = await Promise.all([
+    const [needsRes, suggestionsRes, profilesRes, missionsRes] = await Promise.all([
       supabase.from("client_needs" as any).select("*").order("created_at", { ascending: false }),
       supabase.from("profile_suggestions" as any).select("id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, recruiter_profile_id, super_tam, created_at"),
       supabase.from("recruiter_profiles" as any).select("id, first_name, last_name, job_title, skills, sectors, model, mobility, tjm, admin_rating, languages, available, availability_date, super_tam"),
+      supabase.from("missions").select("suggestion_id"),
     ]);
+    if (!missionsRes.error) setMissionSuggestionIds(new Set((missionsRes.data ?? []).map((m) => m.suggestion_id)));
 
     if (!needsRes.error) setNeeds((needsRes.data as any) || []);
     if (!suggestionsRes.error) setSuggestions((suggestionsRes.data as any) || []);
@@ -423,12 +427,9 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = (e: React.DragEvent, stepKey: string) => {
-    e.preventDefault();
-    if (dragItem) {
-      if (stepKey === "accepted") {
-        // Open mission creation dialog instead of directly updating
-        const suggestion = suggestions.find((s) => s.id === dragItem);
+  /** Ouvre la création de mission pour une suggestion (glisser vers « Accepté » ou bouton). */
+  const openMissionDialog = (suggestionId: string) => {
+        const suggestion = suggestions.find((s) => s.id === suggestionId);
         if (suggestion) {
           const need = needs.find((n) => n.id === suggestion.need_id);
           const profile = recruiterProfiles.find((p) => p.id === suggestion.recruiter_profile_id);
@@ -444,6 +445,14 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
           });
           setMissionDialogOpen(true);
         }
+  };
+
+  const handleDrop = (e: React.DragEvent, stepKey: string) => {
+    e.preventDefault();
+    if (dragItem) {
+      if (stepKey === "accepted") {
+        // La création de mission remplace le simple changement de statut
+        openMissionDialog(dragItem);
       } else {
         updatePipelineStatus(dragItem, stepKey);
       }
@@ -820,6 +829,16 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
                               <span className="text-[10px] text-muted-foreground font-medium">{s.match_score}%</span>
                             </div>
                           )}
+                          {s.pipeline_status === "accepted" && (
+                            missionSuggestionIds.has(s.id) ? (
+                              <p className="mt-1.5 text-[11px] font-medium text-[#17663F]">Mission créée</p>
+                            ) : (
+                              // Profil retenu par le client : l'admin lance la mise en place
+                              <Button size="sm" className="mt-2 h-7 w-full text-xs" onClick={() => openMissionDialog(s.id)}>
+                                Créer la mission
+                              </Button>
+                            )
+                          )}
                           {s.match_reasons.length > 0 && (
                             <div className="mt-1.5 space-y-0.5">
                               {s.match_reasons.slice(0, 2).map((r, i) => (
@@ -895,6 +914,7 @@ const AdminNeedsPanel = ({ initialNeedId }: AdminNeedsPanelProps = {}) => {
             setNeeds((prev) =>
               prev.map((n) => n.id === missionDialogData.needId ? { ...n, status: "staffed" } : n)
             );
+            setMissionSuggestionIds((prev) => new Set(prev).add(missionDialogData.suggestionId));
             setMissionDialogData(null);
           }}
         />
