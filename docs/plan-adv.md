@@ -61,11 +61,19 @@ Reste : contrats en PDF pour Yousign (nouveaux modèles d'Alex), test réel de Y
 - Contrats générés avec l'identité Kistone, stockés dans le bucket `contracts`, statut suivi ;
   signature (à décider : code par email comme les CRA, ou Yousign).
 
-### Phase 2 — CRA
-- Saisie mensuelle (jours / demi-journées, fériés), soumission, validation client signée
-  (code par email + PDF de preuve avec empreinte), refus motivé, validation admin de secours.
-- Taux figés au moment de la validation. Frais optionnels.
-- Relances planifiées (freelance et client).
+### Phase 2 — CRA (fait le 2026-09-29, migration `20261001090000`)
+- Saisie mensuelle (jours / demi-journées, fériés et hors mission grisés), un CRA par mission et
+  par mois, total recalculé en base à l'envoi.
+- Validation client signée : fonction `cra-sign` (code à 6 chiffres par email, 10 min, 5 essais,
+  certification, PDF de preuve horodaté + empreinte SHA-256 dans le bucket `timesheet-proofs`,
+  lisible par le client et l'admin, jamais par le freelance). Refus motivé. Validation de secours
+  par l'admin avec motif, même preuve.
+- Taux figés à la validation dans `timesheet_rates` (admin uniquement).
+- Frais de mission (`timesheet_expenses`, justificatifs dans `expense-receipts`), validés avec le CRA.
+- Relances : `remind-cra` chaque matin via pg_cron (vault : `project_url`, `cron_secret`) —
+  freelance J-5/J-1 et le 2/le 5 du mois suivant, client toutes les 48 h.
+- **Reste à brancher : `RESEND_API_KEY`** (et le domaine d'envoi kistone.fr). Sans elle, aucun
+  email ne part et le client ne peut pas recevoir de code : seule la validation de secours marche.
 
 ### Phase 3 — Facturation
 - Facture client numérotée (jours validés × TJM client), échéances, paiement, relances.

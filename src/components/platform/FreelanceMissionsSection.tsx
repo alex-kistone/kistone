@@ -1,5 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import MissionOnboardingCard from "@/components/platform/MissionOnboardingCard";
+import TimesheetExpenses from "@/components/platform/TimesheetExpenses";
+import { dayIsWorkable, monthIsOpen } from "@/lib/cra";
+import { getFrenchHolidayName } from "@/lib/frenchHolidays";
 import { Briefcase, MapPin, Calendar, Clock, ChevronLeft, ChevronRight, Send, Check, ArrowLeft, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +33,8 @@ interface TimesheetData {
   status: string;
   submitted_at: string | null;
   rejection_reason: string | null;
+  signed_at?: string | null;
+  approval_method?: "otp_email" | "admin" | null;
 }
 
 const MISSION_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -55,7 +60,6 @@ const getFirstDayOfWeek = (month: number, year: number) => {
   const d = new Date(year, month - 1, 1).getDay();
   return d === 0 ? 6 : d - 1;
 };
-const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
 
 const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
   const { toast } = useToast();
@@ -138,8 +142,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
     const { data } = await supabase
       .from("timesheets")
       .select("id, month, year, total_days, status, submitted_at, rejection_reason")
-      .eq("recruiter_profile_id", profileId)
-      .eq("need_id", selectedMission.need_id)
+      .eq("mission_id", selectedMission.id)
       .order("year", { ascending: false })
       .order("month", { ascending: false });
     if (data) setTimesheetHistory(data as any[]);
@@ -172,19 +175,22 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
   const toggleDay = async (dateStr: string) => {
     if (!selectedMission || !profileId) return;
     if (timesheet && !["draft", "client_rejected"].includes(timesheet.status)) return;
+    if (!dayIsWorkable(dateStr, selectedMission)) return;
 
     const currentValue = days[dateStr] || 0;
     const nextValue = currentValue === 0 ? 1 : currentValue === 1 ? 0.5 : 0;
     const tsId = await ensureTimesheet();
     if (!tsId) return;
 
-    if (nextValue === 0) {
-      await supabase.from("timesheet_days").delete().eq("timesheet_id", tsId).eq("day_date", dateStr);
-    } else {
-      await supabase.from("timesheet_days").upsert(
+    const { error } = nextValue === 0
+      ? await supabase.from("timesheet_days").delete().eq("timesheet_id", tsId).eq("day_date", dateStr)
+      : await supabase.from("timesheet_days").upsert(
         { timesheet_id: tsId, day_date: dateStr, value: nextValue },
         { onConflict: "timesheet_id,day_date" }
       );
+    if (error) {
+      toast({ title: "Jour non enregistré", description: error.message, variant: "destructive" });
+      return;
     }
 
     const newDays = { ...days };
@@ -212,7 +218,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
     if (error) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
-      setTimesheet({ ...timesheet, status: "submitted", total_days: total });
+      setTimesheet({ ...timesheet, status: "submitted", total_days: total, rejection_reason: null });
       toast({ title: "CRA envoyé !", description: "Votre CRA a été soumis au client pour validation." });
       loadTimesheetHistory();
     }
@@ -220,7 +226,8 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
   };
 
   const totalDays = useMemo(() => Object.values(days).reduce((sum, v) => sum + v, 0), [days]);
-  const canEdit = !timesheet || ["draft", "client_rejected"].includes(timesheet.status);
+  const monthOpen = selectedMission ? monthIsOpen(currentMonth, currentYear, selectedMission) : false;
+  const canEdit = monthOpen && (!timesheet || ["draft", "client_rejected"].includes(timesheet.status));
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
   const firstDay = getFirstDayOfWeek(currentMonth, currentYear);
 
@@ -320,6 +327,12 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             </Button>
           </div>
 
+          {!monthOpen && !timesheet ? (
+            <p className="mb-4 rounded-lg bg-muted/50 p-3 text-center text-sm text-muted-foreground">
+              Pas de CRA pour ce mois : il n'a pas encore commencé ou n'est pas couvert par la mission.
+            </p>
+          ) : null}
+
           {/* Calendar grid */}
           <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {WEEKDAY_NAMES.map((d) => (
@@ -329,16 +342,18 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             {Array.from({ length: daysInMonth }).map((_, i) => {
               const dayNum = i + 1;
               const dateStr = `${currentYear}-${String(currentMonth).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
-              const date = new Date(currentYear, currentMonth - 1, dayNum);
-              const weekend = isWeekend(date);
+              const off = !dayIsWorkable(dateStr, selectedMission);
+              const holiday = getFrenchHolidayName(dateStr);
               const value = days[dateStr] || 0;
               return (
                 <button
                   key={dayNum}
-                  disabled={weekend || !canEdit}
-                  onClick={() => !weekend && canEdit && toggleDay(dateStr)}
+                  disabled={off || !canEdit}
+                  title={holiday ?? undefined}
+                  aria-label={`${dayNum} ${MONTH_NAMES[currentMonth - 1]}${holiday ? `, ${holiday}` : ""}${value === 1 ? ", journée" : value === 0.5 ? ", demi-journée" : ""}`}
+                  onClick={() => !off && canEdit && toggleDay(dateStr)}
                   className={`relative flex aspect-square flex-col items-center justify-center rounded-lg border text-sm font-medium transition-all sm:text-base ${
-                    weekend ? "border-transparent bg-muted/40 text-muted-foreground/40 cursor-default"
+                    off ? "border-transparent bg-muted/40 text-muted-foreground/40 cursor-default"
                     : value === 1 ? "border-primary bg-primary/15 text-primary ring-1 ring-primary/30"
                     : value === 0.5 ? "border-accent bg-accent/15 text-accent-foreground ring-1 ring-accent/30"
                     : canEdit ? "border-border bg-card text-foreground hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
@@ -347,6 +362,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
                 >
                   <span>{dayNum}</span>
                   {value > 0 && <span className="absolute bottom-0.5 text-[8px] sm:text-[9px] font-semibold">{value === 1 ? "1j" : "½j"}</span>}
+                  {holiday && <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-destructive/60" aria-hidden="true" />}
                 </button>
               );
             })}
@@ -357,6 +373,7 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-primary bg-primary/15" /> Journée complète</span>
             <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-accent bg-accent/15" /> Demi-journée</span>
             <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-border bg-card" /> Non travaillé</span>
+            <span className="flex items-center gap-1.5"><span className="relative h-3 w-3 rounded bg-muted/40"><span className="absolute right-0 top-0 h-1.5 w-1.5 rounded-full bg-destructive/60" /></span> Férié</span>
             {canEdit && <span className="italic">Cliquez pour basculer : 0 → 1j → ½j → 0</span>}
           </div>
 
@@ -376,13 +393,21 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             </div>
           )}
 
+          <TimesheetExpenses
+            timesheetId={timesheet?.id ?? null}
+            editable={canEdit}
+            ensureTimesheet={ensureTimesheet}
+            month={currentMonth}
+            year={currentYear}
+          />
+
           {/* Total & submit */}
           <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
             <div>
               <span className="text-2xl font-bold">{totalDays}</span>
               <span className="ml-1 text-sm text-muted-foreground">jour{totalDays > 1 ? "s" : ""} travaillé{totalDays > 1 ? "s" : ""}</span>
               <div className="text-xs text-muted-foreground mt-0.5">
-                Montant : <span className="font-semibold text-foreground">{(totalDays * selectedMission.recruiter_tjm).toLocaleString("fr-FR")}€</span>
+                Montant HT : <span className="font-semibold text-foreground">{(totalDays * selectedMission.recruiter_tjm).toLocaleString("fr-FR")}€</span>
               </div>
             </div>
             {canEdit && totalDays > 0 && (
@@ -394,7 +419,10 @@ const FreelanceMissionsSection = ({ userId }: { userId: string }) => {
             {timesheet?.status === "client_approved" && (
               <div className="flex items-center gap-2 text-green-600">
                 <Check className="h-5 w-5" />
-                <span className="text-sm font-medium">Approuvé — Vous pouvez envoyer votre facture</span>
+                <span className="text-sm font-medium">
+                  {timesheet.approval_method === "admin" ? "Validé par Kistone" : "Validé par le client"}
+                  {timesheet.signed_at ? ` le ${new Date(timesheet.signed_at).toLocaleDateString("fr-FR")}` : ""}
+                </span>
               </div>
             )}
           </div>

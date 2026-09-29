@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import MissionOnboardingCard from "@/components/platform/MissionOnboardingCard";
-import { Briefcase, MapPin, Calendar, Clock, Check, X, ArrowLeft, User, Euro, MessageSquare } from "lucide-react";
+import SignCraDialog from "@/components/platform/SignCraDialog";
+import TimesheetExpenses from "@/components/platform/TimesheetExpenses";
+import { openCraProof, type TimesheetExpense, type TimesheetSignature } from "@/lib/cra";
+import { Briefcase, MapPin, Calendar, Clock, X, ArrowLeft, User, Euro, MessageSquare, PenLine, FileCheck2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,6 +36,8 @@ interface TimesheetForReview {
   status: string;
   submitted_at: string | null;
   rejection_reason: string | null;
+  signed_at: string | null;
+  approval_method: "otp_email" | "admin" | null;
 }
 
 const MISSION_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -80,11 +85,17 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
   const [clientComment, setClientComment] = useState("");
   const [freelancerComment, setFreelancerComment] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [signOpen, setSignOpen] = useState(false);
+  const [signature, setSignature] = useState<TimesheetSignature | null>(null);
+  const [expenses, setExpenses] = useState<TimesheetExpense[]>([]);
+  const [signerName, setSignerName] = useState("");
 
   // Edit title
 
   useEffect(() => {
     loadMissions();
+    supabase.from("client_profiles").select("first_name, last_name").eq("user_id", userId).maybeSingle()
+      .then(({ data }) => setSignerName([data?.first_name, data?.last_name].filter(Boolean).join(" ")));
   }, [userId]);
 
   const loadMissions = async () => {
@@ -116,7 +127,7 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
     // Load timesheets
     const { data: tsData } = await supabase
       .from("timesheets")
-      .select("id, month, year, total_days, status, submitted_at, rejection_reason, need_id, recruiter_profile_id")
+      .select("id, month, year, total_days, status, submitted_at, rejection_reason, signed_at, approval_method, need_id, recruiter_profile_id, mission_id")
       .in("need_id", needIds)
       .in("status", ["submitted", "client_approved", "client_rejected", "admin_invoiced"])
       .order("year", { ascending: false })
@@ -126,10 +137,11 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
       const grouped: Record<string, TimesheetForReview[]> = {};
       list.forEach((m) => {
         grouped[m.id] = (tsData as any[])
-          .filter((t) => t.need_id === m.need_id && t.recruiter_profile_id === m.recruiter_profile_id)
+          .filter((t) => t.mission_id === m.id)
           .map((t) => ({
-            id: t.id, month: t.month, year: t.year, total_days: t.total_days,
+            id: t.id, month: t.month, year: t.year, total_days: Number(t.total_days),
             status: t.status, submitted_at: t.submitted_at, rejection_reason: t.rejection_reason,
+            signed_at: t.signed_at, approval_method: t.approval_method,
           }));
       });
       setTimesheets(grouped);
@@ -159,8 +171,12 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
     setShowRejectForm(false);
     setRejectionReason("");
     setClientComment("");
+    setSignature(null);
     setView("cra");
     await loadDays(ts.id);
+    const { data: sig } = await supabase.from("timesheet_signatures" as never)
+      .select("signer_name, signer_email, method, signed_at, document_sha256, certificate").eq("timesheet_id", ts.id).maybeSingle();
+    setSignature((sig as TimesheetSignature | null) ?? null);
     // Load comments
     const { data } = await supabase
       .from("timesheets")
@@ -178,32 +194,23 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
     else { setView("list"); setSelectedMission(null); }
   };
 
-  const handleApprove = async () => {
+  const handleSigned = async ({ signed_at }: { signed_at: string }) => {
     if (!selectedTs) return;
-    if (!clientComment.trim()) {
-      toast({ title: "Commentaire requis", description: "Veuillez ajouter un commentaire de mission avant de valider.", variant: "destructive" });
-      return;
-    }
-    setProcessing(true);
-    const { error } = await supabase
-      .from("timesheets")
-      .update({ status: "client_approved", client_reviewed_at: new Date().toISOString(), client_comment: clientComment.trim() } as any)
-      .eq("id", selectedTs.id);
-
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      setTimesheets((prev) => {
-        const updated = { ...prev };
-        Object.keys(updated).forEach((key) => {
-          updated[key] = updated[key].map((t) => t.id === selectedTs.id ? { ...t, status: "client_approved" } : t);
-        });
-        return updated;
+    const patch = { status: "client_approved", signed_at, approval_method: "otp_email" as const };
+    setTimesheets((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((key) => {
+        updated[key] = updated[key].map((t) => t.id === selectedTs.id ? { ...t, ...patch } : t);
       });
-      setSelectedTs({ ...selectedTs, status: "client_approved" });
-      toast({ title: "CRA validé !" });
-    }
-    setProcessing(false);
+      return updated;
+    });
+    await handleOpenCra({ ...selectedTs, ...patch });
+  };
+
+  const handleProof = async () => {
+    if (!selectedTs) return;
+    const err = await openCraProof(selectedTs.id);
+    if (err) toast({ title: "Preuve indisponible", description: err, variant: "destructive" });
   };
 
   const handleReject = async () => {
@@ -211,7 +218,7 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
     setProcessing(true);
     const { error } = await supabase
       .from("timesheets")
-      .update({ status: "client_rejected", client_reviewed_at: new Date().toISOString(), rejection_reason: rejectionReason.trim() } as any)
+      .update({ status: "client_rejected", rejection_reason: rejectionReason.trim() } as any)
       .eq("id", selectedTs.id);
 
     if (error) {
@@ -220,11 +227,11 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
       setTimesheets((prev) => {
         const updated = { ...prev };
         Object.keys(updated).forEach((key) => {
-          updated[key] = updated[key].map((t) => t.id === selectedTs.id ? { ...t, status: "client_rejected" } : t);
+          updated[key] = updated[key].map((t) => t.id === selectedTs.id ? { ...t, status: "client_rejected", rejection_reason: rejectionReason.trim() } : t);
         });
         return updated;
       });
-      setSelectedTs({ ...selectedTs, status: "client_rejected" });
+      setSelectedTs({ ...selectedTs, status: "client_rejected", rejection_reason: rejectionReason.trim() });
       toast({ title: "CRA refusé" });
       setShowRejectForm(false);
     }
@@ -300,7 +307,9 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
 
         {renderCalendar(selectedTs)}
 
-        <div className="mt-6 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <TimesheetExpenses timesheetId={selectedTs.id} editable={false} month={selectedTs.month} year={selectedTs.year} onChange={setExpenses} />
+
+        <div className="mt-6 space-y-4 border-t border-border pt-4">
           <div>
             <span className="text-2xl font-bold">{selectedTs.total_days}</span>
             <span className="ml-1 text-sm text-muted-foreground">jour{selectedTs.total_days > 1 ? "s" : ""}</span>
@@ -311,7 +320,7 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
 
           {/* Freelancer comment */}
           {freelancerComment && (
-            <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+            <div className="rounded-lg border border-border bg-muted/30 p-3">
               <div className="flex items-center gap-1.5 mb-1 text-xs font-semibold text-muted-foreground">
                 <MessageSquare className="h-3 w-3" /> Commentaire du consultant
               </div>
@@ -319,27 +328,46 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
             </div>
           )}
 
-          {/* Client comment field */}
-          {selectedTs.status === "submitted" && (
-            <div className="mt-4">
-              <label className="block text-sm font-medium mb-1.5">
-                Votre commentaire de mission <span className="text-destructive">*</span>
-              </label>
-              <Textarea
-                placeholder="Ajoutez votre retour sur la mission ce mois-ci..."
-                value={clientComment}
-                onChange={(e) => setClientComment(e.target.value)}
-                rows={2}
-                className="resize-none"
-              />
+          {clientComment && selectedTs.status !== "submitted" && (
+            <div className="rounded-lg border border-border bg-muted/30 p-3">
+              <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                <MessageSquare className="h-3 w-3" /> Votre commentaire
+              </div>
+              <p className="text-sm">{clientComment}</p>
+            </div>
+          )}
+
+          {selectedTs.status === "client_rejected" && selectedTs.rejection_reason && (
+            <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+              <strong>Motif du refus :</strong> {selectedTs.rejection_reason}. Le consultant corrige et vous renvoie le CRA.
+            </p>
+          )}
+
+          {["client_approved", "admin_invoiced"].includes(selectedTs.status) && (
+            <div className="flex flex-col gap-3 rounded-lg border border-[#1F9D5B]/30 bg-[#1F9D5B]/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <span className="flex items-start gap-2">
+                <FileCheck2 className="mt-0.5 h-4 w-4 shrink-0 text-[#1F9D5B]" aria-hidden="true" />
+                <span>
+                  {signature?.method === "admin" || selectedTs.approval_method === "admin"
+                    ? "Validé par l'équipe Kistone"
+                    : `Signé${signature ? ` par ${signature.signer_name}` : ""}`}
+                  {(signature?.signed_at ?? selectedTs.signed_at) ? ` le ${new Date((signature?.signed_at ?? selectedTs.signed_at)!).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}` : ""}
+                  {signature?.certificate?.reference ? <span className="block text-xs text-muted-foreground">Référence {signature.certificate.reference}</span> : null}
+                </span>
+              </span>
+              {signature ? (
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={handleProof}>
+                  <FileCheck2 className="h-3.5 w-3.5" aria-hidden="true" /> Télécharger la preuve
+                </Button>
+              ) : null}
             </div>
           )}
 
           {selectedTs.status === "submitted" && (
-            <div className="mt-4 flex gap-2 justify-end">
+            <div className="flex flex-wrap justify-end gap-2">
               {showRejectForm ? (
                 <div className="flex flex-col gap-2 w-full sm:flex-row sm:items-end">
-                  <Textarea placeholder="Motif du refus..." value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} className="min-w-[200px]" rows={2} />
+                  <Textarea placeholder="Motif du refus..." value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} className="w-full" rows={2} aria-label="Motif du refus" />
                   <div className="flex gap-2">
                     <Button size="sm" variant="destructive" onClick={handleReject} disabled={processing || !rejectionReason.trim()}>Confirmer</Button>
                     <Button size="sm" variant="ghost" onClick={() => setShowRejectForm(false)}>Annuler</Button>
@@ -350,14 +378,26 @@ const ClientMissionsSection = ({ userId }: { userId: string }) => {
                   <Button variant="outline" className="gap-2 text-destructive border-destructive/30" onClick={() => setShowRejectForm(true)}>
                     <X className="h-4 w-4" /> Refuser
                   </Button>
-                  <Button className="gap-2" onClick={handleApprove} disabled={processing || !clientComment.trim()}>
-                    <Check className="h-4 w-4" /> Valider le CRA
+                  <Button className="gap-2" onClick={() => setSignOpen(true)} disabled={processing}>
+                    <PenLine className="h-4 w-4" /> Valider et signer
                   </Button>
                 </>
               )}
             </div>
           )}
         </div>
+
+        <SignCraDialog
+          open={signOpen}
+          onOpenChange={setSignOpen}
+          timesheetId={selectedTs.id}
+          monthLabel={`${MONTH_NAMES[selectedTs.month - 1].toLowerCase()} ${selectedTs.year}`}
+          totalDays={selectedTs.total_days}
+          amountHt={selectedTs.total_days * selectedMission.client_tjm}
+          expensesHt={expenses.reduce((sum, e) => sum + e.amount_ht, 0)}
+          defaultName={signerName}
+          onSigned={handleSigned}
+        />
       </div>
     );
   }

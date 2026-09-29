@@ -7,6 +7,15 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getFrenchHolidays, getFrenchHolidayName } from "@/lib/frenchHolidays";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import type { TimesheetExpense, TimesheetSignature } from "@/lib/cra";
+import { frDate } from "@/components/platform/admin/adv";
+import {
+  AdminApproveDialog,
+  ExpensesSection,
+  FrozenRatesSection,
+  SignatureSection,
+  type TimesheetRates,
+} from "@/components/platform/admin/TimesheetValidationSections";
 
 interface AdminTimesheet {
   id: string;
@@ -30,6 +39,9 @@ interface AdminTimesheet {
   client_comment: string | null;
   rejection_reason: string | null;
   recruitments_count: number;
+  signed_at: string | null;
+  approval_method: "otp_email" | "admin" | null;
+  client_reminded_at: string | null;
 }
 
 const MONTH_NAMES = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
@@ -38,7 +50,7 @@ const WEEKDAY_NAMES = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   draft: { label: "Brouillon", color: "bg-muted text-muted-foreground" },
   submitted: { label: "Soumis", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
-  client_approved: { label: "Validé client", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
+  client_approved: { label: "Validé", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" },
   client_rejected: { label: "Refusé client", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
   admin_invoiced: { label: "Facturé", color: "bg-accent text-accent-foreground" },
 };
@@ -50,6 +62,12 @@ const getFirstDayOfWeek = (month: number, year: number) => {
 };
 const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
 
+// Montants d'un CRA : figés à la validation si disponibles, sinon calculés depuis la mission.
+const clientAmountOf = (t: AdminTimesheet, r?: TimesheetRates) =>
+  r ? Number(r.client_amount) : t.tjm ? t.total_days * t.tjm : 0;
+const marginOf = (t: AdminTimesheet, r?: TimesheetRates) =>
+  r ? Number(r.client_amount) - Number(r.freelance_amount) : t.total_days * t.margin_per_day;
+
 const AdminTimesheetsPanel = () => {
   const { toast } = useToast();
   const [timesheets, setTimesheets] = useState<AdminTimesheet[]>([]);
@@ -59,6 +77,9 @@ const AdminTimesheetsPanel = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedTs, setSelectedTs] = useState<AdminTimesheet | null>(null);
   const [days, setDays] = useState<Record<string, number>>({});
+  const [rates, setRates] = useState<Record<string, TimesheetRates>>({});
+  const [expenses, setExpenses] = useState<TimesheetExpense[]>([]);
+  const [signature, setSignature] = useState<TimesheetSignature | null>(null);
 
   const holidays = useMemo(() => getFrenchHolidays(selectedTs?.year || selectedYear), [selectedTs?.year, selectedYear]);
 
@@ -99,6 +120,12 @@ const AdminTimesheetsPanel = () => {
     const needMap: Record<string, { job_title: string; company_name: string }> = {};
     (needs as any[] || []).forEach((n: any) => { needMap[n.id] = { job_title: n.job_title, company_name: n.company_name }; });
 
+    // Montants figés (admin uniquement) ; absents tant que la migration n'est pas appliquée.
+    const { data: rateRows } = await supabase.from("timesheet_rates" as never).select("*");
+    const rateMap: Record<string, TimesheetRates> = {};
+    ((rateRows as TimesheetRates[] | null) || []).forEach((r) => { rateMap[r.timesheet_id] = r; });
+    setRates(rateMap);
+
     const list: AdminTimesheet[] = (ts as any[]).map((t: any) => ({
       ...t,
       recruiter_name: profileMap[t.recruiter_profile_id]?.name || "Inconnu",
@@ -110,6 +137,7 @@ const AdminTimesheetsPanel = () => {
 
     setTimesheets(list);
     setLoading(false);
+    return list;
   };
 
   const handleMarkInvoiced = async (tsId: string) => {
@@ -129,14 +157,34 @@ const AdminTimesheetsPanel = () => {
 
   const handleSelectTs = async (ts: AdminTimesheet) => {
     setSelectedTs(ts);
-    const { data } = await supabase
-      .from("timesheet_days" as any)
-      .select("day_date, value")
-      .eq("timesheet_id", ts.id);
+    setExpenses([]);
+    setSignature(null);
+    const [{ data }, { data: expenseRows }, { data: sigRows }] = await Promise.all([
+      supabase.from("timesheet_days" as never).select("day_date, value").eq("timesheet_id" as never, ts.id as never),
+      supabase
+        .from("timesheet_expenses" as never)
+        .select("*")
+        .eq("timesheet_id" as never, ts.id as never)
+        .order("expense_date" as never, { ascending: true }),
+      supabase
+        .from("timesheet_signatures" as never)
+        .select("signer_name, signer_email, method, signed_at, document_sha256, certificate")
+        .eq("timesheet_id" as never, ts.id as never)
+        .limit(1),
+    ]);
 
     const dayMap: Record<string, number> = {};
     (data as any[] || []).forEach((d: any) => { dayMap[d.day_date] = Number(d.value); });
     setDays(dayMap);
+    setExpenses((expenseRows as TimesheetExpense[] | null) || []);
+    setSignature(((sigRows as TimesheetSignature[] | null) || [])[0] ?? null);
+  };
+
+  // Après une validation de secours : liste et détail rechargés (statut, signature, montants figés).
+  const handleAdminApproved = async () => {
+    const list = await loadTimesheets();
+    const fresh = list?.find((t) => t.id === selectedTs?.id);
+    if (fresh) await handleSelectTs(fresh);
   };
 
   // CSV Export
@@ -148,7 +196,7 @@ const AdminTimesheetsPanel = () => {
       Mois: `${MONTH_NAMES[ts.month - 1]} ${ts.year}`,
       Jours: ts.total_days,
       TJM: ts.tjm || "",
-      "Montant HT": ts.tjm ? ts.total_days * ts.tjm : "",
+      "Montant HT": rates[ts.id] || ts.tjm ? clientAmountOf(ts, rates[ts.id]) : "",
       Recrutements: ts.recruitments_count || 0,
       Statut: STATUS_LABELS[ts.status]?.label || ts.status,
       "Commentaire freelance": ts.freelancer_comment || "",
@@ -179,15 +227,15 @@ const AdminTimesheetsPanel = () => {
     const submitted = monthTimesheets.filter((t) => ["submitted", "client_approved", "client_rejected", "admin_invoiced"].includes(t.status)).length;
     const pending = monthTimesheets.filter((t) => t.status === "submitted").length;
     const invoiced = monthTimesheets.filter((t) => t.status === "admin_invoiced");
-    const caInvoiced = invoiced.reduce((sum, t) => sum + (t.tjm ? t.total_days * t.tjm : 0), 0);
-    const caTotal = monthTimesheets.reduce((sum, t) => sum + (t.tjm ? t.total_days * t.tjm : 0), 0);
+    const caInvoiced = invoiced.reduce((sum, t) => sum + clientAmountOf(t, rates[t.id]), 0);
+    const caTotal = monthTimesheets.reduce((sum, t) => sum + clientAmountOf(t, rates[t.id]), 0);
     const submissionRate = total > 0 ? Math.round((submitted / total) * 100) : 0;
     const totalRecruitments = monthTimesheets.reduce((sum, t) => sum + (t.recruitments_count || 0), 0);
-    const marginTotal = monthTimesheets.reduce((sum, t) => sum + t.total_days * t.margin_per_day, 0);
-    const marginInvoiced = invoiced.reduce((sum, t) => sum + t.total_days * t.margin_per_day, 0);
+    const marginTotal = monthTimesheets.reduce((sum, t) => sum + marginOf(t, rates[t.id]), 0);
+    const marginInvoiced = invoiced.reduce((sum, t) => sum + marginOf(t, rates[t.id]), 0);
 
     return { total, submitted, pending, caInvoiced, caTotal, submissionRate, totalRecruitments, marginTotal, marginInvoiced };
-  }, [monthTimesheets]);
+  }, [monthTimesheets, rates]);
 
   const availableYears = [...new Set(timesheets.map((t) => t.year))].sort((a, b) => b - a);
   if (availableYears.length === 0) availableYears.push(new Date().getFullYear());
@@ -203,6 +251,16 @@ const AdminTimesheetsPanel = () => {
     const { month, year } = selectedTs;
     const daysInMonth = getDaysInMonth(month, year);
     const firstDay = getFirstDayOfWeek(month, year);
+    const selectedRates = rates[selectedTs.id];
+    const validated = selectedTs.status === "client_approved" || selectedTs.status === "admin_invoiced";
+    const validatedAt = signature?.signed_at ?? selectedTs.signed_at;
+    const validationLine = !validated || !validatedAt
+      ? null
+      : (signature?.method ?? selectedTs.approval_method) === "admin"
+      ? `Validé par l'administration le ${frDate(validatedAt)}`
+      : signature
+      ? `Signé par ${signature.signer_name} le ${frDate(validatedAt)}`
+      : null;
 
     return (
       <div>
@@ -219,14 +277,17 @@ const AdminTimesheetsPanel = () => {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Badge className={STATUS_LABELS[selectedTs.status]?.color || ""}>
-                {STATUS_LABELS[selectedTs.status]?.label || selectedTs.status}
-              </Badge>
+              <div className="flex flex-col items-start gap-1 sm:items-end">
+                <Badge className={STATUS_LABELS[selectedTs.status]?.color || ""}>
+                  {STATUS_LABELS[selectedTs.status]?.label || selectedTs.status}
+                </Badge>
+                {validationLine && <p className="text-xs text-muted-foreground">{validationLine}</p>}
+              </div>
               <div className="text-right">
                 <div className="text-lg font-bold">{selectedTs.total_days}j</div>
-                {selectedTs.tjm && (
+                {(selectedRates || selectedTs.tjm) && (
                   <div className="text-xs text-muted-foreground">
-                    {(selectedTs.total_days * selectedTs.tjm).toLocaleString("fr-FR")} € HT
+                    {clientAmountOf(selectedTs, selectedRates).toLocaleString("fr-FR")} € HT
                   </div>
                 )}
               </div>
@@ -339,6 +400,16 @@ const AdminTimesheetsPanel = () => {
               </div>
             )}
           </div>
+
+          {signature && <SignatureSection timesheetId={selectedTs.id} signature={signature} />}
+          {selectedRates && <FrozenRatesSection rates={selectedRates} />}
+          <ExpensesSection expenses={expenses} />
+
+          {selectedTs.status === "submitted" && (
+            <div className="mt-4 flex justify-end">
+              <AdminApproveDialog timesheetId={selectedTs.id} onApproved={handleAdminApproved} />
+            </div>
+          )}
 
           {selectedTs.status === "client_approved" && (
             <div className="mt-4 flex justify-end">
@@ -488,13 +559,16 @@ const AdminTimesheetsPanel = () => {
                   <p className="mt-0.5 text-sm text-muted-foreground">
                     {ts.job_title} — {ts.client_name}
                   </p>
+                  {ts.status === "submitted" && ts.client_reminded_at && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">Relancé le {frDate(ts.client_reminded_at)}</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <div className="text-lg font-bold">{ts.total_days}j</div>
-                    {ts.tjm && (
+                    {(rates[ts.id] || ts.tjm) && (
                       <div className="text-xs text-muted-foreground">
-                        {(ts.total_days * ts.tjm).toLocaleString("fr-FR")} € HT
+                        {clientAmountOf(ts, rates[ts.id]).toLocaleString("fr-FR")} € HT
                       </div>
                     )}
                   </div>
