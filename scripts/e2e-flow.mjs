@@ -147,6 +147,8 @@ async function run() {
   const opp = await free.from("client_needs_open").select("id, job_title");
   check("Freelance · voit le besoin dans ses opportunités", !!opp.data?.some((n) => n.id === need.id), opp.error?.message ?? `${opp.data?.length ?? 0} besoin(s)`);
   check("Freelance · sans les coordonnées du client", !JSON.stringify(opp.data ?? []).includes(users.client.email));
+  const apply = await free.from("need_applications").insert({ need_id: need.id, recruiter_profile_id: rp.id, motivation: `${TAG} motivation` });
+  check("Freelance · se positionne sur le besoin", !apply.error, apply.error?.message);
   const oppClient = await client.from("client_needs_open").select("id");
   check("Client · n'accède pas aux besoins ouverts", !oppClient.data?.length);
 
