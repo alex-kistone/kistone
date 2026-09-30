@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CalendarIcon, MapPin, Euro, Clock, Briefcase } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { fetchCompanySettings } from "@/lib/companySettings";
+import { clientPrice } from "@/lib/pricing";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CreateMissionDialogProps {
@@ -47,13 +47,9 @@ const CreateMissionDialog = ({
   const [durationText, setDurationText] = useState("");
   const [location, setLocation] = useState(missionLocation);
   const [tjmRecruiter, setTjmRecruiter] = useState(recruiterTjm || 0);
-  // Prix client = TJM freelance + marge par défaut (paramètres société), ajustable par l'admin
-  const [defaultMargin, setDefaultMargin] = useState(100);
+  // Prix client = TJM freelance + 20 % (arrondi à l'euro supérieur), ajustable par l'admin
   const [tjmClientOverride, setTjmClientOverride] = useState<number | null>(null);
-  useEffect(() => {
-    fetchCompanySettings().then((s) => setDefaultMargin(s.defaultMarginEur));
-  }, []);
-  const tjmClient = tjmClientOverride ?? tjmRecruiter + defaultMargin;
+  const tjmClient = tjmClientOverride ?? clientPrice(tjmRecruiter);
   const margin = tjmClient - tjmRecruiter;
 
   const handleSubmit = async () => {

@@ -7,8 +7,16 @@
  * pas d'API Deno ici, le front l'importe tel quel via src/lib/jarvi.ts.
  */
 
-/** Projet Jarvi où arrive tout freelance inscrit sur la plateforme. */
-export const JARVI_SIGNUP_PROJECT_ID = "a28725c1-24c0-46b4-bb63-afd1854df1d9";
+import type { Vertical } from "./taxonomy.ts";
+
+/**
+ * Projet Jarvi où arrive tout freelance inscrit, par verticale. Chaque nouvelle verticale
+ * (DRH, CFO…) aura son projet ; ses champs personnalisés s'ajouteront à côté de ceux du RPO.
+ */
+export const JARVI_PROJECTS: Record<Vertical, string> = {
+  rpo: "a28725c1-24c0-46b4-bb63-afd1854df1d9", // « New RPO via plateforme »
+};
+export const JARVI_SIGNUP_PROJECT_ID = JARVI_PROJECTS.rpo;
 
 /** Nombre maximum de métiers et de secteurs par profil (limite des champs Jarvi côté Kistone). */
 export const MAX_CHOICES = 3;

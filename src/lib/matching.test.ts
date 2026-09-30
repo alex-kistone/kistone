@@ -45,12 +45,18 @@ describe("anglais dans le matching", () => {
 });
 
 describe("cohérence du matching", () => {
-  it("compare le TJM freelance + marge au budget client (tolérance 10 %)", () => {
-    const within = scoreRecruiter(need, profile({ tjm: 700 }), false)!; // 800 € client = max
+  it("compare le prix client (TJM freelance + 20 %) au budget, tolérance 10 %", () => {
+    const within = scoreRecruiter(need, profile({ tjm: 650 }), false)!; // 780 € client ≤ 800
     expect(within.breakdown.budget).toBe(25);
-    const slightlyAbove = scoreRecruiter(need, profile({ tjm: 760 }), false)!; // 860 ≤ 880
+    const slightlyAbove = scoreRecruiter(need, profile({ tjm: 700 }), false)!; // 840 ≤ 880
     expect(slightlyAbove.breakdown.budget).toBe(12.5);
-    expect(scoreRecruiter(need, profile({ tjm: 790 }), false)).toBeNull(); // 890 > 880 : exclu
+    expect(scoreRecruiter(need, profile({ tjm: 750 }), false)).toBeNull(); // 900 > 880 : exclu
+  });
+
+  it("ne croise jamais deux verticales", () => {
+    const other = profile({ vertical: "cfo" as never });
+    expect(scoreRecruiter(need, other, false)).toBeNull();
+    expect(scoreRecruiter(need, profile({ vertical: "rpo" }), false)).not.toBeNull();
   });
 
   it("plafonne un profil sans métier commun sous un spécialiste", () => {

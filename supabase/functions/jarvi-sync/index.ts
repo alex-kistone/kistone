@@ -17,7 +17,7 @@
  * virgules) ; à confirmer au premier essai réel.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { JARVI_SIGNUP_PROJECT_ID, JARVI_SPECIALITES, toJarviFields } from "../_shared/jarvi.ts";
+import { JARVI_PROJECTS, JARVI_SPECIALITES, toJarviFields } from "../_shared/jarvi.ts";
 
 const API = "https://functions.prod.jarvi.tech/v1/public-api/rest/v2";
 const corsHeaders = {
@@ -78,8 +78,8 @@ Deno.serve(async (req) => {
 
     const payload: Record<string, string> = {
       externalId: p.id,
-      // Tout freelance inscrit est rattaché au projet Jarvi des inscriptions.
-      projectId: JARVI_SIGNUP_PROJECT_ID,
+      // Tout freelance inscrit est rattaché au projet Jarvi des inscriptions de sa verticale.
+      projectId: JARVI_PROJECTS[(p.vertical ?? "rpo") as keyof typeof JARVI_PROJECTS] ?? JARVI_PROJECTS.rpo,
       firstName: p.first_name ?? "",
       lastName: p.last_name ?? "",
       linkedinUrl: p.linkedin_url,

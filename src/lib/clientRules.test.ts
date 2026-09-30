@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { budgetError } from "./budget";
 import { isFreeEmail } from "./emailDomains";
+import { clientPrice, freelanceRate } from "./pricing";
 
 describe("budgetError", () => {
   it("exige un min strictement inférieur au max", () => {
@@ -24,5 +25,18 @@ describe("isFreeEmail", () => {
     for (const e of ["a@kistone.fr", "a@gotam.ai", "a@outlook-conseil.fr", "a@livementor.com"]) {
       expect(isFreeEmail(e)).toBe(false);
     }
+  });
+});
+
+describe("tarification (+20 %)", () => {
+  it("prix client = TJM freelance + 20 %, arrondi à l'euro supérieur", () => {
+    expect(clientPrice(500)).toBe(600);
+    expect(clientPrice(550)).toBe(660); // pas 661 malgré 550 × 1,2 = 660,000…01
+    expect(clientPrice(333)).toBe(400); // 399,6 → 400
+  });
+  it("le freelance voit le budget client sans la marge", () => {
+    expect(freelanceRate(600)).toBe(500);
+    expect(freelanceRate(800)).toBe(666);
+    expect(clientPrice(freelanceRate(800))).toBeLessThanOrEqual(800);
   });
 });

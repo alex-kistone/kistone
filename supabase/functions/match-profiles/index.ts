@@ -12,7 +12,8 @@
  * téléphone, ni LinkedIn ne sortent de la base.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { MARGIN_EUR, prefilter, type Need, type Recruiter } from "../_shared/matching.ts";
+import { prefilter, type Need, type Recruiter } from "../_shared/matching.ts";
+import { MARGIN_PCT, clientPrice } from "../_shared/pricing.ts";
 import { englishLevel } from "../_shared/jarvi.ts";
 import { METIER_FAMILIES } from "../_shared/taxonomy.ts";
 
@@ -58,11 +59,13 @@ Deno.serve(async (req) => {
     const { data: recruiters } = await admin
       .from("recruiter_profiles")
       .select(
-        "id, first_name, job_title, skills, sectors, tech_specialties, mobility, clients, languages," +
+        "id, vertical, first_name, job_title, skills, sectors, tech_specialties, mobility, clients, languages," +
         " remote_preference, tjm, model, available, availability_date, admin_rating, admin_english_rating, admin_comments, super_tam," +
         " intro_text, missions, has_linkedin_license",
       )
-      .eq("onboarding_completed", true);
+      .eq("onboarding_completed", true)
+      // Verticales étanches : seuls les profils de la verticale du besoin sont candidats.
+      .eq("vertical", need.vertical ?? "rpo");
 
     if (!recruiters?.length) return json({ suggestions: [], message: "Aucun profil freelance disponible." });
 
@@ -150,7 +153,7 @@ async function rankWithClaude(
       mobility: r.mobility ?? [],
       remote_preference: r.remote_preference,
       tjm_recruteur: r.tjm,
-      prix_client: r.tjm != null ? r.tjm + MARGIN_EUR : null,
+      prix_client: r.tjm != null ? clientPrice(r.tjm) : null,
       model: r.model,
       disponible: r.available,
       date_disponibilite: r.availability_date,
@@ -192,7 +195,7 @@ Analyse des compétences :
 - Un profil avec des missions passées proches du besoin (mêmes profils, volumes comparables) doit passer devant un profil qui a seulement coché le bon métier.
 
 Règles :
-- "prix_client" = tarif recruteur + ${MARGIN_EUR} € de marge Gotam. C'est ce que paie le client.
+- "prix_client" = tarif recruteur + ${MARGIN_PCT} % de marge Kistone. C'est ce que paie le client.
 - note_admin : 0 = non noté (ignore ce critère), 2 = pas convaincant, à proposer en dernier recours, 3 = correct, 4 = top profil à favoriser, 5 = top profil prioritaire, à placer en tête dès qu'il est pertinent pour le besoin. Critère lourd.
 - avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
 - niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré.

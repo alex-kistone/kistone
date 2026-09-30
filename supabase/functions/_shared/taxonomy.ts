@@ -5,7 +5,18 @@
  */
 
 /**
- * Métiers recrutés : cochés par le freelance (skills) et par le client (profile_types).
+ * Verticales de la plateforme : le niveau au-dessus des métiers. RPO est la première ;
+ * DRH, CFO, CRO, Legal, CTO… s'ajouteront avec chacune ses spécialités, son matching et sa
+ * correspondance Jarvi, sur le socle commun (comptes, ADV, CRA, facturation). Un besoin et un
+ * profil appartiennent à une verticale ; le matching ne croise jamais deux verticales.
+ * Toute nouvelle valeur doit aussi être ajoutée à la contrainte SQL `*_vertical_check`.
+ */
+export const VERTICALS = [{ id: "rpo", label: "RPO" }] as const;
+export type Vertical = (typeof VERTICALS)[number]["id"];
+export const DEFAULT_VERTICAL: Vertical = "rpo";
+
+/**
+ * Métiers recrutés (verticale RPO) : cochés par le freelance (skills) et par le client (profile_types).
  * Même liste, au caractère près, que le champ Jarvi « Spécialités RPO »
  * (adc61fa4-ad68-4f12-983b-69afe9c03d4c) : la synchro est 1 pour 1.
  */

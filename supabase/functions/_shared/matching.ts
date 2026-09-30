@@ -8,10 +8,8 @@
  */
 
 import { englishLevel } from "./jarvi.ts";
-import { METIER_ALIASES, METIER_FAMILIES } from "./taxonomy.ts";
-
-/** Marge Gotam ajoutée au TJM recruteur pour obtenir le prix client. */
-export const MARGIN_EUR = 100;
+import { clientPrice } from "./pricing.ts";
+import { METIER_ALIASES, METIER_FAMILIES, type Vertical } from "./taxonomy.ts";
 
 /** Tolérance de dépassement du budget max client avant exclusion. */
 const BUDGET_TOLERANCE = 0.1;
@@ -21,6 +19,8 @@ export type RemotePolicy = "on-site" | "hybrid" | "full-remote" | "flexible";
 
 export interface Need {
   id: string;
+  /** Verticale du besoin : seuls les profils de la même verticale sont proposés. */
+  vertical?: Vertical;
   job_title: string;
   description: string | null;
   persona: string;
@@ -34,6 +34,7 @@ export interface Need {
 
 export interface Recruiter {
   id: string;
+  vertical?: Vertical;
   first_name: string;
   job_title: string | null;
   skills: string[];
@@ -144,25 +145,25 @@ function mentionedIn(tags: string[], haystack: string): number {
 
 /**
  * Compatibilité TJM. Le budget du besoin est un prix CLIENT (marge incluse),
- * le TJM du profil est le tarif recruteur : on compare tjm + MARGIN au budget.
+ * le TJM du profil est le tarif recruteur : on compare son prix client (TJM + 20 %) au budget.
  */
 function scoreBudget(need: Need, r: Recruiter): { pts: number; note: string | null; excluded: boolean } {
   if (r.tjm == null) return { pts: MAX.budget * 0.3, note: "TJM non renseigné", excluded: false };
-  const clientPrice = r.tjm + MARGIN_EUR;
+  const price = clientPrice(r.tjm);
   const min = need.budget_tjm_min ?? 0;
   const max = need.budget_tjm_max ?? Number.POSITIVE_INFINITY;
 
-  if (clientPrice > max * (1 + BUDGET_TOLERANCE)) {
-    return { pts: 0, note: `${clientPrice} €/j client, au-delà du budget (${max} €/j)`, excluded: true };
+  if (price > max * (1 + BUDGET_TOLERANCE)) {
+    return { pts: 0, note: `${price} €/j client, au-delà du budget (${max} €/j)`, excluded: true };
   }
-  if (clientPrice > max) {
-    return { pts: MAX.budget * 0.5, note: `${clientPrice} €/j client, légèrement au-dessus du budget`, excluded: false };
+  if (price > max) {
+    return { pts: MAX.budget * 0.5, note: `${price} €/j client, légèrement au-dessus du budget`, excluded: false };
   }
-  if (clientPrice < min) {
+  if (price < min) {
     // Sous le budget : bon pour la marge, mais peut signaler un profil trop junior.
-    return { pts: MAX.budget * 0.8, note: `${clientPrice} €/j client, sous le budget annoncé`, excluded: false };
+    return { pts: MAX.budget * 0.8, note: `${price} €/j client, sous le budget annoncé`, excluded: false };
   }
-  return { pts: MAX.budget, note: `${clientPrice} €/j client, dans le budget`, excluded: false };
+  return { pts: MAX.budget, note: `${price} €/j client, dans le budget`, excluded: false };
 }
 
 function scoreAvailability(r: Recruiter, onMission: boolean): { pts: number; note: string | null; excluded: boolean } {
@@ -197,6 +198,8 @@ function scoreRemote(need: Need, r: Recruiter): { pts: number; note: string | nu
 export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): ScoredRecruiter | null {
   // Note admin 1 = profil grillé, jamais suggéré.
   if ((r.admin_rating ?? 0) === 1) return null;
+  // Verticales étanches : un profil RPO n'est jamais proposé sur un besoin d'une autre verticale.
+  if ((r.vertical ?? "rpo") !== (need.vertical ?? "rpo")) return null;
 
   const budget = scoreBudget(need, r);
   const availability = scoreAvailability(r, onMission);

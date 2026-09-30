@@ -3,7 +3,6 @@ import type { ProviderIdentity } from "@/lib/contracts/types";
 
 /** Paramètres de la société qui porte les missions (table company_settings, une seule ligne). */
 export interface CompanySettings extends ProviderIdentity {
-  defaultMarginEur: number;
   yousignEnabled: boolean;
   pennylaneEnabled: boolean;
 }
@@ -18,7 +17,6 @@ const FALLBACK: CompanySettings = {
   representativeTitle: null,
   clientPaymentTermsDays: 30,
   freelancePaymentTermsDays: 30,
-  defaultMarginEur: 100,
   yousignEnabled: false,
   pennylaneEnabled: false,
 };
@@ -37,7 +35,6 @@ export async function fetchCompanySettings(): Promise<CompanySettings> {
     representativeTitle: (row.representative_title as string | null) ?? null,
     clientPaymentTermsDays: (row.client_payment_terms_days as number) ?? FALLBACK.clientPaymentTermsDays,
     freelancePaymentTermsDays: (row.freelance_payment_terms_days as number) ?? FALLBACK.freelancePaymentTermsDays,
-    defaultMarginEur: (row.default_margin_eur as number) ?? FALLBACK.defaultMarginEur,
     yousignEnabled: Boolean(row.yousign_enabled),
     pennylaneEnabled: Boolean(row.pennylane_enabled),
   };

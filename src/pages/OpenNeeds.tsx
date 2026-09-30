@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { freelanceRate } from "@/lib/pricing";
 import AppShell from "@/components/platform/AppShell";
 import SEO from "@/components/SEO";
 
@@ -172,7 +173,8 @@ const OpenNeeds = () => {
                       {(need.budget_tjm_min || need.budget_tjm_max) && (
                         <span className="flex items-center gap-1">
                           <Euro className="h-3.5 w-3.5" />
-                          {need.budget_tjm_min ? Math.max(0, need.budget_tjm_min - 100) : "?"} - {need.budget_tjm_max ? Math.max(0, need.budget_tjm_max - 100) : "?"} €/j
+                          {/* Budget client ramené au TJM freelance (marge Kistone déduite) */}
+                          {need.budget_tjm_min ? freelanceRate(need.budget_tjm_min) : "?"} - {need.budget_tjm_max ? freelanceRate(need.budget_tjm_max) : "?"} €/j
                         </span>
                       )}
                     </div>
