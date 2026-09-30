@@ -19,8 +19,6 @@ interface ProfileData {
   languages: any[];
   sectors: string[];
   mobility: string[];
-  company_name: string | null;
-  siren: string | null;
 }
 
 interface ChecklistItem {
@@ -71,7 +69,7 @@ const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionCh
     {
       key: "tjm",
       label: "TJM & modèle",
-      description: "Indiquez votre tarif (modèle 100% RPO)",
+      description: "Indiquez votre tarif et votre modèle (RPO, Succès)",
       completed: !!profile.tjm && !!profile.model,
       priority: "high",
     },
@@ -102,13 +100,6 @@ const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionCh
       description: "Ajoutez vos missions réalisées avec KPIs",
       completed: profile.missions?.length > 0,
       priority: "medium",
-    },
-    {
-      key: "legal",
-      label: "Informations légales",
-      description: "Société, SIREN — nécessaires pour les contrats",
-      completed: !!profile.company_name && !!profile.siren,
-      priority: "low",
     },
     {
       key: "languages",
@@ -167,6 +158,7 @@ const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionCh
         {sortedIncomplete.slice(0, 4).map((item) => (
           <button
             key={item.key}
+            type="button"
             onClick={() => onScrollTo?.(item.key)}
             className="flex w-full items-start gap-3 rounded-lg p-2.5 text-left transition-colors hover:bg-muted/50"
           >

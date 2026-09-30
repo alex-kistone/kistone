@@ -76,8 +76,6 @@ const Profile = () => {
   const [remotePreference, setRemotePreference] = useState<string>("");
   const [sectorOther, setSectorOther] = useState("");
   // Informations société : gérées par « Mon dossier » ; lues ici pour la liste de complétion
-  const [recruiterCompanyName, setRecruiterCompanyName] = useState("");
-  const [recruiterSiren, setRecruiterSiren] = useState("");
   // Onglet piloté par le menu latéral (?tab=missions | admin)
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
@@ -149,8 +147,6 @@ const Profile = () => {
         setSectorOther(otherSector);
       }
       setRemotePreference(p.remote_preference || "");
-      setRecruiterCompanyName(p.company_name || "");
-      setRecruiterSiren(p.siren || "");
     } else {
       // Première connexion : on pré-remplit avec le compte LinkedIn / Google, puis
       // on exige l'URL LinkedIn avant d'accéder au profil.
@@ -210,6 +206,22 @@ const Profile = () => {
       setPhoto(file);
       setPhotoPreview(URL.createObjectURL(file));
     }
+  };
+
+  /** Checklist : amène à la section manquante, met le curseur dans le champ et la fait briller. */
+  const scrollToSection = (key: string) => {
+    const targets: Record<string, string> = {
+      photo: "section-photo", identity: phone ? "firstName" : "phone", linkedin: "linkedin", jobTitle: "jobTitle",
+      tjm: "tjm", skills: "section-skills", sectors: "section-sectors", intro: "introText",
+      missions: "section-missions", languages: "section-languages", mobility: "section-mobility",
+    };
+    const el = document.getElementById(targets[key] ?? "");
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) el.focus({ preventScroll: true });
+    const box = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.parentElement ?? el : el;
+    box.classList.add("ring-2", "ring-primary", "ring-offset-4");
+    window.setTimeout(() => box.classList.remove("ring-2", "ring-primary", "ring-offset-4"), 1800);
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -373,14 +385,13 @@ const Profile = () => {
               languages,
               sectors,
               mobility,
-              company_name: recruiterCompanyName,
-              siren: recruiterSiren,
             }}
+            onScrollTo={scrollToSection}
           />
         )}
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Photo */}
-          <div className="flex flex-col items-center gap-3">
+          <div id="section-photo" className="flex flex-col items-center gap-3 rounded-xl transition-shadow">
             <div className="relative h-28 w-28 overflow-hidden rounded-full border-2 border-dashed border-border bg-muted">
               {photoPreview ? (
                 <img src={photoPreview} alt="Photo" className="h-full w-full object-cover" />
@@ -523,13 +534,13 @@ const Profile = () => {
           </div>
 
           {/* Mobilité */}
-          <div className="space-y-2">
+          <div id="section-mobility" className="space-y-2 rounded-xl transition-shadow">
             <Label>Mobilité</Label>
             <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville puis Entrée" />
           </div>
 
           {/* Skills - Multi-select checkboxes */}
-          <div className="space-y-3">
+          <div id="section-skills" className="space-y-3 rounded-xl transition-shadow">
             <Label>Les métiers sur lesquels je recrute *</Label>
             <p className="text-xs text-muted-foreground">{MAX_CHOICES} choix maximum ({skills.length}/{MAX_CHOICES})</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -550,7 +561,7 @@ const Profile = () => {
           </div>
 
           {/* Secteurs / Environnements */}
-          <div className="space-y-3">
+          <div id="section-sectors" className="space-y-3 rounded-xl transition-shadow">
             <Label>Secteurs / Environnements</Label>
             <p className="text-xs text-muted-foreground">{MAX_CHOICES} choix maximum ({sectors.length}/{MAX_CHOICES})</p>
             <div className="flex flex-col gap-2">
@@ -597,7 +608,7 @@ const Profile = () => {
           </div>
 
           {/* Missions */}
-          <div className="space-y-3">
+          <div id="section-missions" className="space-y-3 rounded-xl transition-shadow">
             <div className="flex items-center justify-between">
               <Label>Missions réalisées</Label>
               <Button
@@ -725,7 +736,7 @@ const Profile = () => {
           </div>
 
           {/* Languages */}
-          <div className="space-y-3">
+          <div id="section-languages" className="space-y-3 rounded-xl transition-shadow">
             <div className="flex items-center justify-between">
               <Label className="flex items-center gap-2"><Globe className="h-4 w-4" />Langues</Label>
               <Button
