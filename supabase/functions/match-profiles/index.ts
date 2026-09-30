@@ -13,6 +13,7 @@
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MARGIN_EUR, prefilter, type Need, type Recruiter } from "../_shared/matching.ts";
+import { englishLevel } from "../_shared/jarvi.ts";
 import { METIER_FAMILIES } from "../_shared/taxonomy.ts";
 
 const corsHeaders = {
@@ -57,7 +58,7 @@ Deno.serve(async (req) => {
       .from("recruiter_profiles")
       .select(
         "id, first_name, job_title, skills, sectors, tech_specialties, mobility, clients, languages," +
-        " remote_preference, tjm, model, available, availability_date, admin_rating, super_tam," +
+        " remote_preference, tjm, model, available, availability_date, admin_rating, admin_english_rating, admin_comments, super_tam," +
         " intro_text, missions, has_linkedin_license",
       )
       .eq("onboarding_completed", true);
@@ -150,6 +151,8 @@ async function rankWithClaude(
       date_disponibilite: r.availability_date,
       actuellement_en_mission: s.currentlyOnMission,
       note_admin: r.admin_rating ?? 0,
+      avis_interne: r.admin_comments?.slice(0, 600) ?? "",
+      niveau_anglais: englishLevel({ languages: Array.isArray(r.languages) ? r.languages as { language: string; level: string }[] : [], admin_english_rating: r.admin_english_rating ?? null }),
       super_tam: r.super_tam,
       nb_missions_passees: pastMissions.length,
       // Détail des missions pour juger l'expertise réelle ; le nom des clients reste en base
@@ -181,11 +184,13 @@ Analyse des compétences :
 
 Règles :
 - "prix_client" = tarif recruteur + ${MARGIN_EUR} € de marge Gotam. C'est ce que paie le client.
-- note_admin : 0 = non noté (ignore ce critère), 2 = à proposer en dernier recours, 3 = correct, 4 = à favoriser, 5 = à placer en priorité.
+- note_admin : 0 = non noté (ignore ce critère), 2 = pas convaincant, à proposer en dernier recours, 3 = correct, 4 = top profil à favoriser, 5 = top profil prioritaire, à placer en tête dès qu'il est pertinent pour le besoin. Critère lourd.
+- avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
+- niveau_anglais : 1 (débutant) à 5 (natif), déjà fiabilisé ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant.
 - super_tam = profil d'excellence, à mentionner dans les raisons.
 - Un profil actuellement en mission n'est pertinent que si sa date de disponibilité colle au besoin.
 - Ne t'écarte pas de plus de 25 points du score_regles sans raison explicite dans tes justifications.
-- Ne mentionne JAMAIS la note admin ni le score de règles dans les raisons : elles sont lues par le client.
+- Les raisons sont lues par le client : reste impersonnel et factuel. Ne mentionne JAMAIS une note, une étoile, un score, un avis ou un commentaire interne, ni qui a évalué ou jugé le profil (pas de « selon notre équipe », « évalué comme », « recommandé par »). Décris le profil lui-même : expérience, missions, métiers, secteurs, disponibilité, langues.
 - Écris les raisons en français, concrètes et vérifiables. Pas de superlatif creux.`;
 
   const prompt = `BESOIN CLIENT

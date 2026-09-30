@@ -7,6 +7,7 @@
  * un résultat exploitable si l'appel IA échoue.
  */
 
+import { englishLevel } from "./jarvi.ts";
 import { METIER_ALIASES, METIER_FAMILIES } from "./taxonomy.ts";
 
 /** Marge Gotam ajoutée au TJM recruteur pour obtenir le prix client. */
@@ -47,6 +48,10 @@ export interface Recruiter {
   available: boolean;
   availability_date: string | null;
   admin_rating: number | null;
+  /** Note d'anglais de l'admin (1-5) : prime sur le niveau déclaré dans `languages`. */
+  admin_english_rating?: number | null;
+  /** Avis interne : transmis au classement IA, jamais montré au client. */
+  admin_comments?: string | null;
   super_tam: boolean;
   intro_text: string | null;
   missions: unknown;
@@ -61,6 +66,7 @@ export interface ScoreBreakdown {
   sectors: number;
   location: number;
   quality: number;
+  english: number;
 }
 
 export interface ScoredRecruiter {
@@ -73,7 +79,27 @@ export interface ScoredRecruiter {
 }
 
 // La spécialité métier est la promesse centrale : c'est le critère le plus lourd.
-const MAX = { budget: 25, availability: 20, remote: 15, skills: 35, sectors: 10, location: 10, quality: 15 };
+const MAX = { budget: 25, availability: 20, remote: 15, skills: 35, sectors: 10, location: 10, quality: 25, english: 10 };
+
+/**
+ * Part du critère qualité selon la note admin : 5 = top profil prioritaire, 4 = top profil,
+ * 3 = pas mal, 2 = pas ouf ; 1 = ne matche jamais (exclu plus haut) ; 0 = non noté.
+ */
+const RATING_WEIGHT: Record<number, number> = { 0: 0.45, 2: 0.15, 3: 0.55, 4: 0.8, 5: 1 };
+
+/** Le besoin demande-t-il de l'anglais ? */
+const ENGLISH_HINT = /\b(anglais|english|bilingue|international|anglophone)\b/i;
+
+/** Critère anglais : neutre si le besoin n'en parle pas, sinon selon le niveau retenu. */
+function scoreEnglish(needText: string, r: Recruiter): { pts: number; note: string | null } {
+  if (!ENGLISH_HINT.test(needText)) return { pts: MAX.english, note: null };
+  const languages = Array.isArray(r.languages) ? (r.languages as { language: string; level: string }[]) : [];
+  const level = englishLevel({ languages, admin_english_rating: r.admin_english_rating ?? null });
+  if (level == null) return { pts: MAX.english * 0.4, note: null };
+  if (level >= 4) return { pts: MAX.english, note: "Anglais courant" };
+  if (level === 3) return { pts: MAX.english * 0.6, note: "Bon niveau d'anglais" };
+  return { pts: 0, note: "Anglais limité" };
+}
 
 /** Score plafond d'un profil qui ne recrute sur aucun métier du besoin, même voisin. */
 const NO_METIER_CAP = 45;
@@ -193,7 +219,8 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
     : Math.max(overlap(r.mobility ?? [], [need.mission_location]), mentionedIn(r.mobility ?? [], need.mission_location));
 
   const rating = r.admin_rating ?? 0;
-  const quality = (rating > 0 ? (rating / 5) * MAX.quality * 0.7 : MAX.quality * 0.3) + (r.super_tam ? MAX.quality * 0.3 : 0);
+  const quality = MAX.quality * (RATING_WEIGHT[rating] ?? RATING_WEIGHT[0]) * 0.8 + (r.super_tam ? MAX.quality * 0.2 : 0);
+  const english = scoreEnglish(needText, r);
 
   const breakdown: ScoreBreakdown = {
     budget: budget.pts,
@@ -203,6 +230,7 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
     sectors: sectorsRatio * MAX.sectors,
     location: locationRatio * MAX.location,
     quality: Math.min(quality, MAX.quality),
+    english: english.pts,
   };
 
   // Motifs lus par le client, du plus décisif au plus secondaire : le métier
@@ -214,7 +242,8 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
   else notes.push(`Recrute sur un métier voisin (${(r.skills ?? []).join(", ")})`);
   if (commonSectors.length) notes.push(`Expérience ${commonSectors.join(", ")}`);
   if (r.super_tam) notes.push("Badge Super TAM");
-  for (const n of [budget.note, availability.note, remote.note]) if (n) notes.push(n);
+  // Motifs impersonnels : jamais de mention d'une note, d'un avis ou de qui a évalué le profil.
+  for (const n of [english.note, budget.note, availability.note, remote.note]) if (n) notes.push(n);
   if (onMission) notes.push("Actuellement en mission");
 
   const total = Object.values(breakdown).reduce((a, b) => a + b, 0);

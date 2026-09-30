@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Star, Medal, Globe } from "lucide-react";
+import { Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Medal, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -61,7 +61,6 @@ interface AnonymizedProfile {
   model: string | null;
   available: boolean | null;
   availability_date: string | null;
-  admin_rating: number | null;
   super_tam: boolean | null;
   tech_specialties: string[];
   intro_text: string | null;
@@ -154,9 +153,6 @@ const ProfileDetailPopup = ({ profile, open, onClose }: { profile: AnonymizedPro
               <span className="flex items-center gap-1 text-orange-500"><Clock className="h-4 w-4" /> Dispo. {new Date(profile.availability_date).toLocaleDateString("fr-FR")}</span>
             ) : (
               <span className="flex items-center gap-1 text-orange-500"><Clock className="h-4 w-4" /> Indisponible</span>
-            )}
-            {(profile.admin_rating ?? 0) > 0 && (
-              <span className="flex items-center gap-0.5"><Star className="h-4 w-4 fill-amber-400 text-amber-400" /><span>{profile.admin_rating}/5</span></span>
             )}
             {profile.has_linkedin_license && <span className="text-muted-foreground text-xs">Licence Recruiter</span>}
           </div>
