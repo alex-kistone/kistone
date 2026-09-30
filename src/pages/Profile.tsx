@@ -291,6 +291,9 @@ const Profile = () => {
 
       if (error) throw error;
 
+      // Synchro vers Jarvi en arrière-plan : un échec est noté sur le profil, jamais bloquant.
+      supabase.functions.invoke("jarvi-sync", { body: {} }).catch(() => undefined);
+
       toast({
         title: existingId && !firstVisit ? "Profil mis à jour !" : "Profil créé !",
         description: "Vos informations ont été sauvegardées avec succès.",
