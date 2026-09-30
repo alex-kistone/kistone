@@ -10,7 +10,9 @@
  *    et la rattache au projet Jarvi des inscriptions.
  * 3. Enregistre l'identifiant Jarvi, la date ou l'erreur sur recruiter_profiles.
  *
- * Secret : JARVI_API_KEY (clé privée Jarvi). Sans lui, 503 et rien n'est envoyé.
+ * Secret : JARVI_API_KEY. La clé publique suffit (envoi par /applicants) ; la clé privée
+ * permet en plus de retrouver une fiche créée à la main dans Jarvi par son URL LinkedIn.
+ * Sans clé, 503 et rien n'est envoyé.
  * Format des champs personnalisés d'après la documentation Jarvi (valeurs séparées par des
  * virgules) ; à confirmer au premier essai réel.
  */
@@ -35,6 +37,9 @@ function asJarviValue(v: unknown): string {
 async function findByLinkedin(key: string, url: string): Promise<string | null> {
   const where = encodeURIComponent(JSON.stringify({ profileUrl: { _eq: url } }));
   const res = await fetch(`${API}/profiles?where=${where}&limit=1`, { headers: { "X-API-KEY": key } });
+  // Clé publique : la recherche est refusée, on passe directement à l'envoi (création ou
+  // fusion par externalId) — sans rapprochement avec une fiche créée à la main dans Jarvi.
+  if (res.status === 401 || res.status === 403) return null;
   if (!res.ok) throw new Error(`Recherche Jarvi ${res.status} : ${(await res.text()).slice(0, 200)}`);
   const body = await res.json();
   return body?.data?.[0]?.id ?? null;
@@ -83,7 +88,9 @@ Deno.serve(async (req) => {
     };
     for (const [fieldId, value] of Object.entries(fields)) payload[fieldId] = asJarviValue(value);
 
-    const res = await fetch(`${API}/profiles`, {
+    // Point d'entrée « candidatures » : accepté avec la clé publique, il crée ou met à jour la
+    // fiche (fusion par id / externalId) et la rattache au projet des inscriptions.
+    const res = await fetch(`${API}/applicants`, {
       method: "POST",
       headers: { "X-API-KEY": key, "Content-Type": "application/json" },
       body: JSON.stringify(payload),
