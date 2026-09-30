@@ -25,7 +25,7 @@ const json = (body: unknown, status = 200) =>
 
 /** Poids de l'étage IA dans le score final. Le reste vient du score de règles. */
 const AI_WEIGHT = 0.6;
-const MODEL = "claude-sonnet-5";
+const MODEL = "claude-sonnet-5-5";
 const SHORTLIST_SIZE = 12;
 
 Deno.serve(async (req) => {
