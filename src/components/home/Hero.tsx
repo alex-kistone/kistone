@@ -60,7 +60,7 @@ export default function Hero() {
           i === 0
             ? [part]
             : [
-                <span key={i} className="bg-[linear-gradient(transparent_52%,#F4AFC2_52%)] bg-no-repeat px-[0.04em] [box-decoration-break:clone]">
+                <span key={i} className="bg-[linear-gradient(transparent_72%,#F4AFC2_72%,#F4AFC2_94%,transparent_94%)] bg-no-repeat px-[0.04em] [box-decoration-break:clone]">
                   {HERO.titleHighlight}
                 </span>,
                 part,
