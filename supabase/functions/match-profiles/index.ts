@@ -27,6 +27,7 @@ const json = (body: unknown, status = 200) =>
 /** Poids de l'étage IA dans le score final. Le reste vient du score de règles. */
 const AI_WEIGHT = 0.6;
 const MODEL = "claude-sonnet-5-5";
+const ENGLISH_LEVEL_LABELS = ["", "débutant", "intermédiaire", "avancé", "courant", "natif"];
 const SHORTLIST_SIZE = 12;
 
 Deno.serve(async (req) => {
@@ -78,11 +79,14 @@ Deno.serve(async (req) => {
     // ── Étage 2 : Claude ──────────────────────────────────────────────────
     const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
     let aiByProfile = new Map<string, { score: number; reasons: string[] }>();
+    // État de l'étage IA, renvoyé à l'admin : « ok », « sans clé » ou le message d'erreur.
+    let aiStatus = apiKey ? "ok" : "sans clé";
 
     if (apiKey) {
       try {
         aiByProfile = await rankWithClaude(apiKey, need as Need, shortlist);
       } catch (e) {
+        aiStatus = e instanceof Error ? e.message.slice(0, 300) : String(e);
         console.error("Étage IA indisponible, repli sur le score de règles :", e);
       }
     }
@@ -120,6 +124,7 @@ Deno.serve(async (req) => {
       suggestions: toInsert,
       skipped: suggestions.length - toInsert.length,
       ai_used: aiByProfile.size > 0,
+      ai_status: isAdmin ? aiStatus : undefined,
     });
   } catch (err) {
     console.error("match-profiles:", err);
@@ -163,10 +168,14 @@ async function rankWithClaude(
         outils: m.tools ?? [],
       })),
       nb_clients: r.clients?.length ?? 0,
-      langues: Array.isArray(r.languages)
-        ? (r.languages as Array<{ language?: string; level?: string }>)
-            .map((l) => `${l.language} (${l.level})`).join(", ")
-        : "",
+      // Un seul niveau par langue : pour l'anglais, le niveau retenu (celui de l'admin s'il existe).
+      langues: (Array.isArray(r.languages) ? r.languages as Array<{ language?: string; level?: string }> : [])
+        .map((l) => l.language === "Anglais" && r.admin_english_rating
+          ? `Anglais (${ENGLISH_LEVEL_LABELS[r.admin_english_rating]})`
+          : `${l.language} (${l.level})`)
+        .concat(r.admin_english_rating && !(r.languages as Array<{ language?: string }> | null)?.some?.((l) => l.language === "Anglais")
+          ? [`Anglais (${ENGLISH_LEVEL_LABELS[r.admin_english_rating]})`] : [])
+        .join(", "),
       presentation: r.intro_text?.slice(0, 300) ?? "",
       score_regles: s.score,
       signaux: s.notes,
@@ -186,12 +195,13 @@ Règles :
 - "prix_client" = tarif recruteur + ${MARGIN_EUR} € de marge Gotam. C'est ce que paie le client.
 - note_admin : 0 = non noté (ignore ce critère), 2 = pas convaincant, à proposer en dernier recours, 3 = correct, 4 = top profil à favoriser, 5 = top profil prioritaire, à placer en tête dès qu'il est pertinent pour le besoin. Critère lourd.
 - avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
-- niveau_anglais : 1 (débutant) à 5 (natif), déjà fiabilisé ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant.
+- niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré.
 - super_tam = profil d'excellence, à mentionner dans les raisons.
 - Un profil actuellement en mission n'est pertinent que si sa date de disponibilité colle au besoin.
 - Ne t'écarte pas de plus de 25 points du score_regles sans raison explicite dans tes justifications.
 - Les raisons sont lues par le client : reste impersonnel et factuel. Ne mentionne JAMAIS une note, une étoile, un score, un avis ou un commentaire interne, ni qui a évalué ou jugé le profil (pas de « selon notre équipe », « évalué comme », « recommandé par »). Décris le profil lui-même : expérience, missions, métiers, secteurs, disponibilité, langues.
-- Écris les raisons en français, concrètes et vérifiables. Pas de superlatif creux.`;
+- Écris les raisons en français, concrètes et vérifiables. Pas de superlatif creux.
+- Réponds uniquement en appelant l'outil classer_profils.`;
 
   const prompt = `BESOIN CLIENT
 - Poste : ${need.job_title}
@@ -215,7 +225,7 @@ Classe-les et retourne les 3 à 6 meilleurs via l'outil.`;
     },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: 2048,
+      max_tokens: 16000,
       system,
       messages: [{ role: "user", content: prompt }],
       tools: [{
@@ -243,7 +253,9 @@ Classe-les et retourne les 3 à 6 meilleurs via l'outil.`;
           required: ["matches"],
         },
       }],
-      tool_choice: { type: "tool", name: "classer_profils" },
+      // Ce modèle refuse l'appel d'outil forcé : on laisse « auto » et la consigne nomme l'outil.
+      tool_choice: { type: "auto" },
+      output_config: { effort: "low" },
     }),
   });
 

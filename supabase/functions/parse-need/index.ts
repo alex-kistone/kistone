@@ -39,8 +39,8 @@ serve(async (req) => {
       headers: anthropicHeaders(apiKey),
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
-        max_tokens: 2048,
-        system: `Tu es un assistant RH expert. À partir d'une description libre d'un besoin en recrutement, extrais les informations structurées suivantes. Réponds UNIQUEMENT via l'outil fourni.
+        max_tokens: 16000,
+        system: `Tu es un assistant RH expert. À partir d'une description libre d'un besoin en recrutement, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
 
 Les typologies de profils possibles sont : ${PROFILE_TYPES.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
@@ -89,7 +89,9 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
             },
           },
         ],
-        tool_choice: { type: "tool", name: "extract_need" },
+        // Ce modèle refuse l'appel d'outil forcé : on laisse « auto » et la consigne nomme l'outil.
+      tool_choice: { type: "auto" },
+      output_config: { effort: "low" },
       }),
     });
 
