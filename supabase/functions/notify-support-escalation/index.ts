@@ -17,7 +17,13 @@ Deno.serve(async (req) => {
 
   try {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
+    if (!RESEND_API_KEY) {
+      // Emails pas encore configurés : on ne bloque pas l'action qui a déclenché l'envoi.
+      console.log("[email non envoyé] RESEND_API_KEY absente");
+      return new Response(JSON.stringify({ sent: false, reason: "RESEND_API_KEY absente" }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const { thread_id } = (await req.json()) ?? {};
     if (typeof thread_id !== "string" || thread_id.length < 10) {

@@ -4,7 +4,7 @@
  */
 
 export const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-export const ANTHROPIC_MODEL = "claude-sonnet-5";
+export const ANTHROPIC_MODEL = "claude-sonnet-5-5";
 
 export function anthropicHeaders(apiKey: string): Record<string, string> {
   return {

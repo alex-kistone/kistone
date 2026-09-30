@@ -38,6 +38,7 @@ import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSec
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
 import { METIERS } from "@/lib/taxonomy";
+import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
 
 const Profile = () => {
@@ -833,7 +834,7 @@ const Profile = () => {
                         },
                       },
                     });
-                    if (error) throw error;
+                    if (error) throw new Error(await functionErrorMessage(error));
                     if (data?.intro) setIntroText(data.intro);
                     else throw new Error("Pas de résultat");
                   } catch (err: any) {
