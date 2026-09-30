@@ -536,10 +536,10 @@ const ClientDashboard = () => {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent" onClick={() => navigate(`/client/edit-need/${need.id}`)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent" aria-label="Modifier le besoin" title="Modifier" onClick={() => navigate(`/client/edit-need/${need.id}`)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(need.id)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" aria-label="Supprimer le besoin" title="Supprimer" onClick={() => handleDelete(need.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>

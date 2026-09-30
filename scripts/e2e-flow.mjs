@@ -130,7 +130,7 @@ async function run() {
   }).select("id, onboarding_completed").single();
   must("Freelance · crée son profil (complet)", !rpErr && rp.onboarding_completed, rpErr?.message);
   ids.profile = rp.id;
-  const cp = await client.from("client_profiles").upsert({ user_id: users.client.id, email: users.client.email, company_name: `${TAG} Scale-up`, first_name: "Claire", last_name: "E2E" }, { onConflict: "user_id" });
+  const cp = await client.from("client_profiles").upsert({ user_id: users.client.id, email: users.client.email, company_name: `${TAG} Scale-up`, first_name: "Claire", last_name: "E2E", phone: "+33 6 00 00 00 00" }, { onConflict: "user_id" });
   must("Client · crée son profil", !cp.error, cp.error?.message);
   const { data: need, error: nErr } = await client.from("client_needs").insert({
     user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
@@ -139,6 +139,16 @@ async function run() {
   }).select("id").single();
   must("Client · dépose un besoin", !nErr, nErr?.message);
   ids.need = need.id;
+  const badBudget = await client.from("client_needs").insert({
+    user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
+    job_title: `${TAG} Budget inversé`, mission_location: "Paris", remote_policy: "hybrid", budget_tjm_min: 800, budget_tjm_max: 600,
+  });
+  check("Base · budget min ≥ max refusé", !!badBudget.error, badBudget.error?.message);
+  const opp = await free.from("client_needs_open").select("id, job_title");
+  check("Freelance · voit le besoin dans ses opportunités", !!opp.data?.some((n) => n.id === need.id), opp.error?.message ?? `${opp.data?.length ?? 0} besoin(s)`);
+  check("Freelance · sans les coordonnées du client", !JSON.stringify(opp.data ?? []).includes(users.client.email));
+  const oppClient = await client.from("client_needs_open").select("id");
+  check("Client · n'accède pas aux besoins ouverts", !oppClient.data?.length);
 
   section("Matching et accord");
   const match = await invoke(admin, "match-profiles", { need_id: need.id });
