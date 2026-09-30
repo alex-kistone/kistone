@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface TagInputProps {
@@ -14,10 +15,9 @@ const TagInput = ({ tags, onTagsChange, placeholder }: TagInputProps) => {
 
   const addTag = () => {
     const tag = input.trim();
-    if (tag && !tags.includes(tag)) {
-      onTagsChange([...tags, tag]);
-      setInput("");
-    }
+    if (!tag) return;
+    if (!tags.includes(tag)) onTagsChange([...tags, tag]);
+    setInput("");
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -42,17 +42,24 @@ const TagInput = ({ tags, onTagsChange, placeholder }: TagInputProps) => {
           ))}
         </div>
       )}
-      <Input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            addTag();
-          }
-        }}
-        placeholder={placeholder}
-      />
+      {/* « Entrée » ou le bouton Valider ajoutent l'élément saisi. */}
+      <div className="flex gap-2">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addTag();
+            }
+          }}
+          placeholder={placeholder}
+          aria-label={placeholder}
+        />
+        <Button type="button" variant="outline" onClick={addTag} disabled={!input.trim()}>
+          Valider
+        </Button>
+      </div>
     </div>
   );
 };

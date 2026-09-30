@@ -344,7 +344,7 @@ const ClientNewNeed = () => {
                     setLocationInput("");
                   }
                 }}
-                placeholder="Ajouter une ville puis Entrée"
+                placeholder="Ajouter une ville"
               />
               <Button
                 type="button"

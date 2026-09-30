@@ -537,7 +537,7 @@ const Profile = () => {
           {/* Mobilité */}
           <div id="section-mobility" className="space-y-2 rounded-xl transition-shadow">
             <Label>Mobilité</Label>
-            <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville puis Entrée" />
+            <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville" />
           </div>
 
           {/* Skills - Multi-select checkboxes */}
@@ -605,7 +605,7 @@ const Profile = () => {
           {/* Clients */}
           <div className="space-y-2">
             <Label>Clients majeurs</Label>
-            <TagInput tags={clients} onTagsChange={setClients} placeholder="Ajoutez un client puis Entrée" />
+            <TagInput tags={clients} onTagsChange={setClients} placeholder="Ajoutez un client" />
           </div>
 
           {/* Missions */}
@@ -706,6 +706,19 @@ const Profile = () => {
                         }}
                         placeholder="Ex : LinkedIn Recruiter, Teamtailor, Kalent..."
                       />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={!(mission.tools_input || "").trim()}
+                        onClick={() => {
+                          const val = (mission.tools_input || "").trim();
+                          const updated = [...missions];
+                          updated[idx] = { ...updated[idx], tools: (mission.tools || []).includes(val) ? mission.tools : [...(mission.tools || []), val], tools_input: "" };
+                          setMissions(updated);
+                        }}
+                      >
+                        Valider
+                      </Button>
                     </div>
                     {(mission.tools || []).length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-1.5">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteAccountButton from "@/components/platform/DeleteAccountButton";
 import ExportDataButton from "@/components/platform/ExportDataButton";
@@ -135,10 +135,11 @@ const ClientProfile = () => {
                 value={cityInput}
                 onChange={(e) => setCityInput(e.target.value)}
                 onKeyDown={handleCityKeyDown}
-                placeholder="Ajouter une ville puis Entrée"
+                placeholder="Ajouter une ville"
+                aria-label="Ajouter une ville"
               />
-              <Button type="button" variant="outline" size="icon" onClick={addCity}>
-                <Plus className="h-4 w-4" />
+              <Button type="button" variant="outline" onClick={addCity} disabled={!cityInput.trim()}>
+                Valider
               </Button>
             </div>
             {cities.length > 0 && (
