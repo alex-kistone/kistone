@@ -56,7 +56,16 @@ export default function Hero() {
   return (
     <section className="flex flex-col items-center px-5 pt-14 text-center md:pt-[88px]">
       <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px]">
-        {HERO.title}
+        {HERO.title.split(HERO.titleHighlight).flatMap((part, i) =>
+          i === 0
+            ? [part]
+            : [
+                <span key={i} className="bg-[linear-gradient(transparent_52%,#F4AFC2_52%)] bg-no-repeat px-[0.04em] [box-decoration-break:clone]">
+                  {HERO.titleHighlight}
+                </span>,
+                part,
+              ],
+        )}
       </h1>
 
       <FunctionsUnderline words={HERO.functions} />

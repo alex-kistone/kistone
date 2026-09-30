@@ -4,6 +4,8 @@ import { palettes, type PaletteName } from "@/lib/palettes";
 
 export const HERO = {
   title: "Plateforme Freelance RPO",
+  // Mot surligné au marqueur rose, comme sur la plateforme C-Level
+  titleHighlight: "Freelance",
   // Un soulignement rose passe d'un métier à l'autre sous le titre
   functions: ["Tech", "GTM", "Finance", "Ops"],
   subtitle: [
