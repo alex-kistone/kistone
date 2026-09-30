@@ -6,7 +6,8 @@
  *
  * 1. Retrouve le profil Jarvi : identifiant déjà connu, sinon recherche par URL LinkedIn
  *    (fiche créée à la main dans Jarvi), sinon création.
- * 2. Crée ou met à jour la fiche (identité, poste, champs personnalisés via src/lib/jarvi.ts).
+ * 2. Crée ou met à jour la fiche (identité, poste, champs personnalisés via src/lib/jarvi.ts)
+ *    et la rattache au projet Jarvi des inscriptions.
  * 3. Enregistre l'identifiant Jarvi, la date ou l'erreur sur recruiter_profiles.
  *
  * Secret : JARVI_API_KEY (clé privée Jarvi). Sans lui, 503 et rien n'est envoyé.
@@ -14,7 +15,7 @@
  * virgules) ; à confirmer au premier essai réel.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { JARVI_SPECIALITES, toJarviFields } from "../_shared/jarvi.ts";
+import { JARVI_SIGNUP_PROJECT_ID, JARVI_SPECIALITES, toJarviFields } from "../_shared/jarvi.ts";
 
 const API = "https://functions.prod.jarvi.tech/v1/public-api/rest/v2";
 const corsHeaders = {
@@ -70,6 +71,8 @@ Deno.serve(async (req) => {
 
     const payload: Record<string, string> = {
       externalId: p.id,
+      // Tout freelance inscrit est rattaché au projet Jarvi des inscriptions.
+      projectId: JARVI_SIGNUP_PROJECT_ID,
       firstName: p.first_name ?? "",
       lastName: p.last_name ?? "",
       linkedinUrl: p.linkedin_url,

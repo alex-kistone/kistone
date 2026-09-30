@@ -7,6 +7,9 @@
  * pas d'API Deno ici, le front l'importe tel quel via src/lib/jarvi.ts.
  */
 
+/** Projet Jarvi où arrive tout freelance inscrit sur la plateforme. */
+export const JARVI_SIGNUP_PROJECT_ID = "a28725c1-24c0-46b4-bb63-afd1854df1d9";
+
 /** Nombre maximum de métiers et de secteurs par profil (limite des champs Jarvi côté Kistone). */
 export const MAX_CHOICES = 3;
 
