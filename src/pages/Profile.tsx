@@ -38,6 +38,7 @@ import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSec
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
 import { METIERS } from "@/lib/taxonomy";
+import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -223,6 +224,15 @@ const Profile = () => {
       return;
     }
     setLinkedin(linkedinUrl);
+    if (phone.replace(/\D/g, "").length < 9) {
+      document.getElementById("phone")?.focus();
+      toast({ title: "Téléphone requis", description: "Indiquez un numéro de téléphone valide.", variant: "destructive" });
+      return;
+    }
+    if (skills.length > MAX_CHOICES || sectors.length > MAX_CHOICES) {
+      toast({ title: "Trop de choix", description: `${MAX_CHOICES} métiers et ${MAX_CHOICES} secteurs maximum.`, variant: "destructive" });
+      return;
+    }
     setSaving(true);
 
     try {
@@ -404,8 +414,8 @@ const Profile = () => {
               <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
-              <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Label htmlFor="phone">Téléphone *</Label>
+              <Input id="phone" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="06 12 34 56 78" required />
             </div>
           </div>
 
@@ -422,12 +432,10 @@ const Profile = () => {
                 className="pl-10"
                 required
                 aria-invalid={Boolean(linkedinError)}
-                aria-describedby="linkedin-help"
+                aria-describedby={linkedinError ? "linkedin-help" : undefined}
               />
             </div>
-            <p id="linkedin-help" className={linkedinError ? "text-sm text-destructive" : "text-xs text-muted-foreground"}>
-              {linkedinError ?? "Obligatoire : il sert à synchroniser votre profil avec notre outil de recrutement."}
-            </p>
+            {linkedinError ? <p id="linkedin-help" className="text-sm text-destructive">{linkedinError}</p> : null}
           </div>
 
           {/* Intitulé de poste */}
@@ -448,7 +456,7 @@ const Profile = () => {
             <div className="space-y-3">
               <Label>Modèle</Label>
               <div className="flex flex-col gap-2">
-                {["RPO"].map((m) => (
+                {MODELS.map((m) => (
                   <label key={m} className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       checked={models.includes(m)}
@@ -517,70 +525,15 @@ const Profile = () => {
             <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville puis Entrée" />
           </div>
 
-          {/* Intro / Présentation */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="introText">Texte d'introduction / Présentation</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-xs"
-                disabled={optimizing}
-                onClick={async () => {
-                  setOptimizing(true);
-                  try {
-                    const { data: { session } } = await supabase.auth.getSession();
-                    if (!session) return;
-                    const { data, error } = await supabase.functions.invoke("optimize-intro", {
-                      body: {
-                        profile: {
-                          firstName,
-                          lastName,
-                          jobTitle,
-                          skills,
-                          sectors,
-                          clients,
-                          models,
-                          tjm,
-                          mobility,
-                          languages,
-                          missions: missions.filter((m) => m.client_name.trim()),
-                          hasLinkedinLicense,
-                          currentIntro: introText,
-                        },
-                      },
-                    });
-                    if (error) throw error;
-                    if (data?.intro) setIntroText(data.intro);
-                    else throw new Error("Pas de résultat");
-                  } catch (err: any) {
-                    toast({ title: "Erreur", description: err.message || "Impossible d'optimiser la présentation.", variant: "destructive" });
-                  } finally {
-                    setOptimizing(false);
-                  }
-                }}
-              >
-                {optimizing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                {optimizing ? "Génération..." : "Optimiser avec l'IA"}
-              </Button>
-            </div>
-            <Textarea
-              id="introText"
-              value={introText}
-              onChange={(e) => setIntroText(e.target.value)}
-              placeholder="Présentez-vous en quelques lignes : votre parcours, votre expertise, ce qui vous différencie..."
-              rows={4}
-            />
-          </div>
-
           {/* Skills - Multi-select checkboxes */}
           <div className="space-y-3">
-            <Label>Les métiers sur lesquels je recrute</Label>
+            <Label>Les métiers sur lesquels je recrute *</Label>
+            <p className="text-xs text-muted-foreground">{MAX_CHOICES} choix maximum ({skills.length}/{MAX_CHOICES})</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {METIERS.map((skill) => (
-                <label key={skill} className="flex items-center gap-2 cursor-pointer">
+                <label key={skill} className={cn("flex items-center gap-2", !skills.includes(skill) && skills.length >= MAX_CHOICES ? "cursor-not-allowed opacity-50" : "cursor-pointer")}>
                   <Checkbox
+                    disabled={!skills.includes(skill) && skills.length >= MAX_CHOICES}
                     checked={skills.includes(skill)}
                     onCheckedChange={(checked) => {
                       if (checked) setSkills([...skills, skill]);
@@ -596,10 +549,12 @@ const Profile = () => {
           {/* Secteurs / Environnements */}
           <div className="space-y-3">
             <Label>Secteurs / Environnements</Label>
+            <p className="text-xs text-muted-foreground">{MAX_CHOICES} choix maximum ({sectors.length}/{MAX_CHOICES})</p>
             <div className="flex flex-col gap-2">
               {["Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie", "Autre"].map((sector) => (
-                <label key={sector} className="flex items-center gap-2 cursor-pointer">
+                <label key={sector} className={cn("flex items-center gap-2", !sectors.includes(sector) && sectors.length >= MAX_CHOICES ? "cursor-not-allowed opacity-50" : "cursor-pointer")}>
                   <Checkbox
+                    disabled={!sectors.includes(sector) && sectors.length >= MAX_CHOICES}
                     checked={sectors.includes(sector)}
                     onCheckedChange={(checked) => {
                       if (checked) setSectors([...sectors, sector]);
@@ -775,7 +730,7 @@ const Profile = () => {
                 variant="outline"
                 size="sm"
                 className="gap-1"
-                onClick={() => setLanguages([...languages, { language: "", level: "intermédiaire" }])}
+                onClick={() => setLanguages([...languages, { language: "", level: "courant" }])}
               >
                 <Plus className="h-3.5 w-3.5" />
                 Ajouter
@@ -783,16 +738,23 @@ const Profile = () => {
             </div>
             {languages.map((lang, idx) => (
               <div key={idx} className="flex items-center gap-3">
-                <Input
-                  value={lang.language}
-                  onChange={(e) => {
+                <Select
+                  value={lang.language || undefined}
+                  onValueChange={(val) => {
                     const updated = [...languages];
-                    updated[idx] = { ...updated[idx], language: e.target.value };
+                    updated[idx] = { ...updated[idx], language: val };
                     setLanguages(updated);
                   }}
-                  placeholder="Ex : Anglais"
-                  className="flex-1"
-                />
+                >
+                  <SelectTrigger className="flex-1" aria-label="Langue">
+                    <SelectValue placeholder="Langue" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[...LANGUAGES, ...(lang.language && !LANGUAGES.includes(lang.language) ? [lang.language] : [])].map((l) => (
+                      <SelectItem key={l} value={l}>{l}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Select
                   value={lang.level}
                   onValueChange={(val) => {
@@ -801,7 +763,7 @@ const Profile = () => {
                     setLanguages(updated);
                   }}
                 >
-                  <SelectTrigger className="w-[160px]">
+                  <SelectTrigger className="w-[160px]" aria-label="Niveau">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -822,6 +784,65 @@ const Profile = () => {
               </div>
             ))}
           </div>
+
+          {/* Intro / Présentation */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="introText">Texte de présentation</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs"
+                disabled={optimizing}
+                onClick={async () => {
+                  setOptimizing(true);
+                  try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) return;
+                    const { data, error } = await supabase.functions.invoke("optimize-intro", {
+                      body: {
+                        profile: {
+                          firstName,
+                          lastName,
+                          jobTitle,
+                          skills,
+                          sectors,
+                          clients,
+                          models,
+                          tjm,
+                          mobility,
+                          languages,
+                          missions: missions.filter((m) => m.client_name.trim()),
+                          hasLinkedinLicense,
+                          currentIntro: introText,
+                        },
+                      },
+                    });
+                    if (error) throw error;
+                    if (data?.intro) setIntroText(data.intro);
+                    else throw new Error("Pas de résultat");
+                  } catch (err: any) {
+                    toast({ title: "Erreur", description: err.message || "Impossible d'optimiser la présentation.", variant: "destructive" });
+                  } finally {
+                    setOptimizing(false);
+                  }
+                }}
+              >
+                {optimizing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                {optimizing ? "Génération..." : "Optimiser avec l'IA"}
+              </Button>
+            </div>
+            <Textarea
+              id="introText"
+              value={introText}
+              onChange={(e) => setIntroText(e.target.value)}
+              placeholder="Présentez-vous en quelques lignes : votre parcours, votre expertise, ce qui vous différencie..."
+              rows={4}
+            />
+          </div>
+
+          <p className="-mt-4 text-xs text-muted-foreground">« Optimiser avec l'IA » reprend tout ce que vous avez renseigné ci-dessus.</p>
 
           <Button type="submit" size="lg" className="w-full" disabled={saving}>
             {saving ? "Sauvegarde..." : existingId ? "Mettre à jour mon profil" : "Envoyer mon profil"}
