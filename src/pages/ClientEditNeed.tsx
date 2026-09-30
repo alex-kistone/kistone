@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { budgetError } from "@/lib/budget";
 import AppShell from "@/components/platform/AppShell";
-import { METIERS } from "@/lib/taxonomy";
+import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
 const PROFILE_TYPES = METIERS;
 
@@ -39,6 +40,7 @@ const ClientEditNeed = () => {
   const [contactEmail, setContactEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [profileTypes, setProfileTypes] = useState<string[]>([]);
+  const [sectors, setSectors] = useState<string[]>([]);
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
   const [missionLocation, setMissionLocation] = useState("");
@@ -69,6 +71,7 @@ const ClientEditNeed = () => {
       setContactEmail(need.contact_email);
       setJobTitle(need.job_title);
       setProfileTypes(need.profile_types || []);
+      setSectors(need.sectors || []);
       setBudgetMin(need.budget_tjm_min?.toString() || "");
       setBudgetMax(need.budget_tjm_max?.toString() || "");
       setMissionLocation(need.mission_location);
@@ -81,6 +84,11 @@ const ClientEditNeed = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const budgetIssue = budgetError(budgetMin, budgetMax);
+    if (budgetIssue) {
+      toast({ title: "Budget TJM", description: budgetIssue, variant: "destructive" });
+      return;
+    }
     setSaving(true);
 
     try {
@@ -92,6 +100,7 @@ const ClientEditNeed = () => {
           contact_email: contactEmail,
           job_title: jobTitle,
           profile_types: profileTypes,
+          sectors,
           budget_tjm_min: budgetMin ? parseInt(budgetMin) : null,
           budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
           mission_location: missionLocation,
@@ -158,7 +167,7 @@ const ClientEditNeed = () => {
 
           <div className="space-y-2">
             <Label htmlFor="jobTitle">Intitulé du poste recherché</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : Développeur Full Stack Senior" required />
+            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : RPO Tech" required />
           </div>
 
           <div className="space-y-3">
@@ -179,16 +188,37 @@ const ClientEditNeed = () => {
             </div>
           </div>
 
+          <div className="space-y-3">
+            <Label>Secteur / Environnement</Label>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {SECTEURS.map((sector) => (
+                <label key={sector} className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={sectors.includes(sector)}
+                    onCheckedChange={(checked) => {
+                      if (checked) setSectors([...sectors, sector]);
+                      else setSectors(sectors.filter((s) => s !== sector));
+                    }}
+                  />
+                  <span className="text-sm">{sector}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="budgetMin">Budget TJM min (€/jour)</Label>
-              <Input id="budgetMin" type="number" value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="350" />
+              <Input id="budgetMin" type="number" min={1} aria-invalid={!!budgetError(budgetMin, budgetMax)} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="350" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="budgetMax">Budget TJM max (€/jour)</Label>
-              <Input id="budgetMax" type="number" value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="550" />
+              <Input id="budgetMax" type="number" min={1} aria-invalid={!!budgetError(budgetMin, budgetMax)} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="550" />
             </div>
           </div>
+          {budgetError(budgetMin, budgetMax) && (
+            <p className="-mt-4 text-sm text-destructive">{budgetError(budgetMin, budgetMax)}</p>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="missionLocation">Lieu de la mission</Label>

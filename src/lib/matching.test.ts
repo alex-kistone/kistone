@@ -43,3 +43,36 @@ describe("anglais dans le matching", () => {
     expect(s.notes).toContain("Anglais limité");
   });
 });
+
+describe("cohérence du matching", () => {
+  it("compare le TJM freelance + marge au budget client (tolérance 10 %)", () => {
+    const within = scoreRecruiter(need, profile({ tjm: 700 }), false)!; // 800 € client = max
+    expect(within.breakdown.budget).toBe(25);
+    const slightlyAbove = scoreRecruiter(need, profile({ tjm: 760 }), false)!; // 860 ≤ 880
+    expect(slightlyAbove.breakdown.budget).toBe(12.5);
+    expect(scoreRecruiter(need, profile({ tjm: 790 }), false)).toBeNull(); // 890 > 880 : exclu
+  });
+
+  it("plafonne un profil sans métier commun sous un spécialiste", () => {
+    const outsider = scoreRecruiter(need, profile({ skills: ["Immobilier"] }), false)!;
+    const specialist = scoreRecruiter(need, profile({}), false)!;
+    expect(outsider.score).toBeLessThanOrEqual(45);
+    expect(specialist.score).toBeGreaterThan(outsider.score);
+  });
+
+  it("reconnaît chaque ville d'un besoin multi-lieux", () => {
+    const multi = { ...need, mission_location: "Paris, Lyon" } as Need;
+    expect(scoreRecruiter(multi, profile({ mobility: ["Lyon"] }), false)!.breakdown.location).toBe(10);
+    expect(scoreRecruiter(multi, profile({ mobility: ["Bordeaux"] }), false)!.breakdown.location).toBe(0);
+  });
+
+  it("écarte un full remote d'un besoin sur site", () => {
+    const onSite = { ...need, remote_policy: "on-site" } as Need;
+    expect(scoreRecruiter(onSite, profile({ remote_preference: "full-remote" }), false)!.breakdown.remote).toBe(0);
+  });
+
+  it("détecte l'anglais dans « équipe internationale »", () => {
+    const intl = { ...need, description: "Rejoindre une équipe internationale" } as Need;
+    expect(scoreRecruiter(intl, profile({ admin_english_rating: 2 }), false)!.breakdown.english).toBe(0);
+  });
+});

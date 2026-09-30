@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { clientHomePath } from "@/lib/clientOnboarding";
 import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
@@ -294,6 +295,12 @@ const ClientDashboard = () => {
     if (!session) {
       navigate("/client");
       return;
+    }
+    // Client dont l'onboarding n'est pas fait (coordonnées manquantes) : on l'y renvoie.
+    const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" as const });
+    if (!isAdmin) {
+      const home = await clientHomePath(session.user.id);
+      if (home !== "/client/dashboard") { navigate(home); return; }
     }
     setUserId(session.user.id);
     const { data: adminId } = await supabase.rpc("get_admin_user_id" as any);

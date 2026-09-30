@@ -88,7 +88,7 @@ const MAX = { budget: 25, availability: 20, remote: 15, skills: 35, sectors: 10,
 const RATING_WEIGHT: Record<number, number> = { 0: 0.45, 2: 0.15, 3: 0.55, 4: 0.8, 5: 1 };
 
 /** Le besoin demande-t-il de l'anglais ? */
-const ENGLISH_HINT = /\b(anglais|english|bilingue|international|anglophone)\b/i;
+const ENGLISH_HINT = /\b(anglais|english|bilingues?|internationa(?:l|le|les|ux)|anglophones?)\b/i;
 
 /** Critère anglais : neutre si le besoin n'en parle pas, sinon selon le niveau retenu. */
 function scoreEnglish(needText: string, r: Recruiter): { pts: number; note: string | null } {

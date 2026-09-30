@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
 import SignupSent from "@/components/auth/SignupSent";
+import { isFreeEmail, FREE_EMAIL_MESSAGE } from "@/lib/emailDomains";
+import { clientHomePath } from "@/lib/clientOnboarding";
 
 const ClientAuth = () => {
   const navigate = useNavigate();
@@ -65,6 +67,13 @@ const ClientAuth = () => {
         return;
       }
 
+      // Espace client réservé aux adresses professionnelles (couvre aussi la connexion Google)
+      if (isFreeEmail(session.user.email ?? "")) {
+        await supabase.auth.signOut();
+        toast({ title: "Adresse professionnelle requise", description: FREE_EMAIL_MESSAGE, variant: "destructive" });
+        return;
+      }
+
       // Assign client role
       try {
         const res = await supabase.functions.invoke("assign-client-role", {
@@ -72,6 +81,11 @@ const ClientAuth = () => {
         });
         // Un 409 arrive dans res.error (la réponse est dans son contexte), pas dans res.data
         const body = res.data ?? (await res.error?.context?.json?.().catch(() => null));
+        if (body?.error === "FREE_EMAIL") {
+          await supabase.auth.signOut();
+          toast({ title: "Adresse professionnelle requise", description: body.message, variant: "destructive" });
+          return;
+        }
         if (body?.error === "ROLE_CONFLICT") {
           await supabase.auth.signOut();
           toast({
@@ -85,7 +99,8 @@ const ClientAuth = () => {
         console.error("Role assignment error:", err);
       }
 
-      navigate("/client/dashboard");
+      // Première connexion : onboarding (coordonnées puis premier besoin)
+      navigate(await clientHomePath(session.user.id));
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -108,6 +123,11 @@ const ClientAuth = () => {
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isFreeEmail(email)) {
+      toast({ title: "Adresse professionnelle requise", description: FREE_EMAIL_MESSAGE, variant: "destructive" });
+      return;
+    }
 
     if (!isLogin && password !== confirmPassword) {
       toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" });
@@ -206,8 +226,14 @@ const ClientAuth = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="prenom.nom@entreprise.fr"
+              aria-invalid={!!email && isFreeEmail(email)}
+              aria-describedby="email-hint"
               required
             />
+            <p id="email-hint" className={email && isFreeEmail(email) ? "text-xs text-destructive" : "text-xs text-muted-foreground"}>
+              {email && isFreeEmail(email) ? FREE_EMAIL_MESSAGE : "Adresse de votre entreprise : Gmail, Hotmail, Yahoo… ne sont pas acceptés."}
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Mot de passe</Label>

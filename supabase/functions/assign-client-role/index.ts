@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { FREE_EMAIL_MESSAGE, isFreeEmail } from "../_shared/emailDomains.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -51,6 +52,14 @@ Deno.serve(async (req) => {
     if (roles.includes("user") || (recruiterProfile && !roles.includes("admin"))) {
       return new Response(JSON.stringify({ error: "ROLE_CONFLICT", message: "Ce compte est déjà enregistré en tant que freelance. Vous ne pouvez pas créer un espace client avec la même adresse email." }), {
         status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Espace client réservé aux adresses professionnelles (l'admin garde son accès)
+    if (!roles.includes("admin") && isFreeEmail(user.email ?? "")) {
+      return new Response(JSON.stringify({ error: "FREE_EMAIL", message: FREE_EMAIL_MESSAGE }), {
+        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

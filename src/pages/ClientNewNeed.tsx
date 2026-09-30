@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, Loader2, Mic, MicOff, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,15 +16,16 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { budgetError } from "@/lib/budget";
 import AppShell from "@/components/platform/AppShell";
+import Header from "@/components/KistoneHeader";
+import OnboardingSteps from "@/components/platform/OnboardingSteps";
 import TagInput from "@/components/platform/TagInput";
-import { METIERS } from "@/lib/taxonomy";
+import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
 const PROFILE_TYPES = METIERS;
 
-const SECTORS = [
-  "Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie", "Autre",
-];
+const SECTORS = SECTEURS;
 
 const REMOTE_OPTIONS = [
   { value: "on-site", label: "Sur site" },
@@ -35,6 +36,8 @@ const REMOTE_OPTIONS = [
 
 const ClientNewNeed = () => {
   const navigate = useNavigate();
+  // Étape 2 de l'onboarding client : même formulaire, sans la navigation de l'espace.
+  const onboarding = useSearchParams()[0].get("onboarding") === "1";
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -137,14 +140,13 @@ const ClientNewNeed = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data.job_title) setJobTitle(data.job_title);
-      if (data.profile_types?.length) setProfileTypes(data.profile_types);
-      if (data.budget_tjm_max) {
-        const max = data.budget_tjm_max;
-        setBudgetMax(String(max));
-        setBudgetMin(String(max - 100));
-      } else if (data.budget_tjm_min) {
-        setBudgetMin(String(data.budget_tjm_min));
-      }
+      // L'IA ne peut proposer que des valeurs du référentiel : on écarte tout le reste.
+      const metiers = (data.profile_types ?? []).filter((t: string) => (METIERS as readonly string[]).includes(t));
+      if (metiers.length) setProfileTypes(metiers);
+      const secteurs = (data.sectors ?? []).filter((t: string) => (SECTEURS as readonly string[]).includes(t));
+      if (secteurs.length) setSectors(secteurs);
+      if (data.budget_tjm_min) setBudgetMin(String(data.budget_tjm_min));
+      if (data.budget_tjm_max) setBudgetMax(String(data.budget_tjm_max));
       if (data.mission_location) setMissionLocations(data.mission_location.split(",").map((s: string) => s.trim()).filter(Boolean));
       if (data.remote_policy) setRemotePolicy(data.remote_policy);
       if (data.description) setDescription(data.description);
@@ -160,6 +162,11 @@ const ClientNewNeed = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
+    const budgetIssue = budgetError(budgetMin, budgetMax);
+    if (budgetIssue) {
+      toast({ title: "Budget TJM", description: budgetIssue, variant: "destructive" });
+      return;
+    }
     setSaving(true);
 
     try {
@@ -192,22 +199,34 @@ const ClientNewNeed = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background lg:pl-[248px]">
-      <AppShell role="client" />
+    <div className={onboarding ? "min-h-screen bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
+      {onboarding ? <Header /> : <AppShell role="client" />}
       <main className="container mx-auto max-w-2xl px-4 py-12">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate("/client/dashboard")}
-          className="mb-6 gap-2 text-muted-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Retour au tableau de bord
-        </Button>
+        {onboarding ? (
+          <OnboardingSteps current={2} />
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/client/dashboard")}
+            className="mb-6 gap-2 text-muted-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Retour au tableau de bord
+          </Button>
+        )}
 
-        <h1 className="mb-2 text-3xl font-bold">Déposer un besoin</h1>
+        <h1 className="mb-2 text-3xl font-bold">{onboarding ? "Déposez votre premier besoin" : "Déposer un besoin"}</h1>
         <p className="mb-8 text-muted-foreground">
           Décrivez votre besoin en recrutement — nos recruteurs freelances prendront le relais.
+          {onboarding && (
+            <>
+              {" "}
+              <button type="button" onClick={() => navigate("/client/dashboard")} className="underline underline-offset-2 hover:text-foreground">
+                Passer cette étape
+              </button>
+            </>
+          )}
         </p>
 
         {/* AI Generation Block */}
@@ -263,7 +282,7 @@ const ClientNewNeed = () => {
           {/* Job info */}
           <div className="space-y-2">
             <Label htmlFor="jobTitle">Intitulé du poste recherché</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : Développeur Full Stack Senior" required />
+            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : RPO Tech" required />
           </div>
 
           {/* Profile types - mirrors recruiter skills */}
@@ -308,24 +327,24 @@ const ClientNewNeed = () => {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="budgetMin">Budget TJM min (€/jour)</Label>
-              <Input id="budgetMin" type="number" value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="450" />
+              <Input id="budgetMin" type="number" min={1} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="450" aria-invalid={!!budgetError(budgetMin, budgetMax)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="budgetMax">Budget TJM max (€/jour)</Label>
               <Input
                 id="budgetMax"
                 type="number"
+                min={1}
+                aria-invalid={!!budgetError(budgetMin, budgetMax)}
                 value={budgetMax}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setBudgetMax(val);
-                  if (val) setBudgetMin(String(Math.max(0, parseInt(val) - 100)));
-                  else setBudgetMin("");
-                }}
+                onChange={(e) => setBudgetMax(e.target.value)}
                 placeholder="550"
               />
             </div>
           </div>
+          {budgetError(budgetMin, budgetMax) && (
+            <p className="-mt-4 text-sm text-destructive">{budgetError(budgetMin, budgetMax)}</p>
+          )}
 
           {/* Lieux de mission */}
           <div className="space-y-2">

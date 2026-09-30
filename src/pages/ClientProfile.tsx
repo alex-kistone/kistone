@@ -87,7 +87,7 @@ const ClientProfile = () => {
       first_name: firstName,
       last_name: lastName,
       job_title: jobTitle,
-      phone: phone || null,
+      phone: phone.trim(),
       email,
     };
 
@@ -202,6 +202,7 @@ const ClientProfile = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+33 6 12 34 56 78"
+                required
               />
             </div>
             <div className="space-y-2">

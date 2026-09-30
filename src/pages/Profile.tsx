@@ -37,7 +37,7 @@ import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
-import { METIERS } from "@/lib/taxonomy";
+import { METIERS, SECTEURS } from "@/lib/taxonomy";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
 
@@ -140,7 +140,7 @@ const Profile = () => {
       setLanguages(p.languages || []);
       setHasLinkedinLicense(p.has_linkedin_license || false);
       const loadedSectors: string[] = p.sectors || [];
-      const knownSectors = ["Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie"];
+      const knownSectors: string[] = SECTEURS.filter((x) => x !== "Autre");
       setSectors(loadedSectors.filter((s: string) => knownSectors.includes(s)));
       const otherSector = loadedSectors.find((s: string) => !knownSectors.includes(s));
       if (otherSector) {
@@ -566,7 +566,7 @@ const Profile = () => {
             <Label>Secteurs / Environnements</Label>
             <p className="text-xs text-muted-foreground">{MAX_CHOICES} choix maximum ({sectors.length}/{MAX_CHOICES})</p>
             <div className="flex flex-col gap-2">
-              {["Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie", "Autre"].map((sector) => (
+              {SECTEURS.map((sector) => (
                 <label key={sector} className={cn("flex items-center gap-2", !sectors.includes(sector) && sectors.length >= MAX_CHOICES ? "cursor-not-allowed opacity-50" : "cursor-pointer")}>
                   <Checkbox
                     disabled={!sectors.includes(sector) && sectors.length >= MAX_CHOICES}

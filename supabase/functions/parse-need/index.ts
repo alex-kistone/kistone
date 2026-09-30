@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { METIERS } from "../_shared/taxonomy.ts";
+import { METIERS, SECTEURS } from "../_shared/taxonomy.ts";
 import {
   ANTHROPIC_MODEL,
   ANTHROPIC_URL,
@@ -43,7 +43,9 @@ serve(async (req) => {
         system: `Tu es un assistant RH expert. À partir d'une description libre d'un besoin en recrutement, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
 
 Les typologies de profils possibles sont : ${PROFILE_TYPES.join(", ")}.
+Les secteurs / environnements possibles sont : ${SECTEURS.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
+Le budget est un TJM client en euros HT par jour. N'invente pas de fourchette : si un seul montant est donné (« autour de 600 € »), renseigne uniquement budget_tjm_max ; si une fourchette est donnée, le minimum doit être strictement inférieur au maximum.
 
 Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide pour les arrays).`,
         messages: [{ role: "user", content: freeText }],
@@ -56,12 +58,17 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
               properties: {
                 job_title: {
                   type: "string",
-                  description: "Intitulé du poste recherché",
+                  description: "Intitulé court au format « RPO <métier> », ex : RPO Tech, RPO Data, RPO Finance",
                 },
                 profile_types: {
                   type: "array",
-                  items: { type: "string" },
-                  description: `Typologies de profils parmi: ${PROFILE_TYPES.join(", ")}`,
+                  items: { type: "string", enum: [...PROFILE_TYPES] },
+                  description: "Métiers des profils à recruter",
+                },
+                sectors: {
+                  type: "array",
+                  items: { type: "string", enum: [...SECTEURS] },
+                  description: "Secteur ou environnement de l'entreprise",
                 },
                 budget_tjm_min: {
                   type: "number",

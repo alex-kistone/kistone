@@ -13,6 +13,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ClientAuth from "./pages/ClientAuth";
 import ClientDashboard from "./pages/ClientDashboard";
+import ClientOnboarding from "./pages/ClientOnboarding";
 import ClientNewNeed from "./pages/ClientNewNeed";
 import ClientEditNeed from "./pages/ClientEditNeed";
 import ClientProfile from "./pages/ClientProfile";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/client" element={<ClientAuth />} />
+          <Route path="/client/onboarding" element={<ClientOnboarding />} />
           <Route path="/client/dashboard" element={<ClientDashboard />} />
           <Route path="/client/new-need" element={<ClientNewNeed />} />
           <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
