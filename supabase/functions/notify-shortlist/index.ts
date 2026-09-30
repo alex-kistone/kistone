@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { APP_URL, emailConfigured, esc, layout, sendEmail } from "../_shared/email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,17 +7,13 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "Kistone <notifications@kistone.fr>";
-const APP_URL = (Deno.env.get("APP_URL") ?? "https://kistone.fr").replace(/\/$/, "");
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) {
+    if (!emailConfigured()) {
       // Emails pas encore configurés : on ne bloque pas l'action qui a déclenché l'envoi.
       console.log("[email non envoyé] RESEND_API_KEY absente");
       return new Response(JSON.stringify({ sent: false, reason: "RESEND_API_KEY absente" }), {
@@ -98,33 +95,19 @@ Deno.serve(async (req) => {
     const clientName = need?.contact_name || "Un client";
     const dashboardUrl = `${APP_URL}/dashboard?tab=needs&need=${encodeURIComponent(need_id)}`;
 
-    const emailRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: EMAIL_FROM,
-        to: adminEmails,
-        subject: `🔔 ${clientName} souhaite en savoir plus sur ${freelancerName}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-            <h2 style="color: #1a1a1a;">Nouveau shortlist client 🎯</h2>
-            <p style="color: #444;"><strong>${clientName}</strong> (${company}) souhaite en savoir plus sur le profil <strong>${freelancerName}</strong> pour le besoin :</p>
-            <p style="color: #333; font-weight: 600;">${needTitle}</p>
-            <a href="${dashboardUrl}" style="display: inline-block; background: #c2410c; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-top: 12px;">Voir le pipeline</a>
-          </div>
-        `,
+    const sent = await sendEmail({
+      to: adminEmails,
+      subject: `${clientName} souhaite en savoir plus sur ${freelancerName}`,
+      html: layout({
+        title: "Nouvelle shortlist client",
+        paragraphs: [
+          `<strong>${esc(clientName)}</strong>${company ? ` (${esc(company)})` : ""} souhaite en savoir plus sur le profil <strong>${esc(freelancerName)}</strong> pour le besoin :`,
+          `<strong>${esc(needTitle)}</strong>`,
+        ],
+        cta: { label: "Voir le besoin", href: dashboardUrl },
       }),
     });
-
-    const emailData = await emailRes.json();
-    if (!emailRes.ok) {
-      console.error("Resend error:", emailData);
-    } else {
-      console.log("Shortlist notification sent to admins:", adminEmails);
-    }
+    if (!sent.sent) console.error("notify-shortlist", sent.error);
 
     return new Response(JSON.stringify({ success: true, notified: adminEmails }), {
       status: 200,
