@@ -22,6 +22,13 @@ describe("toJarviFields", () => {
     expect(fields[JARVI_FIELDS.english]).toBe(2);
     expect(fields[JARVI_FIELDS.notes]).toBe("Très bon sourcing");
     expect(fields[JARVI_FIELDS.specialitesTech]).toEqual(["Dev"]);
+    expect(fields[JARVI_FIELDS.autresLangues]).toEqual(["Anglais (intermédiaire)", "Français (natif)"]);
+  });
+
+  it("ajoute l'anglais noté par l'admin même s'il n'est pas déclaré", () => {
+    const { fields } = toJarviFields({ ...base, languages: [{ language: "Français", level: "natif" }], admin_english_rating: 5 }, JARVI_SPECIALITES);
+    expect(fields[JARVI_FIELDS.autresLangues]).toEqual(["Français (natif)", "Anglais (natif)"]);
+    expect(fields[JARVI_FIELDS.english]).toBe(5);
   });
 
   it("n'envoie pas de champ admin vide (ne les efface pas dans Jarvi)", () => {

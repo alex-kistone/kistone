@@ -92,7 +92,13 @@ export function toJarviFields(p: PlatformProfileForJarvi, jarviSpecialites: read
   const models = (p.model ? p.model.split(",") : []).map((m) => m.trim()).filter(Boolean)
     .map((m) => MODEL_TO_JARVI[m] ?? (unmapped.push(`Modèle « ${m} »`), null)).filter((m): m is string => !!m);
   const secteurs = p.sectors.map((s) => SECTOR_TO_JARVI[s] ?? (unmapped.push(`Secteur « ${s} »`), null)).filter((s): s is string => !!s);
-  const autresLangues = p.languages.filter((l) => l.language.trim()).map((l) => `${l.language} (${l.level})`);
+  // Anglais : la note de l'admin fixe le niveau affiché, même si le freelance ne l'a pas déclaré.
+  const adminEnglish = p.admin_english_rating ? LANGUAGE_LEVELS[p.admin_english_rating - 1] : null;
+  const declared = p.languages.filter((l) => l.language.trim());
+  const autresLangues = [
+    ...declared.map((l) => `${l.language} (${l.language === "Anglais" && adminEnglish ? adminEnglish : l.level})`),
+    ...(adminEnglish && !declared.some((l) => l.language === "Anglais") ? [`Anglais (${adminEnglish})`] : []),
+  ];
 
   return {
     fields: {
