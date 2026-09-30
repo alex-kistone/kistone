@@ -46,7 +46,8 @@ describe("toJarviFields", () => {
     expect(fields[JARVI_FIELDS.dispo]).toBe(false);
     expect(fields[JARVI_FIELDS.dateDispo]).toBe("2026-11-02");
     expect(fields[JARVI_FIELDS.secteurs]).toEqual(["Startup/scaleup", "Banque"]);
-    expect(fields[JARVI_FIELDS.fullRemote]).toBe(true);
+    expect(fields[JARVI_FIELDS.remote]).toBe("Full remote");
+    expect(fields[JARVI_FIELDS.linkedinRecruiter]).toBe(false);
     expect(fields[JARVI_FIELDS.english]).toBe(4);
     expect(fields[JARVI_FIELDS.autresLangues]).toEqual(["Anglais (courant)", "Français (natif)"]);
   });

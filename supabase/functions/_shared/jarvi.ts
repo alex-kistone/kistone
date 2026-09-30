@@ -27,7 +27,8 @@ export const JARVI_FIELDS = {
   dateDispo: "ae14786c-4121-4d65-b575-6000f3437574", // Date de dispo
   secteurs: "1c36f227-f1f3-40bd-b6e9-cb32107a937c", // Secteurs (choix multiple)
   mobilite: "765ffdbc-4869-4588-9b5f-1629ff229610", // Mobility (villes)
-  fullRemote: "5637879c-9bdf-4442-a38f-8529c775e718", // Full remote only (oui/non)
+  remote: "20184701-323d-4253-b671-c0bd6e81f214", // Remote (choix unique)
+  linkedinRecruiter: "524df876-e3d9-4aad-9df5-ab4cc63cbf73", // LinkedIN Recruiter (oui/non)
   english: "f9138500-c289-4959-9ee1-ceb3963647e4", // English (note)
   rate: "a652d6b3-d0dd-439a-8b76-2ca7679552a3", // Rate : note admin (1 à 5)
   specialitesTech: "964b658c-fae5-4760-a562-2cd9657b2d13", // Spécialités RPO Tech
@@ -49,6 +50,11 @@ const SECTOR_TO_JARVI: Record<string, string> = {
   Industrie: "Industrie",
 };
 
+/** Préférence de télétravail → valeur du champ Jarvi « Remote ». */
+const REMOTE_TO_JARVI: Record<string, string> = {
+  "on-site": "Sur site", hybrid: "Hybride", "full-remote": "Full remote", flexible: "Flexible",
+};
+
 /** Niveau d'anglais → note Jarvi (1 à 5). */
 const ENGLISH_RATING: Record<string, number> = { "débutant": 1, "intermédiaire": 2, "avancé": 3, courant: 4, natif: 5 };
 
@@ -61,6 +67,7 @@ export interface PlatformProfileForJarvi {
   sectors: string[];
   mobility: string[];
   remote_preference: string | null;
+  has_linkedin_license?: boolean | null;
   languages: { language: string; level: string }[];
   admin_rating?: number | null;
   admin_english_rating?: number | null;
@@ -109,7 +116,8 @@ export function toJarviFields(p: PlatformProfileForJarvi, jarviSpecialites: read
       [JARVI_FIELDS.dateDispo]: p.available ? null : p.availability_date,
       [JARVI_FIELDS.secteurs]: secteurs,
       [JARVI_FIELDS.mobilite]: p.mobility,
-      [JARVI_FIELDS.fullRemote]: p.remote_preference === "full-remote",
+      [JARVI_FIELDS.remote]: p.remote_preference ? REMOTE_TO_JARVI[p.remote_preference] ?? null : null,
+      [JARVI_FIELDS.linkedinRecruiter]: !!p.has_linkedin_license,
       [JARVI_FIELDS.english]: englishLevel(p),
       [JARVI_FIELDS.autresLangues]: autresLangues,
       // Champs admin : envoyés seulement s'ils sont renseignés (jamais effacés par la synchro).

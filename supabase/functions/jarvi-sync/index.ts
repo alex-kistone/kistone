@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     const { fields, unmapped } = toJarviFields({
       skills: p.skills ?? [], model: p.model, tjm: p.tjm, available: p.available !== false,
       availability_date: p.availability_date, sectors: p.sectors ?? [], mobility: p.mobility ?? [],
-      remote_preference: p.remote_preference, languages: Array.isArray(p.languages) ? p.languages : [],
+      remote_preference: p.remote_preference, has_linkedin_license: p.has_linkedin_license, languages: Array.isArray(p.languages) ? p.languages : [],
       admin_rating: p.admin_rating, admin_english_rating: p.admin_english_rating,
       admin_comments: p.admin_comments, tech_specialties: p.tech_specialties,
     }, JARVI_SPECIALITES);
