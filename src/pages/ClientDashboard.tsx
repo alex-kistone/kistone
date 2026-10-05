@@ -563,7 +563,14 @@ const ClientDashboard = () => {
                     {need.description && <p className="mt-3 text-sm text-foreground/80">{need.description}</p>}
 
                     <div className="mt-4 flex items-center gap-3">
-                      <Button size="sm" variant="outline" className="gap-2" onClick={() => handleMatch(need.id)} disabled={isMatching}>
+                      {/* Première recherche : action principale du besoin, mise en avant ; une fois des profils proposés, la relance redevient secondaire */}
+                      <Button
+                        size={needSuggestions.length > 0 ? "sm" : "default"}
+                        variant={needSuggestions.length > 0 ? "outline" : "default"}
+                        className={needSuggestions.length > 0 ? "gap-2" : "gap-2 bg-accent px-5 font-semibold text-accent-foreground shadow-ks-pink-sm hover:bg-accent/90"}
+                        onClick={() => handleMatch(need.id)}
+                        disabled={isMatching}
+                      >
                         <Sparkles className="h-4 w-4" />
                         {isMatching ? "Analyse en cours..." : needSuggestions.length > 0 ? "Relancer l'analyse" : "Trouver des profils"}
                       </Button>
