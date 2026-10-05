@@ -167,8 +167,10 @@ async function run() {
   check("Client · ne peut pas retenir un profil lui-même", !!selfAccept.error || !selfAccept.data?.length, selfAccept.error?.message);
   const adminAccept = await admin.from("profile_suggestions").update({ pipeline_status: "accepted", status_updated_at: new Date().toISOString() }).eq("id", mine.id);
   must("Admin · retient le profil (accepted)", !adminAccept.error, adminAccept.error?.message);
-  const score = await client.from("profile_suggestions").update({ match_score: 100 }).eq("id", mine.id);
-  check("Client · ne peut pas modifier le score", !!score.error, score.error?.message);
+  // Refusé (erreur) ou ignoré par la règle RLS (aucune ligne modifiée) : dans les deux cas le score reste intact
+  const score = await client.from("profile_suggestions").update({ match_score: 100 }).eq("id", mine.id).select("id");
+  const { data: scoreAfter } = await admin.from("profile_suggestions").select("match_score").eq("id", mine.id).single();
+  check("Client · ne peut pas modifier le score", (!!score.error || !score.data?.length) && scoreAfter?.match_score !== 100, score.error?.message ?? `score ${scoreAfter?.match_score}`);
 
   section("Mise en place de la mission");
   const { data: mission, error: mErr } = await admin.from("missions").insert({
