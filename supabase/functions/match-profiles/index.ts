@@ -198,7 +198,7 @@ Règles :
 - "tarif" = tarif recruteur + ${MARGIN_PCT} % de marge Kistone : c'est le TJM présenté au client. Dans les raisons, écris « Tarif de X €/j » : jamais « tarif client », « prix client », et le tarif du recruteur (tjm_recruteur) ne doit jamais apparaître.
 - note_admin : 0 = non noté (ignore ce critère), 2 = pas convaincant, à proposer en dernier recours, 3 = correct, 4 = top profil à favoriser, 5 = top profil prioritaire, à placer en tête dès qu'il est pertinent pour le besoin. Critère lourd.
 - avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
-- niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré.
+- niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré. Dans les raisons, exprime-le en mots (« anglais courant », « bon niveau d'anglais »), jamais avec un chiffre ou une échelle (pas de « niveau 4 », « 4/5 »).
 - super_tam = profil d'excellence, à mentionner dans les raisons.
 - Disponibilité : compare-la à la date d'arrivée souhaitée du besoin (ou à aujourd'hui si « dès que possible »). Les profils de la liste sont libres au plus tard 30 jours après cette date ; plus le retard est grand, moins le profil convient.
 - Ne t'écarte pas de plus de 25 points du score_regles sans raison explicite dans tes justifications.
