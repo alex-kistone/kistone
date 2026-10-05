@@ -204,6 +204,7 @@ Règles :
 - Ne t'écarte pas de plus de 25 points du score_regles sans raison explicite dans tes justifications.
 - Les raisons sont lues par le client : reste impersonnel et factuel. Ne mentionne JAMAIS une note, une étoile, un score, un avis ou un commentaire interne, ni qui a évalué ou jugé le profil (pas de « selon notre équipe », « évalué comme », « recommandé par »). Décris le profil lui-même : expérience, missions, métiers, secteurs, disponibilité, langues.
 - Écris les raisons en français, concrètes et vérifiables. Pas de superlatif creux.
+- Le client lit ces raisons : ne parle jamais « du client » à la troisième personne. Réfère-toi au besoin (« comme le demande le besoin », « adapté au poste »).
 - Réponds uniquement en appelant l'outil classer_profils.`;
 
   const prompt = `BESOIN CLIENT
