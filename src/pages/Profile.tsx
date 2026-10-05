@@ -347,7 +347,7 @@ const Profile = () => {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon dossier" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
+              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon administratif" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
             </h1>
             <p className="mt-1 text-muted-foreground">
               {activeTab === "missions"

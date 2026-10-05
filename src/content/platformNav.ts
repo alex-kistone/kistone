@@ -40,7 +40,7 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
     { label: "Mon profil", path: "/profile", icon: UserRound },
     { label: "Mes opportunités", path: "/open-needs", icon: Search },
     { label: "Mes missions & CRA", path: "/profile", tab: "missions", icon: CalendarCheck },
-    { label: "Mon dossier", path: "/profile", tab: "admin", icon: ShieldCheck },
+    { label: "Mon administratif", path: "/profile", tab: "admin", icon: ShieldCheck },
   ],
   client: [
     { label: "Déposer un besoin", path: "/client/new-need", icon: FilePlus2 },
