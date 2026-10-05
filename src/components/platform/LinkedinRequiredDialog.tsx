@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Linkedin } from "lucide-react";
+import { ChevronDown, ExternalLink, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,12 @@ type Props = {
 };
 
 /**
+ * linkedin.com/in/ redirige un membre connecté vers son propre profil : le lien
+ * « Récupérer mon URL LinkedIn » l'y amène directement, il n'a plus qu'à copier l'adresse.
+ */
+const LINKEDIN_OWN_PROFILE = "https://www.linkedin.com/in/";
+
+/**
  * Fenêtre bloquante : le freelance doit coller son URL LinkedIn avant d'accéder à son
  * profil. L'URL est la clé de synchronisation avec l'ATS (Jarvi).
  */
@@ -23,6 +29,7 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const save = async () => {
     const url = normalizeLinkedinUrl(value);
@@ -46,14 +53,15 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
       >
         <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto self-start" />
         <DialogHeader>
-          <DialogTitle>{firstVisit ? "Bienvenue sur Kistone" : "Ajoutez votre profil LinkedIn"}</DialogTitle>
+          <DialogTitle className="text-2xl leading-tight">
+            {firstVisit ? "Créez votre profil freelance en partant de LinkedIn" : "Ajoutez votre profil LinkedIn"}
+          </DialogTitle>
           <DialogDescription>
             {firstVisit
-              ? "Pour commencer, collez l'URL de votre profil LinkedIn."
+              ? "Nos clients veulent connaître la personne derrière le profil : votre LinkedIn est le point de départ."
               : "Il est obligatoire pour être proposé sur des missions : il nous permet de synchroniser votre profil avec notre outil de recrutement."}
           </DialogDescription>
         </DialogHeader>
-        <LinkedinUrlHowTo />
         <div className="space-y-2">
           <Label htmlFor="linkedin-required">URL de votre profil LinkedIn</Label>
           <div className="relative">
@@ -71,8 +79,30 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
             />
           </div>
           <p id="linkedin-required-help" className={error ? "text-sm text-destructive" : "text-xs text-muted-foreground"}>
-            {error ?? "Collez l'adresse copiée depuis LinkedIn, puis validez."}
+            {error ?? "Le lien ci-dessous ouvre votre profil LinkedIn : copiez son adresse, puis collez-la ici."}
           </p>
+          <a
+            href={LINKEDIN_OWN_PROFILE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent underline-offset-4 hover:underline"
+          >
+            Récupérer mon URL LinkedIn
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="sr-only">(nouvel onglet)</span>
+          </a>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowHelp((v) => !v)}
+            aria-expanded={showHelp}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          >
+            Besoin d'aide ?
+            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showHelp ? "rotate-180" : ""}`} aria-hidden="true" />
+          </button>
+          {showHelp && <div className="mt-3"><LinkedinUrlHowTo /></div>}
         </div>
         {/* Dans un conteneur : la règle [&>button]:hidden ne doit masquer que la croix de fermeture */}
         <div>
