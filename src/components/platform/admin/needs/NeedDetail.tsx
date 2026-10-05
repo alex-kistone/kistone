@@ -8,6 +8,7 @@ import CreateMissionDialog from "@/components/platform/CreateMissionDialog";
 import NeedKanban from "./NeedKanban";
 import SuggestProfilePanel from "./SuggestProfilePanel";
 import { StageCounters, StatusPill, TodoBadge } from "./NeedsList";
+import { desiredStartLabel } from "@/lib/needStart";
 import { budgetLabel, remoteLabel, type NeedRow, type ProfileSuggestion, type StageKey } from "./needsModel";
 import type { NeedsData } from "./useNeeds";
 
@@ -317,6 +318,7 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
           <span className="block text-xs font-normal text-muted-foreground">{remoteLabel(need.remote_policy)}</span>
         </InfoCard>
         <InfoCard label="Budget">{budgetLabel(need)}</InfoCard>
+        <InfoCard label="Arrivée souhaitée">{desiredStartLabel(need.desired_start)}</InfoCard>
         <InfoCard label="Créé le">{longDate(need.created_at)}</InfoCard>
         <InfoCard label="Statut"><StatusPill status={row.status} /></InfoCard>
       </div>

@@ -153,7 +153,7 @@ async function rankWithClaude(
       mobility: r.mobility ?? [],
       remote_preference: r.remote_preference,
       tjm_recruteur: r.tjm,
-      prix_client: r.tjm != null ? clientPrice(r.tjm) : null,
+      tarif: r.tjm != null ? clientPrice(r.tjm) : null,
       model: r.model,
       disponible: r.available,
       date_disponibilite: r.availability_date,
@@ -195,12 +195,12 @@ Analyse des compétences :
 - Un profil avec des missions passées proches du besoin (mêmes profils, volumes comparables) doit passer devant un profil qui a seulement coché le bon métier.
 
 Règles :
-- "prix_client" = tarif recruteur + ${MARGIN_PCT} % de marge Kistone. C'est ce que paie le client.
+- "tarif" = tarif recruteur + ${MARGIN_PCT} % de marge Kistone : c'est le TJM présenté au client. Dans les raisons, écris « Tarif de X €/j » : jamais « tarif client », « prix client », et le tarif du recruteur (tjm_recruteur) ne doit jamais apparaître.
 - note_admin : 0 = non noté (ignore ce critère), 2 = pas convaincant, à proposer en dernier recours, 3 = correct, 4 = top profil à favoriser, 5 = top profil prioritaire, à placer en tête dès qu'il est pertinent pour le besoin. Critère lourd.
 - avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
 - niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré.
 - super_tam = profil d'excellence, à mentionner dans les raisons.
-- Un profil actuellement en mission n'est pertinent que si sa date de disponibilité colle au besoin.
+- Disponibilité : compare-la à la date d'arrivée souhaitée du besoin (ou à aujourd'hui si « dès que possible »). Les profils de la liste sont libres au plus tard 30 jours après cette date ; plus le retard est grand, moins le profil convient.
 - Ne t'écarte pas de plus de 25 points du score_regles sans raison explicite dans tes justifications.
 - Les raisons sont lues par le client : reste impersonnel et factuel. Ne mentionne JAMAIS une note, une étoile, un score, un avis ou un commentaire interne, ni qui a évalué ou jugé le profil (pas de « selon notre équipe », « évalué comme », « recommandé par »). Décris le profil lui-même : expérience, missions, métiers, secteurs, disponibilité, langues.
 - Écris les raisons en français, concrètes et vérifiables. Pas de superlatif creux.
@@ -211,7 +211,8 @@ Règles :
 - Typologies : ${need.profile_types?.join(", ") || "non précisé"}
 - Secteurs : ${need.sectors?.join(", ") || "non précisé"}
 - Lieu : ${need.mission_location} — remote : ${need.remote_policy}
-- Budget client : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (marge incluse)
+- Arrivée souhaitée : ${need.desired_start ? `le ${need.desired_start}` : "dès que possible"} (aujourd'hui : ${new Date().toISOString().slice(0, 10)})
+- Budget : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (marge incluse, à comparer au champ "tarif")
 - Description : ${need.description || "aucune"}
 
 PROFILS PRÉ-QUALIFIÉS

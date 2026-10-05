@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
+import { Briefcase, CalendarClock, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
+import { desiredStartLabel } from "@/lib/needStart";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +20,7 @@ interface OpenNeed {
   budget_tjm_max: number | null;
   mission_location: string;
   remote_policy: string;
+  desired_start: string | null;
   description: string | null;
   created_at: string;
 }
@@ -67,7 +69,7 @@ const OpenNeeds = () => {
     // Load open needs via secure view (no contact info exposed)
     const { data: needsData } = await supabase
       .from("client_needs_open" as any)
-      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at")
+      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start")
       .order("created_at", { ascending: false });
 
     setNeeds((needsData as unknown as OpenNeed[]) || []);
@@ -169,6 +171,9 @@ const OpenNeeds = () => {
                       </span>
                       <span className="flex items-center gap-1">
                         <Monitor className="h-3.5 w-3.5" /> {REMOTE_LABELS[need.remote_policy] || need.remote_policy}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <CalendarClock className="h-3.5 w-3.5" /> {desiredStartLabel(need.desired_start)}
                       </span>
                       {(need.budget_tjm_min || need.budget_tjm_max) && (
                         <span className="flex items-center gap-1">

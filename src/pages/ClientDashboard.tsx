@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Medal, Globe } from "lucide-react";
+import { CalendarClock, Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Medal, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -8,21 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { clientHomePath } from "@/lib/clientOnboarding";
+import { desiredStartLabel } from "@/lib/needStart";
 import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import ClientMissionsSection from "@/components/platform/ClientMissionsSection";
 import ClientInvoicesSection from "@/components/platform/ClientInvoicesSection";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 interface ClientNeed {
   id: string;
@@ -35,6 +26,7 @@ interface ClientNeed {
   budget_tjm_max: number | null;
   mission_location: string;
   remote_policy: string;
+  desired_start: string | null;
   description: string | null;
   status: string;
   created_at: string;
@@ -405,30 +397,6 @@ const ClientDashboard = () => {
     }
   };
 
-  // Profil à retenir, en attente de confirmation
-  const [toAccept, setToAccept] = useState<{ id: string; needId: string; label: string } | null>(null);
-
-  /** Le client retient (accepted) ou écarte (rejected) un profil présélectionné. */
-  const handleDecision = async (suggestionId: string, needId: string, status: "accepted" | "rejected") => {
-    const { error } = await supabase
-      .from("profile_suggestions" as any)
-      .update({ pipeline_status: status, status_updated_at: new Date().toISOString() })
-      .eq("id", suggestionId);
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-      return;
-    }
-    setSuggestions((prev) => ({
-      ...prev,
-      [needId]: (prev[needId] ?? []).map((s) => (s.id === suggestionId ? { ...s, pipeline_status: status } : s)),
-    }));
-    toast(
-      status === "accepted"
-        ? { title: "Profil retenu", description: "L'équipe Kistone prépare la mission : vous serez invité à compléter votre dossier et à signer le contrat." }
-        : { title: "Profil écarté" },
-    );
-  };
-
   const handleShortlist = async (suggestionId: string, needId: string, anonymousLabel: string) => {
     const { error } = await supabase
       .from("profile_suggestions" as any)
@@ -557,7 +525,8 @@ const ClientDashboard = () => {
                           {need.budget_tjm_min && need.budget_tjm_max ? `${need.budget_tjm_min} - ${need.budget_tjm_max} €/j` : need.budget_tjm_max ? `Max ${need.budget_tjm_max} €/j` : `Min ${need.budget_tjm_min} €/j`}
                         </span>
                       )}
-                      <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{new Date(need.created_at).toLocaleDateString("fr-FR")}</span>
+                      <span className="flex items-center gap-1"><CalendarClock className="h-3.5 w-3.5" />Arrivée : {desiredStartLabel(need.desired_start).toLowerCase()}</span>
+                      <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />Déposé le {new Date(need.created_at).toLocaleDateString("fr-FR")}</span>
                     </div>
 
                     {need.description && <p className="mt-3 text-sm text-foreground/80">{need.description}</p>}
@@ -698,24 +667,11 @@ const ClientDashboard = () => {
                                       Je souhaite en savoir plus
                                     </Button>
                                   )}
+                                  {/* La suite (entretien, validation, mission) est pilotée par l'équipe Kistone */}
                                   {(s.pipeline_status === "shortlisted" || s.pipeline_status === "interview") && (
-                                    <div className="mt-3 flex flex-wrap gap-2">
-                                      <Button
-                                        size="sm"
-                                        className="gap-2"
-                                        onClick={(e) => { e.stopPropagation(); setToAccept({ id: s.id, needId: need.id, label: s.anonymous_label }); }}
-                                      >
-                                        <CheckCircle2 className="h-4 w-4" />
-                                        Retenir ce profil
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={(e) => { e.stopPropagation(); handleDecision(s.id, need.id, "rejected"); }}
-                                      >
-                                        Écarter
-                                      </Button>
-                                    </div>
+                                    <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-1 text-xs font-medium text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
+                                      <HandHeart className="h-3.5 w-3.5" /> Intérêt transmis · l'équipe Kistone vous recontacte
+                                    </p>
                                   )}
                                   {s.pipeline_status === "accepted" && (
                                     <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#E8F5EE] px-2.5 py-1 text-xs font-medium text-[#17663F]">
@@ -741,26 +697,6 @@ const ClientDashboard = () => {
         </>
         )}
       </main>
-
-      <AlertDialog open={Boolean(toAccept)} onOpenChange={(o) => { if (!o) setToAccept(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Retenir {toAccept?.label} ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              L'équipe Kistone prépare la mission. Vous serez ensuite invité à compléter le dossier de votre entreprise et à
-              signer le contrat avant le démarrage.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => { if (toAccept) handleDecision(toAccept.id, toAccept.needId, "accepted"); setToAccept(null); }}
-            >
-              Retenir ce profil
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Profile detail popup */}
       <ProfileDetailPopup profile={selectedProfile} open={!!selectedProfile} onClose={() => setSelectedProfile(null)} />

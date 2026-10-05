@@ -10,7 +10,7 @@ const daysAgo = (n: number) => new Date(NOW - n * 86_400_000).toISOString();
 const need = (id: string, over: Partial<ClientNeed> = {}): ClientNeed => ({
   id, user_id: "u1", company_name: "Acme", contact_name: "", contact_email: "", job_title: `Poste ${id}`,
   profile_types: [], sectors: [], budget_tjm_min: null, budget_tjm_max: null, mission_location: "", remote_policy: "hybrid",
-  status: "pending", persona: "", description: null, tenant_id: null, created_at: daysAgo(1), updated_at: daysAgo(1),
+  status: "pending", persona: "", description: null, desired_start: null, vertical: "rpo", tenant_id: null, created_at: daysAgo(1), updated_at: daysAgo(1),
   ...over,
 });
 

@@ -45,6 +45,7 @@ serve(async (req) => {
 Les typologies de profils possibles sont : ${PROFILE_TYPES.join(", ")}.
 Les secteurs / environnements possibles sont : ${SECTEURS.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
+Date d'arrivée souhaitée : nous sommes le ${new Date().toISOString().slice(0, 10)}. Si le texte donne une date ou une période de démarrage (« début novembre », « en janvier »), renseigne desired_start au format AAAA-MM-JJ (premier jour de la période). Si c'est urgent (« ASAP », « au plus vite ») ou non précisé, omets desired_start.
 Le budget est un TJM client en euros HT par jour. N'invente pas de fourchette : si un seul montant est donné (« autour de 600 € »), renseigne uniquement budget_tjm_max ; si une fourchette est donnée, le minimum doit être strictement inférieur au maximum.
 
 Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide pour les arrays).`,
@@ -77,6 +78,10 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
                 budget_tjm_max: {
                   type: "number",
                   description: "Budget TJM maximum en euros/jour",
+                },
+                desired_start: {
+                  type: "string",
+                  description: "Date d'arrivée souhaitée au format AAAA-MM-JJ ; à omettre si dès que possible ou non précisée",
                 },
                 mission_location: {
                   type: "string",

@@ -161,10 +161,12 @@ async function run() {
   ids.suggestion = mine.id;
   const { data: cView } = await client.from("profile_suggestions").select("*").eq("id", mine.id).single();
   check("Client · ne voit pas le nom de famille du freelance", !JSON.stringify(cView).includes(`E2E-${STAMP}`));
-  for (const status of ["shortlisted", "accepted"]) {
-    const { error } = await client.from("profile_suggestions").update({ pipeline_status: status, status_updated_at: new Date().toISOString() }).eq("id", mine.id);
-    must(`Client · passe le profil en « ${status} »`, !error, error?.message);
-  }
+  const interest = await client.from("profile_suggestions").update({ pipeline_status: "shortlisted", status_updated_at: new Date().toISOString() }).eq("id", mine.id);
+  must("Client · signale son intérêt (shortlisted)", !interest.error, interest.error?.message);
+  const selfAccept = await client.from("profile_suggestions").update({ pipeline_status: "accepted" }).eq("id", mine.id).select("id");
+  check("Client · ne peut pas retenir un profil lui-même", !!selfAccept.error || !selfAccept.data?.length, selfAccept.error?.message);
+  const adminAccept = await admin.from("profile_suggestions").update({ pipeline_status: "accepted", status_updated_at: new Date().toISOString() }).eq("id", mine.id);
+  must("Admin · retient le profil (accepted)", !adminAccept.error, adminAccept.error?.message);
   const score = await client.from("profile_suggestions").update({ match_score: 100 }).eq("id", mine.id);
   check("Client · ne peut pas modifier le score", !!score.error, score.error?.message);
 

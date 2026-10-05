@@ -17,6 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
+import DesiredStartField from "@/components/platform/DesiredStartField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
 import OnboardingSteps from "@/components/platform/OnboardingSteps";
@@ -96,6 +97,8 @@ const ClientNewNeed = () => {
   const [missionLocations, setMissionLocations] = useState<string[]>([]);
   const [locationInput, setLocationInput] = useState("");
   const [remotePolicy, setRemotePolicy] = useState("on-site");
+  // Date d'arrivée souhaitée : dès que possible (desired_start NULL) ou une date précise
+  const [start, setStart] = useState<{ asap: boolean; date: string }>({ asap: true, date: "" });
   const [description, setDescription] = useState("");
   const [sectors, setSectors] = useState<string[]>([]);
 
@@ -149,6 +152,7 @@ const ClientNewNeed = () => {
       if (data.budget_tjm_max) setBudgetMax(String(data.budget_tjm_max));
       if (data.mission_location) setMissionLocations(data.mission_location.split(",").map((s: string) => s.trim()).filter(Boolean));
       if (data.remote_policy) setRemotePolicy(data.remote_policy);
+      if (typeof data.desired_start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data.desired_start)) setStart({ asap: false, date: data.desired_start });
       if (data.description) setDescription(data.description);
 
       toast({ title: "Fiche générée !", description: "Vérifiez et complétez les champs ci-dessous." });
@@ -183,6 +187,7 @@ const ClientNewNeed = () => {
           budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
           mission_location: missionLocations.join(", "),
           remote_policy: remotePolicy,
+          desired_start: start.asap || !start.date ? null : start.date,
           description: description || null,
           sectors,
         });
@@ -322,6 +327,8 @@ const ClientNewNeed = () => {
               ))}
             </div>
           </div>
+
+          <DesiredStartField asap={start.asap} date={start.date} onChange={setStart} />
 
           {/* Budget TJM */}
           <div className="grid gap-4 sm:grid-cols-2">

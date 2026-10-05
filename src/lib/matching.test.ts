@@ -82,3 +82,31 @@ describe("cohérence du matching", () => {
     expect(scoreRecruiter(intl, profile({ admin_english_rating: 2 }), false)!.breakdown.english).toBe(0);
   });
 });
+
+describe("date d'arrivée souhaitée", () => {
+  const inDays = (n: number) => { const d = new Date(); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const busyUntil = (n: number) => profile({ available: false, availability_date: inDays(n) });
+
+  it("besoin « dès que possible » : profils libres sous 30 jours, exclus au-delà", () => {
+    expect(scoreRecruiter(need, profile({}), false)!.breakdown.availability).toBe(20);
+    const late = scoreRecruiter(need, busyUntil(20), false)!;
+    expect(late.breakdown.availability).toBeGreaterThan(10);
+    expect(late.breakdown.availability).toBeLessThan(20);
+    expect(late.notes.join(" ")).toMatch(/20 j après la date souhaitée/);
+    expect(scoreRecruiter(need, busyUntil(30), false)).not.toBeNull();
+    expect(scoreRecruiter(need, busyUntil(31), false)).toBeNull();
+  });
+
+  it("arrivée dans 2 mois : un profil libre dans 45 jours convient pleinement", () => {
+    const later = { ...need, desired_start: inDays(60) } as Need;
+    expect(scoreRecruiter(later, busyUntil(45), false)!.breakdown.availability).toBe(20);
+    expect(scoreRecruiter(later, busyUntil(85), false)!.breakdown.availability).toBeLessThan(20);
+    expect(scoreRecruiter(later, busyUntil(95), false)).toBeNull();
+  });
+
+  it("le tarif est présenté sans le mot « client »", () => {
+    const notes = scoreRecruiter(need, profile({ tjm: 500 }), false)!.notes.join(" ");
+    expect(notes).toMatch(/Tarif de 600 €\/j/);
+    expect(notes).not.toMatch(/client/i);
+  });
+});

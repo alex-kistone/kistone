@@ -228,12 +228,13 @@ const ClientAuth = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="prenom.nom@entreprise.fr"
               aria-invalid={!!email && isFreeEmail(email)}
-              aria-describedby="email-hint"
+              aria-describedby={email && isFreeEmail(email) ? "email-hint" : undefined}
               required
             />
-            <p id="email-hint" className={email && isFreeEmail(email) ? "text-xs text-destructive" : "text-xs text-muted-foreground"}>
-              {email && isFreeEmail(email) ? FREE_EMAIL_MESSAGE : "Adresse de votre entreprise : Gmail, Hotmail, Yahoo… ne sont pas acceptés."}
-            </p>
+            {/* Message seulement si une adresse grand public est saisie */}
+            {email && isFreeEmail(email) && (
+              <p id="email-hint" className="text-xs text-destructive">{FREE_EMAIL_MESSAGE}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Mot de passe</Label>

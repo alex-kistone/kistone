@@ -16,6 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
+import DesiredStartField from "@/components/platform/DesiredStartField";
 import AppShell from "@/components/platform/AppShell";
 import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
@@ -45,6 +46,8 @@ const ClientEditNeed = () => {
   const [budgetMax, setBudgetMax] = useState("");
   const [missionLocation, setMissionLocation] = useState("");
   const [remotePolicy, setRemotePolicy] = useState("on-site");
+  // Date d'arrivée souhaitée : dès que possible (desired_start NULL) ou une date précise
+  const [start, setStart] = useState<{ asap: boolean; date: string }>({ asap: true, date: "" });
   const [description, setDescription] = useState("");
 
   useEffect(() => {
@@ -76,6 +79,7 @@ const ClientEditNeed = () => {
       setBudgetMax(need.budget_tjm_max?.toString() || "");
       setMissionLocation(need.mission_location);
       setRemotePolicy(need.remote_policy);
+      setStart(need.desired_start ? { asap: false, date: need.desired_start } : { asap: true, date: "" });
       setDescription(need.description || "");
       setLoading(false);
     };
@@ -105,6 +109,7 @@ const ClientEditNeed = () => {
           budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
           mission_location: missionLocation,
           remote_policy: remotePolicy,
+          desired_start: start.asap || !start.date ? null : start.date,
           description: description || null,
         })
         .eq("id", id);
@@ -205,6 +210,8 @@ const ClientEditNeed = () => {
               ))}
             </div>
           </div>
+
+          <DesiredStartField asap={start.asap} date={start.date} onChange={setStart} />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">

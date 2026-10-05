@@ -118,6 +118,8 @@ export type Database = {
           contact_name: string
           created_at: string
           description: string | null
+          desired_start: string | null
+          vertical: string
           id: string
           job_title: string
           mission_location: string
@@ -138,6 +140,8 @@ export type Database = {
           contact_name: string
           created_at?: string
           description?: string | null
+          desired_start?: string | null
+          vertical?: string
           id?: string
           job_title: string
           mission_location: string
@@ -158,6 +162,8 @@ export type Database = {
           contact_name?: string
           created_at?: string
           description?: string | null
+          desired_start?: string | null
+          vertical?: string
           id?: string
           job_title?: string
           mission_location?: string

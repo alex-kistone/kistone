@@ -11,6 +11,9 @@ import { englishLevel } from "./jarvi.ts";
 import { clientPrice } from "./pricing.ts";
 import { METIER_ALIASES, METIER_FAMILIES, type Vertical } from "./taxonomy.ts";
 
+/** Retard toléré (jours) entre la date d'arrivée souhaitée et la disponibilité du profil. */
+export const START_TOLERANCE_DAYS = 30;
+
 /** Tolérance de dépassement du budget max client avant exclusion. */
 const BUDGET_TOLERANCE = 0.1;
 
@@ -30,6 +33,8 @@ export interface Need {
   remote_policy: RemotePolicy;
   budget_tjm_min: number | null;
   budget_tjm_max: number | null;
+  /** Date d'arrivée souhaitée (AAAA-MM-JJ) ; null = dès que possible. */
+  desired_start?: string | null;
 }
 
 export interface Recruiter {
@@ -154,34 +159,52 @@ function scoreBudget(need: Need, r: Recruiter): { pts: number; note: string | nu
   const max = need.budget_tjm_max ?? Number.POSITIVE_INFINITY;
 
   if (price > max * (1 + BUDGET_TOLERANCE)) {
-    return { pts: 0, note: `${price} €/j client, au-delà du budget (${max} €/j)`, excluded: true };
+    return { pts: 0, note: `Tarif de ${price} €/j, au-delà du budget (${max} €/j)`, excluded: true };
   }
   if (price > max) {
-    return { pts: MAX.budget * 0.5, note: `${price} €/j client, légèrement au-dessus du budget`, excluded: false };
+    return { pts: MAX.budget * 0.5, note: `Tarif de ${price} €/j, légèrement au-dessus du budget`, excluded: false };
   }
   if (price < min) {
     // Sous le budget : bon pour la marge, mais peut signaler un profil trop junior.
-    return { pts: MAX.budget * 0.8, note: `${price} €/j client, sous le budget annoncé`, excluded: false };
+    return { pts: MAX.budget * 0.8, note: `Tarif de ${price} €/j, sous le budget annoncé`, excluded: false };
   }
-  return { pts: MAX.budget, note: `${price} €/j client, dans le budget`, excluded: false };
+  return { pts: MAX.budget, note: `Tarif de ${price} €/j, dans le budget`, excluded: false };
 }
 
-function scoreAvailability(r: Recruiter, onMission: boolean): { pts: number; note: string | null; excluded: boolean } {
+const DAY_MS = 86_400_000;
+const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const parseDay = (iso: string) => { const [y, m, d] = iso.slice(0, 10).split("-").map(Number); return new Date(y, m - 1, d); };
+const frDate = (d: Date) => d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
+/**
+ * Disponibilité mesurée par rapport à la date d'arrivée souhaitée (aujourd'hui pour un besoin
+ * « dès que possible ») : pleine si le profil est libre à cette date, dégressive jusqu'à
+ * START_TOLERANCE_DAYS de retard, exclue au-delà.
+ */
+function scoreAvailability(need: Need, r: Recruiter, onMission: boolean, now = new Date()): { pts: number; note: string | null; excluded: boolean } {
+  const today = startOfDay(now);
+  const asap = !need.desired_start;
+  const wanted = asap ? today : new Date(Math.max(parseDay(need.desired_start!).getTime(), today.getTime()));
   const isTopProfile = (r.admin_rating ?? 0) >= 4 || r.super_tam;
-  const daysUntil = r.availability_date
-    ? Math.ceil((new Date(r.availability_date).getTime() - Date.now()) / 86_400_000)
-    : null;
 
-  if (r.available && !onMission) return { pts: MAX.availability, note: "Disponible immédiatement", excluded: false };
-
-  if (daysUntil == null) {
+  // Date à partir de laquelle le profil est libre
+  const freeFrom = r.available && !onMission ? today : r.availability_date ? parseDay(r.availability_date) : null;
+  if (!freeFrom) {
     // Indisponible et sans date : on ne le propose que si c'est un profil rare.
     return { pts: 0, note: "Indisponible, aucune date communiquée", excluded: !isTopProfile };
   }
-  if (daysUntil <= 0) return { pts: MAX.availability * 0.9, note: "Date de disponibilité atteinte", excluded: false };
-  if (daysUntil <= 30) return { pts: MAX.availability * 0.7, note: `Disponible dans ${daysUntil} j`, excluded: false };
-  if (daysUntil <= 90) return { pts: MAX.availability * 0.4, note: `Disponible dans ${daysUntil} j`, excluded: false };
-  return { pts: MAX.availability * 0.1, note: `Disponible seulement dans ${daysUntil} j`, excluded: !isTopProfile };
+
+  const lateBy = Math.round((freeFrom.getTime() - wanted.getTime()) / DAY_MS);
+  if (lateBy <= 0) {
+    const note = freeFrom <= today ? "Disponible immédiatement" : asap ? `Disponible dès le ${frDate(freeFrom)}` : `Disponible pour une arrivée le ${frDate(wanted)}`;
+    return { pts: MAX.availability, note, excluded: false };
+  }
+  if (lateBy <= START_TOLERANCE_DAYS) {
+    // De 90 % (1 jour de retard) à 50 % (30 jours)
+    const pts = MAX.availability * (0.9 - 0.4 * ((lateBy - 1) / (START_TOLERANCE_DAYS - 1)));
+    return { pts, note: `Disponible le ${frDate(freeFrom)}, ${lateBy} j après la date souhaitée`, excluded: false };
+  }
+  return { pts: 0, note: `Disponible le ${frDate(freeFrom)}, trop tard pour la date souhaitée`, excluded: true };
 }
 
 /** Un full-remote sur un besoin sur site (et l'inverse) est un mauvais match. */
@@ -202,7 +225,7 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
   if ((r.vertical ?? "rpo") !== (need.vertical ?? "rpo")) return null;
 
   const budget = scoreBudget(need, r);
-  const availability = scoreAvailability(r, onMission);
+  const availability = scoreAvailability(need, r, onMission);
   if (budget.excluded || availability.excluded) return null;
 
   const remote = scoreRemote(need, r);
