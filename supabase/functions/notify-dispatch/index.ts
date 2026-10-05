@@ -63,7 +63,8 @@ Deno.serve(async (req) => {
         html: single
           ? layout({
             title: single.title,
-            paragraphs: [esc(single.body ?? "")],
+            // Les retours à la ligne du message (relances de l'admin : liste des éléments manquants) sont conservés
+            paragraphs: esc(single.body ?? "").split(/\n{2,}/).map((p) => p.replace(/\n/g, "<br>")),
             cta: single.link ? { label: "Ouvrir mon espace", href: `${APP_URL}${single.link}` } : undefined,
           })
           : layout({

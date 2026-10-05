@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import {
-  CheckCircle2, Circle, Download, FileSignature, FolderOpen, Loader2, PlayCircle, Send, Upload,
+  BellRing, CheckCircle2, Circle, Download, FileSignature, FolderOpen, Loader2, PlayCircle, Send, Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import {
   CONTRACT_STATUS, PARTY_LABEL, frDate, functionErrorMessage, openPrivateFile, todayStamp, type MissionContract,
 } from "./adv";
 import { useOpenDossier } from "./kycDossiers";
+import DossierReminderDialog from "./DossierReminderDialog";
 
 const SIGNED_MAX_BYTES = 10 * 1024 * 1024;
 const SIGNED_TYPES: Record<string, string> = {
@@ -40,6 +41,7 @@ const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabl
   const openDossier = useOpenDossier();
   const [busy, setBusy] = useState<string | null>(null);
   const [confirmStart, setConfirmStart] = useState(false);
+  const [reminding, setReminding] = useState<KycParty | null>(null);
   const fileInputs = useRef<Record<KycParty, HTMLInputElement | null>>({ client: null, freelance: null });
 
   const contractOf = (party: KycParty) => contracts.find((c) => c.party === party) ?? null;
@@ -140,14 +142,21 @@ const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabl
           )}
         </div>
         {uid && (
+          <div className="flex gap-1 self-start sm:self-auto">
+          {!ok && (
+            <Button size="sm" variant="ghost" className="gap-1 text-xs" onClick={() => setReminding(party)}>
+              <BellRing className="h-3.5 w-3.5" /> Relancer
+            </Button>
+          )}
           <Button
             size="sm"
             variant="ghost"
-            className="gap-1 self-start text-xs sm:self-auto"
+            className="gap-1 text-xs"
             onClick={() => openDossier(uid)}
           >
             <FolderOpen className="h-3.5 w-3.5" /> Voir le dossier
           </Button>
+          </div>
         )}
       </li>
     );
@@ -228,13 +237,7 @@ const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabl
 
   return (
     <section aria-label="Mise en place de la mission" className="mt-4 rounded-lg border border-border bg-muted/20 p-3 sm:p-4">
-      <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-        <h4 className="text-sm font-semibold">Mise en place · {doneCount}/4</h4>
-        <Button size="sm" className="gap-1" disabled={!!busy} onClick={() => setConfirmStart(true)}>
-          {busy === "start" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PlayCircle className="h-3.5 w-3.5" />}
-          Démarrer la mission
-        </Button>
-      </div>
+      <h4 className="mb-1 text-sm font-semibold">Mise en place · {doneCount}/4</h4>
       <p className="mb-2 text-xs text-muted-foreground">
         {yousignEnabled
           ? "Les contrats partent en signature électronique (Yousign)."
@@ -246,6 +249,13 @@ const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabl
         {renderContract("client")}
         {renderContract("freelance")}
       </ul>
+      {/* Dernière étape de la checklist : en bas à droite */}
+      <div className="mt-3 flex justify-end border-t border-border pt-3">
+        <Button size="sm" className="gap-1" disabled={!!busy} onClick={() => setConfirmStart(true)}>
+          {busy === "start" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PlayCircle className="h-3.5 w-3.5" />}
+          Démarrer la mission
+        </Button>
+      </div>
 
       <AlertDialog open={confirmStart} onOpenChange={(v) => { if (busy !== "start") setConfirmStart(v); }}>
         <AlertDialogContent>
@@ -265,6 +275,16 @@ const MissionOnboardingChecklist = ({ mission, dossiers, contracts, yousignEnabl
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {reminding && userOf(reminding) && (
+        <DossierReminderDialog
+          open
+          onOpenChange={(v) => { if (!v) setReminding(null); }}
+          party={reminding}
+          userId={userOf(reminding)!}
+          missionTitle={mission.title}
+        />
+      )}
     </section>
   );
 };

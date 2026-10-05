@@ -344,6 +344,7 @@ export default function KycDossierPanel({ party, userId, email }: { party: KycPa
         ) : null}
       </section>
 
+      {REQUIRED_DOCS[party].length > 0 && (
       <section aria-labelledby="kyc-docs" className="space-y-4">
         <div>
           <h2 id="kyc-docs" className="text-xl font-semibold">Pièces justificatives</h2>
@@ -362,6 +363,7 @@ export default function KycDossierPanel({ party, userId, email }: { party: KycPa
           ))}
         </ul>
       </section>
+      )}
 
       {dossier && editable ? (
         <section aria-labelledby="kyc-submit" className="space-y-3 rounded-2xl border border-border bg-card p-5">

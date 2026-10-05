@@ -194,6 +194,16 @@ async function run() {
     const { error } = await c.from("kyc_documents").insert({ user_id: uid, kind, path, file_name: `${kind}.pdf`, mime: "application/pdf", size: 30, expires_at: expires ? `${YEAR + 1}-01-01` : null });
     return error?.message ?? null;
   };
+  // Relance de l'admin : liste des éléments manquants, notification + email ; réservée à l'admin
+  const { data: missingClient } = await admin.rpc("kyc_missing_items", { _user_id: users.client.id, _party: "client" });
+  check("Admin · voit ce qui manque au dossier client (sans Kbis)", Array.isArray(missingClient) && missingClient.includes("Forme juridique") && !missingClient.includes("Kbis"), JSON.stringify(missingClient));
+  const remind = await admin.rpc("send_dossier_reminder", { _user_id: users.client.id, _party: "client", _title: `${TAG} Relance dossier`, _message: `${TAG} Il manque :\n- Forme juridique` });
+  const { data: reminderNotif } = await client.from("notifications").select("id, email").eq("kind", "kyc_reminder").eq("user_id", users.client.id);
+  check("Admin · relance le client (notification + email)", !remind.error && reminderNotif?.length === 1 && reminderNotif[0].email === true, remind.error?.message);
+  const selfRemind = await client.rpc("send_dossier_reminder", { _user_id: users.freelance.id, _party: "freelance", _title: "x", _message: "x" });
+  check("Client · ne peut pas envoyer de relance", !!selfRemind.error);
+  const peekMissing = await client.rpc("kyc_missing_items", { _user_id: users.freelance.id, _party: "freelance" });
+  check("Client · ne lit pas le dossier du freelance", !!peekMissing.error);
   const incomplete = await free.from("kyc_dossiers").update({ status: "submitted" }).eq("user_id", users.freelance.id);
   check("Base · dossier incomplet refusé à l'envoi", !!incomplete.error, incomplete.error?.message);
   const f1 = await free.from("recruiter_profiles").update({ company_name: `${TAG} Conseil`, legal_form: "SASU", siren: "732829320", siret: "73282932000074", company_address: "1 rue de Test, 75001 Paris", iban: "FR7630006000011234567890189", bic: "AGRIFRPP" }).eq("user_id", users.freelance.id);
@@ -205,8 +215,7 @@ async function run() {
   must("Freelance · envoie son dossier", !(await free.from("kyc_dossiers").update({ status: "submitted" }).eq("user_id", users.freelance.id)).error);
   const c1 = await client.from("client_profiles").update({ legal_form: "SAS", siren: "732829320", siret: "73282932000074", company_address: "2 avenue de Test, 75002 Paris", representative_name: "Claire E2E", representative_title: "Présidente", billing_email: `compta-${STAMP}@${DOMAIN}` }).eq("user_id", users.client.id);
   must("Client · renseigne son entreprise", !c1.error, c1.error?.message);
-  must("Client · dépose son Kbis", !(await addDoc(client, users.client.id, "kbis")));
-  must("Client · envoie son dossier", !(await client.from("kyc_dossiers").update({ status: "submitted" }).eq("user_id", users.client.id)).error);
+  must("Client · envoie son dossier (sans Kbis)", !(await client.from("kyc_dossiers").update({ status: "submitted" }).eq("user_id", users.client.id)).error);
   const peek = await client.storage.from("admin-documents").list(users.freelance.id);
   check("Client · ne voit pas les pièces du freelance", !peek.data?.length);
   const selfOk = await client.from("kyc_dossiers").update({ status: "approved" }).eq("user_id", users.client.id).select();

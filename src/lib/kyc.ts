@@ -44,7 +44,7 @@ export interface KycDocSpec {
   expires?: boolean;
 }
 
-/** Pièces exigées. Le client ne fournit que son Kbis : sa société est identifiée par ses informations légales. */
+/** Pièces exigées. Le client n'en fournit aucune : sa société est identifiée par ses informations légales. */
 export const REQUIRED_DOCS: Record<KycParty, KycDocSpec[]> = {
   freelance: [
     { kind: "kbis", label: "Kbis ou avis de situation SIRENE", hint: "De moins de 3 mois" },
@@ -53,7 +53,7 @@ export const REQUIRED_DOCS: Record<KycParty, KycDocSpec[]> = {
     { kind: "urssaf", label: "Attestation de vigilance URSSAF", hint: "De moins de 6 mois", expires: true },
     { kind: "insurance", label: "Attestation d'assurance RC Pro", hint: "En cours de validité", expires: true },
   ],
-  client: [{ kind: "kbis", label: "Kbis", hint: "De moins de 3 mois" }],
+  client: [],
 };
 
 /** Champs société obligatoires, par partie (colonnes des tables de profil). */
