@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarIcon, MapPin, Euro, Clock, Briefcase } from "lucide-react";
+import { CalendarIcon, MapPin, Euro, Briefcase } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,8 @@ const CreateMissionDialog = ({
   const [saving, setSaving] = useState(false);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [durationText, setDurationText] = useState("");
+  // Titre de la mission (contrats, CRA, factures, notifications) : intitulé du besoin + client, modifiable
+  const [missionTitle, setMissionTitle] = useState(`${needTitle} - ${companyName}`);
   const [location, setLocation] = useState(missionLocation);
   const [tjmRecruiter, setTjmRecruiter] = useState(recruiterTjm || 0);
   // Prix client = TJM freelance + 20 % (arrondi à l'euro supérieur), ajustable par l'admin
@@ -70,14 +71,13 @@ const CreateMissionDialog = ({
           suggestion_id: suggestionId,
           need_id: needId,
           recruiter_profile_id: recruiterProfileId,
-          title: needTitle,
+          title: missionTitle.trim() || needTitle,
           company_name: companyName,
           location,
           recruiter_tjm: tjmRecruiter,
           client_tjm: tjmClient,
           start_date: format(startDate, "yyyy-MM-dd"),
           end_date: endDate ? format(endDate, "yyyy-MM-dd") : null,
-          duration_text: durationText || null,
           // Mise en place : dossiers KYC et contrats à finaliser avant le démarrage
           status: "onboarding",
           created_by: session.user.id,
@@ -128,6 +128,17 @@ const CreateMissionDialog = ({
               <span className="font-semibold text-sm">{recruiterName}</span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">{needTitle} — {companyName}</p>
+          </div>
+
+          {/* Titre */}
+          <div>
+            <Label htmlFor="mission-title" className="text-xs">Titre de la mission</Label>
+            <Input
+              id="mission-title"
+              value={missionTitle}
+              onChange={(e) => setMissionTitle(e.target.value)}
+              className="mt-1"
+            />
           </div>
 
           {/* TJM */}
@@ -215,24 +226,10 @@ const CreateMissionDialog = ({
             </div>
           </div>
 
-          {/* Duration text */}
-          <div>
-            <Label className="text-xs">Durée (texte libre)</Label>
-            <div className="relative mt-1">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={durationText}
-                onChange={(e) => setDurationText(e.target.value)}
-                placeholder="ex: 3 mois renouvelable"
-                className="pl-9"
-              />
-            </div>
-          </div>
-
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={onClose}>Annuler</Button>
-            <Button onClick={handleSubmit} disabled={saving || !startDate}>
+            <Button onClick={handleSubmit} disabled={saving || !startDate || !missionTitle.trim()}>
               {saving ? "Création..." : "Créer la mission"}
             </Button>
           </div>
