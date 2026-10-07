@@ -1,4 +1,4 @@
-import { ADMIN_PILLS, ASSETS } from "@/content/home";
+import { ADMIN_CHECKLIST, ASSETS } from "@/content/home";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<(typeof ASSETS)[number]["icon"], JSX.Element> = {
@@ -42,10 +42,24 @@ export default function WhyMarketplace() {
             Contrat, KYC, CRA, facturation. On gère l’administratif, vous gérez vos recrutements.
           </h3>
         </div>
-        <ul className="relative flex flex-wrap gap-2 text-[13px]">
-          {ADMIN_PILLS.map((p) => (
-            <li key={p} className="rounded-full border border-[rgba(245,241,234,0.2)] px-3.5 py-[7px]">
-              {p}
+        {/* La liste se coche toute seule, ligne après ligne, en boucle */}
+        <ul className="relative grid gap-2.5 text-[14px] sm:grid-cols-2">
+          {ADMIN_CHECKLIST.map((item, i) => (
+            <li
+              key={item}
+              className="ks-check-row flex items-center gap-3 rounded-2xl border border-[rgba(245,241,234,0.12)] bg-[rgba(245,241,234,0.04)] px-3.5 py-3"
+              style={{ animationDelay: `${i * 0.7}s` }}
+            >
+              <span
+                className="ks-check-box flex h-5 w-5 shrink-0 items-center justify-center rounded-md border"
+                style={{ animationDelay: `${i * 0.7}s` }}
+                aria-hidden="true"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path className="ks-check-mark" d="M5 12.5l4.5 4.5L19 7.5" style={{ animationDelay: `${i * 0.7}s` }} />
+                </svg>
+              </span>
+              {item}
             </li>
           ))}
         </ul>

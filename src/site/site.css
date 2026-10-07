@@ -70,10 +70,28 @@
 }
 @keyframes ks-rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
 
+/* Marketplace (refonte 2027) : curseur de frappe, apparition des critères, liste qui se coche */
+.ks-caret { animation: ks-blink 1s steps(1) infinite; }
+@keyframes ks-blink { 50% { opacity: 0; } }
+.ks-pop-in { animation: ks-chip-in .45s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes ks-chip-in { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
+.ks-check-row { animation: ks-check-fade 8s ease infinite; }
+.ks-check-box { animation: ks-check-fill 8s ease infinite; }
+.ks-check-mark { stroke-dasharray: 14; stroke-dashoffset: 14; animation: ks-check-draw 8s ease infinite; }
+@keyframes ks-check-fade { 0%, 4% { opacity: .45; } 10%, 88% { opacity: 1; } 96%, 100% { opacity: .45; } }
+@keyframes ks-check-fill { 0%, 4% { background: transparent; border-color: rgba(245,241,234,.3); } 10%, 88% { background: #FF2E6E; border-color: #FF2E6E; } 96%, 100% { background: transparent; border-color: rgba(245,241,234,.3); } }
+@keyframes ks-check-draw { 0%, 5% { stroke-dashoffset: 14; } 12%, 88% { stroke-dashoffset: 0; } 96%, 100% { stroke-dashoffset: 14; } }
+.ks-float { animation: ks-float 6s ease-in-out infinite; }
+@keyframes ks-float { 50% { transform: translateY(-6px); } }
+
 @media (prefers-reduced-motion: reduce) {
   .ks-site *, .ks-site *::before, .ks-site *::after {
     animation: none !important;
     transition: none !important;
   }
   .ks-lift:hover, .ks-btn:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ks-site .ks-check-box { background: #FF2E6E; border-color: #FF2E6E; }
+  .ks-site .ks-check-mark { stroke-dashoffset: 0; }
 }

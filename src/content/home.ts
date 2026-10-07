@@ -77,3 +77,63 @@ export const RESOURCES: { kind: string; title: string; meta: string; palette: Pa
   { kind: "Podcast", title: "[Titre d’épisode]", meta: "Podcast · [durée]", palette: "lilac" },
   { kind: "Guide", title: "[Titre de guide : outiller ses RH avec l’IA]", meta: "Guide · PDF", palette: "teal" },
 ];
+
+// ── Refonte 2027 ────────────────────────────────────────────────────────────
+
+/** Rangée de réassurance sous le hero (promesses validées uniquement). */
+export const HERO_TRUST = {
+  avatars: ["JM", "KB", "AL", "TR"] as const,
+  lead: "700+ recruteurs vérifiés",
+  points: ["Réponse sous 48 h", "Sans engagement"],
+};
+
+/**
+ * Démo « brief → matching » : un besoin se tape tout seul, l'IA en extrait les critères,
+ * puis les profils correspondants apparaissent. Un exemple par métier (onglets).
+ * Profils fictifs en attendant les vrais : la démo illustre le produit.
+ */
+export type Brief = { domain: Exclude<Filter, "Tous">; text: string; criteria: string[]; matches: { name: string; score: number }[] };
+export const BRIEFS: Brief[] = [
+  {
+    domain: "Tech",
+    text: "Je cherche un recruteur pour 3 développeurs backend, à Paris en hybride, dès que possible.",
+    criteria: ["RPO Tech", "Paris · hybride", "Dès que possible", "3 postes"],
+    matches: [{ name: "Julie M.", score: 94 }, { name: "Thomas R.", score: 88 }, { name: "Léo P.", score: 71 }],
+  },
+  {
+    domain: "GTM",
+    text: "Besoin d'un recruteur pour monter une équipe de 4 Account Executives en SaaS B2B, à partir de janvier.",
+    criteria: ["RPO GTM", "SaaS B2B", "Janvier", "4 postes"],
+    matches: [{ name: "Karim B.", score: 96 }, { name: "Sofia D.", score: 89 }, { name: "Julie M.", score: 68 }],
+  },
+  {
+    domain: "Finance",
+    text: "On recrute un contrôleur de gestion et un comptable senior à Lyon, 3 jours par semaine.",
+    criteria: ["RPO Finance", "Lyon", "3 j/semaine", "2 postes"],
+    matches: [{ name: "Anne L.", score: 93 }, { name: "Léo P.", score: 74 }, { name: "Karim B.", score: 66 }],
+  },
+  {
+    domain: "Ops",
+    text: "Recrutement de 5 responsables logistique pour nos entrepôts, démarrage en novembre.",
+    criteria: ["RPO Ops", "Multi-sites", "Novembre", "5 postes"],
+    matches: [{ name: "Léo P.", score: 95 }, { name: "Anne L.", score: 77 }, { name: "Sofia D.", score: 70 }],
+  },
+];
+
+/** Chiffres clés (promesses validées : 48 h, 15 min ; communauté annoncée dans le hero). */
+export const PROOF = [
+  { value: "48", unit: "h", label: "pour recevoir vos premiers profils" },
+  { value: "700", unit: "+", label: "recruteurs freelances qualifiés" },
+  { value: "15", unit: "min", label: "pour cadrer votre besoin avec nous" },
+];
+
+/** Cadre administratif : la liste se coche toute seule dans la carte sombre. */
+export const ADMIN_CHECKLIST = ["Contrat de mission signé", "KYC vérifié", "CRA validé chaque mois", "Facture unique émise"];
+
+export const FINAL_CTA = {
+  title: "Votre prochain recrutement",
+  titleEnd: "commence ici.",
+  text: "Décrivez votre besoin en quelques lignes : vous recevez des profils sous 48 h.",
+  primary: "Je recrute",
+  secondary: "Je suis freelance",
+};

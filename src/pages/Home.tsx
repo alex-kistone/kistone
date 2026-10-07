@@ -1,7 +1,9 @@
 import SEO from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
 import Hero from "@/components/home/Hero";
-import MarketplacePreview from "@/components/home/MarketplacePreview";
+import BriefDemo from "@/components/home/BriefDemo";
+import ProofStrip from "@/components/home/ProofStrip";
+import FinalCTA from "@/components/home/FinalCTA";
 import LogoTicker from "@/components/home/LogoTicker";
 import HowItWorks from "@/components/home/HowItWorks";
 import WhyMarketplace from "@/components/home/WhyMarketplace";
@@ -18,13 +20,15 @@ export default function Home() {
         path="/"
       />
       <Hero />
-      <MarketplacePreview />
+      <BriefDemo />
       <LogoTicker />
+      <ProofStrip />
       <HowItWorks />
       <WhyMarketplace />
       <FreelanceCTA />
       <StudioReminder />
       <ResourcesTeaser />
+      <FinalCTA />
     </SiteLayout>
   );
 }
