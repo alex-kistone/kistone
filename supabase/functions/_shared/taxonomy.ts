@@ -4,16 +4,8 @@
  * le front l'importe tel quel via src/lib/taxonomy.ts.
  */
 
-/**
- * Verticales de la plateforme : le niveau au-dessus des métiers. RPO est la première ;
- * DRH, CFO, CRO, Legal, CTO… s'ajouteront avec chacune ses spécialités, son matching et sa
- * correspondance Jarvi, sur le socle commun (comptes, ADV, CRA, facturation). Un besoin et un
- * profil appartiennent à une verticale ; le matching ne croise jamais deux verticales.
- * Toute nouvelle valeur doit aussi être ajoutée à la contrainte SQL `*_vertical_check`.
- */
-export const VERTICALS = [{ id: "rpo", label: "RPO" }] as const;
-export type Vertical = (typeof VERTICALS)[number]["id"];
-export const DEFAULT_VERTICAL: Vertical = "rpo";
+// Verticales (départements) : configuration complète dans verticals.ts.
+export { VERTICALS, DEFAULT_VERTICAL, type Vertical } from "./verticals.ts";
 
 /**
  * Métiers recrutés (verticale RPO) : cochés par le freelance (skills) et par le client (profile_types).

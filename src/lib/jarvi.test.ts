@@ -62,3 +62,27 @@ describe("toJarviFields", () => {
     expect(fields[JARVI_FIELDS.dateDispo]).toBeNull();
   });
 });
+
+describe("toJarviFields · départements C-Level", () => {
+  const CFO_FIELD = "f96c2a0c-dac9-4c86-bf3c-8b6dd20229a1";
+  const cfo = { ...base, vertical: "cfo" as const, specialties: ["Trésorerie", "FP&A"], skills: [], model: null };
+
+  it("envoie les spécialités dans le champ de la verticale, sans les champs propres au RPO", () => {
+    const { fields } = toJarviFields(cfo, JARVI_SPECIALITES);
+    expect(fields[CFO_FIELD]).toEqual(["Trésorerie", "FP&A"]);
+    expect(JARVI_FIELDS.specialites in fields).toBe(false);
+    expect(JARVI_FIELDS.modele in fields).toBe(false);
+    expect(JARVI_FIELDS.linkedinRecruiter in fields).toBe(false);
+    expect(fields[JARVI_FIELDS.tjm]).toBe(550);
+  });
+
+  it("ajoute « CFO Part-time » quand le freelance n'est pas à temps plein", () => {
+    expect(toJarviFields({ ...cfo, weekly_capacity: 2 }, JARVI_SPECIALITES).fields[CFO_FIELD]).toContain("CFO Part-time");
+    expect(toJarviFields({ ...cfo, weekly_capacity: 5 }, JARVI_SPECIALITES).fields[CFO_FIELD]).not.toContain("CFO Part-time");
+  });
+
+  it("n'envoie pas de spécialités quand le champ Jarvi n'existe pas encore (COO)", () => {
+    const { fields } = toJarviFields({ ...cfo, vertical: "coo" as const, specialties: ["Achats"] }, JARVI_SPECIALITES);
+    expect(Object.values(fields)).not.toContainEqual(["Achats"]);
+  });
+});

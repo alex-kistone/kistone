@@ -69,6 +69,7 @@ Deno.serve(async (req) => {
   try {
     const jarviId = p.jarvi_profile_id ?? await findByLinkedin(key, p.linkedin_url);
     const { fields, unmapped } = toJarviFields({
+      vertical: p.vertical, specialties: p.specialties ?? [], weekly_capacity: p.weekly_capacity,
       skills: p.skills ?? [], model: p.model, tjm: p.tjm, available: p.available !== false,
       availability_date: p.availability_date, sectors: p.sectors ?? [], mobility: p.mobility ?? [],
       remote_preference: p.remote_preference, has_linkedin_license: p.has_linkedin_license, languages: Array.isArray(p.languages) ? p.languages : [],
@@ -78,8 +79,11 @@ Deno.serve(async (req) => {
 
     const payload: Record<string, string> = {
       externalId: p.id,
-      // Tout freelance inscrit est rattaché au projet Jarvi des inscriptions de sa verticale.
-      projectId: JARVI_PROJECTS[(p.vertical ?? "rpo") as keyof typeof JARVI_PROJECTS] ?? JARVI_PROJECTS.rpo,
+      // Tout freelance inscrit est rattaché au projet Jarvi des inscriptions de sa verticale
+      // (aucun projet tant que celui de la verticale n'existe pas dans Jarvi).
+      ...(JARVI_PROJECTS[(p.vertical ?? "rpo") as keyof typeof JARVI_PROJECTS]
+        ? { projectId: JARVI_PROJECTS[(p.vertical ?? "rpo") as keyof typeof JARVI_PROJECTS]! }
+        : {}),
       firstName: p.first_name ?? "",
       lastName: p.last_name ?? "",
       linkedinUrl: p.linkedin_url,

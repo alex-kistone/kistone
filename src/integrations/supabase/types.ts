@@ -111,6 +111,8 @@ export type Database = {
       }
       client_needs: {
         Row: {
+          specialties: string[]
+          days_per_week: number | null
           budget_tjm_max: number | null
           budget_tjm_min: number | null
           company_name: string
@@ -133,6 +135,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          specialties?: string[]
+          days_per_week?: number | null
           budget_tjm_max?: number | null
           budget_tjm_min?: number | null
           company_name: string
@@ -155,6 +159,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          specialties?: string[]
+          days_per_week?: number | null
           budget_tjm_max?: number | null
           budget_tjm_min?: number | null
           company_name?: string
@@ -427,6 +433,7 @@ export type Database = {
       }
       missions: {
         Row: {
+          days_per_week: number | null
           client_tjm: number
           company_name: string
           created_at: string
@@ -446,6 +453,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          days_per_week?: number | null
           client_tjm?: number
           company_name: string
           created_at?: string
@@ -465,6 +473,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          days_per_week?: number | null
           client_tjm?: number
           company_name?: string
           created_at?: string
@@ -724,6 +733,10 @@ export type Database = {
       }
       recruiter_profiles: {
         Row: {
+          weekly_capacity: number | null
+          years_experience: number | null
+          previous_companies: string[]
+          vertical: string
           admin_comments: string | null
           admin_rating: number | null
           availability_date: string | null
@@ -768,6 +781,10 @@ export type Database = {
           work_time: string | null
         }
         Insert: {
+          weekly_capacity?: number | null
+          years_experience?: number | null
+          previous_companies?: string[]
+          vertical?: string
           admin_comments?: string | null
           admin_rating?: number | null
           availability_date?: string | null
@@ -812,6 +829,10 @@ export type Database = {
           work_time?: string | null
         }
         Update: {
+          weekly_capacity?: number | null
+          years_experience?: number | null
+          previous_companies?: string[]
+          vertical?: string
           admin_comments?: string | null
           admin_rating?: number | null
           availability_date?: string | null

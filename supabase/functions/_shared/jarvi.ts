@@ -7,16 +7,14 @@
  * pas d'API Deno ici, le front l'importe tel quel via src/lib/jarvi.ts.
  */
 
-import type { Vertical } from "./taxonomy.ts";
+import { FULL_TIME_DAYS, VERTICALS, verticalOf, type Vertical } from "./verticals.ts";
 
 /**
- * Projet Jarvi où arrive tout freelance inscrit, par verticale. Chaque nouvelle verticale
- * (DRH, CFO…) aura son projet ; ses champs personnalisés s'ajouteront à côté de ceux du RPO.
+ * Projet Jarvi où arrive tout freelance inscrit, par verticale (« New X via plateforme »).
+ * null : projet pas encore créé dans Jarvi (la fiche est créée sans rattachement à un projet).
  */
-export const JARVI_PROJECTS: Record<Vertical, string> = {
-  rpo: "a28725c1-24c0-46b4-bb63-afd1854df1d9", // « New RPO via plateforme »
-};
-export const JARVI_SIGNUP_PROJECT_ID = JARVI_PROJECTS.rpo;
+export const JARVI_PROJECTS = Object.fromEntries(VERTICALS.map((v) => [v.id, v.jarvi.projectId])) as Record<Vertical, string | null>;
+export const JARVI_SIGNUP_PROJECT_ID = JARVI_PROJECTS.rpo!;
 
 /** Nombre maximum de métiers et de secteurs par profil (limite des champs Jarvi côté Kistone). */
 export const MAX_CHOICES = 3;
@@ -67,6 +65,12 @@ const REMOTE_TO_JARVI: Record<string, string> = {
 const ENGLISH_RATING: Record<string, number> = { "débutant": 1, "intermédiaire": 2, "avancé": 3, courant: 4, natif: 5 };
 
 export interface PlatformProfileForJarvi {
+  /** Verticale du profil (RPO par défaut). */
+  vertical?: Vertical | null;
+  /** Spécialités de la verticale (hors RPO). */
+  specialties?: string[] | null;
+  /** Jours par semaine disponibles (null ou 5 = temps plein). */
+  weekly_capacity?: number | null;
   skills: string[];
   model: string | null;
   tjm: number | null;
@@ -99,7 +103,9 @@ export { METIERS as JARVI_SPECIALITES } from "./taxonomy.ts";
  */
 export function toJarviFields(p: PlatformProfileForJarvi, jarviSpecialites: readonly string[]) {
   const unmapped: string[] = [];
-  const specialites = p.skills.filter((s) => {
+  const vertical = verticalOf(p.vertical);
+  const isRpo = vertical.id === "rpo";
+  const specialites = (isRpo ? p.skills : []).filter((s) => {
     const ok = jarviSpecialites.includes(s);
     if (!ok) unmapped.push(`Métier « ${s} »`);
     return ok;
@@ -115,22 +121,39 @@ export function toJarviFields(p: PlatformProfileForJarvi, jarviSpecialites: read
     ...(adminEnglish && !declared.some((l) => l.language === "Anglais") ? [`Anglais (${adminEnglish})`] : []),
   ];
 
-  return {
-    fields: {
+  // Hors RPO : spécialités de la verticale dans son propre champ Jarvi, avec le tag
+  // « X Part-time » quand le freelance n'est pas à temps plein.
+  const verticalSpecialties = isRpo ? [] : (p.specialties ?? []).filter((s) => {
+    const ok = vertical.specialties.includes(s);
+    if (!ok) unmapped.push(`Spécialité « ${s} »`);
+    return ok;
+  });
+  const partTime = !!p.weekly_capacity && p.weekly_capacity < FULL_TIME_DAYS;
+  if (!isRpo && partTime && vertical.partTimeTag) verticalSpecialties.push(vertical.partTimeTag);
+  const verticalFields = isRpo
+    ? {
       [JARVI_FIELDS.specialites]: specialites,
       [JARVI_FIELDS.modele]: models,
+      [JARVI_FIELDS.linkedinRecruiter]: !!p.has_linkedin_license,
+    }
+    : vertical.jarvi.specialtiesFieldId
+      ? { [vertical.jarvi.specialtiesFieldId]: verticalSpecialties }
+      : {};
+
+  return {
+    fields: {
+      ...verticalFields,
       [JARVI_FIELDS.tjm]: p.tjm,
       [JARVI_FIELDS.dispo]: p.available,
       [JARVI_FIELDS.dateDispo]: p.available ? null : p.availability_date,
       [JARVI_FIELDS.secteurs]: secteurs,
       [JARVI_FIELDS.mobilite]: p.mobility,
       [JARVI_FIELDS.remote]: p.remote_preference ? REMOTE_TO_JARVI[p.remote_preference] ?? null : null,
-      [JARVI_FIELDS.linkedinRecruiter]: !!p.has_linkedin_license,
       [JARVI_FIELDS.english]: englishLevel(p),
       [JARVI_FIELDS.autresLangues]: autresLangues,
       // Champs admin : envoyés seulement s'ils sont renseignés (jamais effacés par la synchro).
       ...(p.admin_rating ? { [JARVI_FIELDS.rate]: p.admin_rating } : {}),
-      ...(p.tech_specialties?.length ? { [JARVI_FIELDS.specialitesTech]: p.tech_specialties.filter((t) => JARVI_TECH_SPECIALTIES.includes(t)) } : {}),
+      ...(isRpo && p.tech_specialties?.length ? { [JARVI_FIELDS.specialitesTech]: p.tech_specialties.filter((t) => JARVI_TECH_SPECIALTIES.includes(t)) } : {}),
       ...(p.admin_comments?.trim() ? { [JARVI_FIELDS.notes]: p.admin_comments.trim() } : {}),
     },
     unmapped,
