@@ -59,7 +59,7 @@ export default function LinkedinRequiredDialog({ open, firstVisit, initialVertic
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto self-start" />
+        <img src="/logos/logo-full-black.png" alt="Kistone" width={1822} height={402} className="h-8 w-auto self-start" />
         {step === "vertical" ? (
           <>
         <DialogHeader>

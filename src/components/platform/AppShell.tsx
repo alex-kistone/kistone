@@ -61,7 +61,7 @@ function SidebarBody({ role, email, onNavigate, onSignOut, bell = false }: {
     <div className="flex h-full flex-col">
       <div className="flex items-start justify-between gap-2">
         <Link to="/" aria-label="Kistone, retour au site" className="px-2 pt-1">
-          <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto" />
+          <img src="/logos/logo-full-black.png" alt="Kistone" width={1822} height={402} className="h-8 w-auto" />
         </Link>
         {bell ? <NotificationBell className="h-10 w-10" /> : null}
       </div>
@@ -113,7 +113,7 @@ export default function AppShell({ role }: { role: PlatformRole }) {
 
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur lg:hidden">
         <Link to="/" aria-label="Kistone, retour au site">
-          <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-11 w-auto" />
+          <img src="/logos/logo-full-black.png" alt="Kistone" width={1822} height={402} className="h-7 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
         <NotificationBell />
