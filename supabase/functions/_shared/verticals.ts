@@ -89,19 +89,19 @@ export const VERTICALS: readonly VerticalConfig[] = [
   {
     id: "coo", short: "COO", label: "Opérations", roles: "COO · Head of Ops",
     description: "Process, scaling des opérations, pilotage de la performance.",
-    palette: "sand", specialties: COO_SPECIALTIES,
+    palette: "sand", specialties: COO_SPECIALTIES, partTimeTag: "COO Part-time",
     jarvi: { projectId: "627670cb-b090-4061-a534-fb5f195e4637", specialtiesFieldId: "007887f9-a5f0-4659-8fae-5b485aa8884f" },
   },
   {
     id: "cro", short: "CRO", label: "Revenue", roles: "CRO · Head of Sales",
     description: "Stratégie commerciale, équipes, ouverture de marché et pipeline.",
-    palette: "blue", specialties: CRO_SPECIALTIES,
+    palette: "blue", specialties: CRO_SPECIALTIES, partTimeTag: "CRO Part-time",
     jarvi: { projectId: "673fb8cf-3e51-4abe-8887-b16f1e23ebfd", specialtiesFieldId: "b1d64ff3-dbf6-4cdf-ae53-5ac4ce0b0d29" },
   },
   {
     id: "cto", short: "CTO", label: "Tech, Data & IA", roles: "CTO · CDO · Head of AI",
     description: "Architecture, équipes tech, data et intégration de l'IA.",
-    palette: "teal", specialties: CTO_SPECIALTIES,
+    palette: "teal", specialties: CTO_SPECIALTIES, partTimeTag: "CTO Part-time",
     jarvi: { projectId: "f01d8cf4-86f8-4681-adbe-62abc4080fbe", specialtiesFieldId: "f09ec442-2d93-4bf5-b6b4-788e35d3a102" },
   },
 ];
