@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { rhythmLabel, verticalOf } from "@/lib/verticals";
+import { palettes } from "@/lib/palettes";
 import { X, MapPin, Briefcase, Globe, Linkedin, Phone, Mail, Calendar, CheckCircle2, Star, Medal, Award, MessageCircle, Settings2, UserPlus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -59,6 +61,10 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
 
   if (!open) return null;
 
+  // Département du profil (RPO ou C-Level) et champs propres aux C-Level
+  const cProfile = profile as typeof profile & { vertical?: string; specialties?: string[]; weekly_capacity?: number | null; years_experience?: number | null; previous_companies?: string[] };
+  const vConf = verticalOf(cProfile.vertical);
+  const isRpoProfile = vConf.id === "rpo";
   const missions = Array.isArray(profile.missions) ? profile.missions : [];
   const languages = Array.isArray(profile.languages) ? profile.languages : [];
 
@@ -176,12 +182,20 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
             </div>
           )}
 
+          {/* Fonction et rythme */}
+          <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
+            <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: palettes[vConf.palette].tint, color: palettes[vConf.palette].ink }}>{vConf.short} · {vConf.label}</span>
+            <span className="text-muted-foreground">{rhythmLabel(cProfile.weekly_capacity)}</span>
+            {cProfile.years_experience ? <span className="text-muted-foreground">· {cProfile.years_experience} ans d'expérience</span> : null}
+            {cProfile.previous_companies?.length ? <span className="text-muted-foreground">· ex-{cProfile.previous_companies.join(", ")}</span> : null}
+          </div>
+
           {/* Skills */}
-          {profile.skills && profile.skills.length > 0 && (
+          {(isRpoProfile ? profile.skills ?? [] : cProfile.specialties ?? []).length > 0 && (
             <div className="mt-5">
-              <h3 className="mb-2 text-sm font-semibold">Métiers recrutés</h3>
+              <h3 className="mb-2 text-sm font-semibold">{isRpoProfile ? "Métiers recrutés" : `Spécialités ${vConf.short}`}</h3>
               <div className="flex flex-wrap gap-1.5">
-                {profile.skills.map((s) => (
+                {(isRpoProfile ? profile.skills ?? [] : cProfile.specialties ?? []).map((s) => (
                   <Badge key={s} variant="outline" className="text-xs">{s}</Badge>
                 ))}
               </div>

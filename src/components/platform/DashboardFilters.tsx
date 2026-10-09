@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { type FullProfile } from "@/components/platform/ProfileDetailModal";
 import { METIERS } from "@/lib/taxonomy";
+import { VERTICALS } from "@/lib/verticals";
 
 const SKILLS_OPTIONS = METIERS;
 
@@ -49,6 +50,8 @@ const DashboardFilters = ({
   onViewModeChange,
 }: DashboardFiltersProps) => {
   const [modelFilter, setModelFilter] = useState("all");
+  // Fonction (RPO, DRH, CFO, COO, CRO, CTO)
+  const [verticalFilter, setVerticalFilter] = useState("all");
   const [mobilityFilter, setMobilityFilter] = useState("");
   const [tjmRange, setTjmRange] = useState<[number, number]>([0, 1500]);
   const [tjmActive, setTjmActive] = useState(false);
@@ -107,8 +110,13 @@ const DashboardFilters = ({
           `${p.first_name} ${p.last_name}`.toLowerCase().includes(q) ||
           p.email.toLowerCase().includes(q) ||
           p.skills?.some((s) => s.toLowerCase().includes(q)) ||
+          ((p as { specialties?: string[] }).specialties ?? []).some((s) => s.toLowerCase().includes(q)) ||
           p.clients?.some((c) => c.toLowerCase().includes(q))
       );
+    }
+
+    if (verticalFilter !== "all") {
+      result = result.filter((p) => ((p as { vertical?: string }).vertical ?? "rpo") === verticalFilter);
     }
 
     if (modelFilter !== "all") {
@@ -166,7 +174,7 @@ const DashboardFilters = ({
 
     onFiltered(result);
   }, [
-    profiles, search, modelFilter, mobilityFilter,
+    profiles, search, verticalFilter, modelFilter, mobilityFilter,
     tjmRange, tjmActive, skillsFilter, sectorsFilter,
     languageFilter, ratingFilter, sortBy,
   ]);
@@ -184,6 +192,17 @@ const DashboardFilters = ({
             className="pl-10"
           />
         </div>
+        <Select value={verticalFilter} onValueChange={setVerticalFilter}>
+          <SelectTrigger className="w-full sm:w-[180px]" aria-label="Fonction">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Toutes les fonctions</SelectItem>
+            {VERTICALS.map((v) => (
+              <SelectItem key={v.id} value={v.id}>{v.short} · {v.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select value={sortBy} onValueChange={onSortByChange}>
           <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Trier par" />

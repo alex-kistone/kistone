@@ -68,10 +68,10 @@ describe("filterAndSortRows", () => {
 
 describe("paramètres d'URL", () => {
   it("fait l'aller-retour des filtres sans toucher aux autres paramètres", () => {
-    const params = applyFiltersToParams(new URLSearchParams("tab=needs&need=x"), { q: "dev", status: "to_match", client: "u1", todo: true });
+    const params = applyFiltersToParams(new URLSearchParams("tab=needs&need=x"), { q: "dev", status: "to_match", client: "u1", todo: true, vertical: "cfo" });
     expect(params.get("tab")).toBe("needs");
     expect(params.get("need")).toBe("x");
-    expect(filtersFromParams(params)).toEqual({ q: "dev", status: "to_match", client: "u1", todo: true });
+    expect(filtersFromParams(params)).toEqual({ q: "dev", status: "to_match", client: "u1", todo: true, vertical: "cfo" });
     expect(applyFiltersToParams(params, EMPTY_FILTERS).toString()).toBe("tab=needs&need=x");
     expect(filtersFromParams(new URLSearchParams("status=bogus")).status).toBe("");
   });

@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { verticalOf } from "@/lib/verticals";
+import { palettes } from "@/lib/palettes";
 import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import AdminNeedsPanel from "@/components/platform/AdminNeedsPanel";
@@ -428,13 +430,15 @@ const Dashboard = () => {
                           </div>
                         </div>
 
-                        {profile.skills && profile.skills.length > 0 && (
-                          <div className="mb-3 flex flex-wrap gap-1">
-                            {profile.skills.map((skill) => (
-                              <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>
-                            ))}
-                          </div>
-                        )}
+                        {/* Fonction, puis métiers recrutés (RPO) ou spécialités (C-Level) */}
+                        <div className="mb-3 flex flex-wrap gap-1">
+                          <Badge className="text-xs" style={{ background: palettes[verticalOf((profile as { vertical?: string }).vertical).palette].tint, color: palettes[verticalOf((profile as { vertical?: string }).vertical).palette].ink }}>
+                            {verticalOf((profile as { vertical?: string }).vertical).short}
+                          </Badge>
+                          {(verticalOf((profile as { vertical?: string }).vertical).id === "rpo" ? profile.skills ?? [] : (profile as { specialties?: string[] }).specialties ?? []).map((skill) => (
+                            <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>
+                          ))}
+                        </div>
 
                         {profile.clients && profile.clients.length > 0 && (
                           <div className="mb-3 text-sm text-muted-foreground">

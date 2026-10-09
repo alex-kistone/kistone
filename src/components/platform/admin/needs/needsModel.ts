@@ -119,13 +119,15 @@ export interface NeedFilters {
   status: NeedDisplayStatus | "";
   client: string;
   todo: boolean;
+  /** Fonction (rpo, drh, cfo…) ; vide = toutes. */
+  vertical: string;
 }
 
-export const EMPTY_FILTERS: NeedFilters = { q: "", status: "", client: "", todo: false };
+export const EMPTY_FILTERS: NeedFilters = { q: "", status: "", client: "", todo: false, vertical: "" };
 
 /** Paramètres d'URL de l'onglet Besoins (les filtres survivent au passage par le détail). */
 export const NEED_PARAM = "need";
-const FILTER_KEYS = ["q", "status", "client", "todo"] as const;
+const FILTER_KEYS = ["q", "status", "client", "todo", "fonction"] as const;
 
 export function filtersFromParams(params: URLSearchParams): NeedFilters {
   const status = params.get("status") ?? "";
@@ -134,6 +136,7 @@ export function filtersFromParams(params: URLSearchParams): NeedFilters {
     status: status in NEED_STATUS ? (status as NeedDisplayStatus) : "",
     client: params.get("client") ?? "",
     todo: params.get("todo") === "1",
+    vertical: params.get("fonction") ?? "",
   };
 }
 
@@ -144,6 +147,7 @@ export function applyFiltersToParams(prev: URLSearchParams, f: NeedFilters): URL
   if (f.status) next.set("status", f.status);
   if (f.client) next.set("client", f.client);
   if (f.todo) next.set("todo", "1");
+  if (f.vertical) next.set("fonction", f.vertical);
   return next;
 }
 
@@ -158,6 +162,7 @@ export function filterAndSortRows(rows: NeedRow[], f: NeedFilters): NeedRow[] {
       if (f.status && r.status !== f.status) return false;
       if (f.client && r.need.user_id !== f.client) return false;
       if (f.todo && r.todo.length === 0) return false;
+      if (f.vertical && (r.need.vertical ?? "rpo") !== f.vertical) return false;
       return true;
     })
     .sort((a, b) => {
