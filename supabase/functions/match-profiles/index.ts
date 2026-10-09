@@ -14,6 +14,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { prefilter, type Need, type Recruiter } from "../_shared/matching.ts";
 import { MARGIN_PCT, clientPrice } from "../_shared/pricing.ts";
+import { rhythmLabel, verticalOf } from "../_shared/verticals.ts";
 import { englishLevel } from "../_shared/jarvi.ts";
 import { METIER_FAMILIES } from "../_shared/taxonomy.ts";
 
@@ -61,7 +62,7 @@ Deno.serve(async (req) => {
       .select(
         "id, vertical, first_name, job_title, skills, sectors, tech_specialties, mobility, clients, languages," +
         " remote_preference, tjm, model, available, availability_date, admin_rating, admin_english_rating, admin_comments, super_tam," +
-        " intro_text, missions, has_linkedin_license",
+        " intro_text, missions, has_linkedin_license, specialties, weekly_capacity, years_experience, previous_companies",
       )
       .eq("onboarding_completed", true)
       // Verticales étanches : seuls les profils de la verticale du besoin sont candidats.
@@ -69,12 +70,16 @@ Deno.serve(async (req) => {
 
     if (!recruiters?.length) return json({ suggestions: [], message: "Aucun profil freelance disponible." });
 
-    // Un profil déjà en mission active reste proposable, mais pénalisé.
+    // Jours par semaine déjà engagés par profil (missions en cours ou en mise en place) :
+    // un fractional reste proposable tant qu'il lui reste de la capacité.
     const { data: activeMissions } = await admin
-      .from("missions").select("recruiter_profile_id").eq("status", "active");
-    const busyIds = new Set((activeMissions ?? []).map((m: { recruiter_profile_id: string }) => m.recruiter_profile_id));
+      .from("missions").select("recruiter_profile_id, days_per_week").in("status", ["active", "onboarding"]);
+    const committed = new Map<string, number>();
+    for (const m of (activeMissions ?? []) as { recruiter_profile_id: string; days_per_week: number | null }[]) {
+      committed.set(m.recruiter_profile_id, (committed.get(m.recruiter_profile_id) ?? 0) + (m.days_per_week ?? 5));
+    }
 
-    const shortlist = prefilter(need as Need, recruiters as Recruiter[], busyIds, SHORTLIST_SIZE);
+    const shortlist = prefilter(need as Need, recruiters as Recruiter[], committed, SHORTLIST_SIZE);
     if (!shortlist.length) {
       return json({ suggestions: [], message: "Aucun profil ne satisfait les critères du besoin." });
     }
@@ -148,6 +153,10 @@ async function rankWithClaude(
       profile_id: r.id,
       job_title: r.job_title,
       metiers_recrutes: r.skills ?? [],
+      specialites: r.specialties ?? [],
+      rythme: rhythmLabel(r.weekly_capacity),
+      annees_experience: r.years_experience ?? null,
+      entreprises_parcours: r.previous_companies ?? [],
       tech_specialties: r.tech_specialties ?? [],
       sectors: r.sectors ?? [],
       mobility: r.mobility ?? [],
@@ -185,14 +194,27 @@ async function rankWithClaude(
     };
   });
 
-  const system = `Tu es un expert du recrutement RPO chez Gotam. Tu classes des recruteurs freelances face à un besoin client.
-
-Ces profils ont DÉJÀ passé un filtre déterministe : budget, disponibilité et compatibilité remote sont vérifiés. Le champ "score_regles" (0-100) est ce filtre, et "signaux" en donne les motifs factuels. Ton rôle est d'apporter le jugement qualitatif que le filtre ne capte pas : adéquation réelle entre l'expérience du recruteur et le poste, pertinence sectorielle, solidité du parcours.
-
-Analyse des compétences :
+  const isRpo = (need.vertical ?? "rpo") === "rpo";
+  const v = verticalOf(need.vertical);
+  const intro = isRpo
+    ? "Tu es un expert du recrutement RPO chez Kistone. Tu classes des recruteurs freelances face à un besoin client."
+    : `Tu es un expert des dirigeants C-Level fractional chez Kistone. Tu classes des freelances ${v.roles} (fonction ${v.label}) face à un besoin client.`;
+  const analysis = isRpo
+    ? `Analyse des compétences :
 - Les métiers recrutés sont : ${METIER_FAMILIES.flat().join(", ")}. Familles voisines : ${METIER_FAMILIES.map((f) => f.join(" / ")).join(" ; ")}. Un recruteur d'une famille voisine peut convenir, un recruteur d'une autre famille rarement.
 - Ne te contente pas des cases cochées : lis l'intitulé du poste et la description du besoin (technos, séniorité, volume, délais), puis compare-les aux missions passées (profils recrutés, résultats, durée, outils), aux spécialités et à la présentation du recruteur.
-- Un profil avec des missions passées proches du besoin (mêmes profils, volumes comparables) doit passer devant un profil qui a seulement coché le bon métier.
+- Un profil avec des missions passées proches du besoin (mêmes profils, volumes comparables) doit passer devant un profil qui a seulement coché le bon métier.`
+    : `Analyse des compétences :
+- Spécialités possibles de la fonction : ${v.specialties.join(", ")}. Compare les "specialites" du profil à celles attendues par le besoin.
+- Lis l'intitulé et la description du besoin (stade de l'entreprise, enjeux : levée, structuration, scaling, équipe à manager) et compare-les au parcours : années d'expérience, entreprises du parcours, missions passées (rôle et périmètre, résultat clé), présentation.
+- Un dirigeant qui a déjà porté un enjeu comparable (même stade, même type de chantier) doit passer devant un profil qui a seulement coché la bonne spécialité.
+- "rythme" = jours par semaine que le profil propose ; le besoin demande ${rhythmLabel(need.days_per_week).toLowerCase()}.`;
+
+  const system = `${intro}
+
+Ces profils ont DÉJÀ passé un filtre déterministe : budget, disponibilité et compatibilité remote sont vérifiés. Le champ "score_regles" (0-100) est ce filtre, et "signaux" en donne les motifs factuels. Ton rôle est d'apporter le jugement qualitatif que le filtre ne capte pas : adéquation réelle entre l'expérience du profil et le poste, pertinence sectorielle, solidité du parcours.
+
+${analysis}
 
 Règles :
 - "tarif" = tarif recruteur + ${MARGIN_PCT} % de marge Kistone : c'est le TJM présenté au client. Dans les raisons, écris « Tarif de X €/j » : jamais « tarif client », « prix client », et le tarif du recruteur (tjm_recruteur) ne doit jamais apparaître.
@@ -209,7 +231,7 @@ Règles :
 
   const prompt = `BESOIN CLIENT
 - Poste : ${need.job_title}
-- Typologies : ${need.profile_types?.join(", ") || "non précisé"}
+- Fonction : ${v.label} (${v.short})${isRpo ? `\n- Typologies à recruter : ${need.profile_types?.join(", ") || "non précisé"}` : `\n- Spécialités attendues : ${need.specialties?.join(", ") || "non précisé"}\n- Rythme demandé : ${rhythmLabel(need.days_per_week)}`}
 - Secteurs : ${need.sectors?.join(", ") || "non précisé"}
 - Lieu : ${need.mission_location} — remote : ${need.remote_policy}
 - Arrivée souhaitée : ${need.desired_start ? `le ${need.desired_start}` : "dès que possible"} (aujourd'hui : ${new Date().toISOString().slice(0, 10)})

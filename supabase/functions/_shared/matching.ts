@@ -10,6 +10,7 @@
 import { englishLevel } from "./jarvi.ts";
 import { clientPrice } from "./pricing.ts";
 import { METIER_ALIASES, METIER_FAMILIES, type Vertical } from "./taxonomy.ts";
+import { FULL_TIME_DAYS, rhythmLabel } from "./verticals.ts";
 
 /** Retard toléré (jours) entre la date d'arrivée souhaitée et la disponibilité du profil. */
 export const START_TOLERANCE_DAYS = 30;
@@ -35,11 +36,21 @@ export interface Need {
   budget_tjm_max: number | null;
   /** Date d'arrivée souhaitée (AAAA-MM-JJ) ; null = dès que possible. */
   desired_start?: string | null;
+  /** Spécialités attendues (départements C-Level). */
+  specialties?: string[] | null;
+  /** Jours par semaine demandés ; null = temps plein. */
+  days_per_week?: number | null;
 }
 
 export interface Recruiter {
   id: string;
   vertical?: Vertical;
+  /** Spécialités du département (C-Level). */
+  specialties?: string[] | null;
+  /** Jours disponibles par semaine ; null = temps plein. */
+  weekly_capacity?: number | null;
+  years_experience?: number | null;
+  previous_companies?: string[] | null;
   first_name: string;
   job_title: string | null;
   skills: string[];
@@ -218,14 +229,29 @@ function scoreRemote(need: Need, r: Recruiter): { pts: number; note: string | nu
   return { pts: MAX.remote * 0.5, note: null };
 }
 
-export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): ScoredRecruiter | null {
+/**
+ * Capacité fractional : un freelance à temps partiel déjà en mission reste disponible tant
+ * qu'il lui reste assez de jours par semaine pour le besoin. `committedDays` = jours déjà pris
+ * par ses missions en cours (0 si aucune).
+ */
+export function capacityFor(need: Need, r: Recruiter, committedDays: number) {
+  const capacity = r.weekly_capacity ?? FULL_TIME_DAYS;
+  const wanted = need.days_per_week ?? FULL_TIME_DAYS;
+  const remaining = Math.max(0, capacity - committedDays);
+  return { capacity, wanted, remaining, fits: remaining >= wanted, offersLess: capacity < wanted };
+}
+
+export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean, committedDays = onMission ? FULL_TIME_DAYS : 0): ScoredRecruiter | null {
   // Note admin 1 = profil grillé, jamais suggéré.
   if ((r.admin_rating ?? 0) === 1) return null;
   // Verticales étanches : un profil RPO n'est jamais proposé sur un besoin d'une autre verticale.
   if ((r.vertical ?? "rpo") !== (need.vertical ?? "rpo")) return null;
 
   const budget = scoreBudget(need, r);
-  const availability = scoreAvailability(need, r, onMission);
+  // En mission, mais avec assez de jours libres dans la semaine : traité comme disponible
+  const cap = capacityFor(need, r, committedDays);
+  const busy = committedDays > 0 && !cap.fits;
+  const availability = scoreAvailability(need, r, busy);
   if (budget.excluded || availability.excluded) return null;
 
   const remote = scoreRemote(need, r);
@@ -233,12 +259,20 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
   // Métiers : on croise les métiers recrutés par le profil avec ceux du besoin
   // (identiques ou voisins), puis ses spécialités avec l'intitulé et la description.
   const needText = `${need.job_title} ${need.description ?? ""}`;
+  const isRpo = (need.vertical ?? "rpo") === "rpo";
+  // Départements C-Level : spécialités communes avec le besoin (ou citées dans le texte)
+  const mySpecialties = r.specialties ?? [];
+  const wantedSpecialties = need.specialties ?? [];
+  const commonSpecialties = mySpecialties.filter((x) => wantedSpecialties.some((y) => norm(x) === norm(y)));
+  const cLevelRatio = wantedSpecialties.length
+    ? Math.min(1, commonSpecialties.length / wantedSpecialties.length + 0.15 * mentionedIn(mySpecialties, needText))
+    : Math.max(0.5, mentionedIn(mySpecialties, needText));
   const metiers = metierMatch(r.skills ?? [], need.profile_types);
   const specialtiesInText = mentionedIn(r.tech_specialties ?? [], needText);
-  const skillsRatio = need.profile_types?.length
+  const skillsRatio = !isRpo ? cLevelRatio : need.profile_types?.length
     ? Math.min(1, metiers.ratio + 0.25 * specialtiesInText)
     : mentionedIn([...(r.skills ?? []), ...(r.tech_specialties ?? [])], needText);
-  const noMetierInCommon = (need.profile_types?.length ?? 0) > 0 && metiers.exact.length === 0 && metiers.near.length === 0;
+  const noMetierInCommon = isRpo && (need.profile_types?.length ?? 0) > 0 && metiers.exact.length === 0 && metiers.near.length === 0;
   const sectorsRatio = overlap(r.sectors ?? [], need.sectors);
   const locationRatio = need.remote_policy === "full-remote"
     ? 1
@@ -250,7 +284,8 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
 
   const breakdown: ScoreBreakdown = {
     budget: budget.pts,
-    availability: availability.pts,
+    // Le profil propose moins de jours que demandé : disponibilité au prorata
+    availability: cap.offersLess ? availability.pts * (cap.capacity / cap.wanted) : availability.pts,
     remote: remote.pts,
     skills: skillsRatio * MAX.skills,
     sectors: sectorsRatio * MAX.sectors,
@@ -263,14 +298,20 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
   // d'abord (c'est ce qui distingue les profils), puis secteur, budget, dispo, remote.
   const commonSectors = (r.sectors ?? []).filter((x) => (need.sectors ?? []).some((y) => norm(x) === norm(y)));
   const notes: string[] = [];
-  if (noMetierInCommon) notes.push(`Recrute surtout en ${(r.skills ?? []).join(", ") || "autre métier"}, pas en ${need.profile_types.join(", ")}`);
+  if (!isRpo) {
+    if (commonSpecialties.length) notes.push(`Spécialiste ${commonSpecialties.join(", ")}`);
+    else if (mySpecialties.length) notes.push(`Expertise ${mySpecialties.slice(0, 3).join(", ")}`);
+    if (r.years_experience) notes.push(`${r.years_experience} ans d'expérience${r.previous_companies?.length ? ` · ex-${r.previous_companies.slice(0, 2).join(", ")}` : ""}`);
+  } else if (noMetierInCommon) notes.push(`Recrute surtout en ${(r.skills ?? []).join(", ") || "autre métier"}, pas en ${need.profile_types.join(", ")}`);
   else if (metiers.exact.length) notes.push(`Recrute déjà des profils ${metiers.exact.join(", ")}`);
   else notes.push(`Recrute sur un métier voisin (${(r.skills ?? []).join(", ")})`);
   if (commonSectors.length) notes.push(`Expérience ${commonSectors.join(", ")}`);
   if (r.super_tam) notes.push("Badge Super TAM");
   // Motifs impersonnels : jamais de mention d'une note, d'un avis ou de qui a évalué le profil.
   for (const n of [english.note, budget.note, availability.note, remote.note]) if (n) notes.push(n);
-  if (onMission) notes.push("Actuellement en mission");
+  if (cap.offersLess) notes.push(`Disponible ${rhythmLabel(cap.capacity)}, le besoin demande ${rhythmLabel(cap.wanted).toLowerCase()}`);
+  else if (committedDays > 0 && cap.fits) notes.push(`Déjà en mission, ${cap.remaining} j/sem encore disponibles`);
+  if (busy) notes.push("Actuellement en mission");
 
   const total = Object.values(breakdown).reduce((a, b) => a + b, 0);
   const maxTotal = Object.values(MAX).reduce((a, b) => a + b, 0);
@@ -282,14 +323,18 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean): Sc
     score: noMetierInCommon ? Math.min(raw, NO_METIER_CAP) : raw,
     breakdown,
     notes,
-    currentlyOnMission: onMission,
+    currentlyOnMission: busy,
   };
 }
 
-/** Filtre + trie tous les profils, et ne garde que les `limit` meilleurs. */
-export function prefilter(need: Need, recruiters: Recruiter[], busyIds: Set<string>, limit = 12): ScoredRecruiter[] {
+/**
+ * Filtre + trie tous les profils, et ne garde que les `limit` meilleurs. `busy` : profils en
+ * mission (Set) ou jours par semaine déjà engagés par profil (Map, pour le fractional).
+ */
+export function prefilter(need: Need, recruiters: Recruiter[], busy: Set<string> | Map<string, number>, limit = 12): ScoredRecruiter[] {
+  const committed = (id: string) => (busy instanceof Map ? busy.get(id) ?? 0 : busy.has(id) ? FULL_TIME_DAYS : 0);
   return recruiters
-    .map((r) => scoreRecruiter(need, r, busyIds.has(r.id)))
+    .map((r) => scoreRecruiter(need, r, committed(r.id) > 0, committed(r.id)))
     .filter((s): s is ScoredRecruiter => s !== null)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);

@@ -64,6 +64,9 @@ const CreateMissionDialog = ({
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
+      // Rythme convenu = celui du besoin (sert à suivre la capacité des freelances fractional)
+      const { data: needRow } = await supabase.from("client_needs").select("days_per_week").eq("id", needId).maybeSingle();
+
       // 1. Create the mission
       const { error: missionError } = await supabase
         .from("missions" as any)
@@ -80,6 +83,7 @@ const CreateMissionDialog = ({
           end_date: endDate ? format(endDate, "yyyy-MM-dd") : null,
           // Mise en place : dossiers KYC et contrats à finaliser avant le démarrage
           status: "onboarding",
+          days_per_week: (needRow as { days_per_week: number | null } | null)?.days_per_week ?? null,
           created_by: session.user.id,
         });
 

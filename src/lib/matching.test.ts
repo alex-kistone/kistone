@@ -110,3 +110,34 @@ describe("date d'arrivée souhaitée", () => {
     expect(notes).not.toMatch(/client/i);
   });
 });
+
+describe("départements C-Level", () => {
+  const cfoNeed = { ...need, vertical: "cfo", profile_types: [], specialties: ["Trésorerie", "FP&A"], days_per_week: 2 } as unknown as Need;
+  const cfo = (over: Partial<Recruiter>) => profile({ vertical: "cfo" as never, skills: [], specialties: ["Trésorerie", "FP&A", "Consolidation"], weekly_capacity: 3, ...over });
+
+  it("classe selon les spécialités communes avec le besoin", () => {
+    const exact = scoreRecruiter(cfoNeed, cfo({}), false)!;
+    const other = scoreRecruiter(cfoNeed, cfo({ specialties: ["Comptabilité"] }), false)!;
+    expect(exact.score).toBeGreaterThan(other.score);
+    expect(exact.notes[0]).toBe("Spécialiste Trésorerie, FP&A");
+  });
+
+  it("garde disponible un fractional en mission tant qu'il lui reste des jours", () => {
+    const ranked = prefilter(cfoNeed, [cfo({ id: "a" })], new Map([["a", 1]]));
+    expect(ranked[0].currentlyOnMission).toBe(false);
+    expect(ranked[0].notes.join(" ")).toMatch(/2 j\/sem encore disponibles/);
+    const full = prefilter(cfoNeed, [cfo({ id: "b", available: false, availability_date: null })], new Map([["b", 3]]));
+    expect(full).toHaveLength(0); // plus de jours libres, aucune date : exclu
+  });
+
+  it("pénalise un profil qui propose moins de jours que demandé", () => {
+    const fullTimeNeed = { ...cfoNeed, days_per_week: null } as Need;
+    const s = scoreRecruiter(fullTimeNeed, cfo({ weekly_capacity: 2 }), false)!;
+    expect(s.breakdown.availability).toBeCloseTo(8);
+    expect(s.notes.join(" ")).toMatch(/Disponible 2 j \/ sem, le besoin demande temps plein/);
+  });
+
+  it("ne mélange jamais un CFO et un besoin RPO", () => {
+    expect(scoreRecruiter(need, cfo({}), false)).toBeNull();
+  });
+});
