@@ -40,7 +40,10 @@ describe("anglais dans le matching", () => {
     expect(scoreRecruiter(englishNeed, declared, false)!.notes).toContain("Anglais courant");
     const s = scoreRecruiter(englishNeed, corrected, false)!;
     expect(s.breakdown.english).toBe(0);
-    expect(s.notes).toContain("Anglais limité");
+    expect(s.notes).toContain("Anglais limité, alors que le besoin l'exige");
+    // Exigence explicite non remplie : plafond conservé même après l'étage IA
+    expect(s.cap).toBe(55);
+    expect(s.score).toBeLessThanOrEqual(55);
   });
 });
 
@@ -139,5 +142,14 @@ describe("départements C-Level", () => {
 
   it("ne mélange jamais un CFO et un besoin RPO", () => {
     expect(scoreRecruiter(need, cfo({}), false)).toBeNull();
+  });
+});
+
+describe("anglais seulement contextuel", () => {
+  it("ne plafonne pas quand le besoin évoque l'international sans exiger l'anglais", () => {
+    const ctx = { ...need, description: "Rejoindre une équipe internationale" } as Need;
+    const s = scoreRecruiter(ctx, profile({ admin_english_rating: 2 }), false)!;
+    expect(s.cap).toBeUndefined();
+    expect(s.notes).toContain("Anglais limité");
   });
 });

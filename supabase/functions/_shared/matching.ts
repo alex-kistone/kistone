@@ -93,6 +93,8 @@ export interface ScoredRecruiter {
   /** Motifs factuels, réutilisés si l'IA est indisponible. */
   notes: string[];
   currentlyOnMission: boolean;
+  /** Plafond du score final (après l'étage IA) quand une exigence du besoin n'est pas remplie. */
+  cap?: number;
 }
 
 // La spécialité métier est la promesse centrale : c'est le critère le plus lourd.
@@ -106,16 +108,23 @@ const RATING_WEIGHT: Record<number, number> = { 0: 0.45, 2: 0.15, 3: 0.55, 4: 0.
 
 /** Le besoin demande-t-il de l'anglais ? */
 const ENGLISH_HINT = /\b(anglais|english|bilingues?|internationa(?:l|le|les|ux)|anglophones?)\b/i;
+/** L'anglais est une exigence explicite du besoin (et pas seulement un contexte international). */
+const ENGLISH_REQUIRED = /\b(anglais|english)\b[^.]{0,60}\b(indispensable|obligatoire|requis|exigé|impératif|courant|fluent|bilingue)|\b(indispensable|obligatoire|requis|exigé|impératif)\b[^.]{0,40}\b(anglais|english)\b|\bbilingue anglais\b/i;
+/** Plafond d'un profil à l'anglais limité quand le besoin l'exige. */
+export const ENGLISH_MISS_CAP = 55;
 
 /** Critère anglais : neutre si le besoin n'en parle pas, sinon selon le niveau retenu. */
-function scoreEnglish(needText: string, r: Recruiter): { pts: number; note: string | null } {
+function scoreEnglish(needText: string, r: Recruiter): { pts: number; note: string | null; missedRequirement?: boolean } {
   if (!ENGLISH_HINT.test(needText)) return { pts: MAX.english, note: null };
+  const required = ENGLISH_REQUIRED.test(needText);
   const languages = Array.isArray(r.languages) ? (r.languages as { language: string; level: string }[]) : [];
   const level = englishLevel({ languages, admin_english_rating: r.admin_english_rating ?? null });
   if (level == null) return { pts: MAX.english * 0.4, note: null };
   if (level >= 4) return { pts: MAX.english, note: "Anglais courant" };
   if (level === 3) return { pts: MAX.english * 0.6, note: "Bon niveau d'anglais" };
-  return { pts: 0, note: "Anglais limité" };
+  return required
+    ? { pts: 0, note: "Anglais limité, alors que le besoin l'exige", missedRequirement: true }
+    : { pts: 0, note: "Anglais limité" };
 }
 
 /** Score plafond d'un profil qui ne recrute sur aucun métier du besoin, même voisin. */
@@ -320,7 +329,9 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean, com
   return {
     recruiter: r,
     // Sans aucun métier commun, le profil reste visible mais ne peut pas passer devant un vrai spécialiste
-    score: noMetierInCommon ? Math.min(raw, NO_METIER_CAP) : raw,
+    score: Math.min(raw, ...(noMetierInCommon ? [NO_METIER_CAP] : []), ...(english.missedRequirement ? [ENGLISH_MISS_CAP] : [])),
+    // Plafond maintenu après l'étage IA : une exigence explicite non remplie ne se rattrape pas
+    cap: english.missedRequirement ? ENGLISH_MISS_CAP : noMetierInCommon ? NO_METIER_CAP : undefined,
     breakdown,
     notes,
     currentlyOnMission: busy,
