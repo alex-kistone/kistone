@@ -59,6 +59,7 @@ const users = {
   admin: { email: `e2e-admin-${STAMP}@${DOMAIN}` },
   client: { email: `e2e-client-${STAMP}@${DOMAIN}` },
   freelance: { email: `e2e-freelance-${STAMP}@${DOMAIN}` },
+  cfo: { email: `e2e-cfo-${STAMP}@${DOMAIN}` },
 };
 
 function createAccount(u) {
@@ -116,6 +117,7 @@ async function run() {
   const admin = await signIn(users.admin);
   const client = await signIn(users.client);
   const free = await signIn(users.freelance);
+  const cfoUser = await signIn(users.cfo);
   must("Client · rôle attribué comme à l'inscription", !(await invoke(client, "assign-client-role", {})).error);
   must("Freelance · rôle attribué comme à l'inscription", !(await invoke(free, "assign-freelance-role", {})).error);
   const both = await invoke(client, "assign-freelance-role", {});
@@ -312,6 +314,33 @@ async function run() {
   expect("Freelance", fK, ["mission_created", "kyc_approved", "mission_started", "cra_rejected", "cra_approved", "freelance_invoice_approved", "freelance_invoice_paid"]);
   expect("Admin", aK, ["kyc_submitted", "cra_approved", "freelance_invoice_submitted"]);
   check("Client · ne reçoit aucune notification du freelance", !cK.some((k) => k.startsWith("freelance_invoice") || k.startsWith("cra_rejected")));
+
+  section("Départements C-Level (CFO fractional)");
+  must("CFO · rôle freelance attribué", !(await invoke(cfoUser, "assign-freelance-role", {})).error);
+  const { data: cfoProfile, error: cfoErr } = await cfoUser.from("recruiter_profiles").insert({
+    user_id: users.cfo.id, email: users.cfo.email, first_name: "Thomas", last_name: `E2E-${STAMP}`, vertical: "cfo",
+    linkedin_url: `https://www.linkedin.com/in/e2e-cfo-${STAMP}`, job_title: "CFO fractional",
+    specialties: ["Trésorerie", "FP&A", "Budget & Forecast"], weekly_capacity: 3, years_experience: 15, previous_companies: ["Qonto"],
+    sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid", tjm: 1000, available: true,
+  }).select("id, onboarding_completed").single();
+  must("CFO · profil complet avec ses spécialités (sans métiers RPO)", !cfoErr && cfoProfile.onboarding_completed, cfoErr?.message);
+  const { data: cfoNeed, error: cfoNeedErr } = await client.from("client_needs").insert({
+    user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
+    job_title: `${TAG} CFO fractional`, vertical: "cfo", specialties: ["Trésorerie", "FP&A"], days_per_week: 2,
+    mission_location: "Paris", remote_policy: "hybrid", budget_tjm_min: 1000, budget_tjm_max: 1400,
+    description: "Après la série A : budget, trésorerie et reporting investisseurs, 2 jours par semaine.",
+  }).select("id").single();
+  must("Client · dépose un besoin CFO 2 j/sem", !cfoNeedErr, cfoNeedErr?.message);
+  const cfoOpp = await cfoUser.from("client_needs_open").select("id, vertical");
+  check("CFO · voit le besoin CFO dans ses opportunités", !!cfoOpp.data?.some((n) => n.id === cfoNeed.id), cfoOpp.error?.message);
+  check("CFO · ne voit pas les besoins RPO", !cfoOpp.data?.some((n) => n.vertical !== "cfo"));
+  const rpoOpp = await free.from("client_needs_open").select("id");
+  check("Recruteur RPO · ne voit pas le besoin CFO", !rpoOpp.data?.some((n) => n.id === cfoNeed.id));
+  const cfoMatch = await invoke(admin, "match-profiles", { need_id: cfoNeed.id });
+  must("Admin · lance le matching CFO", !cfoMatch.error, cfoMatch.error);
+  const cfoSugg = sql(`select recruiter_profile_id from public.profile_suggestions where need_id = ${q(cfoNeed.id)};`);
+  check("Matching CFO · propose le CFO", cfoSugg.some((x) => x.recruiter_profile_id === cfoProfile.id), `${cfoSugg.length} profil(s)`);
+  check("Matching CFO · ne propose jamais le recruteur RPO", !cfoSugg.some((x) => x.recruiter_profile_id === ids.profile));
 }
 
 // ── Nettoyage ──────────────────────────────────────────────────────────────────
