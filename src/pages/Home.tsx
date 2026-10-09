@@ -3,6 +3,7 @@ import SiteLayout from "@/components/site/SiteLayout";
 import Hero from "@/components/home/Hero";
 import BriefDemo from "@/components/home/BriefDemo";
 import ProofStrip from "@/components/home/ProofStrip";
+import FunctionsGrid from "@/components/home/FunctionsGrid";
 import FinalCTA from "@/components/home/FinalCTA";
 import LogoTicker from "@/components/home/LogoTicker";
 import HowItWorks from "@/components/home/HowItWorks";
@@ -15,13 +16,14 @@ export default function Home() {
   return (
     <SiteLayout>
       <SEO
-        title="Kistone · Partenaire RH augmenté"
-        description="Des recruteurs RPO freelance vérifiés pour recruter vite, et un studio IA qui construit vos outils RH sur mesure."
+        title="Kistone · Plateforme Freelance · Fractional Leaders"
+        description="Dirigeants et recruteurs freelance pour les entreprises Tech & Digital : RPO, DRH, CFO, COO, CRO, CTO, à temps plein ou quelques jours par semaine."
         path="/"
       />
       <Hero />
       <BriefDemo />
       <LogoTicker />
+      <FunctionsGrid />
       <ProofStrip />
       <HowItWorks />
       <WhyMarketplace />

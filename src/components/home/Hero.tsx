@@ -33,7 +33,7 @@ function FunctionsUnderline({ words }: { words: string[] }) {
 
   return (
     <div className="relative mt-7 inline-block pb-3">
-      <ul className="flex items-baseline gap-6 font-ks-display text-[22px] font-semibold tracking-[-0.02em] sm:gap-9 sm:text-[28px]" aria-label="Métiers">
+      <ul className="flex items-baseline gap-[14px] font-ks-display text-[19px] font-semibold tracking-[-0.02em] sm:gap-9 sm:text-[28px]" aria-label="Métiers">
         {words.map((w, i) => (
           <li
             key={w}
@@ -60,7 +60,7 @@ export default function Hero() {
       <p className="ks-reveal mb-7 inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-full border border-[rgba(20,19,18,0.08)] bg-white pl-1.5 pr-3.5 text-[13px] text-ks-ink-2 sm:gap-2.5 sm:pr-4 sm:text-sm shadow-[0_1px_2px_rgba(20,19,18,0.04)]">
         <span className="flex h-6 items-center gap-1.5 rounded-full bg-ks-dark px-2.5 font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-dark-fg">
           <span className="h-1.5 w-1.5 rounded-full bg-ks-pink" aria-hidden="true" />
-          Marketplace RPO
+          {HERO.badgeChip}
         </span>
         {HERO.reassurance}
       </p>
@@ -75,6 +75,8 @@ export default function Hero() {
                 part,
               ],
         )}
+        <br />
+        <span className="text-[#8F8980]">{HERO.titleSecond}</span>
       </h1>
 
       <FunctionsUnderline words={HERO.functions} />
@@ -89,7 +91,7 @@ export default function Hero() {
         <Cta href={ROUTES.recruit} size="lg" arrow className="shadow-ks-pink">
           {HERO.primary}
         </Cta>
-        <Cta href={ROUTES.studio} size="lg" variant="secondary">
+        <Cta href={ROUTES.freelance} size="lg" variant="secondary">
           {HERO.secondary}
         </Cta>
       </div>

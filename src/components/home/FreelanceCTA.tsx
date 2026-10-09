@@ -11,15 +11,15 @@ export default function FreelanceCTA() {
         className="ks-reveal mx-auto mt-24 grid max-w-ks scroll-mt-24 items-center gap-10 rounded-[28px] bg-ks-secondary p-6 sm:p-10 md:mt-[140px] md:rounded-[36px] lg:grid-cols-2 lg:gap-14 lg:p-14"
       >
         <div>
-          <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">Je suis recruteur freelance</span>
+          <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">Je suis freelance</span>
           <h2 id="freelances-title" className="mt-4 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
-            Des missions RPO. Zéro administratif.
+            Des missions fractional. Zéro administratif.
           </h2>
           <p className="mt-[18px] max-w-[480px] text-[17px] leading-[1.55] text-ks-soft md:text-lg">
-            Rejoignez la marketplace : missions qualifiées, contrat, CRA et facturation gérés pour vous.
+            Rejoignez la plateforme : missions qualifiées en RPO, DRH, CFO, COO, CRO ou CTO, contrat, CRA et facturation gérés pour vous.
           </p>
           <Cta href={ROUTES.freelance} variant="dark" size="lg" arrow className="mt-7">
-            Rejoindre la marketplace
+            Rejoindre la plateforme
           </Cta>
         </div>
 

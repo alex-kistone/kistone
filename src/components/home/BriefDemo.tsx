@@ -101,7 +101,7 @@ export default function BriefDemo() {
               <h2 id="marketplace-title" className="font-ks-display text-[26px] font-semibold leading-[1.05] tracking-[-0.03em] sm:text-[34px]">
                 Décrivez votre besoin.
                 <br />
-                <span className="text-ks-subtle">On trouve le recruteur.</span>
+                <span className="text-ks-subtle">On trouve le profil.</span>
               </h2>
             </div>
 
@@ -161,7 +161,7 @@ export default function BriefDemo() {
               <span className="whitespace-nowrap font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">Profils proposés</span>
               <span className="flex items-center gap-1.5 whitespace-nowrap text-xs text-ks-subtle">
                 <span className={cn("h-1.5 w-1.5 rounded-full", showMatches ? "bg-ks-success" : "bg-[#CFC8BC]")} aria-hidden="true" />
-                {showMatches ? <>3<span className="hidden sm:inline"> recruteurs</span> disponibles</> : "En attente"}
+                {showMatches ? <>{brief.matches.length}<span className="hidden sm:inline"> profils</span> disponibles</> : "En attente"}
               </span>
             </div>
             <ul className="flex flex-1 flex-col gap-2.5" aria-live="polite">
@@ -190,7 +190,7 @@ export default function BriefDemo() {
                         <span className="truncate text-[15px] font-semibold">{r.name}</span>
                         <span className="hidden h-5 shrink-0 items-center gap-1 rounded-full bg-[#E8F5EE] px-2 text-[11px] font-medium text-[#17663F] sm:flex">
                           <span className="h-1.5 w-1.5 rounded-full bg-ks-success" aria-hidden="true" />
-                          Dispo
+                          {r.rhythm}
                         </span>
                       </div>
                       <p className="truncate text-[13px] text-ks-subtle">{r.role} · {r.xp}</p>

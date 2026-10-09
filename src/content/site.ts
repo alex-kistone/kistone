@@ -16,11 +16,12 @@ export type Menu = { id: string; label: string; items: MenuItem[] };
 export const MENUS: Menu[] = [
   {
     id: "mkt",
-    label: "Marketplace RPO",
+    label: "Fractional Leaders",
     items: [
-      { title: "Trouver un recruteur", desc: "Des recruteurs RPO freelance vérifiés, par expertise.", href: "/#marketplace", dot: "#FF2E6E" },
-      { title: "Comment ça marche", desc: "Du besoin au recruteur intégré à votre équipe.", href: "/#comment", dot: "#E07A3A" },
-      { title: "Devenir recruteur", desc: "Missions RPO, administratif géré.", href: "/#freelances", dot: "#C99A12" },
+      { title: "Trouver un expert", desc: "RPO, DRH, CFO, COO, CRO, CTO : freelances vérifiés.", href: "/#marketplace", dot: "#FF2E6E" },
+      { title: "Les six fonctions", desc: "À temps plein ou quelques jours par semaine.", href: "/#fonctions", dot: "#7357D6" },
+      { title: "Comment ça marche", desc: "Un profil en 48 h, un démarrage en une semaine.", href: "/#comment", dot: "#E07A3A" },
+      { title: "Devenir freelance", desc: "Missions qualifiées, administratif géré.", href: "/#freelances", dot: "#C99A12" },
     ],
   },
   {
@@ -45,11 +46,12 @@ export const MENUS: Menu[] = [
 
 export const FOOTER_COLUMNS = [
   {
-    title: "Marketplace RPO",
+    title: "Fractional Leaders",
     links: [
-      { label: "Trouver un recruteur", href: "/#marketplace" },
+      { label: "Trouver un expert", href: "/#marketplace" },
+      { label: "Les six fonctions", href: "/#fonctions" },
       { label: "Comment ça marche", href: "/#comment" },
-      { label: "Devenir recruteur", href: "/#freelances" },
+      { label: "Devenir freelance", href: "/#freelances" },
     ],
   },
   {

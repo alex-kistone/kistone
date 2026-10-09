@@ -13,7 +13,7 @@ function BriefMini() {
       <div className="h-2 w-[85%] rounded-full bg-ks-secondary" />
       <div className="h-2 w-[62%] rounded-full bg-ks-secondary" />
       <div className="mt-1 flex flex-wrap gap-1.5">
-        {["RPO Tech", "Paris", "Dès que possible"].map((c) => (
+        {["CFO", "2 j / sem", "Trésorerie"].map((c) => (
           <span key={c} className="rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: p.soft, color: p.ink }}>
             {c}
           </span>
@@ -58,7 +58,7 @@ function TrackingMini() {
   return (
     <div className="flex w-full flex-col gap-3 rounded-2xl bg-white p-4 shadow-[0_10px_24px_-16px_rgba(60,40,20,0.35)]">
       <div className="flex items-center justify-between text-[12px]">
-        <span className="font-semibold">Postes pourvus</span>
+        <span className="font-semibold">Objectifs du trimestre</span>
         <span className="font-ks-display text-[15px] font-semibold">2/3</span>
       </div>
       <div className="h-1.5 rounded-full bg-ks-secondary">
@@ -79,12 +79,12 @@ export default function HowItWorks() {
     <section id="comment" className="mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <SectionTag className="ks-reveal">Comment ça marche</SectionTag>
       <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-        Un recruteur senior.
+        Un expert senior.
         <br />
         Sans le CDI.
       </h2>
       <p className="ks-reveal mt-[18px] text-[17px] leading-[1.5] text-ks-soft md:text-[19px]">
-        Il rejoint vos équipes, utilise vos outils et recrute à votre rythme.
+        Il rejoint vos équipes, utilise vos outils et avance à votre rythme.
       </p>
       <ol className="mt-14 grid w-full gap-5 text-left md:grid-cols-3">
         {STEPS.map((s, i) => {

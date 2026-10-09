@@ -3,65 +3,67 @@ import { palettes, type PaletteName } from "@/lib/palettes";
 // Contenus de l'accueil. Les [placeholders] restent tels quels en attendant le vrai contenu.
 
 export const HERO = {
-  title: "Plateforme Freelance RPO",
-  // Mot surligné au marqueur rose, comme sur la plateforme C-Level
+  // « Plateforme Freelance » / « Fractional Leaders » (jamais « management de transition »)
+  title: "Plateforme Freelance",
   titleHighlight: "Freelance",
-  // Un soulignement rose passe d'un métier à l'autre sous le titre
-  functions: ["Tech", "GTM", "Finance", "Ops"],
+  titleSecond: "Fractional Leaders",
+  // Un soulignement rose passe d'une fonction à l'autre sous le titre
+  functions: ["RPO", "DRH", "CFO", "COO", "CRO", "CTO"],
   subtitle: [
-    "En 48H, nous connectons les entreprises avec les meilleurs recruteurs freelances parmi une communauté de 700+ experts qualifiés.",
+    "Des dirigeants et des recruteurs freelance pour les entreprises Tech & Digital, à temps plein ou quelques jours par semaine. En quelques jours, pas en quelques mois.",
   ],
-  primary: "Accéder à la plateforme",
-  secondary: "Découvrir le studio",
-  reassurance: "Bien recruter, bien équiper",
+  primary: "Partager un besoin",
+  secondary: "Je suis freelance",
+  badgeChip: "Tech & Digital",
+  reassurance: "Fractional et temps plein",
 };
-
-export const FILTERS = ["Tous", "Tech", "GTM", "Finance", "Ops"] as const;
-export type Filter = (typeof FILTERS)[number];
 
 export type Recruiter = {
   initials: string;
   name: string;
   role: string;
-  domain: Exclude<Filter, "Tous">;
-  dispo: string;
+  /** Fonction (rpo, drh, cfo, coo, cro, cto). */
+  vertical: string;
+  rhythm: string;
   xp: string;
-  city: string;
-  tags: string[];
   palette: PaletteName;
 };
 
-// Fiches fictives en attendant les vrais profils de la marketplace.
+// Profils fictifs, pour illustrer la plateforme en attendant les vrais.
 export const RECRUITERS: Recruiter[] = [
-  { initials: "JM", name: "Julie M.", role: "Recruteuse Tech & Produit", domain: "Tech", dispo: "Dispo", xp: "9 ans", city: "Nantes · remote", tags: ["Scale-ups", "Dev & Data", "Produit"], palette: "lilac" },
-  { initials: "KB", name: "Karim B.", role: "Recruteur GTM & Revenue", domain: "GTM", dispo: "Dispo", xp: "12 ans", city: "Paris", tags: ["SaaS B2B", "Account Exec", "SDR"], palette: "apricot" },
-  { initials: "AL", name: "Anne L.", role: "Recruteuse Finance", domain: "Finance", dispo: "Dispo", xp: "7 ans", city: "Lyon · hybride", tags: ["PME", "Contrôle de gestion", "Ops"], palette: "sage" },
-  { initials: "TR", name: "Thomas R.", role: "Recruteur Tech", domain: "Tech", dispo: "Dispo", xp: "6 ans", city: "Rennes · remote", tags: ["Start-ups", "DevOps", "Mobile"], palette: "blue" },
-  { initials: "SD", name: "Sofia D.", role: "Recruteuse GTM", domain: "GTM", dispo: "Dispo", xp: "8 ans", city: "Télétravail", tags: ["Marketplace", "Customer Success"], palette: "sand" },
-  { initials: "LP", name: "Léo P.", role: "Recruteur Ops", domain: "Ops", dispo: "Dispo", xp: "10 ans", city: "Bordeaux", tags: ["Supply", "Logistique", "Opérations"], palette: "teal" },
+  { initials: "JM", name: "Julie M.", role: "Recruteuse Tech & Produit", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage" },
+  { initials: "TR", name: "Thomas R.", role: "Recruteur Tech", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "blue" },
+  { initials: "CM", name: "Camille M.", role: "DRH part-time", vertical: "drh", rhythm: "3 j / sem", xp: "12 ans", palette: "apricot" },
+  { initials: "VB", name: "Valérie B.", role: "DRH · Transformation RH", vertical: "drh", rhythm: "2 j / sem", xp: "15 ans", palette: "apricot" },
+  { initials: "TL", name: "Thomas L.", role: "CFO fractional · ex-Qonto", vertical: "cfo", rhythm: "2 j / sem", xp: "15 ans", palette: "lilac" },
+  { initials: "YK", name: "Youssef K.", role: "CFO · levées de fonds", vertical: "cfo", rhythm: "Temps plein", xp: "13 ans", palette: "lilac" },
+  { initials: "AD", name: "Aminata D.", role: "COO · scaling des opérations", vertical: "coo", rhythm: "3 j / sem", xp: "14 ans", palette: "sand" },
+  { initials: "RP", name: "Rohit P.", role: "COO · supply chain", vertical: "coo", rhythm: "Temps plein", xp: "11 ans", palette: "sand" },
+  { initials: "SB", name: "Sylvie B.", role: "CRO · ouverture de marché", vertical: "cro", rhythm: "Temps plein", xp: "14 ans", palette: "blue" },
+  { initials: "KB", name: "Karim B.", role: "Head of Sales · SaaS B2B", vertical: "cro", rhythm: "2 j / sem", xp: "12 ans", palette: "blue" },
+  { initials: "LN", name: "Lina N.", role: "CTO · intégration IA", vertical: "cto", rhythm: "3 j / sem", xp: "16 ans", palette: "teal" },
+  { initials: "MG", name: "Marc G.", role: "Head of AI · data", vertical: "cto", rhythm: "2 j / sem", xp: "10 ans", palette: "teal" },
 ];
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
 
 export const STEPS = [
-  { num: "Étape 01", title: "Décrivez votre besoin", desc: "15 minutes pour cadrer les postes, le rythme et le budget." },
-  { num: "Étape 02", title: "Choisissez votre recruteur", desc: "Des profils RPO sélectionnés selon votre secteur et vos métiers." },
-  { num: "Étape 03", title: "Il recrute avec vous", desc: "Intégré à vos outils et à vos rituels, avec un suivi clair chaque mois." },
+  { num: "Étape 01", title: "Partagez votre besoin", desc: "On qualifie ensemble l'enjeu, le temps utile et le budget." },
+  { num: "Étape 02", title: "Un profil en 48 h", desc: "Un freelance senior, présélectionné sur la fonction et vos enjeux." },
+  { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, conformité, onboarding : puis un suivi régulier de la mission." },
 ];
 
-export const ADMIN_PILLS = ["Contrat de mission", "KYC", "CRA mensuel", "Facture unique"];
-
 export const ASSETS = [
-  { icon: "shield", title: "Recruteurs vérifiés", desc: "Identité, statut et références contrôlés avant la première mission.", featured: true },
-  { icon: "clock", title: "Flexible", desc: "Quelques jours par semaine ou à plein temps. Vous ajustez selon vos besoins." },
-  { icon: "team", title: "Intégré à votre équipe", desc: "Votre ATS, votre Slack, vos rituels. Il recrute en votre nom." },
-  { icon: "pulse", title: "Spécialisés par métier", desc: "Tech, GTM, Finance, Ops : un recruteur qui connaît vos profils." },
+  { icon: "shield", title: "Profils vérifiés", desc: "Identité, statut, parcours et références contrôlés avant la première mission.", featured: true },
+  { icon: "clock", title: "Fractional ou temps plein", desc: "Quelques jours par semaine ou à plein temps. Vous ajustez selon vos besoins." },
+  { icon: "team", title: "Intégré à votre équipe", desc: "Vos outils, vos rituels, vos objectifs. Un dirigeant qui travaille avec vous." },
+  { icon: "pulse", title: "Spécialisés par fonction", desc: "RPO, DRH, CFO, COO, CRO, CTO : un expert qui connaît vos enjeux." },
 ] as const;
 
 export const FREELANCE_SPACE = [
-  { label: "Mission · Scale-up SaaS · 3 j/sem.", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
-  { label: "CRA de septembre", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
-  { label: "Facture de septembre", status: "Envoyée", bg: palettes.blue.soft, fg: palettes.blue.ink },
+  { label: "Mission CFO · Scale-up SaaS · 2 j/sem.", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
+  { label: "CRA d'octobre · 8 jours", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
+  { label: "Facture d'octobre", status: "Envoyée", bg: palettes.blue.soft, fg: palettes.blue.ink },
   { label: "Nouvelle mission proposée", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
 ];
 
@@ -82,58 +84,70 @@ export const RESOURCES: { kind: string; title: string; meta: string; palette: Pa
 
 /** Rangée de réassurance sous le hero (promesses validées uniquement). */
 export const HERO_TRUST = {
-  avatars: ["JM", "KB", "AL", "TR"] as const,
-  lead: "700+ recruteurs vérifiés",
-  points: ["Réponse sous 48 h", "Sans engagement"],
+  avatars: ["JM", "CM", "TL", "LN"] as const,
+  lead: "700+ experts vérifiés",
+  points: ["Profil sous 48 h", "Sans engagement"],
 };
 
 /**
  * Démo « brief → matching » : un besoin se tape tout seul, l'IA en extrait les critères,
- * puis les profils correspondants apparaissent. Un exemple par métier (onglets).
+ * puis les profils correspondants apparaissent. Un exemple par fonction (onglets).
  * Profils fictifs en attendant les vrais : la démo illustre le produit.
  */
-export type Brief = { domain: Exclude<Filter, "Tous">; text: string; criteria: string[]; matches: { name: string; score: number }[] };
+export type Brief = { domain: string; text: string; criteria: string[]; matches: { name: string; score: number }[] };
 export const BRIEFS: Brief[] = [
   {
-    domain: "Tech",
+    domain: "RPO",
     text: "Je cherche un recruteur pour 3 développeurs backend, à Paris en hybride, dès que possible.",
     criteria: ["RPO Tech", "Paris · hybride", "Dès que possible", "3 postes"],
-    matches: [{ name: "Julie M.", score: 94 }, { name: "Thomas R.", score: 88 }, { name: "Léo P.", score: 71 }],
+    matches: [{ name: "Julie M.", score: 94 }, { name: "Thomas R.", score: 88 }],
   },
   {
-    domain: "GTM",
-    text: "Besoin d'un recruteur pour monter une équipe de 4 Account Executives en SaaS B2B, à partir de janvier.",
-    criteria: ["RPO GTM", "SaaS B2B", "Janvier", "4 postes"],
-    matches: [{ name: "Karim B.", score: 96 }, { name: "Sofia D.", score: 89 }, { name: "Julie M.", score: 68 }],
+    domain: "DRH",
+    text: "Scale-up de 120 personnes : on cherche un DRH 3 jours par semaine pour structurer la rémunération et les relations sociales.",
+    criteria: ["DRH", "3 j / sem", "Compensations & bénéfices", "Relations sociales"],
+    matches: [{ name: "Camille M.", score: 93 }, { name: "Valérie B.", score: 86 }],
   },
   {
-    domain: "Finance",
-    text: "On recrute un contrôleur de gestion et un comptable senior à Lyon, 3 jours par semaine.",
-    criteria: ["RPO Finance", "Lyon", "3 j/semaine", "2 postes"],
-    matches: [{ name: "Anne L.", score: 93 }, { name: "Léo P.", score: 74 }, { name: "Karim B.", score: 66 }],
+    domain: "CFO",
+    text: "Après notre série A, besoin d'un CFO 2 jours par semaine pour le budget, la trésorerie et le reporting investisseurs.",
+    criteria: ["CFO", "2 j / sem", "Trésorerie", "Budget & Forecast"],
+    matches: [{ name: "Thomas L.", score: 95 }, { name: "Youssef K.", score: 84 }],
   },
   {
-    domain: "Ops",
-    text: "Recrutement de 5 responsables logistique pour nos entrepôts, démarrage en novembre.",
-    criteria: ["RPO Ops", "Multi-sites", "Novembre", "5 postes"],
-    matches: [{ name: "Léo P.", score: 95 }, { name: "Anne L.", score: 77 }, { name: "Sofia D.", score: 70 }],
+    domain: "COO",
+    text: "Nous ouvrons deux nouveaux marchés : il nous faut un COO pour structurer les process et manager les équipes ops.",
+    criteria: ["COO", "Ouverture de marché", "Structuration & process", "Management d'équipe"],
+    matches: [{ name: "Aminata D.", score: 92 }, { name: "Rohit P.", score: 81 }],
+  },
+  {
+    domain: "CRO",
+    text: "On veut ouvrir l'Allemagne et monter une équipe de 5 commerciaux : CRO à temps plein, démarrage en janvier.",
+    criteria: ["CRO", "Temps plein", "Expansion internationale", "Management d'équipe"],
+    matches: [{ name: "Sylvie B.", score: 96 }, { name: "Karim B.", score: 79 }],
+  },
+  {
+    domain: "CTO",
+    text: "Startup SaaS : on cherche un CTO 3 jours par semaine pour intégrer l'IA générative au produit et structurer l'équipe tech.",
+    criteria: ["CTO", "3 j / sem", "Intégration IA / LLM", "Management d'équipes tech"],
+    matches: [{ name: "Lina N.", score: 94 }, { name: "Marc G.", score: 87 }],
   },
 ];
 
-/** Chiffres clés (promesses validées : 48 h, 15 min ; communauté annoncée dans le hero). */
+/** Chiffres clés (promesses validées : 48 h ; communauté annoncée dans le hero). */
 export const PROOF = [
   { value: "48", unit: "h", label: "pour recevoir vos premiers profils" },
-  { value: "700", unit: "+", label: "recruteurs freelances qualifiés" },
-  { value: "15", unit: "min", label: "pour cadrer votre besoin avec nous" },
+  { value: "2 à 5", unit: "j", label: "par semaine, selon votre besoin réel" },
+  { value: "700", unit: "+", label: "experts freelance qualifiés" },
 ];
 
 /** Cadre administratif : la liste se coche toute seule dans la carte sombre. */
 export const ADMIN_CHECKLIST = ["Contrat de mission signé", "KYC vérifié", "CRA validé chaque mois", "Facture unique émise"];
 
 export const FINAL_CTA = {
-  title: "Votre prochain recrutement",
-  titleEnd: "commence ici.",
+  title: "Votre prochain dirigeant",
+  titleEnd: "est peut-être déjà disponible.",
   text: "Décrivez votre besoin en quelques lignes : vous recevez des profils sous 48 h.",
-  primary: "Je recrute",
+  primary: "Partager un besoin",
   secondary: "Je suis freelance",
 };

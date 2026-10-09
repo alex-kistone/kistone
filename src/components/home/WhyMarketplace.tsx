@@ -39,7 +39,7 @@ export default function WhyMarketplace() {
         <div className="relative flex flex-col gap-3.5">
           <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Cadre clé en main</span>
           <h3 className="max-w-[600px] font-ks-display text-[28px] font-semibold leading-[1.08] tracking-[-0.03em] md:text-[38px]">
-            Contrat, KYC, CRA, facturation. On gère l’administratif, vous gérez vos recrutements.
+            Contrat, KYC, CRA, facturation. On gère l’administratif, vous pilotez votre croissance.
           </h3>
         </div>
         {/* La liste se coche toute seule, ligne après ligne, en boucle */}
