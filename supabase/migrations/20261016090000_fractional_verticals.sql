@@ -67,3 +67,20 @@ create policy "Users can create applications" on public.need_applications
     recruiter_profile_id in (select id from public.recruiter_profiles where user_id = auth.uid())
     and exists (select 1 from public.list_open_needs() o where o.id = need_applications.need_id)
   );
+
+-- 6. Profil « complet » (entre dans le matching) : TJM, LinkedIn et, selon la verticale,
+--    les métiers recrutés (RPO) ou les spécialités (départements C-Level).
+create or replace function public.compute_onboarding_completed()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.onboarding_completed :=
+    new.tjm is not null
+    and new.linkedin_url is not null
+    and case when coalesce(new.vertical, 'rpo') = 'rpo'
+             then coalesce(array_length(new.skills, 1), 0) > 0
+             else coalesce(array_length(new.specialties, 1), 0) > 0 end;
+  return new;
+end;
+$$;

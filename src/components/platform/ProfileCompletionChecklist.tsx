@@ -32,9 +32,11 @@ interface ChecklistItem {
 interface ProfileCompletionChecklistProps {
   profile: ProfileData;
   onScrollTo?: (field: string) => void;
+  /** Département C-Level : spécialités au lieu des métiers recrutés, pas de modèle RPO / Succès. */
+  cLevel?: boolean;
 }
 
-const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionChecklistProps) => {
+const ProfileCompletionChecklist = ({ profile, onScrollTo, cLevel }: ProfileCompletionChecklistProps) => {
   const [dismissed, setDismissed] = useState(false);
 
   const items: ChecklistItem[] = useMemo(() => [
@@ -68,15 +70,15 @@ const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionCh
     },
     {
       key: "tjm",
-      label: "TJM & modèle",
-      description: "Indiquez votre tarif et votre modèle (RPO, Succès)",
+      label: cLevel ? "TJM" : "TJM & modèle",
+      description: cLevel ? "Indiquez votre tarif journalier" : "Indiquez votre tarif et votre modèle (RPO, Succès)",
       completed: !!profile.tjm && !!profile.model,
       priority: "high",
     },
     {
       key: "skills",
-      label: "Métiers recrutés",
-      description: "Listez les profils que vous savez recruter",
+      label: cLevel ? "Spécialités" : "Métiers recrutés",
+      description: cLevel ? "Choisissez vos domaines d'expertise" : "Listez les profils que vous savez recruter",
       completed: profile.skills?.length > 0,
       priority: "medium",
     },
@@ -115,7 +117,7 @@ const ProfileCompletionChecklist = ({ profile, onScrollTo }: ProfileCompletionCh
       completed: profile.mobility?.length > 0,
       priority: "low",
     },
-  ], [profile]);
+  ], [profile, cLevel]);
 
   const completedCount = items.filter(i => i.completed).length;
   const percentage = Math.round((completedCount / items.length) * 100);

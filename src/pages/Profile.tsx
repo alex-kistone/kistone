@@ -40,6 +40,18 @@ import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionC
 import { METIERS, SECTEURS } from "@/lib/taxonomy";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
+import { FULL_TIME_DAYS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
+import { palettes } from "@/lib/palettes";
+
+/** Spécialités au plus, pour un département C-Level. */
+const MAX_SPECIALTIES = 5;
+const RHYTHMS = [
+  { value: "5", label: "Temps plein" },
+  { value: "4", label: "4 jours par semaine" },
+  { value: "3", label: "3 jours par semaine" },
+  { value: "2", label: "2 jours par semaine" },
+  { value: "1", label: "1 jour par semaine" },
+];
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -76,6 +88,12 @@ const Profile = () => {
   const [sectors, setSectors] = useState<string[]>([]);
   const [remotePreference, setRemotePreference] = useState<string>("");
   const [sectorOther, setSectorOther] = useState("");
+  // Département (RPO, DRH, CFO, COO, CRO, CTO) et champs propres aux C-Level
+  const [vertical, setVertical] = useState<Vertical>("rpo");
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [weeklyCapacity, setWeeklyCapacity] = useState("5");
+  const [yearsExperience, setYearsExperience] = useState("");
+  const [previousCompanies, setPreviousCompanies] = useState<string[]>([]);
   // Informations société : gérées par « Mon dossier » ; lues ici pour la liste de complétion
   // Onglet piloté par le menu latéral (?tab=missions | admin)
   const [searchParams] = useSearchParams();
@@ -148,6 +166,11 @@ const Profile = () => {
         setSectorOther(otherSector);
       }
       setRemotePreference(p.remote_preference || "");
+      setVertical(isVertical(p.vertical) ? p.vertical : "rpo");
+      setSpecialties(p.specialties || []);
+      setWeeklyCapacity(String(p.weekly_capacity ?? FULL_TIME_DAYS));
+      setYearsExperience(p.years_experience?.toString() || "");
+      setPreviousCompanies(p.previous_companies || []);
     } else {
       // Première connexion : on pré-remplit avec le compte LinkedIn / Google, puis
       // on exige l'URL LinkedIn avant d'accéder au profil.
@@ -171,20 +194,21 @@ const Profile = () => {
    * première visite, crée le profil freelance, encore incomplet : il n'entre dans le
    * matching qu'une fois le TJM et les métiers renseignés.
    */
-  const saveLinkedinUrl = async (url: string): Promise<string | null> => {
+  const saveLinkedinUrl = async (url: string, chosen: Vertical = vertical): Promise<string | null> => {
     if (existingId) {
       const { error } = await supabase.from("recruiter_profiles").update({ linkedin_url: url }).eq("id", existingId);
       if (error) return error.message;
     } else {
       const { data, error } = await supabase
         .from("recruiter_profiles")
-        .insert({ user_id: userId, email, first_name: firstName, last_name: lastName, linkedin_url: url })
+        .insert({ user_id: userId, email, first_name: firstName, last_name: lastName, linkedin_url: url, vertical: chosen })
         .select("id")
         .single();
       if (error) return error.message.includes("ROLE_CONFLICT")
         ? "Cette adresse est déjà utilisée pour un espace client."
         : error.message;
       setExistingId(data.id);
+      setVertical(chosen);
       importAccountPhoto(data.id);
     }
     setLinkedin(url);
@@ -225,6 +249,9 @@ const Profile = () => {
     window.setTimeout(() => box.classList.remove("ring-2", "ring-primary", "ring-offset-4"), 1800);
   };
 
+  const isRpo = vertical === "rpo";
+  const vConf = verticalOf(vertical);
+
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
@@ -240,6 +267,10 @@ const Profile = () => {
     if (phone.replace(/\D/g, "").length < 9) {
       document.getElementById("phone")?.focus();
       toast({ title: "Téléphone requis", description: "Indiquez un numéro de téléphone valide.", variant: "destructive" });
+      return;
+    }
+    if (!isRpo && specialties.length > MAX_SPECIALTIES) {
+      toast({ title: "Trop de choix", description: `${MAX_SPECIALTIES} spécialités maximum.`, variant: "destructive" });
       return;
     }
     if (skills.length > MAX_CHOICES || sectors.length > MAX_CHOICES) {
@@ -275,17 +306,23 @@ const Profile = () => {
         linkedin_url: linkedinUrl,
         photo_url: photoUrl,
         job_title: jobTitle || null,
-        skills,
+        vertical,
+        // Métiers recrutés et champs RPO : réservés au RPO ; spécialités : départements C-Level
+        skills: isRpo ? skills : [],
+        specialties: isRpo ? [] : specialties,
+        weekly_capacity: Number(weeklyCapacity) || null,
+        years_experience: yearsExperience ? parseInt(yearsExperience) : null,
+        previous_companies: previousCompanies,
         clients,
         mobility,
         tjm: tjm ? parseInt(tjm) : null,
-        model: models.length > 0 ? models.join(",") : null,
+        model: isRpo && models.length > 0 ? models.join(",") : null,
         available,
         availability_date: !available && availability ? availability.toISOString().split("T")[0] : null,
         intro_text: introText || null,
         missions: missions.filter((m) => m.client_name.trim()).map(({ tools_input, ...rest }) => rest),
         languages: languages.filter((l) => l.language.trim()),
-        has_linkedin_license: hasLinkedinLicense,
+        has_linkedin_license: isRpo && hasLinkedinLicense,
         sectors: sectors.map((s) => s === "Autre" && sectorOther.trim() ? sectorOther.trim() : s).filter((s) => s !== "Autre"),
         remote_preference: remotePreference || null,
       };
@@ -342,10 +379,20 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background lg:pl-[248px]">
       <AppShell role="freelance" />
-      <LinkedinRequiredDialog open={linkedinGate} firstVisit={firstVisit} onSubmit={saveLinkedinUrl} />
+      <LinkedinRequiredDialog
+        open={linkedinGate}
+        firstVisit={firstVisit}
+        initialVertical={isVertical(searchParams.get("fonction")) ? (searchParams.get("fonction") as Vertical) : null}
+        onSubmit={saveLinkedinUrl}
+      />
       <main className="container mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
+            {existingId && activeTab !== "missions" && activeTab !== "admin" && (
+              <span className="mb-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: palettes[vConf.palette].tint, color: palettes[vConf.palette].ink }}>
+                Profil {vConf.short}
+              </span>
+            )}
             <h1 className="text-3xl font-bold">
               {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon administratif" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
             </h1>
@@ -377,10 +424,11 @@ const Profile = () => {
               linkedin_url: linkedin,
               photo_url: photoPreview,
               job_title: jobTitle,
-              skills,
+              skills: isRpo ? skills : specialties,
               clients,
               tjm: tjm ? parseInt(tjm) : null,
-              model: models.join(",") || null,
+              // Le modèle (RPO / Succès) ne concerne que le RPO
+              model: isRpo ? models.join(",") || null : "fractional",
               intro_text: introText,
               missions,
               languages,
@@ -388,6 +436,7 @@ const Profile = () => {
               mobility,
             }}
             onScrollTo={scrollToSection}
+            cLevel={!isRpo}
           />
         )}
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -456,7 +505,12 @@ const Profile = () => {
           {/* Intitulé de poste */}
           <div className="space-y-2">
             <Label htmlFor="jobTitle">Intitulé de poste</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : Talent Acquisition Manager" />
+            <Input
+              id="jobTitle"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              placeholder={isRpo ? "Ex : Talent Acquisition Manager" : `Ex : ${vConf.short} fractional`}
+            />
           </div>
 
 
@@ -468,6 +522,7 @@ const Profile = () => {
               <Label htmlFor="tjm">TJM (€/jour)</Label>
               <Input id="tjm" type="number" value={tjm} onChange={(e) => setTjm(e.target.value)} placeholder="450" required />
             </div>
+            {isRpo && (
             <div className="space-y-3">
               <Label>Modèle</Label>
               <div className="flex flex-col gap-2">
@@ -484,6 +539,20 @@ const Profile = () => {
                   </label>
                 ))}
               </div>
+            </div>
+            )}
+            <div className="space-y-3">
+              <Label htmlFor="rhythm">Mon rythme</Label>
+              <Select value={weeklyCapacity} onValueChange={setWeeklyCapacity}>
+                <SelectTrigger id="rhythm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {RHYTHMS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-3">
               <Label>Préférence de remote</Label>
@@ -540,6 +609,8 @@ const Profile = () => {
             <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville" />
           </div>
 
+{isRpo ? (
+          <>
           {/* Skills - Multi-select checkboxes */}
           <div id="section-skills" className="space-y-3 rounded-xl transition-shadow">
             <Label>Les métiers sur lesquels je recrute *</Label>
@@ -560,6 +631,45 @@ const Profile = () => {
               ))}
             </div>
           </div>
+
+          </>
+          ) : (
+          <>
+          {/* Spécialités du département (C-Level) */}
+          <div id="section-skills" className="space-y-3 rounded-xl transition-shadow">
+            <Label>Mes spécialités *</Label>
+            <p className="text-xs text-muted-foreground">{MAX_SPECIALTIES} choix maximum ({specialties.length}/{MAX_SPECIALTIES})</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {vConf.specialties.map((sp) => (
+                <label key={sp} className={cn("flex items-center gap-2", !specialties.includes(sp) && specialties.length >= MAX_SPECIALTIES ? "cursor-not-allowed opacity-50" : "cursor-pointer")}>
+                  <Checkbox
+                    disabled={!specialties.includes(sp) && specialties.length >= MAX_SPECIALTIES}
+                    checked={specialties.includes(sp)}
+                    onCheckedChange={(checked) => {
+                      if (checked) setSpecialties([...specialties, sp]);
+                      else setSpecialties(specialties.filter((x) => x !== sp));
+                    }}
+                  />
+                  <span className="text-sm">{sp}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Séniorité et parcours */}
+          <div className="grid gap-4 sm:grid-cols-[160px_1fr]">
+            <div className="space-y-2">
+              <Label htmlFor="years">Années d'expérience</Label>
+              <Input id="years" type="number" min="0" max="60" value={yearsExperience} onChange={(e) => setYearsExperience(e.target.value)} placeholder="15" />
+            </div>
+            <div className="space-y-2">
+              <Label>Entreprises marquantes du parcours</Label>
+              <TagInput tags={previousCompanies} onTagsChange={setPreviousCompanies} placeholder="Ex : Qonto" />
+            </div>
+          </div>
+
+          </>
+          )}
 
           {/* Secteurs / Environnements */}
           <div id="section-sectors" className="space-y-3 rounded-xl transition-shadow">
@@ -593,7 +703,8 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* LinkedIn Recruiter License */}
+          {/* LinkedIn Recruiter License (RPO) */}
+          {isRpo && (
           <div className="flex items-center gap-3">
             <Switch checked={hasLinkedinLicense} onCheckedChange={setHasLinkedinLicense} id="linkedin-license" />
             <Label htmlFor="linkedin-license" className="flex items-center gap-2 text-sm font-medium">
@@ -601,6 +712,7 @@ const Profile = () => {
               Je possède ma propre licence LinkedIn Recruiter
             </Label>
           </div>
+          )}
 
           {/* Clients */}
           <div className="space-y-2">
@@ -646,7 +758,7 @@ const Profile = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">Type de profils recrutés</Label>
+                    <Label className="text-xs">{isRpo ? "Type de profils recrutés" : "Rôle et périmètre"}</Label>
                     <Input
                       value={mission.profile_types}
                       onChange={(e) => {
@@ -654,13 +766,13 @@ const Profile = () => {
                         updated[idx] = { ...updated[idx], profile_types: e.target.value };
                         setMissions(updated);
                       }}
-                      placeholder="Ex : Développeurs Full-Stack"
+                      placeholder={isRpo ? "Ex : Développeurs Full-Stack" : "Ex : CFO fractional, 2 j/sem, série A"}
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">Nombre de recrutements réalisés</Label>
+                    <Label className="text-xs">{isRpo ? "Nombre de recrutements réalisés" : "Résultat clé"}</Label>
                     <Input
-                      type="number"
+                      type={isRpo ? "number" : "text"}
                       min="0"
                       value={mission.kpis}
                       onChange={(e) => {
@@ -668,7 +780,7 @@ const Profile = () => {
                         updated[idx] = { ...updated[idx], kpis: e.target.value };
                         setMissions(updated);
                       }}
-                      placeholder="Ex : 12"
+                      placeholder={isRpo ? "Ex : 12" : "Ex : levée de 8 M€ bouclée"}
                     />
                   </div>
                   <div className="space-y-1">

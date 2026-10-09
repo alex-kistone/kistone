@@ -21,7 +21,8 @@ const FreelancerAuth = () => {
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
   // Adresse à qui le lien de confirmation vient d'être envoyé : remplace le formulaire
   const [sentTo, setSentTo] = useState<string | null>(null);
-  const confirmRedirect = `${window.location.origin}/register`;
+  // La fonction choisie sur la landing (?fonction=cfo) suit la confirmation d'email
+  const confirmRedirect = `${window.location.origin}/register${window.location.search}`;
 
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const FreelancerAuth = () => {
         console.error("Attribution du rôle freelance :", err);
       }
 
-      window.location.replace("/profile");
+      window.location.replace(`/profile${window.location.search.includes("fonction=") ? window.location.search : ""}`);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -108,7 +109,7 @@ const FreelancerAuth = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}${window.location.pathname}`,
+        redirectTo: `${window.location.origin}${window.location.pathname}${window.location.search}`,
         queryParams: { prompt: "select_account" },
       },
     });
@@ -193,7 +194,7 @@ const FreelancerAuth = () => {
           Continuer avec Google
         </Button>
         <LinkedInButton
-          redirectTo={`${window.location.origin}${window.location.pathname}`}
+          redirectTo={`${window.location.origin}${window.location.pathname}${window.location.search}`}
           disabled={loading}
           onStart={() => setLoading(true)}
           onError={() => setLoading(false)}

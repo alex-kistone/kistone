@@ -1,18 +1,23 @@
 import { useState } from "react";
-import { ChevronDown, ExternalLink, Linkedin } from "lucide-react";
+import { ArrowLeft, ChevronDown, ExternalLink, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
 import LinkedinUrlHowTo from "./LinkedinUrlHowTo";
+import { palettes } from "@/lib/palettes";
+import { VERTICALS, type Vertical } from "@/lib/verticals";
+import { cn } from "@/lib/utils";
 
 type Props = {
   open: boolean;
   /** Première connexion (profil pas encore créé) ou profil existant sans URL. */
   firstVisit: boolean;
-  /** Enregistre l'URL canonique ; renvoie un message d'erreur, ou null si tout va bien. */
-  onSubmit: (url: string) => Promise<string | null>;
+  /** Fonction pré-sélectionnée (lien « Je suis freelance » depuis une page de fonction). */
+  initialVertical?: Vertical | null;
+  /** Enregistre l'URL canonique (et, à la première visite, la fonction) ; renvoie un message d'erreur, ou null. */
+  onSubmit: (url: string, vertical: Vertical) => Promise<string | null>;
 };
 
 /**
@@ -25,7 +30,10 @@ const LINKEDIN_OWN_PROFILE = "https://www.linkedin.com/in/";
  * Fenêtre bloquante : le freelance doit coller son URL LinkedIn avant d'accéder à son
  * profil. L'URL est la clé de synchronisation avec l'ATS (Jarvi).
  */
-export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: Props) {
+export default function LinkedinRequiredDialog({ open, firstVisit, initialVertical, onSubmit }: Props) {
+  // Première visite : d'abord la fonction (RPO, DRH, CFO…), puis l'URL LinkedIn
+  const [vertical, setVertical] = useState<Vertical | null>(initialVertical ?? null);
+  const [step, setStep] = useState<"vertical" | "linkedin">(firstVisit && !initialVertical ? "vertical" : "linkedin");
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -38,7 +46,7 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
       return;
     }
     setSaving(true);
-    const failure = await onSubmit(url);
+    const failure = await onSubmit(url, vertical ?? "rpo");
     setSaving(false);
     if (failure) setError(failure);
   };
@@ -52,6 +60,46 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
         onInteractOutside={(e) => e.preventDefault()}
       >
         <img src="/logos/logo-full-black.png" alt="Kistone" width={1200} height={377} className="-ml-1.5 h-12 w-auto self-start" />
+        {step === "vertical" ? (
+          <>
+        <DialogHeader>
+          <DialogTitle className="text-2xl leading-tight">Bienvenue sur Kistone</DialogTitle>
+          <DialogDescription>Quelle est votre fonction ? Votre profil et les missions proposées en dépendent.</DialogDescription>
+        </DialogHeader>
+        <div role="radiogroup" aria-label="Votre fonction" className="grid grid-cols-2 gap-2.5">
+          {VERTICALS.map((v) => {
+            const p = palettes[v.palette];
+            const on = vertical === v.id;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => setVertical(v.id)}
+                className={cn(
+                  "flex flex-col items-start gap-1.5 rounded-2xl border p-3 text-left transition-colors",
+                  on ? "border-foreground ring-1 ring-foreground" : "border-border hover:bg-muted/50",
+                )}
+              >
+                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: p.tint, color: p.ink }}>{v.short}</span>
+                <span className="text-sm font-semibold leading-tight">{v.label}</span>
+                <span className="text-xs text-muted-foreground">{v.roles}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div>
+          <Button onClick={() => setStep("linkedin")} disabled={!vertical} className="w-full">Continuer</Button>
+        </div>
+          </>
+        ) : (
+          <>
+        {firstVisit && !initialVertical && (
+          <button type="button" onClick={() => setStep("vertical")} className="inline-flex items-center gap-1 self-start text-xs text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" /> Changer de fonction
+          </button>
+        )}
         <DialogHeader>
           <DialogTitle className="text-2xl leading-tight">
             {firstVisit ? "Créez votre profil freelance en partant de LinkedIn" : "Ajoutez votre profil LinkedIn"}
@@ -110,6 +158,8 @@ export default function LinkedinRequiredDialog({ open, firstVisit, onSubmit }: P
             {saving ? "Enregistrement…" : "Valider"}
           </Button>
         </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
