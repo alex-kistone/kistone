@@ -66,7 +66,7 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
               properties: {
                 job_title: {
                   type: "string",
-                  description: "Intitulé court : « RPO <métier> » pour un recruteur (RPO Tech, RPO Data), sinon « <fonction> fractional » ou « <fonction> temps plein » (CFO fractional, CTO temps plein)",
+                  description: "Intitulé court : « RPO <métier> » pour un recruteur (RPO Tech, RPO Data), sinon « <fonction> fractional » seulement si un nombre de jours par semaine est donné, « <fonction> temps plein » si le temps plein est explicite, et « <fonction> » seul sinon (CFO fractional, CTO temps plein, CRO)",
                 },
                 vertical: {
                   type: "string",

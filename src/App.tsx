@@ -42,6 +42,7 @@ const App = () => (
           <Route path="/client" element={<ClientAuth />} />
           <Route path="/client/onboarding" element={<ClientOnboarding />} />
           <Route path="/client/dashboard" element={<ClientDashboard />} />
+          <Route path="/besoin" element={<ClientNewNeed />} />
           <Route path="/client/new-need" element={<ClientNewNeed />} />
           <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
           <Route path="/client/profile" element={<ClientProfile />} />

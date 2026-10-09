@@ -26,6 +26,8 @@ type Props = {
   /** Jours par semaine demandés, "5" = temps plein. */
   days: string;
   onDays: (v: string) => void;
+  /** Fonction déjà choisie à l'écran précédent (parcours public) : pas de nouveau choix ici. */
+  hideFunctionChoice?: boolean;
 };
 
 const toggle = (list: string[], value: string, on: boolean) => (on ? [...list, value] : list.filter((x) => x !== value));
@@ -34,12 +36,13 @@ const toggle = (list: string[], value: string, on: boolean) => (on ? [...list, v
  * Le « quoi » d'un besoin : la fonction recherchée (RPO, DRH, CFO, COO, CRO, CTO), puis les
  * métiers à recruter (RPO) ou les spécialités attendues (C-Level), et le rythme souhaité.
  */
-export default function NeedFunctionFields({ vertical, onVertical, profileTypes, onProfileTypes, specialties, onSpecialties, days, onDays }: Props) {
+export default function NeedFunctionFields({ vertical, onVertical, profileTypes, onProfileTypes, specialties, onSpecialties, days, onDays, hideFunctionChoice }: Props) {
   const conf = verticalOf(vertical);
   const isRpo = vertical === "rpo";
 
   return (
     <>
+      {!hideFunctionChoice && (
       <div className="space-y-3">
         <Label id="need-function-label">Fonction recherchée</Label>
         <div role="radiogroup" aria-labelledby="need-function-label" className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -70,6 +73,7 @@ export default function NeedFunctionFields({ vertical, onVertical, profileTypes,
           })}
         </div>
       </div>
+      )}
 
       {isRpo ? (
         <div className="space-y-3">

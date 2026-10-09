@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
 import OnboardingSteps from "@/components/platform/OnboardingSteps";
+import { submitPendingNeed } from "@/lib/pendingNeed";
 
 /**
  * Onboarding d'un nouveau client, étape 1 : coordonnées et entreprise.
@@ -63,6 +64,12 @@ const ClientOnboarding = () => {
     setSaving(false);
     if (error) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    // Besoin qualifié avant l'inscription : il est enregistré maintenant, sinon étape 2 (premier besoin)
+    if (await submitPendingNeed(userId, email)) {
+      toast({ title: "Besoin envoyé !", description: "L'équipe Kistone revient vers vous rapidement." });
+      navigate("/client/dashboard");
       return;
     }
     navigate("/client/new-need?onboarding=1");

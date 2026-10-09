@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, Loader2, Mic, MicOff, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
-import { isVertical, verticalOf, type Vertical } from "@/lib/verticals";
+import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
+import { savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
+import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
@@ -36,11 +38,24 @@ const REMOTE_OPTIONS = [
   { value: "flexible", label: "Flexible" },
 ];
 
+/** Exemple de besoin rédigé librement, par fonction (zone de texte de l'IA). */
+const BRIEF_EXAMPLES: Record<Vertical, string> = {
+  rpo: "Ex : Je recherche un RPO senior, spécialiste des profils Dev Fullstack en startup, 3 jours sur site à Paris, budget autour des 500-600 €/jour, pour une mission de 6 mois…",
+  drh: "Ex : Scale-up de 120 personnes, nous cherchons un DRH 3 jours par semaine pour structurer la rémunération et les relations sociales…",
+  cfo: "Ex : Après notre série A, nous cherchons un CFO 2 jours par semaine pour le budget, la trésorerie et le reporting investisseurs…",
+  coo: "Ex : Nous ouvrons deux marchés et cherchons un COO pour structurer les process et manager les équipes ops…",
+  cro: "Ex : Nous voulons ouvrir l'Allemagne et monter une équipe de 5 commerciaux : CRO à temps plein, démarrage en janvier…",
+  cto: "Ex : Startup SaaS, nous cherchons un CTO 3 jours par semaine pour intégrer l'IA générative au produit et structurer l'équipe tech…",
+};
+
 const ClientNewNeed = () => {
   const navigate = useNavigate();
   // Étape 2 de l'onboarding client : même formulaire, sans la navigation de l'espace.
   const [searchParams] = useSearchParams();
   const onboarding = searchParams.get("onboarding") === "1";
+  // Parcours public « Partager un besoin » (/besoin) : on qualifie le besoin avant de créer le compte
+  const isPublic = useLocation().pathname === "/besoin";
+  const [picked, setPicked] = useState(() => !isPublic || isVertical(searchParams.get("fonction")));
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -116,7 +131,10 @@ const ClientNewNeed = () => {
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/client"); return; }
+      if (!session) {
+        if (!isPublic) navigate("/client");
+        return;
+      }
       setUserId(session.user.id);
       setContactEmail(session.user.email || "");
 
@@ -135,7 +153,7 @@ const ClientNewNeed = () => {
       }
     };
     init();
-  }, [navigate]);
+  }, [navigate, isPublic]);
 
   const handleGenerate = async () => {
     if (freeText.trim().length < 10) {
@@ -181,10 +199,29 @@ const ClientNewNeed = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userId) return;
     const budgetIssue = budgetError(budgetMin, budgetMax);
     if (budgetIssue) {
       toast({ title: "Budget TJM", description: budgetIssue, variant: "destructive" });
+      return;
+    }
+    const need: PendingNeed = {
+      job_title: jobTitle,
+      vertical,
+      profile_types: vertical === "rpo" ? profileTypes : [],
+      specialties: vertical === "rpo" ? [] : specialties,
+      days_per_week: Number(days) < 5 ? Number(days) : null,
+      budget_tjm_min: budgetMin ? parseInt(budgetMin) : null,
+      budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
+      mission_location: missionLocations.join(", "),
+      remote_policy: remotePolicy,
+      desired_start: start.asap || !start.date ? null : start.date,
+      description: description || null,
+      sectors,
+    };
+    // Visiteur sans compte : le besoin est gardé, puis enregistré après l'inscription
+    if (!userId) {
+      savePendingNeed(need);
+      navigate("/client?mode=signup&besoin=1");
       return;
     }
     setSaving(true);
@@ -223,10 +260,43 @@ const ClientNewNeed = () => {
   };
 
   return (
-    <div className={onboarding ? "min-h-screen bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
-      {onboarding ? <Header /> : <AppShell role="client" />}
+    <div className={onboarding || isPublic ? "min-h-screen bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
+      {onboarding || isPublic ? <Header /> : <AppShell role="client" />}
+      {isPublic && !picked ? (
+        <main className="container mx-auto max-w-4xl px-4 py-12 md:py-16">
+          <h1 className="mb-2 text-3xl font-bold md:text-4xl">De quel profil avez-vous besoin ?</h1>
+          <p className="mb-10 text-muted-foreground">Choisissez la fonction : le formulaire s'adapte à votre besoin.</p>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {VERTICALS.map((v) => {
+              const p = palettes[v.palette];
+              return (
+                <li key={v.id}>
+                  <button
+                    type="button"
+                    onClick={() => { setVertical(v.id); setPicked(true); window.scrollTo(0, 0); }}
+                    className="flex h-full w-full flex-col items-start gap-4 rounded-[28px] border border-border bg-card p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                  >
+                    <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: p.tint, color: p.ink }}>{v.short}</span>
+                    <span className="text-xl font-bold leading-tight">Je cherche {v.id === "rpo" ? "un recruteur" : `un ${v.short}`}</span>
+                    <span className="text-sm text-muted-foreground">{v.description}</span>
+                    <span className="h-1 w-12 rounded-full" style={{ background: p.accent }} aria-hidden="true" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-10 text-sm text-muted-foreground">
+            Déjà client ? <Link to="/client" className="font-medium text-foreground underline underline-offset-2">Se connecter</Link>
+          </p>
+        </main>
+      ) : (
       <main className="container mx-auto max-w-2xl px-4 py-12">
-        {onboarding ? (
+        {isPublic ? (
+          <Button variant="ghost" size="sm" onClick={() => setPicked(false)} className="mb-6 gap-2 text-muted-foreground">
+            <ArrowLeft className="h-4 w-4" />
+            Changer de profil
+          </Button>
+        ) : onboarding ? (
           <OnboardingSteps current={2} />
         ) : (
           <Button
@@ -240,9 +310,11 @@ const ClientNewNeed = () => {
           </Button>
         )}
 
-        <h1 className="mb-2 text-3xl font-bold">{onboarding ? "Déposez votre premier besoin" : "Déposer un besoin"}</h1>
+        <h1 className="mb-2 text-3xl font-bold">{isPublic ? `Votre besoin ${verticalOf(vertical).short}` : onboarding ? "Déposez votre premier besoin" : "Déposer un besoin"}</h1>
         <p className="mb-8 text-muted-foreground">
-          Décrivez votre besoin en recrutement — nos recruteurs freelances prendront le relais.
+          {vertical === "rpo"
+            ? "Décrivez votre besoin en recrutement : nos recruteurs freelances prennent le relais."
+            : "Décrivez votre besoin : nos experts freelance prennent le relais."}
           {onboarding && (
             <>
               {" "}
@@ -265,7 +337,7 @@ const ClientNewNeed = () => {
           <Textarea
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
-            placeholder="Ex : Je recherche un RPO senior, spécialiste des profils Dev Fullstack en startup, 3 jours sur site à Paris, budget autour des 500-600€/jour, pour une mission de 6 mois..."
+            placeholder={BRIEF_EXAMPLES[vertical]}
             rows={4}
             className="mb-3"
           />
@@ -319,6 +391,7 @@ const ClientNewNeed = () => {
             onSpecialties={setSpecialties}
             days={days}
             onDays={setDays}
+            hideFunctionChoice={isPublic}
           />
 
           {/* Secteurs */}
@@ -447,10 +520,11 @@ const ClientNewNeed = () => {
           </div>
 
           <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={saving}>
-            {saving ? "Enregistrement..." : "Déposer mon besoin"}
+            {saving ? "Enregistrement..." : userId ? "Déposer mon besoin" : "Continuer : créer mon compte"}
           </Button>
         </form>
       </main>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import Header from "@/components/KistoneHeader";
 import SignupSent from "@/components/auth/SignupSent";
 import { isFreeEmail, FREE_EMAIL_MESSAGE } from "@/lib/emailDomains";
 import { clientHomePath } from "@/lib/clientOnboarding";
+import { loadPendingNeed, submitPendingNeed } from "@/lib/pendingNeed";
 
 const ClientAuth = () => {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ const ClientAuth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  // Besoin qualifié avant l'inscription (parcours « Partager un besoin »), envoyé après connexion
+  const [pendingNeed] = useState(() => loadPendingNeed());
   // Fonction choisie sur la landing (« Je recrute un CFO ») : retrouvée au dépôt du premier besoin
   useEffect(() => {
     const f = searchParams.get("fonction");
@@ -104,8 +107,13 @@ const ClientAuth = () => {
         console.error("Role assignment error:", err);
       }
 
-      // Première connexion : onboarding (coordonnées puis premier besoin)
-      navigate(await clientHomePath(session.user.id));
+      // Première connexion : onboarding (coordonnées puis premier besoin). Client déjà installé :
+      // le besoin qualifié avant la connexion est enregistré tout de suite.
+      const home = await clientHomePath(session.user.id);
+      if (home === "/client/dashboard" && (await submitPendingNeed(session.user.id, session.user.email ?? ""))) {
+        toast({ title: "Besoin envoyé !", description: "L'équipe Kistone revient vers vous rapidement." });
+      }
+      navigate(home);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -182,7 +190,9 @@ const ClientAuth = () => {
           {isLogin ? "Espace Client" : "Créez votre espace client"}
         </h1>
         <p className="mb-8 text-center text-muted-foreground">
-          {isLogin
+          {pendingNeed
+            ? `Votre besoin « ${pendingNeed.job_title || "sans titre"} » est prêt. ${isLogin ? "Connectez-vous" : "Créez votre compte"} pour l'envoyer.`
+            : isLogin
             ? "Connectez-vous pour gérer vos besoins en recrutement."
             : "Inscrivez-vous pour déposer vos besoins en recrutement."}
         </p>

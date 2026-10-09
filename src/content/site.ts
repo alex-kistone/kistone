@@ -1,7 +1,9 @@
 // Navigation et liens communs à toutes les pages du site vitrine.
 
 export const ROUTES = {
-  recruit: "/client", // parcours « Je recrute » de la plateforme
+  // « Je recrute » / « Partager un besoin » : on qualifie le besoin avant de créer le compte
+  recruit: "/besoin",
+  clientLogin: "/client",
   freelance: "/register", // parcours « Je suis freelance » de la plateforme
   login: "/login",
   studio: "/studio",
