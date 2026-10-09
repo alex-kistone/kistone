@@ -1,3 +1,4 @@
+import { needSummary } from "@/lib/verticals";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -56,7 +57,7 @@ interface Props {
 const NeedsList = ({ rows, onOpen, hideClient = false }: Props) => (
   <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
     {rows.map(({ need, counts, status, todo }) => {
-      const metiers = need.profile_types?.length ? need.profile_types.join(", ") : null;
+      const metiers = needSummary(need);
       const place = [need.mission_location, remoteLabel(need.remote_policy)].filter((s) => s && s !== "—").join(" · ");
       const age = relativeAge(need.created_at);
       const label = [

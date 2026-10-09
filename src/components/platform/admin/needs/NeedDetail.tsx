@@ -9,6 +9,7 @@ import NeedKanban from "./NeedKanban";
 import SuggestProfilePanel from "./SuggestProfilePanel";
 import { StageCounters, StatusPill, TodoBadge } from "./NeedsList";
 import { desiredStartLabel } from "@/lib/needStart";
+import { needSummary, rhythmLabel } from "@/lib/verticals";
 import { budgetLabel, remoteLabel, type NeedRow, type ProfileSuggestion, type StageKey } from "./needsModel";
 import type { NeedsData } from "./useNeeds";
 
@@ -312,7 +313,7 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
           </Link>
           {need.contact_name && <span className="block text-xs font-normal text-muted-foreground">{need.contact_name}</span>}
         </InfoCard>
-        <InfoCard label="Métier">{need.profile_types?.length ? need.profile_types.join(", ") : "Non précisé"}</InfoCard>
+        <InfoCard label="Fonction">{needSummary(need)}<span className="block text-xs font-normal text-muted-foreground">{rhythmLabel(need.days_per_week)}</span></InfoCard>
         <InfoCard label="Lieu & télétravail">
           {need.mission_location || "Non précisé"}
           <span className="block text-xs font-normal text-muted-foreground">{remoteLabel(need.remote_policy)}</span>

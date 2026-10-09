@@ -16,11 +16,12 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
+import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
+import { isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import AppShell from "@/components/platform/AppShell";
 import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
-const PROFILE_TYPES = METIERS;
 
 const REMOTE_OPTIONS = [
   { value: "on-site", label: "Sur site" },
@@ -41,6 +42,10 @@ const ClientEditNeed = () => {
   const [contactEmail, setContactEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [profileTypes, setProfileTypes] = useState<string[]>([]);
+  // Fonction recherchée (RPO ou département C-Level), spécialités et rythme
+  const [vertical, setVertical] = useState<Vertical>("rpo");
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [days, setDays] = useState("5");
   const [sectors, setSectors] = useState<string[]>([]);
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
@@ -74,6 +79,9 @@ const ClientEditNeed = () => {
       setContactEmail(need.contact_email);
       setJobTitle(need.job_title);
       setProfileTypes(need.profile_types || []);
+      setVertical(isVertical(need.vertical) ? need.vertical : "rpo");
+      setSpecialties(need.specialties || []);
+      setDays(String(need.days_per_week ?? 5));
       setSectors(need.sectors || []);
       setBudgetMin(need.budget_tjm_min?.toString() || "");
       setBudgetMax(need.budget_tjm_max?.toString() || "");
@@ -103,7 +111,10 @@ const ClientEditNeed = () => {
           contact_name: contactName,
           contact_email: contactEmail,
           job_title: jobTitle,
-          profile_types: profileTypes,
+          vertical,
+          profile_types: vertical === "rpo" ? profileTypes : [],
+          specialties: vertical === "rpo" ? [] : specialties,
+          days_per_week: Number(days) < 5 ? Number(days) : null,
           sectors,
           budget_tjm_min: budgetMin ? parseInt(budgetMin) : null,
           budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
@@ -172,26 +183,19 @@ const ClientEditNeed = () => {
 
           <div className="space-y-2">
             <Label htmlFor="jobTitle">Intitulé du poste recherché</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : RPO Tech" required />
+            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={vertical === "rpo" ? "Ex : RPO Tech" : `Ex : ${verticalOf(vertical).short} fractional`} required />
           </div>
 
-          <div className="space-y-3">
-            <Label>Typologies de profils recherchés</Label>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {PROFILE_TYPES.map((type) => (
-                <label key={type} className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox
-                    checked={profileTypes.includes(type)}
-                    onCheckedChange={(checked) => {
-                      if (checked) setProfileTypes([...profileTypes, type]);
-                      else setProfileTypes(profileTypes.filter((t) => t !== type));
-                    }}
-                  />
-                  <span className="text-sm">{type}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          <NeedFunctionFields
+            vertical={vertical}
+            onVertical={setVertical}
+            profileTypes={profileTypes}
+            onProfileTypes={setProfileTypes}
+            specialties={specialties}
+            onSpecialties={setSpecialties}
+            days={days}
+            onDays={setDays}
+          />
 
           <div className="space-y-3">
             <Label>Secteur / Environnement</Label>

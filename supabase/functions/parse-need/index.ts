@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { METIERS, SECTEURS } from "../_shared/taxonomy.ts";
+import { VERTICALS } from "../_shared/verticals.ts";
 import {
   ANTHROPIC_MODEL,
   ANTHROPIC_URL,
@@ -40,9 +41,15 @@ serve(async (req) => {
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
         max_tokens: 16000,
-        system: `Tu es un assistant RH expert. À partir d'une description libre d'un besoin en recrutement, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
+        system: `Tu es un assistant RH expert. Kistone place des recruteurs RPO freelance et des dirigeants C-Level fractional (quelques jours par semaine ou temps plein). À partir d'une description libre d'un besoin, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
 
-Les typologies de profils possibles sont : ${PROFILE_TYPES.join(", ")}.
+Fonction recherchée (vertical) :
+- rpo : le client cherche un recruteur pour recruter des profils (ex. « un recruteur pour 3 développeurs »).
+${VERTICALS.filter((v) => v.id !== "rpo").map((v) => `- ${v.id} : le client cherche un ${v.roles} lui-même (${v.description})`).join("\n")}
+Spécialités possibles par fonction (n'utilise que celles de la fonction retenue) :
+${VERTICALS.filter((v) => v.id !== "rpo").map((v) => `- ${v.id} : ${v.specialties.join(" ; ")}`).join("\n")}
+Pour la fonction rpo, les typologies de profils à recruter sont : ${PROFILE_TYPES.join(", ")}.
+Rythme : days_per_week = nombre de jours par semaine demandés (1 à 4) ; omets-le pour un temps plein ou s'il n'est pas précisé.
 Les secteurs / environnements possibles sont : ${SECTEURS.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
 Date d'arrivée souhaitée : nous sommes le ${new Date().toISOString().slice(0, 10)}. Si le texte donne une date ou une période de démarrage (« début novembre », « en janvier »), renseigne desired_start au format AAAA-MM-JJ (premier jour de la période). Si c'est urgent (« ASAP », « au plus vite ») ou non précisé, omets desired_start.
@@ -59,12 +66,28 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
               properties: {
                 job_title: {
                   type: "string",
-                  description: "Intitulé court au format « RPO <métier> », ex : RPO Tech, RPO Data, RPO Finance",
+                  description: "Intitulé court : « RPO <métier> » pour un recruteur (RPO Tech, RPO Data), sinon « <fonction> fractional » ou « <fonction> temps plein » (CFO fractional, CTO temps plein)",
+                },
+                vertical: {
+                  type: "string",
+                  enum: VERTICALS.map((v) => v.id),
+                  description: "Fonction recherchée",
+                },
+                specialties: {
+                  type: "array",
+                  items: { type: "string", enum: [...new Set(VERTICALS.flatMap((v) => [...v.specialties]))] },
+                  description: "Spécialités attendues, parmi celles de la fonction retenue (vide pour rpo)",
+                },
+                days_per_week: {
+                  type: "integer",
+                  minimum: 1,
+                  maximum: 4,
+                  description: "Jours par semaine demandés ; à omettre pour un temps plein",
                 },
                 profile_types: {
                   type: "array",
                   items: { type: "string", enum: [...PROFILE_TYPES] },
-                  description: "Métiers des profils à recruter",
+                  description: "Métiers des profils à recruter (fonction rpo uniquement)",
                 },
                 sectors: {
                   type: "array",

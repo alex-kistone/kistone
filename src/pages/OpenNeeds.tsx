@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, CalendarClock, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
+import { Briefcase, CalendarClock, Clock, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
 import { desiredStartLabel } from "@/lib/needStart";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { freelanceRate } from "@/lib/pricing";
+import { rhythmLabel } from "@/lib/verticals";
 import AppShell from "@/components/platform/AppShell";
 import SEO from "@/components/SEO";
 
@@ -21,6 +22,9 @@ interface OpenNeed {
   mission_location: string;
   remote_policy: string;
   desired_start: string | null;
+  vertical: string;
+  specialties: string[];
+  days_per_week: number | null;
   description: string | null;
   created_at: string;
 }
@@ -69,7 +73,7 @@ const OpenNeeds = () => {
     // Load open needs via secure view (no contact info exposed)
     const { data: needsData } = await supabase
       .from("client_needs_open" as any)
-      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start")
+      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start, vertical, specialties, days_per_week")
       .order("created_at", { ascending: false });
 
     setNeeds((needsData as unknown as OpenNeed[]) || []);
@@ -156,9 +160,10 @@ const OpenNeeds = () => {
                           Publié le {new Date(need.created_at).toLocaleDateString("fr-FR")}
                         </p>
                       </div>
-                      {need.profile_types?.length > 0 && (
+                      {/* Métiers à recruter (RPO) ou spécialités attendues (C-Level) */}
+                      {(need.vertical === "rpo" || !need.vertical ? need.profile_types : need.specialties)?.length > 0 && (
                         <div className="flex flex-wrap gap-1">
-                          {need.profile_types.map((t) => (
+                          {(need.vertical === "rpo" || !need.vertical ? need.profile_types : need.specialties).map((t) => (
                             <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
                           ))}
                         </div>
@@ -171,6 +176,9 @@ const OpenNeeds = () => {
                       </span>
                       <span className="flex items-center gap-1">
                         <Monitor className="h-3.5 w-3.5" /> {REMOTE_LABELS[need.remote_policy] || need.remote_policy}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" /> {rhythmLabel(need.days_per_week)}
                       </span>
                       <span className="flex items-center gap-1">
                         <CalendarClock className="h-3.5 w-3.5" /> {desiredStartLabel(need.desired_start)}

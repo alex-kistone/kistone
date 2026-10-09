@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { clientHomePath } from "@/lib/clientOnboarding";
 import { desiredStartLabel } from "@/lib/needStart";
+import { needSummary, rhythmLabel } from "@/lib/verticals";
 import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
@@ -27,6 +28,9 @@ interface ClientNeed {
   mission_location: string;
   remote_policy: string;
   desired_start: string | null;
+  vertical: string;
+  specialties: string[];
+  days_per_week: number | null;
   description: string | null;
   status: string;
   created_at: string;
@@ -514,9 +518,8 @@ const ClientDashboard = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                      {need.profile_types.length > 0 && (
-                        <span className="flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{need.profile_types.join(", ")}</span>
-                      )}
+                      <span className="flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{needSummary(need)}</span>
+                      <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{rhythmLabel(need.days_per_week)}</span>
                       <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{need.mission_location}</span>
                       <span className="flex items-center gap-1"><Wifi className="h-3.5 w-3.5" />{remotePolicyLabels[need.remote_policy] || need.remote_policy}</span>
                       {(need.budget_tjm_min || need.budget_tjm_max) && (

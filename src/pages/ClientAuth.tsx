@@ -20,6 +20,11 @@ const ClientAuth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  // Fonction choisie sur la landing (« Je recrute un CFO ») : retrouvée au dépôt du premier besoin
+  useEffect(() => {
+    const f = searchParams.get("fonction");
+    if (f) try { sessionStorage.setItem("kistone-fonction", f); } catch { /* stockage indisponible */ }
+  }, [searchParams]);
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
   // Adresse à qui le lien de confirmation vient d'être envoyé : remplace le formulaire
   const [sentTo, setSentTo] = useState<string | null>(null);

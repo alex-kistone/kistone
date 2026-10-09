@@ -17,6 +17,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
+import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
+import { isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
@@ -24,7 +26,6 @@ import OnboardingSteps from "@/components/platform/OnboardingSteps";
 import TagInput from "@/components/platform/TagInput";
 import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
-const PROFILE_TYPES = METIERS;
 
 const SECTORS = SECTEURS;
 
@@ -38,7 +39,8 @@ const REMOTE_OPTIONS = [
 const ClientNewNeed = () => {
   const navigate = useNavigate();
   // Étape 2 de l'onboarding client : même formulaire, sans la navigation de l'espace.
-  const onboarding = useSearchParams()[0].get("onboarding") === "1";
+  const [searchParams] = useSearchParams();
+  const onboarding = searchParams.get("onboarding") === "1";
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -92,6 +94,15 @@ const ClientNewNeed = () => {
   const [contactEmail, setContactEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [profileTypes, setProfileTypes] = useState<string[]>([]);
+  // Fonction recherchée (RPO ou département C-Level), spécialités et rythme
+  const [vertical, setVertical] = useState<Vertical>(() => {
+    let stored: string | null = null;
+    try { stored = sessionStorage.getItem("kistone-fonction"); } catch { /* stockage indisponible */ }
+    const f = searchParams.get("fonction") ?? stored;
+    return isVertical(f) ? f : "rpo";
+  });
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [days, setDays] = useState("5");
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
   const [missionLocations, setMissionLocations] = useState<string[]>([]);
@@ -144,6 +155,11 @@ const ClientNewNeed = () => {
 
       if (data.job_title) setJobTitle(data.job_title);
       // L'IA ne peut proposer que des valeurs du référentiel : on écarte tout le reste.
+      // Fonction détectée par l'IA : spécialités de cette fonction uniquement
+      const detected: Vertical = isVertical(data.vertical) ? data.vertical : vertical;
+      setVertical(detected);
+      setSpecialties((data.specialties ?? []).filter((t: string) => verticalOf(detected).specialties.includes(t)));
+      if (typeof data.days_per_week === "number" && data.days_per_week >= 1 && data.days_per_week <= 5) setDays(String(data.days_per_week));
       const metiers = (data.profile_types ?? []).filter((t: string) => (METIERS as readonly string[]).includes(t));
       if (metiers.length) setProfileTypes(metiers);
       const secteurs = (data.sectors ?? []).filter((t: string) => (SECTEURS as readonly string[]).includes(t));
@@ -182,7 +198,10 @@ const ClientNewNeed = () => {
           contact_name: contactName,
           contact_email: contactEmail,
           job_title: jobTitle,
-          profile_types: profileTypes,
+          vertical,
+          profile_types: vertical === "rpo" ? profileTypes : [],
+          specialties: vertical === "rpo" ? [] : specialties,
+          days_per_week: Number(days) < 5 ? Number(days) : null,
           budget_tjm_min: budgetMin ? parseInt(budgetMin) : null,
           budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
           mission_location: missionLocations.join(", "),
@@ -287,27 +306,20 @@ const ClientNewNeed = () => {
           {/* Job info */}
           <div className="space-y-2">
             <Label htmlFor="jobTitle">Intitulé du poste recherché</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Ex : RPO Tech" required />
+            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={vertical === "rpo" ? "Ex : RPO Tech" : `Ex : ${verticalOf(vertical).short} fractional`} required />
           </div>
 
           {/* Profile types - mirrors recruiter skills */}
-          <div className="space-y-3">
-            <Label>Typologies de profils recherchés</Label>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {PROFILE_TYPES.map((type) => (
-                <label key={type} className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox
-                    checked={profileTypes.includes(type)}
-                    onCheckedChange={(checked) => {
-                      if (checked) setProfileTypes([...profileTypes, type]);
-                      else setProfileTypes(profileTypes.filter((t) => t !== type));
-                    }}
-                  />
-                  <span className="text-sm">{type}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          <NeedFunctionFields
+            vertical={vertical}
+            onVertical={setVertical}
+            profileTypes={profileTypes}
+            onProfileTypes={setProfileTypes}
+            specialties={specialties}
+            onSpecialties={setSpecialties}
+            days={days}
+            onDays={setDays}
+          />
 
           {/* Secteurs */}
           <div className="space-y-3">

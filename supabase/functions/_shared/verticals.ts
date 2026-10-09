@@ -120,3 +120,10 @@ export const FULL_TIME_DAYS = 5;
 /** Libellé d'un rythme : « Temps plein » ou « 2 j / sem ». */
 export const rhythmLabel = (days: number | null | undefined) =>
   !days || days >= FULL_TIME_DAYS ? "Temps plein" : `${days} j / sem`;
+
+/** « RPO · Tech, Data » ou « CFO · Trésorerie, FP&A » : la fonction et ce qui est attendu. */
+export function needSummary(n: { vertical?: string | null; profile_types?: string[] | null; specialties?: string[] | null }): string {
+  const v = verticalOf(n.vertical);
+  const items = v.id === "rpo" ? n.profile_types ?? [] : n.specialties ?? [];
+  return items.length ? `${v.short} · ${items.join(", ")}` : v.short;
+}
