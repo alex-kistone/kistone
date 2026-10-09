@@ -90,7 +90,7 @@ export const VERTICALS: readonly VerticalConfig[] = [
     id: "coo", short: "COO", label: "Opérations", roles: "COO · Head of Ops",
     description: "Process, scaling des opérations, pilotage de la performance.",
     palette: "sand", specialties: COO_SPECIALTIES,
-    jarvi: { projectId: null, specialtiesFieldId: null }, // projet et champ Jarvi à créer
+    jarvi: { projectId: null, specialtiesFieldId: "007887f9-a5f0-4659-8fae-5b485aa8884f" }, // projet Jarvi à créer
   },
   {
     id: "cro", short: "CRO", label: "Revenue", roles: "CRO · Head of Sales",

@@ -81,8 +81,9 @@ describe("toJarviFields · départements C-Level", () => {
     expect(toJarviFields({ ...cfo, weekly_capacity: 5 }, JARVI_SPECIALITES).fields[CFO_FIELD]).not.toContain("CFO Part-time");
   });
 
-  it("n'envoie pas de spécialités quand le champ Jarvi n'existe pas encore (COO)", () => {
+  it("range les spécialités COO dans leur propre champ Jarvi", () => {
     const { fields } = toJarviFields({ ...cfo, vertical: "coo" as const, specialties: ["Achats"] }, JARVI_SPECIALITES);
-    expect(Object.values(fields)).not.toContainEqual(["Achats"]);
+    expect(fields["007887f9-a5f0-4659-8fae-5b485aa8884f"]).toContain("Achats");
+    expect(fields[CFO_FIELD]).toBeUndefined();
   });
 });
