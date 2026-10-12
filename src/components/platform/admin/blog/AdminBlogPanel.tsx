@@ -359,7 +359,7 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" onClick={generateImage} disabled={imaging} className="gap-2">
                   {imaging ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-                  {imaging ? "Illustration en cours (environ 1 min)…" : draft.cover_url ? "Régénérer" : "Générer l'image"}
+                  {imaging ? "Photo en cours (environ 30 s)…" : draft.cover_url ? "Régénérer" : "Générer l'image"}
                 </Button>
                 <Button size="sm" variant="outline" asChild className="gap-2">
                   <label className="cursor-pointer">

@@ -100,7 +100,7 @@ Retourne l'article complet en appelant l'outil « article » (et rien d'autre).`
               description: "4 à 5 questions fréquentes avec réponses de 2 à 3 phrases, autonomes",
               items: { type: "object", properties: { q: { type: "string" }, a: { type: "string" } }, required: ["q", "a"] },
             },
-            image_prompt: { type: "string", description: "Description en anglais d'une illustration éditoriale pour la couverture, sans texte ni logo" },
+            image_prompt: { type: "string", description: "Description en anglais d'une scène pour une photo éditoriale réaliste (lieu, personnes, action, ambiance), sans texte, sans logo, sans écran lisible" },
             cover_alt: { type: "string", description: "Texte alternatif de l'image de couverture, en français" },
           },
           required: ["title", "slug", "excerpt", "seo_title", "seo_description", "content", "tags", "faq", "image_prompt", "cover_alt"],

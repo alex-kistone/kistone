@@ -1,14 +1,17 @@
 /**
- * blog-image — génère l'illustration de couverture d'un article (admin uniquement) et la
- * dépose dans le stockage public « blog-images ».
+ * blog-image — couverture d'article (admin uniquement) : photo éditoriale réaliste générée par
+ * OpenAI (gpt-image-1), sur laquelle on pose le vrai logo Kistone et la tagline (jamais
+ * dessinés par l'IA). Le résultat est déposé dans le stockage public « blog-images ».
  *
- * Corps : { prompt } — description en anglais (proposée par blog-generate, modifiable).
+ * Corps : { prompt } — description de la scène (proposée par blog-generate, modifiable).
  * Réponse : { url }
  *
- * Avec OPENAI_API_KEY : image gpt-image-1 (webp). Sans cette clé : illustration vectorielle (SVG)
- * dessinée par Claude (ANTHROPIC_API_KEY) dans la palette Kistone.
+ * Secret : OPENAI_API_KEY. Sans clé, 503 avec la marche à suivre.
+ * Test du montage sans OpenAI : { prompt, test_photo_url } (photo JPEG ou PNG existante).
  */
+import { decode, Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 import { requireAdmin } from "../_shared/adminAuth.ts";
+import { BRAND_BLOCK_PNG_BASE64 } from "../_shared/blogCoverBrand.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,40 +20,44 @@ const corsHeaders = {
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-// Direction artistique Kistone : fonds beige chaud, pastels doux, touche de rose, pas de texte
-const STYLE = "Editorial illustration for a B2B blog, warm off-white and beige background (#F4EFE8), soft pastel accents (sage green, apricot, lilac, pale blue) with a single touch of vivid pink (#FF2E6E), clean modern flat shapes with subtle grain, calm and professional, generous negative space, no text, no letters, no logos, no watermark.";
+// Direction artistique : photo éditoriale réaliste, dans la lignée des portraits du site
+const STYLE = "Realistic editorial photograph for a business magazine. Natural soft window light, warm beige, cream and sand tones with muted pastel accents, shallow depth of field, modern European workspace, candid senior professionals, 35mm lens, high-end and calm. Keep the lower-left third of the frame simple and uncluttered (a logo will be placed there). No text, no letters, no numbers, no logos, no readable screens, no watermark.";
 
-const SVG_SYSTEM = `Tu es illustrateur éditorial. Tu dessines en SVG des illustrations de couverture pour le blog de Kistone (plateforme de dirigeants et recruteurs freelance).
+const W = 1536;
+const H = 1024;
 
-Contraintes :
-- Un seul élément <svg> avec xmlns="http://www.w3.org/2000/svg" et viewBox="0 0 1536 1024", sans width ni height.
-- Fond plein #F4EFE8. Palette : #DCEEDF (sauge), #FBE6D4 (abricot), #E8E2F6 (lilas), #DDE8F5 (bleu pâle), #F5ECCB (sable), encre #141312, et une seule touche de rose vif #FF2E6E.
-- Style : formes plates et géométriques, compositions éditoriales modernes (personnages stylisés sans visage détaillé, objets symboliques, graphiques, cartes de profil abstraites), beaucoup d'espace, quelques traits fins à l'encre.
-- Tu peux glisser, en grand et discret, l'éclair Kistone au trait : <path d="M38 560 L488 18 L318 398 M22 588 L346 416 L602 416 L280 588 Z M300 606 L132 1006 L590 444" fill="none" stroke-width="24"/> (mis à l'échelle et tourné avec transform).
-- Aucun texte, aucune lettre, aucun chiffre, aucun logo d'entreprise. Pas de <script>, pas d'image externe, pas de police, pas de filtre lourd.
-- 30 à 70 éléments au total, code compact (pas de commentaires, coordonnées entières).`;
+/** Pose un dégradé sombre en bas, puis le logo et la tagline en bas à gauche. */
+async function brandCover(photoBytes: Uint8Array): Promise<Uint8Array> {
+  let photo = (await decode(photoBytes)) as Image;
+  if (photo.width !== W || photo.height !== H) photo = photo.cover(W, H);
 
-/** Illustration SVG dessinée par Claude, quand aucune clé de génération d'image n'est configurée. */
-async function claudeSvg(prompt: string): Promise<string> {
-  const key = Deno.env.get("ANTHROPIC_API_KEY");
-  if (!key) throw new Error("Aucune clé de génération configurée (OPENAI_API_KEY ou ANTHROPIC_API_KEY).");
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-5-5",
-      max_tokens: 8000,
-      system: SVG_SYSTEM,
-      messages: [{ role: "user", content: `Dessine l'illustration de couverture suivante et réponds uniquement avec le code SVG, sans commentaire ni bloc de code :\n\n${prompt}` }],
-    }),
+  // Dégradé : de transparent à 74 % d'encre sur le bas de l'image, pour la lisibilité du logo
+  const gh = Math.round(H * 0.45);
+  const scrim = new Image(W, gh);
+  scrim.fill((_x: number, y: number) => {
+    const t = (y - 1) / gh;
+    return Image.rgbaToColor(20, 19, 18, Math.round(255 * 0.74 * t * t));
   });
-  if (!res.ok) throw new Error(`Claude ${res.status} : ${(await res.text()).slice(0, 200)}`);
-  const text: string = (await res.json()).content?.filter((c: { type: string }) => c.type === "text").map((c: { text: string }) => c.text).join("") ?? "";
-  const svg = text.match(/<svg[\s\S]*<\/svg>/i)?.[0];
-  if (!svg) throw new Error("Illustration incomplète, réessayez.");
-  // Rien d'exécutable ni d'externe dans un fichier servi publiquement
-  if (/<script|<foreignObject|\son[a-z]+\s*=|javascript:|<image|href\s*=\s*["']https?:/i.test(svg)) throw new Error("Illustration refusée (contenu non autorisé), réessayez.");
-  return svg;
+  photo.composite(scrim, 0, H - gh);
+
+  const brand = (await decode(Uint8Array.from(atob(BRAND_BLOCK_PNG_BASE64), (c) => c.charCodeAt(0)))) as Image;
+  brand.resize(Math.round(W * 0.42), Image.RESIZE_AUTO);
+  const margin = Math.round(W * 0.045);
+  photo.composite(brand, margin, H - margin - brand.height);
+
+  return await photo.encodeJPEG(86);
+}
+
+async function openAiPhoto(key: string, prompt: string): Promise<Uint8Array> {
+  const res = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model: "gpt-image-1", prompt: `${prompt}\n\n${STYLE}`, size: `${W}x${H}`, quality: "medium", output_format: "jpeg", n: 1 }),
+  });
+  if (!res.ok) throw new Error(`Génération d'image ${res.status} : ${(await res.text()).slice(0, 300)}`);
+  const b64 = (await res.json())?.data?.[0]?.b64_json;
+  if (!b64) throw new Error("Aucune image renvoyée.");
+  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 }
 
 Deno.serve(async (req) => {
@@ -58,34 +65,26 @@ Deno.serve(async (req) => {
   const admin = await requireAdmin(req);
   if (!admin) return json({ error: "Réservé aux administrateurs." }, 403);
 
-  const { prompt } = await req.json().catch(() => ({}));
+  const { prompt, test_photo_url } = await req.json().catch(() => ({}));
   if (!prompt || String(prompt).trim().length < 5) return json({ error: "Description de l'image manquante." }, 400);
 
   const key = Deno.env.get("OPENAI_API_KEY");
-  if (!key) {
-    try {
-      const svg = await claudeSvg(String(prompt).trim());
-      const path = `covers/${crypto.randomUUID()}.svg`;
-      const { error } = await admin.db.storage.from("blog-images").upload(path, new TextEncoder().encode(svg), { contentType: "image/svg+xml" });
-      if (error) return json({ error: `Stockage : ${error.message}` }, 500);
-      return json({ url: admin.db.storage.from("blog-images").getPublicUrl(path).data.publicUrl, kind: "svg" });
-    } catch (e) {
-      return json({ error: (e as Error).message }, 502);
-    }
+  if (!key && !test_photo_url) {
+    return json({
+      error: "Photos non configurées : ajoutez la clé OPENAI_API_KEY dans Supabase (Project Settings › Edge Functions › Secrets). En attendant, téléversez une image.",
+    }, 503);
   }
 
-  const res = await fetch("https://api.openai.com/v1/images/generations", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "gpt-image-1", prompt: `${String(prompt).trim()}\n\n${STYLE}`, size: "1536x1024", quality: "medium", output_format: "webp", n: 1 }),
-  });
-  if (!res.ok) return json({ error: `Génération d'image ${res.status} : ${(await res.text()).slice(0, 300)}` }, 502);
-  const b64 = (await res.json())?.data?.[0]?.b64_json;
-  if (!b64) return json({ error: "Aucune image renvoyée." }, 502);
-
-  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-  const path = `covers/${crypto.randomUUID()}.webp`;
-  const { error } = await admin.db.storage.from("blog-images").upload(path, bytes, { contentType: "image/webp" });
-  if (error) return json({ error: `Stockage : ${error.message}` }, 500);
-  return json({ url: admin.db.storage.from("blog-images").getPublicUrl(path).data.publicUrl });
+  try {
+    const photo = test_photo_url
+      ? new Uint8Array(await (await fetch(String(test_photo_url))).arrayBuffer())
+      : await openAiPhoto(key!, String(prompt).trim());
+    const cover = await brandCover(photo);
+    const path = `covers/${crypto.randomUUID()}.jpg`;
+    const { error } = await admin.db.storage.from("blog-images").upload(path, cover, { contentType: "image/jpeg" });
+    if (error) return json({ error: `Stockage : ${error.message}` }, 500);
+    return json({ url: admin.db.storage.from("blog-images").getPublicUrl(path).data.publicUrl });
+  } catch (e) {
+    return json({ error: (e as Error).message }, 502);
+  }
 });
