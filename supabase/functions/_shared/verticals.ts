@@ -67,7 +67,7 @@ const COO_SPECIALTIES = [
   "Achats", "Service client", "Automatisation & outils",
 ] as const;
 
-// Produit et Data (ajoutés le 2026-10-12) : projets et champs Jarvi à créer.
+// Produit et Data (ajoutés le 2026-10-12) : valeurs créées dans les champs Jarvi « Spécialités CPO / CDO ».
 const CPO_SPECIALTIES = [
   "Stratégie produit", "Discovery & recherche utilisateur", "Roadmap & priorisation",
   "Management d'équipes produit", "Product-led growth", "Pricing & monétisation", "Product ops",
@@ -120,13 +120,13 @@ export const VERTICALS: readonly VerticalConfig[] = [
     id: "cpo", short: "CPO", label: "Produit", roles: "CPO · Head of Product",
     description: "Vision produit, roadmap, discovery et équipes produit.",
     palette: "olive", specialties: CPO_SPECIALTIES, partTimeTag: "CPO Part-time",
-    jarvi: { projectId: null, specialtiesFieldId: null }, // projet et champ Jarvi à créer
+    jarvi: { projectId: "a8d4ac0f-d7fa-46b8-a8b3-3924bdc07d3e", specialtiesFieldId: "718474cc-7f1a-4890-9054-a4c7ff2aa458" },
   },
   {
     id: "cdo", short: "CDO", label: "Data", roles: "CDO · Head of Data",
     description: "Stratégie data, gouvernance, plateforme et équipes data.",
     palette: "slate", specialties: CDO_SPECIALTIES, partTimeTag: "CDO Part-time",
-    jarvi: { projectId: null, specialtiesFieldId: null }, // projet et champ Jarvi à créer
+    jarvi: { projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c8d6c7ee-ecc3-4c00-aa74-e333ec106225" },
   },
 ];
 
