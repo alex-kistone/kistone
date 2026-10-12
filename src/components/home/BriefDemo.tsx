@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cta from "@/components/site/Cta";
 import { ROUTES } from "@/content/site";
-import { BRIEFS, RECRUITERS } from "@/content/home";
-import { palettes } from "@/lib/palettes";
+import { BRIEFS } from "@/content/home";
+import MatchFeed from "./MatchFeed";
 import { saveHomeBrief } from "@/lib/homeBrief";
 import { detectVertical } from "@/lib/detectVertical";
 import { cn } from "@/lib/utils";
@@ -110,7 +110,6 @@ export default function BriefDemo() {
 
   const own = custom !== null;
   const showCriteria = !own && phase !== "typing";
-  const showMatches = own || phase === "matches";
 
   return (
     <div className="px-5 md:px-8">
@@ -201,62 +200,8 @@ export default function BriefDemo() {
             </div>
           </div>
 
-          {/* Les profils proposés */}
-          <div className="flex min-w-0 flex-col rounded-[24px] bg-ks-muted p-3 sm:p-4">
-            <div className="flex items-center justify-between px-2 pb-3 pt-1">
-              <span className="whitespace-nowrap font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">Profils proposés</span>
-              <span className="flex items-center gap-1.5 whitespace-nowrap text-xs text-ks-subtle">
-                <span className={cn("h-1.5 w-1.5 rounded-full", showMatches ? "bg-ks-success" : "bg-[#CFC8BC]")} aria-hidden="true" />
-                {showMatches ? <>{brief.matches.length}<span className="hidden sm:inline"> profils</span> disponibles</> : "En attente"}
-              </span>
-            </div>
-            <ul className="flex flex-1 flex-col gap-2.5" aria-live="polite">
-              {brief.matches.map((m, i) => {
-                const r = RECRUITERS.find((x) => x.name === m.name)!;
-                const p = palettes[r.palette];
-                return (
-                  <li
-                    key={`${brief.domain}-${m.name}`}
-                    className={cn(
-                      "flex items-center gap-3.5 rounded-[18px] bg-white p-3.5 shadow-[0_1px_2px_rgba(20,19,18,0.04)] transition-all duration-500 sm:p-4",
-                      showMatches ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
-                    )}
-                    style={{ transitionDelay: showMatches ? `${i * 140}ms` : "0ms" }}
-                    aria-hidden={!showMatches}
-                  >
-                    <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-ks-display text-[15px] font-semibold"
-                      style={{ background: p.tint, color: p.ink }}
-                      aria-hidden="true"
-                    >
-                      {r.initials}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="truncate text-[15px] font-semibold">{r.name}</span>
-                        <span className="hidden h-5 shrink-0 items-center gap-1 rounded-full bg-[#E8F5EE] px-2 text-[11px] font-medium text-[#17663F] sm:flex">
-                          <span className="h-1.5 w-1.5 rounded-full bg-ks-success" aria-hidden="true" />
-                          {r.rhythm}
-                        </span>
-                      </div>
-                      <p className="truncate text-[13px] text-ks-subtle">{r.role} · {r.xp}</p>
-                      <div className="mt-2 h-[5px] rounded-full bg-ks-secondary" aria-hidden="true">
-                        <div
-                          className="h-[5px] rounded-full bg-ks-pink transition-[width] duration-700 ease-[cubic-bezier(.2,.7,.2,1)]"
-                          style={{ width: showMatches ? `${m.score}%` : "0%", transitionDelay: `${i * 140 + 200}ms` }}
-                        />
-                      </div>
-                    </div>
-                    <span className="shrink-0 font-ks-display text-[22px] font-semibold tracking-[-0.03em]">
-                      {m.score}
-                      <span className="text-[13px] text-ks-pink">%</span>
-                      <span className="sr-only"> de correspondance</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          {/* Matching en continu, indépendant du besoin tapé à gauche */}
+          <MatchFeed />
         </div>
       </section>
     </div>

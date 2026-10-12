@@ -81,6 +81,8 @@
 @keyframes ks-check-fade { 0%, 4% { opacity: .45; } 10%, 88% { opacity: 1; } 96%, 100% { opacity: .45; } }
 @keyframes ks-check-fill { 0%, 4% { background: transparent; border-color: rgba(245,241,234,.3); } 10%, 88% { background: #FF2E6E; border-color: #FF2E6E; } 96%, 100% { background: transparent; border-color: rgba(245,241,234,.3); } }
 @keyframes ks-check-draw { 0%, 5% { stroke-dashoffset: 14; } 12%, 88% { stroke-dashoffset: 0; } 96%, 100% { stroke-dashoffset: 14; } }
+.ks-bar-fill { animation: ks-bar-fill .9s .15s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes ks-bar-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .ks-float { animation: ks-float 6s ease-in-out infinite; }
 @keyframes ks-float { 50% { transform: translateY(-6px); } }
 
