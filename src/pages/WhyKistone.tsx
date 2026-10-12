@@ -73,7 +73,36 @@ export default function WhyKistone() {
         </figure>
       </section>
 
-      <PageSection tag="Nos engagements" title="Ce qui fait la différence" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]" className="md:mt-36">
+      {/* L'origine : le RPO */}
+      <PageSection tag="D'où vient Kistone" title="Tout a commencé par le recrutement" className="md:mt-36">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-start">
+          <div className="space-y-5 text-[18px] leading-[1.65] text-ks-ink-2">
+            <p>
+              Mon premier métier, c'est le RPO : intégré aux équipes de startups et de scale-ups, je recrutais à leurs côtés
+              les talents qui allaient porter leur croissance. Une expertise qui m'a appris l'essentiel : bien comprendre un besoin,
+              évaluer un parcours au-delà du CV, et ne présenter que le bon profil, au bon moment.
+            </p>
+            <p>
+              Au fil des missions, une même demande revenait. Après les recruteurs, il fallait un DRH pour structurer les équipes,
+              un CFO pour préparer la levée, un CTO pour tenir la plateforme : des dirigeants seniors, souvent pour quelques jours
+              par semaine seulement.
+            </p>
+            <p>
+              Kistone est né de ce constat : appliquer à toutes les fonctions de direction l'exigence de qualification forgée dans
+              le recrutement. Le RPO reste notre socle, et cette culture du recrutement fait notre différence, jusqu'au
+              contract-to-hire, quand une mission a vocation à devenir un recrutement.
+            </p>
+          </div>
+          <blockquote className="rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg">
+            <p className="font-ks-display text-[24px] font-semibold leading-[1.3] tracking-[-0.02em]">
+              « Recruter m'a appris à reconnaître un grand profil. Kistone permet de le rendre accessible à toutes les fonctions de direction. »
+            </p>
+            <footer className="mt-5 text-[14px] text-ks-dark-muted">Alexandre Guégo, fondateur de Kistone</footer>
+          </blockquote>
+        </div>
+      </PageSection>
+
+      <PageSection tag="Nos engagements" title="Ce qui fait la différence" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
         <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {COMMITMENTS.map((c, i) => (
             <li key={c.title} className="rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
