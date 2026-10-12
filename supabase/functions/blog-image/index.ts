@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
   const { prompt, test_photo_url } = await req.json().catch(() => ({}));
   if (!prompt || String(prompt).trim().length < 5) return json({ error: "Description de l'image manquante." }, 400);
 
-  const gemini = Deno.env.get("GEMINI_API_KEY");
+  const gemini = Deno.env.get("GEMINI_API_KEY")?.trim().replace(/^["']|["']$/g, "");
   const openai = Deno.env.get("OPENAI_API_KEY");
   if (!gemini && !openai && !test_photo_url) {
     return json({
