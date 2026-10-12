@@ -21,6 +21,7 @@ import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import { takeHomeBrief } from "@/lib/homeBrief";
+import Highlight from "@/components/site/Highlight";
 import { savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
 import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
@@ -291,7 +292,7 @@ const ClientNewNeed = () => {
                     className="flex h-full w-full flex-col items-start gap-4 rounded-[28px] border border-border bg-card p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
                   >
                     <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: p.tint, color: p.ink }}>{v.short}</span>
-                    <span className="text-xl font-bold leading-tight">Je cherche {v.id === "rpo" ? "un recruteur" : `un ${v.short}`}</span>
+                    <span className="text-xl font-bold leading-tight">Je cherche un <Highlight>{v.id === "rpo" ? "recruteur" : v.short}</Highlight></span>
                     <span className="text-sm text-muted-foreground">{v.description}</span>
                     <span className="h-1 w-12 rounded-full" style={{ background: p.accent }} aria-hidden="true" />
                   </button>

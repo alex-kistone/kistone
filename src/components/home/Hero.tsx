@@ -3,6 +3,7 @@ import Cta from "@/components/site/Cta";
 import { ROUTES } from "@/content/site";
 import { HERO, HERO_TRUST } from "@/content/home";
 import HeroCards, { PersonPhoto } from "./HeroCards";
+import Highlight from "@/components/site/Highlight";
 import { cn } from "@/lib/utils";
 
 const STEP_MS = 2000;
@@ -72,9 +73,7 @@ export default function Hero() {
               i === 0
                 ? [part]
                 : [
-                    <span key={i} className="bg-[linear-gradient(transparent_62%,#F4AFC2_62%,#F4AFC2_94%,transparent_94%)] bg-no-repeat px-[0.04em] [box-decoration-break:clone]">
-                      {HERO.titleHighlight}
-                    </span>,
+                    <Highlight key={i}>{HERO.titleHighlight}</Highlight>,
                     part,
                   ],
             )}

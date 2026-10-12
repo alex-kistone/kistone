@@ -5,6 +5,7 @@ import SiteLayout from "@/components/site/SiteLayout";
 import SectionTag from "@/components/site/SectionTag";
 import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
+import Highlight from "@/components/site/Highlight";
 import { ROLE_PAGES, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
 import { ROUTES } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
@@ -154,7 +155,9 @@ function RoleContent({ role }: { role: Role }) {
         <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: palettes[v.palette].tint, color: palettes[v.palette].ink }}>
           {v.roles}
         </span>
-        <h1 className="mt-6 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">{role.h1}</h1>
+        <h1 className="mt-6 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
+          {role.h1.split(v.short).flatMap((part, i) => (i === 0 ? [part] : [<Highlight key={i}>{v.short}</Highlight>, part]))}
+        </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{role.lead}</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
           <Cta href={needHref} size="lg" arrow className="shadow-ks-pink">Partager mon besoin {v.short}</Cta>
