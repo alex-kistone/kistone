@@ -3,6 +3,9 @@
 /** Prise de rendez-vous avec Alex (bandeau du haut). */
 export const CALENDLY_URL = "https://calendly.com/alexandre-kistone/30mins-meetup";
 
+/** Liens simples de l'en-tête, après les menus déroulants. */
+export const NAV_LINKS = [{ label: "Pourquoi Kistone", href: "/pourquoi-kistone" }];
+
 export const ROUTES = {
   // « Je recrute » / « Partager un besoin » : on qualifie le besoin avant de créer le compte
   recruit: "/besoin",
@@ -51,6 +54,7 @@ export const MENUS: Menu[] = [
     items: [
       { title: "Blog & articles", desc: "Freelance, stratégie, structuration, leadership.", href: "/ressources", dot: "#1F8F87" },
       { title: "Podcast", desc: "[Nom du podcast]", href: "/#ressources", dot: "#FF2E6E" },
+      { title: "Comparatif des acteurs", desc: "Dirigeants fractional et intérim : qui fait quoi en France.", href: "/ressources/comparatif-acteurs-fractional", dot: "#1F2A44" },
       { title: "Guides & études de cas", desc: "Méthodes et retours d’expérience.", href: "/#ressources", dot: "#E07A3A" },
       { title: "Le studio IA", desc: "Outils RH sur mesure : onboarding, assistant RH, tri de candidatures.", href: "/studio", dot: "#7357D6" },
     ],
@@ -70,6 +74,7 @@ export const FOOTER_COLUMNS = [
     title: "La plateforme",
     links: [
       { label: "Trouver un expert", href: "/#marketplace" },
+      { label: "Pourquoi Kistone", href: "/pourquoi-kistone" },
       { label: "Comment ça marche", href: "/#comment" },
       { label: "Partager un besoin", href: "/besoin" },
       { label: "Devenir freelance", href: "/freelances" },

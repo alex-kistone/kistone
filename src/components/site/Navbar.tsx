@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { MENUS, ROUTES } from "@/content/site";
+import { MENUS, ROUTES, NAV_LINKS } from "@/content/site";
 import { useAccount } from "@/hooks/useAccount";
 import PromoBanner from "./PromoBanner";
 import Cta from "./Cta";
@@ -91,6 +91,15 @@ function DesktopMenus() {
           </div>
         );
       })}
+      {NAV_LINKS.map((l) => (
+        <SmartLink
+          key={l.href}
+          href={l.href}
+          className="flex h-10 items-center whitespace-nowrap rounded-full px-3.5 text-[15px] text-ks-ink-2 transition-colors hover:bg-[rgba(20,19,18,0.05)]"
+        >
+          {l.label}
+        </SmartLink>
+      ))}
     </nav>
   );
 }
@@ -168,6 +177,11 @@ function MobileMenu() {
                 </SmartLink>
               ))}
             </div>
+          ))}
+          {NAV_LINKS.map((l) => (
+            <SmartLink key={l.href} href={l.href} onClick={close} className="rounded-[14px] px-3 py-2.5 text-base font-medium hover:bg-white">
+              {l.label}
+            </SmartLink>
           ))}
         </nav>
         <div className="mt-auto flex flex-col gap-2.5 pt-8">

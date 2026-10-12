@@ -9,7 +9,7 @@ import { COMPARISON } from "./content/comparison";
 import { BlogDataContext, type BlogPost } from "./lib/blog";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
-export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/freelances", "/ressources", COMPARISON_PATH];
+export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/freelances", "/pourquoi-kistone", "/ressources", COMPARISON_PATH];
 
 /** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
 export const LLMS_PAGES = [
@@ -17,6 +17,7 @@ export const LLMS_PAGES = [
   { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (fonction, rythme, budget) pour recevoir un profil présélectionné sous 48 h." },
   ...ROLE_PAGES.map((r) => ({ path: rolePath(r), title: r.seoTitle, desc: r.seoDescription })),
   ...MODEL_PAGES.map((m) => ({ path: modelPath(m), title: m.seoTitle, desc: m.seoDescription })),
+  { path: "/pourquoi-kistone", title: "Pourquoi Kistone", desc: "La conviction d'Alexandre Guégo, fondateur : après le freelancing, le fractional leadership deviendra un mode normal de construction des équipes de direction." },
   { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la communauté Kistone : missions qualifiées par fonction, TJM intégral, rythme au choix, contrat, CRA et facturation gérés. Inscription gratuite." },
   { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur le freelance, la stratégie, la structuration des fonctions clés et le leadership." },
   { path: COMPARISON_PATH, title: COMPARISON.seoTitle, desc: COMPARISON.seoDescription },

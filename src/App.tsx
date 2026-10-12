@@ -25,6 +25,7 @@ import RolePage from "./pages/RolePage";
 import BlogIndex from "./pages/BlogIndex";
 import ModelPage from "./pages/ModelPage";
 import FreelancesPage from "./pages/FreelancesPage";
+import WhyKistone from "./pages/WhyKistone";
 import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
@@ -54,6 +55,7 @@ export const AppRoutes = () => (
     <Route path="/recruter/:slug" element={<RolePage />} />
     <Route path="/modeles/:slug" element={<ModelPage />} />
     <Route path="/freelances" element={<FreelancesPage />} />
+    <Route path="/pourquoi-kistone" element={<WhyKistone />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path={COMPARISON_PATH} element={<ComparisonPage />} />
     <Route path="/ressources/:slug" element={<BlogPost />} />

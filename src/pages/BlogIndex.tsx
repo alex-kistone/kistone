@@ -7,9 +7,6 @@ import { useBlogPosts } from "@/components/blog/useBlogPosts";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { BLOG_PATH } from "@/lib/blog";
 import { ROUTES } from "@/content/site";
-import SmartLink from "@/components/site/SmartLink";
-import { COMPARISON, PLAYERS } from "@/content/comparison";
-import { COMPARISON_PATH } from "@/pages/ComparisonPage";
 
 /** /ressources : tous les articles publiés, du plus récent au plus ancien. */
 export default function BlogIndex() {
@@ -30,15 +27,7 @@ export default function BlogIndex() {
         <p className="mt-5 max-w-[680px] text-lg leading-[1.5] text-ks-soft md:text-xl">
           Nos analyses sur le freelance, la stratégie, la structuration des fonctions clés et le leadership : des repères concrets pour les dirigeants et les freelances.
         </p>
-        {/* Guide de référence, toujours en tête */}
-        <SmartLink href={COMPARISON_PATH} className="ks-lift mt-12 flex flex-col gap-3 rounded-[28px] bg-ks-dark p-7 text-ks-dark-fg md:flex-row md:items-center md:justify-between md:p-9">
-          <span>
-            <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">Comparatif · {PLAYERS.length} acteurs</span>
-            <span className="mt-2 block font-ks-display text-[24px] font-bold leading-[1.15] tracking-[-0.03em] md:text-[30px]">{COMPARISON.title}</span>
-          </span>
-          <span className="shrink-0 rounded-full bg-ks-pink px-5 py-3 text-[15px] font-semibold text-white">Lire le comparatif →</span>
-        </SmartLink>
-        {loading ? (
+        {loading && posts.length === 0 ? (
           <p className="mt-14 text-ks-subtle">Chargement des articles…</p>
         ) : posts.length === 0 ? (
           <div className="mt-14 rounded-[28px] bg-white p-10 text-center shadow-ks-card">
