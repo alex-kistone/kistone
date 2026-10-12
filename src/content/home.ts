@@ -84,26 +84,25 @@ export const RESOURCES: { kind: string; title: string; meta: string; palette: Pa
 
 /** Rangée de réassurance sous le hero (promesses validées uniquement). */
 /**
- * Cartes profils à droite du hero (profils d'illustration). Photo dans public/people/ :
- * sans fichier, la carte affiche les initiales sur la teinte de la carte.
+ * Cartes profils à droite du hero (profils d'illustration, portraits générés par IA).
+ * Photo dans public/people/ : sans fichier, la carte affiche les initiales.
  */
 export type HeroCard = {
   initials: string; name: string; chip: string; role: string; meta: string; tags: string[];
   palette: PaletteName; photo: string; capacity: string; availability: string;
 };
 export const HERO_CARDS: HeroCard[] = [
-  { initials: "SR", name: "Sarah R.", chip: "Legal", role: "Legal counsel", meta: "9 ans · Tech & SaaS", tags: ["Contrats", "Conformité", "Gouvernance"], palette: "sand", photo: "/people/sarah.webp", capacity: "2j / semaine", availability: "Dispo immédiatement" },
-  { initials: "TL", name: "Thomas L.", chip: "CFO", role: "CFO fractional", meta: "15 ans · ex-Qonto, Spendesk", tags: ["Closing", "Cash forecast", "Série A/B"], palette: "blue", photo: "/people/thomas.webp", capacity: "2j / semaine", availability: "Dispo sous 1 sem." },
-  { initials: "CM", name: "Camille M.", chip: "DRH", role: "DRH part-time", meta: "12 ans · ex-Doctolib, Alan", tags: ["Comp & ben", "People ops", "Onboarding"], palette: "sage", photo: "/people/camille.webp", capacity: "3j / semaine", availability: "Dispo sous 2 sem." },
+  { initials: "SR", name: "Sarah R.", chip: "Legal", role: "Legal counsel", meta: "9 ans · Tech & SaaS", tags: ["Contrats", "Conformité", "Gouvernance"], palette: "sand", photo: "/people/sarah.jpg", capacity: "2j / semaine", availability: "Dispo immédiatement" },
+  { initials: "TL", name: "Thomas L.", chip: "CFO", role: "CFO fractional", meta: "15 ans · ex-Qonto, Spendesk", tags: ["Closing", "Cash forecast", "Série A/B"], palette: "blue", photo: "/people/thomas.jpg", capacity: "2j / semaine", availability: "Dispo sous 1 sem." },
+  { initials: "CM", name: "Camille M.", chip: "DRH", role: "DRH part-time", meta: "12 ans · ex-Doctolib, Alan", tags: ["Comp & ben", "People ops", "Onboarding"], palette: "sage", photo: "/people/camille.jpg", capacity: "3j / semaine", availability: "Dispo sous 2 sem." },
 ];
 
 export const HERO_TRUST = {
-  // Avatars de la ligne de réassurance : les profils des cartes, plus un quatrième
+  // Avatars de la ligne de réassurance : les profils des cartes
   avatars: [
-    { initials: "CM", photo: "/people/camille.webp", palette: "sage" },
-    { initials: "TL", photo: "/people/thomas.webp", palette: "blue" },
-    { initials: "SR", photo: "/people/sarah.webp", palette: "sand" },
-    { initials: "LN", photo: "/people/lina.webp", palette: "teal" },
+    { initials: "CM", photo: "/people/camille.jpg", palette: "sage" },
+    { initials: "TL", photo: "/people/thomas.jpg", palette: "blue" },
+    { initials: "SR", photo: "/people/sarah.jpg", palette: "sand" },
   ] as { initials: string; photo: string; palette: PaletteName }[],
   lead: "700+ experts vérifiés",
   points: ["Profil sous 48 h", "Sans engagement"],

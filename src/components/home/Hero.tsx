@@ -65,17 +65,20 @@ export default function Hero() {
           </span>
           {HERO.reassurance}
         </p>
-        <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px] xl:text-[70px]">
-          {HERO.title.split(HERO.titleHighlight).flatMap((part, i) =>
-            i === 0
-              ? [part]
-              : [
-                  <span key={i} className="bg-[linear-gradient(transparent_62%,#F4AFC2_62%,#F4AFC2_94%,transparent_94%)] bg-no-repeat px-[0.04em] [box-decoration-break:clone]">
-                    {HERO.titleHighlight}
-                  </span>,
-                  part,
-                ],
-          )}
+        <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px] xl:text-[66px]">
+          {/* « Plateforme Freelance » sur une seule ligne en deux colonnes */}
+          <span className="xl:whitespace-nowrap">
+            {HERO.title.split(HERO.titleHighlight).flatMap((part, i) =>
+              i === 0
+                ? [part]
+                : [
+                    <span key={i} className="bg-[linear-gradient(transparent_62%,#F4AFC2_62%,#F4AFC2_94%,transparent_94%)] bg-no-repeat px-[0.04em] [box-decoration-break:clone]">
+                      {HERO.titleHighlight}
+                    </span>,
+                    part,
+                  ],
+            )}
+          </span>
           <br />
           <span className="text-[#8F8980]">{HERO.titleSecond}</span>
         </h1>

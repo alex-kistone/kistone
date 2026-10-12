@@ -16,7 +16,7 @@ export function PersonPhoto({ photo, initials, palette, className, textClass }: 
       </span>
     );
   }
-  return <img src={photo} alt="" loading="lazy" onError={() => setMissing(true)} className={cn("object-cover", className)} />;
+  return <img src={photo} alt="" loading="lazy" onError={() => setMissing(true)} className={cn("object-cover object-[50%_30%]", className)} />;
 }
 
 /** Position de chaque carte dans la pile (de l'arrière vers l'avant). */
