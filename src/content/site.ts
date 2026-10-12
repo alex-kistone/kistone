@@ -1,5 +1,8 @@
 // Navigation et liens communs à toutes les pages du site vitrine.
 
+/** Prise de rendez-vous avec Alex (bandeau du haut). */
+export const CALENDLY_URL = "https://calendly.com/alexandre-kistone/30mins-meetup";
+
 export const ROUTES = {
   // « Je recrute » / « Partager un besoin » : on qualifie le besoin avant de créer le compte
   recruit: "/besoin",

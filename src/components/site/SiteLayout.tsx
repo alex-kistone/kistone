@@ -27,7 +27,7 @@ function ScrollToHash() {
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="ks-site flex min-h-screen flex-col">
+    <div className="ks-site flex min-h-screen flex-col overflow-x-clip">
       <ScrollToHash />
       <Navbar />
       <main className="flex-1">{children}</main>

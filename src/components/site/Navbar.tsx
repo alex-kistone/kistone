@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 import { cn } from "@/lib/utils";
 import { MENUS, ROUTES } from "@/content/site";
 import { useAccount } from "@/hooks/useAccount";
+import PromoBanner from "./PromoBanner";
 import Cta from "./Cta";
 import Logo from "./Logo";
 import SmartLink from "./SmartLink";
@@ -178,7 +179,11 @@ function MobileMenu() {
 }
 
 export default function Navbar() {
+  const { loggedIn } = useAccount();
   return (
+    <>
+    {/* Bandeau de prise de rendez-vous : visiteurs seulement */}
+    {!loggedIn && <PromoBanner />}
     <header className="sticky top-0 z-40 border-b border-ks-line bg-[rgba(245,241,234,0.82)] backdrop-blur-[16px]">
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
         <div className="flex items-center gap-10">
@@ -191,5 +196,6 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+    </>
   );
 }

@@ -2,10 +2,12 @@ import { FOOTER_COLUMNS, ROUTES } from "@/content/site";
 import Cta from "./Cta";
 import Logo from "./Logo";
 import SmartLink from "./SmartLink";
+import { BoltWatermark } from "@/components/brand/Bolt";
 
 export default function Footer() {
   return (
-    <footer className="mx-3 mb-3 mt-24 rounded-[28px] bg-ks-dark px-6 pb-8 pt-12 text-ks-dark-fg md:mx-6 md:mb-6 md:mt-[140px] md:rounded-[36px] md:px-12 lg:px-[72px] lg:pt-14">
+    <footer className="relative isolate overflow-hidden mx-3 mb-3 mt-24 rounded-[28px] bg-ks-dark px-6 pb-8 pt-12 text-ks-dark-fg md:mx-6 md:mb-6 md:mt-[140px] md:rounded-[36px] md:px-12 lg:px-[72px] lg:pt-14">
+      <BoltWatermark tone="light" className="-bottom-32 -right-16 h-[560px] w-auto rotate-[14deg]" />
       <div className="mx-auto max-w-[1296px]">
         <div className="grid gap-12 lg:grid-cols-[480px_minmax(0,1fr)] lg:gap-20">
           <div>

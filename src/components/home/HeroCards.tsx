@@ -2,6 +2,7 @@ import { useState } from "react";
 import { HERO_CARDS, type HeroCard } from "@/content/home";
 import { palettes, type PaletteName } from "@/lib/palettes";
 import { cn } from "@/lib/utils";
+import { BoltWatermark } from "@/components/brand/Bolt";
 
 /** Photo d'un profil ; tant que le fichier manque, les initiales sur la teinte du profil. */
 export function PersonPhoto({ photo, initials, palette, className, textClass }: {
@@ -61,8 +62,8 @@ function Card({ c, className }: { c: HeroCard; className: string }) {
 /** Pile de cartes profils à droite du hero : chaque fonction, un expert senior. */
 export default function HeroCards() {
   return (
-    <div className="relative mx-auto aspect-[564/640] w-full max-w-[520px]" aria-hidden="true">
-      <img src="/logos/bolt-black.png" alt="" className="pointer-events-none absolute left-1/2 top-1/2 h-[95%] w-auto -translate-x-1/2 -translate-y-1/2 rotate-[18deg] opacity-[0.04]" />
+    <div className="relative isolate mx-auto aspect-[564/640] w-full max-w-[520px]" aria-hidden="true">
+      <BoltWatermark strokeWidth={14} className="left-1/2 top-1/2 h-[175%] w-auto -translate-x-1/2 -translate-y-1/2 rotate-[14deg] opacity-[0.09]" />
       {HERO_CARDS.map((c, i) => (
         <Card key={c.name} c={c} className={LAYOUT[i]} />
       ))}

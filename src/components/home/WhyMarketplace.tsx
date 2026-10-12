@@ -1,5 +1,6 @@
 import { ADMIN_CHECKLIST, ASSETS } from "@/content/home";
 import { cn } from "@/lib/utils";
+import { BoltWatermark } from "@/components/brand/Bolt";
 
 const ICONS: Record<(typeof ASSETS)[number]["icon"], JSX.Element> = {
   shield: (
@@ -28,8 +29,9 @@ export default function WhyMarketplace() {
   return (
     <section
       aria-label="Pourquoi la marketplace"
-      className="mx-auto mt-24 grid max-w-ks gap-5 px-5 md:mt-[140px] md:grid-cols-2 md:px-8 lg:grid-cols-3 xl:px-0"
+      className="relative isolate mx-auto mt-24 grid max-w-ks gap-5 px-5 md:mt-[140px] md:grid-cols-2 md:px-8 lg:grid-cols-3 xl:px-0"
     >
+      <BoltWatermark className="-bottom-28 right-[6%] h-[220px] w-auto rotate-[24deg]" />
       <article className="ks-lift ks-reveal relative flex min-h-[280px] flex-col justify-between gap-8 overflow-hidden rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg md:col-span-2 md:p-10">
         <div
           className="pointer-events-none absolute -right-[90px] -top-[90px] h-[300px] w-[300px] rounded-full"

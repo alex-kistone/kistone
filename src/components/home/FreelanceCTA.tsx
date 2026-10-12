@@ -1,6 +1,7 @@
 import Cta from "@/components/site/Cta";
 import { ROUTES } from "@/content/site";
 import { FREELANCE_SPACE } from "@/content/home";
+import { BoltWatermark } from "@/components/brand/Bolt";
 
 export default function FreelanceCTA() {
   return (
@@ -8,8 +9,9 @@ export default function FreelanceCTA() {
       <section
         id="freelances"
         aria-labelledby="freelances-title"
-        className="ks-reveal mx-auto mt-24 grid max-w-ks scroll-mt-24 items-center gap-10 rounded-[28px] bg-ks-secondary p-6 sm:p-10 md:mt-[140px] md:rounded-[36px] lg:grid-cols-2 lg:gap-14 lg:p-14"
+        className="relative isolate overflow-hidden ks-reveal mx-auto mt-24 grid max-w-ks scroll-mt-24 items-center gap-10 rounded-[28px] bg-ks-secondary p-6 sm:p-10 md:mt-[140px] md:rounded-[36px] lg:grid-cols-2 lg:gap-14 lg:p-14"
       >
+        <BoltWatermark className="-bottom-24 -right-10 h-[440px] w-auto rotate-[12deg]" />
         <div>
           <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">Je suis freelance</span>
           <h2 id="freelances-title" className="mt-4 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
