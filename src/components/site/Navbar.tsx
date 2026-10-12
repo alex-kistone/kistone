@@ -121,7 +121,7 @@ function AccountActions({ size = "md", className, onDone }: { size?: "md" | "lg"
   return (
     <>
       <Cta href={ROUTES.freelance} size={size} variant="secondary" onClick={onDone} className={className}>Je suis freelance</Cta>
-      <Cta href={ROUTES.recruit} size={size} onClick={onDone} className={className}>Je recrute</Cta>
+      <Cta href={ROUTES.clientLogin} size={size} onClick={onDone} className={className}>Connexion</Cta>
     </>
   );
 }
