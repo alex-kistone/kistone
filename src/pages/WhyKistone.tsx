@@ -95,7 +95,7 @@ export default function WhyKistone() {
           </div>
           <blockquote className="rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg">
             <p className="font-ks-display text-[24px] font-semibold leading-[1.3] tracking-[-0.02em]">
-              « Recruter m'a appris à reconnaître un grand profil. Kistone permet de le rendre accessible à toutes les fonctions de direction. »
+              « Un grand dirigeant n'a pas besoin d'être là cinq jours par semaine pour transformer une entreprise. Il a besoin d'être le bon. »
             </p>
             <footer className="mt-5 text-[14px] text-ks-dark-muted">Alexandre Guégo, fondateur de Kistone</footer>
           </blockquote>
