@@ -78,7 +78,7 @@ const PrivacyPolicy = () => {
             <p>
               <strong>Profils freelances sur les pages publiques.</strong> Lorsqu'un profil freelance a été qualifié par l'équipe
               Kistone (note de 4 ou 5 sur 5 après entretien), un extrait anonymisé peut être affiché sur les pages publiques du site
-              (par exemple « Recrutez un CFO fractional ») : prénom et initiale du nom, intitulé de poste, années d'expérience,
+              (par exemple « Recrutez un Fractional CFO ») : prénom et initiale du nom, intitulé de poste, années d'expérience,
               spécialités, rythme de travail et disponibilité. Ne sont jamais affichés : le nom complet, la photo, les coordonnées,
               le profil LinkedIn, l'entreprise, les clients ni le tarif. Ce traitement repose sur l'intérêt légitime de Kistone à
               présenter son réseau ; vous pouvez vous y opposer à tout moment en écrivant à l'adresse indiquée à l'article 1, et

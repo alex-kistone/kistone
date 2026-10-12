@@ -169,7 +169,7 @@ function RoleContent({ role }: { role: Role }) {
       </section>
 
       {/* Profils récents */}
-      <Section id="profils" tag="Profils récents" title={`Des ${role.role.replace(/ (fractional|freelance)$/, "")} qualifiés, prêts à démarrer`}>
+      <Section id="profils" tag="Profils récents" title={`Des ${v.short} qualifiés, prêts à démarrer`}>
         <p className="mt-4 max-w-[680px] text-[17px] leading-[1.55] text-ks-soft">
           Derniers profils inscrits sur Kistone, notés 4 ou 5 étoiles après entretien. Identités complètes communiquées lors de la mise en relation.
         </p>
@@ -257,7 +257,7 @@ function RoleContent({ role }: { role: Role }) {
           </h2>
           <div className="mt-8 flex flex-wrap gap-3">
             <Cta href={needHref} size="lg" arrow>Partager mon besoin {v.short}</Cta>
-            <Cta href={ROUTES.freelance} size="lg" variant="ghost-dark">Je suis {role.role.split(" ")[0]} freelance</Cta>
+            <Cta href={ROUTES.freelance} size="lg" variant="ghost-dark">Je suis {v.short} freelance</Cta>
           </div>
           <nav aria-label="Autres fonctions" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">
             <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Autres fonctions</p>

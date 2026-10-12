@@ -12,7 +12,7 @@ export type SampleProfile = { name: string; job: string; xp: number; specialties
 export type RolePage = {
   vertical: Vertical;
   slug: string;
-  /** Nom du poste, au singulier (« CFO fractional »). */
+  /** Nom du poste, au singulier (« Fractional CFO »). */
   role: string;
   /** Nom du poste en toutes lettres (« directeur financier »). */
   longName: string;
@@ -34,12 +34,12 @@ export type RolePage = {
 export const ROLE_PAGES: RolePage[] = [
   {
     vertical: "rpo",
-    slug: "rpo-freelance",
-    role: "RPO freelance",
+    slug: "fractional-rpo",
+    role: "Fractional RPO",
     longName: "recruteur externalisé (RPO)",
-    h1: "Recrutez un RPO freelance",
+    h1: "Recrutez un Fractional RPO",
     lead: "Des recruteurs seniors spécialisés par métier, intégrés à vos équipes en 48 h pour mener vos embauches du brief à l'onboarding. Sans honoraires au placement.",
-    seoTitle: "RPO freelance : externalisez vos recrutements",
+    seoTitle: "Fractional RPO : externalisez vos recrutements",
     seoDescription: "Recrutement externalisé (RPO) : un recruteur freelance senior intégré à vos équipes en 48 h, spécialisé Tech, Data, Product, Sales ou Finance. Facturé au jour, sans honoraires au placement.",
     rate: [450, 750],
     when: [
@@ -84,12 +84,12 @@ export const ROLE_PAGES: RolePage[] = [
   },
   {
     vertical: "drh",
-    slug: "drh-fractional",
-    role: "DRH fractional",
+    slug: "fractional-drh",
+    role: "Fractional DRH",
     longName: "directeur des ressources humaines (CHRO)",
-    h1: "Recrutez un DRH fractional",
+    h1: "Recrutez un Fractional DRH",
     lead: "Des DRH et CHRO présélectionnés pour vos enjeux RH, présentés en 48 h. Quelques jours par semaine ou à temps plein, avec la flexibilité du freelance et sans frais de recrutement.",
-    seoTitle: "DRH fractional (CHRO) à temps partagé",
+    seoTitle: "Fractional DRH (CHRO) à temps partagé",
     seoDescription: "DRH à temps partagé ou à temps plein : un CHRO senior pour structurer vos RH, la rémunération et les relations sociales. Profil présenté en 48 h, facturé au jour.",
     rate: [800, 1300],
     when: [
@@ -101,7 +101,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le DRH (ou CHRO, Chief Human Resources Officer) définit et pilote la politique RH de l'entreprise : organisation, rémunération, développement des talents, relations sociales et conformité au droit du travail.",
-      "Un DRH fractional assure ce rôle quelques jours par semaine. Il apporte l'expérience d'un DRH confirmé à une entreprise qui n'a pas encore besoin, ou pas les moyens, d'un poste à temps plein.",
+      "Un Fractional DRH assure ce rôle quelques jours par semaine. Il apporte l'expérience d'un DRH confirmé à une entreprise qui n'a pas encore besoin, ou pas les moyens, d'un poste à temps plein.",
     ],
     missions: [
       "Construire la stratégie RH alignée sur le plan de croissance",
@@ -122,25 +122,25 @@ export const ROLE_PAGES: RolePage[] = [
     profile: "Un DRH ou HRBP senior avec 10 ans d'expérience ou plus, dont plusieurs en startup ou scale-up, habitué à structurer une fonction RH en croissance.",
     faq: [
       { q: "Qu'est-ce qu'un DRH à temps partagé ?", a: "C'est un DRH expérimenté qui travaille pour vous quelques jours par semaine, souvent 1 à 3, en freelance. Il apporte la séniorité d'un DRH sans le coût d'un poste à temps plein." },
-      { q: "Combien coûte un DRH fractional ?", a: "Comptez en général 800 à 1 300 € HT par jour. À 2 jours par semaine, vous avez un DRH senior pour un budget ajusté à votre besoin réel." },
+      { q: "Combien coûte un Fractional DRH ?", a: "Comptez en général 800 à 1 300 € HT par jour. À 2 jours par semaine, vous avez un DRH senior pour un budget ajusté à votre besoin réel." },
       { q: "Pour quelle taille d'entreprise ?", a: "Le format convient surtout entre 30 et 300 salariés : assez grand pour avoir de vrais sujets RH, pas encore assez pour un DRH à temps plein." },
       { q: "Peut-il gérer la paie ?", a: "Il pilote la paie et sa conformité, en s'appuyant sur votre prestataire ou votre gestionnaire de paie. Les spécialités de chaque profil sont indiquées avant la mise en relation." },
     ],
     samples: [
-      { name: "Camille M.", job: "DRH part-time", xp: 12, specialties: ["HR strategy", "Paye", "Relations sociales"], days: 3, available: true },
+      { name: "Camille M.", job: "Fractional DRH", xp: 12, specialties: ["HR strategy", "Paye", "Relations sociales"], days: 3, available: true },
       { name: "Valérie B.", job: "DRH · Transformation RH", xp: 15, specialties: ["Transformation RH", "HRBP"], days: 2, available: true },
       { name: "Nicolas F.", job: "CHRO scale-up", xp: 14, specialties: ["Compensations & bénéfices", "HR Ops"], days: null, available: false },
     ],
   },
   {
     vertical: "cfo",
-    slug: "cfo-fractional",
-    role: "CFO fractional",
+    slug: "fractional-cfo",
+    role: "Fractional CFO",
     longName: "directeur administratif et financier (DAF)",
-    h1: "Recrutez un CFO fractional",
+    h1: "Recrutez un Fractional CFO",
     lead: "Des CFO et DAF présélectionnés pour vos enjeux financiers, présentés en 48 h. Budget, trésorerie, reporting ou levée de fonds, à la carte : quelques jours par semaine ou à temps plein.",
-    seoTitle: "CFO fractional : DAF à temps partagé",
-    seoDescription: "CFO fractional ou DAF à temps partagé : pilotage financier, trésorerie, closing, reporting investisseurs et levée de fonds. Profil senior présenté en 48 h, facturé au jour.",
+    seoTitle: "Fractional CFO : DAF à temps partagé",
+    seoDescription: "Fractional CFO ou DAF à temps partagé : pilotage financier, trésorerie, closing, reporting investisseurs et levée de fonds. Profil senior présenté en 48 h, facturé au jour.",
     rate: [900, 1500],
     when: [
       { title: "Avant ou après une levée", desc: "Préparer la data room, le business plan et le reporting investisseurs, puis tenir les engagements pris." },
@@ -151,7 +151,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le CFO (Chief Financial Officer), ou DAF en France, est responsable de la santé financière de l'entreprise : budget, trésorerie, comptabilité, contrôle de gestion, financement et relation avec les investisseurs et les banques.",
-      "Un CFO fractional exerce ce rôle quelques jours par semaine. C'est le format privilégié des startups et PME qui ont besoin d'un regard financier de haut niveau sans recruter un DAF à temps plein.",
+      "Un Fractional CFO exerce ce rôle quelques jours par semaine. C'est le format privilégié des startups et PME qui ont besoin d'un regard financier de haut niveau sans recruter un DAF à temps plein.",
     ],
     missions: [
       "Construire le budget et le prévisionnel de trésorerie",
@@ -171,26 +171,26 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un DAF ou CFO avec 10 à 20 ans d'expérience, souvent passé par l'audit puis la direction financière de startups, scale-ups ou PME, et habitué aux échanges avec les investisseurs.",
     faq: [
-      { q: "Qu'est-ce qu'un CFO fractional ?", a: "Un directeur financier expérimenté qui travaille pour plusieurs entreprises, quelques jours par semaine chacune. Vous bénéficiez de son expertise au rythme dont vous avez besoin." },
-      { q: "Combien coûte un CFO fractional ?", a: "En général 900 à 1 500 € HT par jour selon l'expérience et le périmètre. À 2 jours par semaine, vous bénéficiez d'un DAF senior pour un budget ajusté à votre besoin réel." },
-      { q: "CFO fractional ou expert-comptable ?", a: "L'expert-comptable tient et certifie les comptes. Le CFO fractional pilote : budget, trésorerie, financement, reporting et décisions stratégiques. Les deux travaillent ensemble." },
+      { q: "Qu'est-ce qu'un Fractional CFO ?", a: "Un directeur financier expérimenté qui travaille pour plusieurs entreprises, quelques jours par semaine chacune. Vous bénéficiez de son expertise au rythme dont vous avez besoin." },
+      { q: "Combien coûte un Fractional CFO ?", a: "En général 900 à 1 500 € HT par jour selon l'expérience et le périmètre. À 2 jours par semaine, vous bénéficiez d'un DAF senior pour un budget ajusté à votre besoin réel." },
+      { q: "Fractional CFO ou expert-comptable ?", a: "L'expert-comptable tient et certifie les comptes. Le Fractional CFO pilote : budget, trésorerie, financement, reporting et décisions stratégiques. Les deux travaillent ensemble." },
       { q: "Peut-il accompagner une levée de fonds ?", a: "Oui, c'est l'un des besoins les plus fréquents : business plan, data room, valorisation, échanges avec les fonds, puis reporting après la levée." },
     ],
     samples: [
-      { name: "Thomas L.", job: "CFO fractional", xp: 15, specialties: ["Trésorerie", "FP&A", "M&A / Levée de fonds"], days: 2, available: true },
+      { name: "Thomas L.", job: "Fractional CFO", xp: 15, specialties: ["Trésorerie", "FP&A", "M&A / Levée de fonds"], days: 2, available: true },
       { name: "Youssef K.", job: "CFO · levées de fonds", xp: 13, specialties: ["M&A / Levée de fonds", "Reporting / Closing"], days: null, available: true },
       { name: "Hélène D.", job: "DAF PME", xp: 18, specialties: ["Comptabilité", "Controle de gestion"], days: 3, available: false },
     ],
   },
   {
     vertical: "cto",
-    slug: "cto-fractional",
-    role: "CTO fractional",
+    slug: "fractional-cto",
+    role: "Fractional CTO",
     longName: "directeur technique",
-    h1: "Recrutez un CTO fractional",
+    h1: "Recrutez un Fractional CTO",
     lead: "Des CTO présélectionnés pour vos enjeux tech et IA, présentés en 48 h. Architecture, équipes, delivery ou intégration de l'IA générative, quelques jours par semaine ou à temps plein.",
-    seoTitle: "CTO fractional : directeur technique à temps partagé",
-    seoDescription: "CTO fractional ou directeur technique à temps partagé : architecture, équipes tech, delivery et intégration de l'IA générative. Profil senior présenté en 48 h.",
+    seoTitle: "Fractional CTO : directeur technique à temps partagé",
+    seoDescription: "Fractional CTO ou directeur technique à temps partagé : architecture, équipes tech, delivery et intégration de l'IA générative. Profil senior présenté en 48 h.",
     rate: [1000, 1600],
     when: [
       { title: "Pas de CTO dans l'équipe fondatrice", desc: "Vous devez faire les bons choix techniques et recruter vos premiers développeurs sans profil tech au board." },
@@ -201,7 +201,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le CTO (Chief Technology Officer), ou directeur technique, définit la stratégie technologique de l'entreprise et en garantit l'exécution : architecture, choix techniques, sécurité, organisation et recrutement des équipes d'ingénierie.",
-      "Un CTO fractional apporte cette vision et cette expérience quelques jours par semaine. Il convient aux startups qui n'ont pas encore de CTO, aux PME qui digitalisent leur offre et aux équipes qui doivent intégrer l'IA.",
+      "Un Fractional CTO apporte cette vision et cette expérience quelques jours par semaine. Il convient aux startups qui n'ont pas encore de CTO, aux PME qui digitalisent leur offre et aux équipes qui doivent intégrer l'IA.",
     ],
     missions: [
       "Définir la stratégie et la roadmap technique avec la direction",
@@ -221,8 +221,8 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un CTO ou VP Engineering avec 12 ans d'expérience ou plus, ayant déjà fait grandir une équipe tech en startup ou scale-up, et à l'aise avec les sujets IA.",
     faq: [
-      { q: "Qu'est-ce qu'un CTO fractional ?", a: "Un directeur technique expérimenté qui intervient quelques jours par semaine. Il prend les décisions techniques structurantes et encadre l'équipe, sans le coût d'un CTO à temps plein." },
-      { q: "Combien coûte un CTO fractional ?", a: "En général 1 000 à 1 600 € HT par jour, selon l'expérience et le périmètre. La plupart des missions se font à 2 ou 3 jours par semaine." },
+      { q: "Qu'est-ce qu'un Fractional CTO ?", a: "Un directeur technique expérimenté qui intervient quelques jours par semaine. Il prend les décisions techniques structurantes et encadre l'équipe, sans le coût d'un CTO à temps plein." },
+      { q: "Combien coûte un Fractional CTO ?", a: "En général 1 000 à 1 600 € HT par jour, selon l'expérience et le périmètre. La plupart des missions se font à 2 ou 3 jours par semaine." },
       { q: "Peut-il coder ?", a: "Certains restent très opérationnels, d'autres se concentrent sur l'architecture et le management. Précisez-le dans votre besoin : le matching en tient compte." },
       { q: "Peut-il nous aider sur l'IA générative ?", a: "Oui. De nombreux CTO de la plateforme sont spécialisés en stratégie IA et intégration de LLM, du choix des cas d'usage à la mise en production." },
     ],
@@ -234,13 +234,13 @@ export const ROLE_PAGES: RolePage[] = [
   },
   {
     vertical: "cro",
-    slug: "cro-fractional",
-    role: "CRO fractional",
+    slug: "fractional-cro",
+    role: "Fractional CRO",
     longName: "directeur commercial (Chief Revenue Officer)",
-    h1: "Recrutez un CRO fractional",
+    h1: "Recrutez un Fractional CRO",
     lead: "Des CRO et directeurs commerciaux présélectionnés pour vos enjeux de croissance, présentés en 48 h. Go-to-market, équipe sales, pipeline ou nouveau marché, au rythme qui vous convient.",
-    seoTitle: "CRO fractional : directeur commercial à temps partagé",
-    seoDescription: "CRO fractional ou directeur commercial à temps partagé : go-to-market, équipes sales, pipeline, RevOps et ouverture de marché. Profil senior présenté en 48 h.",
+    seoTitle: "Fractional CRO : directeur commercial à temps partagé",
+    seoDescription: "Fractional CRO ou directeur commercial à temps partagé : go-to-market, équipes sales, pipeline, RevOps et ouverture de marché. Profil senior présenté en 48 h.",
     rate: [900, 1500],
     when: [
       { title: "Passer du fondateur à une équipe", desc: "Les fondateurs vendent encore seuls : il faut un process, des recrutements et un management commercial." },
@@ -251,7 +251,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le CRO (Chief Revenue Officer) est responsable de l'ensemble du chiffre d'affaires : ventes, développement commercial, et souvent marketing et customer success. Il aligne ces équipes sur un même objectif de revenu.",
-      "Un CRO fractional intervient quelques jours par semaine pour poser la stratégie commerciale, structurer l'équipe et le process de vente, et accompagner les managers jusqu'à ce que la machine tourne.",
+      "Un Fractional CRO intervient quelques jours par semaine pour poser la stratégie commerciale, structurer l'équipe et le process de vente, et accompagner les managers jusqu'à ce que la machine tourne.",
     ],
     missions: [
       "Définir la stratégie go-to-market et le plan commercial",
@@ -272,7 +272,7 @@ export const ROLE_PAGES: RolePage[] = [
     profile: "Un CRO, VP Sales ou directeur commercial avec 10 ans d'expérience ou plus, qui a déjà fait passer une équipe de quelques commerciaux à une organisation structurée.",
     faq: [
       { q: "CRO ou directeur commercial ?", a: "Le directeur commercial pilote les ventes. Le CRO couvre l'ensemble du revenu : ventes, marketing et customer success. Sur la plateforme, les deux profils sont proposés selon votre besoin." },
-      { q: "Combien coûte un CRO fractional ?", a: "En général 900 à 1 500 € HT par jour. Une part variable liée aux résultats peut se discuter selon les missions." },
+      { q: "Combien coûte un Fractional CRO ?", a: "En général 900 à 1 500 € HT par jour. Une part variable liée aux résultats peut se discuter selon les missions." },
       { q: "Peut-il vendre lui-même ?", a: "Certains profils restent sur le terrain pour les grands comptes, d'autres se concentrent sur l'équipe et le process. Précisez-le dans votre besoin." },
       { q: "Combien de temps dure la mission ?", a: "Souvent 6 à 12 mois, le temps de structurer l'équipe et le process, puis de recruter ou faire monter un responsable interne." },
     ],
@@ -284,13 +284,13 @@ export const ROLE_PAGES: RolePage[] = [
   },
   {
     vertical: "coo",
-    slug: "coo-fractional",
-    role: "COO fractional",
+    slug: "fractional-coo",
+    role: "Fractional COO",
     longName: "directeur des opérations",
-    h1: "Recrutez un COO fractional",
+    h1: "Recrutez un Fractional COO",
     lead: "Des COO présélectionnés pour vos enjeux opérationnels, présentés en 48 h. Process, scaling, pilotage de la performance ou ouverture de marché, quelques jours par semaine ou à temps plein.",
-    seoTitle: "COO fractional : directeur des opérations à temps partagé",
-    seoDescription: "COO fractional ou directeur des opérations à temps partagé : process, scaling, pilotage de la performance et organisation. Profil senior présenté en 48 h.",
+    seoTitle: "Fractional COO : directeur des opérations à temps partagé",
+    seoDescription: "Fractional COO ou directeur des opérations à temps partagé : process, scaling, pilotage de la performance et organisation. Profil senior présenté en 48 h.",
     rate: [900, 1400],
     when: [
       { title: "Des fondateurs débordés", desc: "Le CEO gère tout l'opérationnel au détriment de la stratégie, des clients et des investisseurs." },
@@ -301,7 +301,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le COO (Chief Operating Officer), ou directeur des opérations, transforme la stratégie en exécution : organisation, process, supply chain, service client, outils et pilotage de la performance au quotidien.",
-      "Un COO fractional prend ce rôle quelques jours par semaine. Il libère les fondateurs de l'opérationnel et met en place une organisation capable de suivre la croissance.",
+      "Un Fractional COO prend ce rôle quelques jours par semaine. Il libère les fondateurs de l'opérationnel et met en place une organisation capable de suivre la croissance.",
     ],
     missions: [
       "Traduire la stratégie en plan opérationnel et en objectifs",
@@ -321,8 +321,8 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un COO ou directeur des opérations avec 10 ans d'expérience ou plus, souvent passé par le conseil puis l'opérationnel en scale-up, habitué aux phases de forte croissance.",
     faq: [
-      { q: "Qu'est-ce qu'un COO fractional ?", a: "Un directeur des opérations expérimenté qui intervient quelques jours par semaine pour organiser, structurer et piloter vos opérations, sans recruter un COO à temps plein." },
-      { q: "Combien coûte un COO fractional ?", a: "En général 900 à 1 400 € HT par jour, selon l'expérience et le périmètre de la mission." },
+      { q: "Qu'est-ce qu'un Fractional COO ?", a: "Un directeur des opérations expérimenté qui intervient quelques jours par semaine pour organiser, structurer et piloter vos opérations, sans recruter un COO à temps plein." },
+      { q: "Combien coûte un Fractional COO ?", a: "En général 900 à 1 400 € HT par jour, selon l'expérience et le périmètre de la mission." },
       { q: "COO ou chef de projet ?", a: "Le chef de projet mène un chantier. Le COO a une vision d'ensemble des opérations et la légitimité pour arbitrer entre les équipes." },
       { q: "Pour quelle taille d'entreprise ?", a: "Le format convient surtout aux entreprises de 20 à 300 personnes en croissance, où les fondateurs ont besoin de déléguer l'opérationnel." },
     ],
@@ -334,13 +334,13 @@ export const ROLE_PAGES: RolePage[] = [
   },
   {
     vertical: "cpo",
-    slug: "cpo-fractional",
-    role: "CPO fractional",
+    slug: "fractional-cpo",
+    role: "Fractional CPO",
     longName: "directeur produit (Chief Product Officer)",
-    h1: "Recrutez un CPO fractional",
+    h1: "Recrutez un Fractional CPO",
     lead: "Des CPO et Heads of Product présélectionnés pour vos enjeux produit, présentés en 48 h. Vision, roadmap, discovery ou équipe produit, quelques jours par semaine ou à temps plein.",
-    seoTitle: "CPO fractional : directeur produit à temps partagé",
-    seoDescription: "CPO fractional ou Head of Product à temps partagé : vision produit, roadmap, discovery, product-led growth et équipes produit. Profil senior présenté en 48 h.",
+    seoTitle: "Fractional CPO : directeur produit à temps partagé",
+    seoDescription: "Fractional CPO ou Head of Product à temps partagé : vision produit, roadmap, discovery, product-led growth et équipes produit. Profil senior présenté en 48 h.",
     rate: [900, 1400],
     when: [
       { title: "Une roadmap dictée par les urgences", desc: "Les demandes clients et commerciales s'empilent, sans vision ni priorisation claire." },
@@ -351,7 +351,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le CPO (Chief Product Officer), ou directeur produit, porte la vision du produit et décide de ce que l'entreprise construit : stratégie, roadmap, discovery, priorisation et organisation des équipes produit et design.",
-      "Un CPO fractional exerce ce rôle quelques jours par semaine. Il apporte méthode et recul à des équipes qui livrent beaucoup mais sans toujours savoir pourquoi.",
+      "Un Fractional CPO exerce ce rôle quelques jours par semaine. Il apporte méthode et recul à des équipes qui livrent beaucoup mais sans toujours savoir pourquoi.",
     ],
     missions: [
       "Définir la vision et la stratégie produit avec la direction",
@@ -371,8 +371,8 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un CPO, VP Product ou Head of Product avec 10 ans d'expérience ou plus, passé par des éditeurs SaaS ou des scale-ups, qui a déjà construit une équipe produit.",
     faq: [
-      { q: "Qu'est-ce qu'un CPO fractional ?", a: "Un directeur produit expérimenté qui intervient quelques jours par semaine pour cadrer la vision, la roadmap et l'équipe produit." },
-      { q: "Combien coûte un CPO fractional ?", a: "En général 900 à 1 400 € HT par jour, selon l'expérience et le périmètre." },
+      { q: "Qu'est-ce qu'un Fractional CPO ?", a: "Un directeur produit expérimenté qui intervient quelques jours par semaine pour cadrer la vision, la roadmap et l'équipe produit." },
+      { q: "Combien coûte un Fractional CPO ?", a: "En général 900 à 1 400 € HT par jour, selon l'expérience et le périmètre." },
       { q: "CPO ou product manager ?", a: "Le product manager gère un périmètre du produit. Le CPO fixe la vision d'ensemble, arbitre les priorités et organise l'équipe produit." },
       { q: "Peut-il recruter nos premiers PM ?", a: "Oui, c'est souvent une partie de la mission : définir les postes, mener les entretiens et intégrer les nouveaux PM." },
     ],
@@ -384,13 +384,13 @@ export const ROLE_PAGES: RolePage[] = [
   },
   {
     vertical: "cdo",
-    slug: "cdo-fractional",
-    role: "CDO fractional",
+    slug: "fractional-cdo",
+    role: "Fractional CDO",
     longName: "directeur data (Chief Data Officer)",
-    h1: "Recrutez un CDO fractional",
+    h1: "Recrutez un Fractional CDO",
     lead: "Des CDO et Heads of Data présélectionnés pour vos enjeux data et IA, présentés en 48 h. Stratégie, gouvernance, plateforme ou équipe data, quelques jours par semaine ou à temps plein.",
-    seoTitle: "CDO fractional : directeur data à temps partagé",
-    seoDescription: "CDO fractional ou Head of Data à temps partagé : stratégie data, gouvernance, plateforme, analytics et cas d'usage IA. Profil senior présenté en 48 h.",
+    seoTitle: "Fractional CDO : directeur data à temps partagé",
+    seoDescription: "Fractional CDO ou Head of Data à temps partagé : stratégie data, gouvernance, plateforme, analytics et cas d'usage IA. Profil senior présenté en 48 h.",
     rate: [1000, 1500],
     when: [
       { title: "Des chiffres qui ne concordent pas", desc: "Chaque équipe a son tableur et ses indicateurs : personne ne fait confiance aux données." },
@@ -401,7 +401,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     definition: [
       "Le CDO (Chief Data Officer), ou directeur data, fait de la donnée un actif de l'entreprise : stratégie data, gouvernance et qualité, plateforme technique, analytics et cas d'usage d'IA.",
-      "Un CDO fractional prend ce rôle quelques jours par semaine. Il convient aux entreprises qui veulent tirer parti de leurs données et de l'IA sans encore recruter un directeur data à temps plein.",
+      "Un Fractional CDO prend ce rôle quelques jours par semaine. Il convient aux entreprises qui veulent tirer parti de leurs données et de l'IA sans encore recruter un directeur data à temps plein.",
     ],
     missions: [
       "Définir la stratégie data et les cas d'usage prioritaires",
@@ -421,8 +421,8 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un CDO, Head of Data ou directeur data avec 10 ans d'expérience ou plus, qui a déjà construit une plateforme et une équipe data en scale-up ou en grand groupe.",
     faq: [
-      { q: "Qu'est-ce qu'un CDO fractional ?", a: "Un directeur data expérimenté qui intervient quelques jours par semaine pour poser la stratégie, la gouvernance et la plateforme data." },
-      { q: "Combien coûte un CDO fractional ?", a: "En général 1 000 à 1 500 € HT par jour, selon l'expérience et le périmètre." },
+      { q: "Qu'est-ce qu'un Fractional CDO ?", a: "Un directeur data expérimenté qui intervient quelques jours par semaine pour poser la stratégie, la gouvernance et la plateforme data." },
+      { q: "Combien coûte un Fractional CDO ?", a: "En général 1 000 à 1 500 € HT par jour, selon l'expérience et le périmètre." },
       { q: "CDO ou CTO ?", a: "Le CTO est responsable de la technologie et du produit. Le CDO se concentre sur la donnée : sa qualité, sa gouvernance et sa valorisation, notamment par l'IA." },
       { q: "Peut-il lancer nos projets d'IA ?", a: "Oui. Il identifie les cas d'usage rentables, prépare les données nécessaires et pilote les premiers projets jusqu'en production." },
     ],

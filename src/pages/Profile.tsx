@@ -509,7 +509,7 @@ const Profile = () => {
               id="jobTitle"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              placeholder={isRpo ? "Ex : Talent Acquisition Manager" : `Ex : ${vConf.short} fractional`}
+              placeholder={isRpo ? "Ex : Talent Acquisition Manager" : `Ex : Fractional ${vConf.short}`}
             />
           </div>
 
@@ -766,7 +766,7 @@ const Profile = () => {
                         updated[idx] = { ...updated[idx], profile_types: e.target.value };
                         setMissions(updated);
                       }}
-                      placeholder={isRpo ? "Ex : Développeurs Full-Stack" : "Ex : CFO fractional, 2 j/sem, série A"}
+                      placeholder={isRpo ? "Ex : Développeurs Full-Stack" : "Ex : Fractional CFO, 2 j/sem, série A"}
                     />
                   </div>
                   <div className="space-y-1">

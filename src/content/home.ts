@@ -33,9 +33,9 @@ export type Recruiter = {
 export const RECRUITERS: Recruiter[] = [
   { initials: "JM", name: "Julie M.", role: "Recruteuse Tech & Produit", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage" },
   { initials: "TR", name: "Thomas R.", role: "Recruteur Tech", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "blue" },
-  { initials: "CM", name: "Camille M.", role: "DRH part-time", vertical: "drh", rhythm: "3 j / sem", xp: "12 ans", palette: "apricot" },
+  { initials: "CM", name: "Camille M.", role: "Fractional DRH", vertical: "drh", rhythm: "3 j / sem", xp: "12 ans", palette: "apricot" },
   { initials: "VB", name: "Valérie B.", role: "DRH · Transformation RH", vertical: "drh", rhythm: "2 j / sem", xp: "15 ans", palette: "apricot" },
-  { initials: "TL", name: "Thomas L.", role: "CFO fractional · ex-Qonto", vertical: "cfo", rhythm: "2 j / sem", xp: "15 ans", palette: "lilac" },
+  { initials: "TL", name: "Thomas L.", role: "Fractional CFO · ex-Qonto", vertical: "cfo", rhythm: "2 j / sem", xp: "15 ans", palette: "lilac" },
   { initials: "YK", name: "Youssef K.", role: "CFO · levées de fonds", vertical: "cfo", rhythm: "Temps plein", xp: "13 ans", palette: "lilac" },
   { initials: "AD", name: "Aminata D.", role: "COO · scaling des opérations", vertical: "coo", rhythm: "3 j / sem", xp: "14 ans", palette: "sand" },
   { initials: "RP", name: "Rohit P.", role: "COO · supply chain", vertical: "coo", rhythm: "Temps plein", xp: "11 ans", palette: "sand" },
@@ -93,8 +93,8 @@ export type HeroCard = {
 };
 export const HERO_CARDS: HeroCard[] = [
   { initials: "SR", name: "Sarah R.", chip: "Legal", role: "Legal counsel", meta: "9 ans · Tech & SaaS", tags: ["Contrats", "Conformité", "Gouvernance"], palette: "sand", photo: "/people/sarah.jpg", capacity: "2j / semaine", availability: "Dispo immédiatement" },
-  { initials: "TL", name: "Thomas L.", chip: "CFO", role: "CFO fractional", meta: "15 ans · ex-Qonto, Spendesk", tags: ["Closing", "Cash forecast", "Série A/B"], palette: "blue", photo: "/people/thomas.jpg", capacity: "2j / semaine", availability: "Dispo sous 1 sem." },
-  { initials: "CM", name: "Camille M.", chip: "DRH", role: "DRH part-time", meta: "12 ans · ex-Doctolib, Alan", tags: ["Comp & ben", "People ops", "Onboarding"], palette: "sage", photo: "/people/camille.jpg", capacity: "3j / semaine", availability: "Dispo sous 2 sem." },
+  { initials: "TL", name: "Thomas L.", chip: "CFO", role: "Fractional CFO", meta: "15 ans · ex-Qonto, Spendesk", tags: ["Closing", "Cash forecast", "Série A/B"], palette: "blue", photo: "/people/thomas.jpg", capacity: "2j / semaine", availability: "Dispo sous 1 sem." },
+  { initials: "CM", name: "Camille M.", chip: "DRH", role: "Fractional DRH", meta: "12 ans · ex-Doctolib, Alan", tags: ["Comp & ben", "People ops", "Onboarding"], palette: "sage", photo: "/people/camille.jpg", capacity: "3j / semaine", availability: "Dispo sous 2 sem." },
 ];
 
 export const HERO_TRUST = {

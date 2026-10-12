@@ -26,7 +26,7 @@ const LENGTHS: Record<string, string> = {
 
 /** Pages du site vers lesquelles l'article peut renvoyer (maillage interne). */
 const INTERNAL_LINKS = [
-  ...VERTICALS.map((v) => `- /recruter/${v.id === "rpo" ? "rpo-freelance" : `${v.id}-fractional`} : page « ${v.id === "rpo" ? "RPO freelance" : `${v.short} fractional`} » (${v.description})`),
+  ...VERTICALS.map((v) => `- /recruter/fractional-${v.id} : page « Fractional ${v.short} » (${v.description})`),
   "- /besoin : formulaire pour partager un besoin et recevoir un profil sous 48 h",
   "- /register : inscription des freelances",
 ].join("\n");
