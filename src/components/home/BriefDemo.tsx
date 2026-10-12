@@ -98,7 +98,8 @@ export default function BriefDemo() {
     if (i >= 0 && i !== index) setIndex(i);
   };
 
-  const needHref = `${ROUTES.recruit}?fonction=${brief.domain.toLowerCase()}`;
+  // Avec un besoin tapé : fonction présélectionnée et fiche pré-remplie ; sinon, choix de la fonction
+  const needHref = custom?.trim() ? `${ROUTES.recruit}?fonction=${brief.domain.toLowerCase()}` : ROUTES.recruit;
   const keepBrief = () => {
     if (custom?.trim()) saveHomeBrief(custom);
   };
@@ -173,6 +174,10 @@ export default function BriefDemo() {
                 className="mt-2 block min-h-[78px] w-full resize-none bg-transparent text-[16px] leading-[1.55] text-ks-ink outline-none placeholder:text-ks-subtle sm:text-[17px]"
               />
             </div>
+
+            <Cta href={needHref} onClick={keepBrief} arrow className="-mt-1 self-start">
+              Découvrir les profils
+            </Cta>
 
             <div aria-live="polite">
               <p className={cn("flex items-center gap-2 text-sm font-medium transition-opacity duration-300", showCriteria ? "text-ks-ink" : "text-ks-subtle")}>
@@ -251,9 +256,6 @@ export default function BriefDemo() {
                 );
               })}
             </ul>
-            <Cta href={needHref} onClick={keepBrief} arrow className="mt-3 w-full justify-center">
-              Déposer mon besoin
-            </Cta>
           </div>
         </div>
       </section>
