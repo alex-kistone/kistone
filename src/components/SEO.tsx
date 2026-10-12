@@ -13,12 +13,13 @@ const BASE_URL = "https://kistone.fr";
 
 export default function SEO({ title, description, path, type = "website", image, jsonLd }: SEOProps) {
   const url = `${BASE_URL}${path}`;
-  const safeTitle = title.length > 60 ? title.slice(0, 57) + "…" : title;
+  // La marque toujours en tête : l'onglet commence par « Kistone », Google affiche la suite.
+  const full = title.startsWith("Kistone") ? title : `Kistone · ${title}`;
+  const safeTitle = full.length > 65 ? full.slice(0, 64) + "…" : full;
   const safeDesc = description.length > 160 ? description.slice(0, 157) + "…" : description;
   return (
     <Helmet>
-      {/* L'onglet affiche toujours « Kistone » ; le titre de page sert au partage (og/twitter). */}
-      <title>Kistone</title>
+      <title>{safeTitle}</title>
       <meta name="description" content={safeDesc} />
       <link rel="canonical" href={url} />
       <meta property="og:title" content={safeTitle} />

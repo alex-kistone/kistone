@@ -3,17 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kistone</title>
-    <meta name="description" content="Kistone — Plateforme Freelance RPO : recruteurs freelances spécialisés par métier, et un studio IA pour vos outils RH." />
-    <meta name="author" content="Kistone" />
-
+    <!--seo-->
+    <title>Kistone · Plateforme Freelance · Fractional Leaders</title>
+    <meta name="description" content="Dirigeants et recruteurs freelance pour les entreprises Tech &amp; Digital : RPO, DRH, CFO, COO, CRO, CTO, à temps plein ou quelques jours par semaine." />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Kistone" />
-    <meta property="og:description" content="Kistone — Plateforme Freelance RPO : recruteurs freelances spécialisés par métier, et un studio IA pour vos outils RH." />
-
+    <meta property="og:title" content="Kistone · Plateforme Freelance · Fractional Leaders" />
+    <meta property="og:description" content="Dirigeants et recruteurs freelance pour les entreprises Tech &amp; Digital : RPO, DRH, CFO, COO, CRO, CTO, à temps plein ou quelques jours par semaine." />
+    <meta name="twitter:title" content="Kistone · Plateforme Freelance · Fractional Leaders" />
+    <meta name="twitter:description" content="Dirigeants et recruteurs freelance pour les entreprises Tech &amp; Digital : RPO, DRH, CFO, COO, CRO, CTO, à temps plein ou quelques jours par semaine." />
+    <!--/seo-->
+    <meta name="author" content="Kistone" />
+    <meta property="og:site_name" content="Kistone" />
+    <meta property="og:locale" content="fr_FR" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Kistone" />
-    <meta name="twitter:description" content="Kistone — Plateforme Freelance RPO : recruteurs freelances spécialisés par métier, et un studio IA pour vos outils RH." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +28,15 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Page pré-rendue servie pour une autre adresse (repli des espaces connectés) : on vide
+      // le contenu avant affichage, l'application le remplace aussitôt.
+      (function () {
+        var r = document.getElementById("root"), p = r.getAttribute("data-prerendered");
+        var here = location.pathname.replace(/\/+$/, "") || "/";
+        if (p && p !== here) r.innerHTML = "";
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

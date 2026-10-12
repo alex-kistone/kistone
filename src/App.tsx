@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Studio from "./pages/Studio";
@@ -24,37 +25,49 @@ import CookieConsent from "./components/platform/CookieConsent";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+/** Les routes du site, partagées par le navigateur et le pré-rendu (scripts/prerender.mjs). */
+export const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/studio" element={<Studio />} />
+    <Route path="/register" element={<FreelancerAuth />} />
+    <Route path="/profile" element={<Profile />} />
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/forgot-password" element={<ForgotPassword />} />
+    <Route path="/reset-password" element={<ResetPassword />} />
+    <Route path="/client" element={<ClientAuth />} />
+    <Route path="/client/onboarding" element={<ClientOnboarding />} />
+    <Route path="/client/dashboard" element={<ClientDashboard />} />
+    <Route path="/besoin" element={<ClientNewNeed />} />
+    <Route path="/client/new-need" element={<ClientNewNeed />} />
+    <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
+    <Route path="/client/profile" element={<ClientProfile />} />
+    <Route path="/open-needs" element={<OpenNeeds />} />
+    <Route path="/privacy" element={<PrivacyPolicy />} />
+    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
+/** Fournisseurs communs ; le routeur est passé en enfant (navigateur ou pré-rendu). */
+export const AppProviders = ({ children }: { children: ReactNode }) => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/studio" element={<Studio />} />
-          <Route path="/register" element={<FreelancerAuth />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/client" element={<ClientAuth />} />
-          <Route path="/client/onboarding" element={<ClientOnboarding />} />
-          <Route path="/client/dashboard" element={<ClientDashboard />} />
-          <Route path="/besoin" element={<ClientNewNeed />} />
-          <Route path="/client/new-need" element={<ClientNewNeed />} />
-          <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
-          <Route path="/client/profile" element={<ClientProfile />} />
-          <Route path="/open-needs" element={<OpenNeeds />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <CookieConsent />
-      </BrowserRouter>
+      {children}
     </TooltipProvider>
   </QueryClientProvider>
+);
+
+const App = () => (
+  <AppProviders>
+    <BrowserRouter>
+      <AppRoutes />
+      <CookieConsent />
+    </BrowserRouter>
+  </AppProviders>
 );
 
 export default App;
