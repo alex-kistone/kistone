@@ -1,12 +1,13 @@
 /**
  * blog-image — couverture d'article (admin uniquement) : photo éditoriale réaliste générée par
- * OpenAI (gpt-image-1), sur laquelle on pose le vrai logo Kistone et la tagline (jamais
+ * Gemini (Google) ou OpenAI, sur laquelle on pose le vrai logo Kistone et la tagline (jamais
  * dessinés par l'IA). Le résultat est déposé dans le stockage public « blog-images ».
  *
  * Corps : { prompt } — description de la scène (proposée par blog-generate, modifiable).
  * Réponse : { url }
  *
- * Secret : OPENAI_API_KEY. Sans clé, 503 avec la marche à suivre.
+ * Secrets : GEMINI_API_KEY (prioritaire ; modèle GEMINI_IMAGE_MODEL, gemini-2.5-flash-image par
+ * défaut) ou OPENAI_API_KEY (gpt-image-1). Sans clé, 503 avec la marche à suivre.
  * Test du montage sans OpenAI : { prompt, test_photo_url } (photo JPEG ou PNG existante).
  */
 import { decode, Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
@@ -48,6 +49,24 @@ async function brandCover(photoBytes: Uint8Array): Promise<Uint8Array> {
   return await photo.encodeJPEG(86);
 }
 
+/** Photo générée par Gemini (format 3:2, recadrée ensuite en 1536 × 1024). */
+async function geminiPhoto(key: string, prompt: string): Promise<Uint8Array> {
+  const model = Deno.env.get("GEMINI_IMAGE_MODEL") || "gemini-2.5-flash-image";
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    method: "POST",
+    headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: `${prompt}\n\n${STYLE}` }] }],
+      generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "3:2" } },
+    }),
+  });
+  if (!res.ok) throw new Error(`Gemini ${res.status} : ${(await res.text()).slice(0, 300)}`);
+  const parts = (await res.json())?.candidates?.[0]?.content?.parts ?? [];
+  const data = parts.find((p: { inlineData?: { data?: string } }) => p.inlineData?.data)?.inlineData?.data;
+  if (!data) throw new Error("Gemini n'a pas renvoyé d'image (description refusée ou trop vague), reformulez.");
+  return Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+}
+
 async function openAiPhoto(key: string, prompt: string): Promise<Uint8Array> {
   const res = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
@@ -68,17 +87,20 @@ Deno.serve(async (req) => {
   const { prompt, test_photo_url } = await req.json().catch(() => ({}));
   if (!prompt || String(prompt).trim().length < 5) return json({ error: "Description de l'image manquante." }, 400);
 
-  const key = Deno.env.get("OPENAI_API_KEY");
-  if (!key && !test_photo_url) {
+  const gemini = Deno.env.get("GEMINI_API_KEY");
+  const openai = Deno.env.get("OPENAI_API_KEY");
+  if (!gemini && !openai && !test_photo_url) {
     return json({
-      error: "Photos non configurées : ajoutez la clé OPENAI_API_KEY dans Supabase (Project Settings › Edge Functions › Secrets). En attendant, téléversez une image.",
+      error: "Photos non configurées : ajoutez la clé GEMINI_API_KEY dans Supabase (Project Settings › Edge Functions › Secrets). En attendant, téléversez une image.",
     }, 503);
   }
 
   try {
     const photo = test_photo_url
       ? new Uint8Array(await (await fetch(String(test_photo_url))).arrayBuffer())
-      : await openAiPhoto(key!, String(prompt).trim());
+      : gemini
+      ? await geminiPhoto(gemini, String(prompt).trim())
+      : await openAiPhoto(openai!, String(prompt).trim());
     const cover = await brandCover(photo);
     const path = `covers/${crypto.randomUUID()}.jpg`;
     const { error } = await admin.db.storage.from("blog-images").upload(path, cover, { contentType: "image/jpeg" });
