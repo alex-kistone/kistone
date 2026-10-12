@@ -88,7 +88,7 @@ const Profile = () => {
   const [sectors, setSectors] = useState<string[]>([]);
   const [remotePreference, setRemotePreference] = useState<string>("");
   const [sectorOther, setSectorOther] = useState("");
-  // Département (RPO, DRH, CFO, COO, CRO, CTO) et champs propres aux C-Level
+  // Département (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO) et champs propres aux C-Level
   const [vertical, setVertical] = useState<Vertical>("rpo");
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [weeklyCapacity, setWeeklyCapacity] = useState("5");

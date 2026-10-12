@@ -17,7 +17,7 @@ export default function Home() {
     <SiteLayout>
       <SEO
         title="Kistone · Plateforme Freelance · Fractional Leaders"
-        description="Dirigeants et recruteurs freelance pour les entreprises Tech & Digital : RPO, DRH, CFO, COO, CRO, CTO, à temps plein ou quelques jours par semaine."
+        description="Dirigeants et recruteurs freelance pour les entreprises Tech & Digital : RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO, à temps plein ou quelques jours par semaine."
         path="/"
       />
       <Hero />

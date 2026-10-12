@@ -50,7 +50,7 @@ const DashboardFilters = ({
   onViewModeChange,
 }: DashboardFiltersProps) => {
   const [modelFilter, setModelFilter] = useState("all");
-  // Fonction (RPO, DRH, CFO, COO, CRO, CTO)
+  // Fonction (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO)
   const [verticalFilter, setVerticalFilter] = useState("all");
   const [mobilityFilter, setMobilityFilter] = useState("");
   const [tjmRange, setTjmRange] = useState<[number, number]>([0, 1500]);

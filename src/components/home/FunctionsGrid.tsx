@@ -5,22 +5,26 @@ import { palettes } from "@/lib/palettes";
 import { VERTICALS } from "@/lib/verticals";
 
 /**
- * Les six fonctions de la plateforme : une carte teintée par fonction, qui ouvre le dépôt
+ * Les fonctions de la plateforme : une carte teintée par fonction, qui ouvre le dépôt
  * de besoin avec la fonction déjà choisie (?fonction=cfo).
  */
+// Le titre suit le nombre de fonctions (« Huit fonctions clés. »)
+const COUNT_WORDS = ["Zéro", "Une", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sept", "Huit", "Neuf", "Dix", "Onze", "Douze"];
+const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
+
 export default function FunctionsGrid() {
   return (
     <section id="fonctions" className="mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <SectionTag className="ks-reveal">Fonctions</SectionTag>
       <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-        Six fonctions clés.
+        {countWord(VERTICALS.length)} fonctions clés.
         <br />
         Un seul partenaire.
       </h2>
       <p className="ks-reveal mt-[18px] text-[17px] leading-[1.5] text-ks-soft md:text-[19px]">
         Des experts seniors, à temps plein ou quelques jours par semaine.
       </p>
-      <ul className="mt-14 grid w-full gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-14 grid w-full gap-5 text-left sm:grid-cols-2 lg:grid-cols-4">
         {VERTICALS.map((v, i) => {
           const p = palettes[v.palette];
           return (

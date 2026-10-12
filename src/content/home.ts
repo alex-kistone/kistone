@@ -57,7 +57,7 @@ export const ASSETS = [
   { icon: "shield", title: "Profils vérifiés", desc: "Identité, statut, parcours et références contrôlés avant la première mission.", featured: true },
   { icon: "clock", title: "Fractional ou temps plein", desc: "Quelques jours par semaine ou à plein temps. Vous ajustez selon vos besoins." },
   { icon: "team", title: "Intégré à votre équipe", desc: "Vos outils, vos rituels, vos objectifs. Un dirigeant qui travaille avec vous." },
-  { icon: "pulse", title: "Spécialisés par fonction", desc: "RPO, DRH, CFO, COO, CRO, CTO : un expert qui connaît vos enjeux." },
+  { icon: "pulse", title: "Spécialisés par fonction", desc: "RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO : un expert qui connaît vos enjeux." },
 ] as const;
 
 export const FREELANCE_SPACE = [

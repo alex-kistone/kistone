@@ -33,7 +33,7 @@ type Props = {
 const toggle = (list: string[], value: string, on: boolean) => (on ? [...list, value] : list.filter((x) => x !== value));
 
 /**
- * Le « quoi » d'un besoin : la fonction recherchée (RPO, DRH, CFO, COO, CRO, CTO), puis les
+ * Le « quoi » d'un besoin : la fonction recherchée (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO), puis les
  * métiers à recruter (RPO) ou les spécialités attendues (C-Level), et le rythme souhaité.
  */
 export default function NeedFunctionFields({ vertical, onVertical, profileTypes, onProfileTypes, specialties, onSpecialties, days, onDays, hideFunctionChoice }: Props) {
