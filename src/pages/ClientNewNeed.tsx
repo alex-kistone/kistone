@@ -21,6 +21,7 @@ import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import { takeHomeBrief } from "@/lib/homeBrief";
+import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
 import { savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
 import { palettes } from "@/lib/palettes";
@@ -275,7 +276,13 @@ const ClientNewNeed = () => {
   };
 
   return (
-    <div className={onboarding || isPublic ? "min-h-screen bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
+    <div className={onboarding || isPublic ? "relative isolate min-h-screen overflow-x-clip bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
+      {isPublic && (
+        <>
+          <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
+          <BoltWatermark className="-left-16 bottom-24 hidden h-[260px] w-auto rotate-[-18deg] md:block" />
+        </>
+      )}
       {onboarding || isPublic ? <Header /> : <AppShell role="client" />}
       {isPublic && !picked ? (
         <main className="container mx-auto max-w-4xl px-4 py-12 md:py-16">

@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
+import { BoltWatermark } from "@/components/brand/Bolt";
 import AccountSwitch from "@/components/auth/AccountSwitch";
 import SignupSent from "@/components/auth/SignupSent";
 import { isFreeEmail, FREE_EMAIL_MESSAGE } from "@/lib/emailDomains";
@@ -181,8 +182,10 @@ const ClientAuth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative isolate min-h-screen overflow-x-clip bg-background">
       <Header />
+      <BoltWatermark strokeWidth={14} className="-left-40 top-40 h-[760px] w-auto rotate-[-14deg]" />
+      <BoltWatermark className="-right-10 top-24 hidden h-[300px] w-auto rotate-[16deg] md:block" />
       <main className="mx-3 my-8 flex max-w-[480px] flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:mx-auto sm:my-16 sm:px-10 sm:py-12">
         <AccountSwitch current="client" signup={!isLogin} />
         <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[16px] bg-ks-pink-100">

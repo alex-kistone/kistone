@@ -6,6 +6,7 @@ import SectionTag from "@/components/site/SectionTag";
 import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
+import { BoltWatermark } from "@/components/brand/Bolt";
 import { ROLE_PAGES, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
 import { ROUTES } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
@@ -91,8 +92,9 @@ function ProfileCard({ p, palette }: { p: Shown; palette: string }) {
   );
 }
 
-const Section = ({ id, tag, title, children, className }: { id?: string; tag: string; title: string; children: React.ReactNode; className?: string }) => (
-  <section id={id} className={cn("mx-auto mt-24 max-w-ks scroll-mt-24 px-5 md:mt-32 md:px-8 xl:px-0", className)}>
+const Section = ({ id, tag, title, children, className, bolt }: { id?: string; tag: string; title: string; children: React.ReactNode; className?: string; bolt?: string }) => (
+  <section id={id} className={cn("relative isolate mx-auto mt-24 max-w-ks scroll-mt-24 px-5 md:mt-32 md:px-8 xl:px-0", className)}>
+    {bolt && <BoltWatermark className={bolt} />}
     <SectionTag>{tag}</SectionTag>
     <h2 className="mt-5 max-w-[820px] font-ks-display text-[34px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[48px]">{title}</h2>
     {children}
@@ -151,7 +153,8 @@ function RoleContent({ role }: { role: Role }) {
       <SEO title={role.seoTitle} description={role.seoDescription} path={rolePath(role)} jsonLd={jsonLd} />
 
       {/* Promesse */}
-      <section className="mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
+      <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
+        <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg] md:h-[760px]" />
         <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: palettes[v.palette].tint, color: palettes[v.palette].ink }}>
           {v.roles}
         </span>
@@ -179,7 +182,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Chiffres clés */}
-      <Section tag="Chiffres clés" title="Un dirigeant senior, avec la flexibilité du freelance">
+      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" tag="Chiffres clés" title="Un dirigeant senior, avec la flexibilité du freelance">
         <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {figures.map((f) => (
             <div key={f.label} className="rounded-[24px] bg-white p-6 shadow-ks-card">
@@ -205,7 +208,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Définition et fiche de poste */}
-      <Section tag="Fiche de poste" title={`${role.role} : définition et fiche de poste`}>
+      <Section bolt="-right-16 top-0 h-[480px] w-auto rotate-[12deg]" tag="Fiche de poste" title={`${role.role} : définition et fiche de poste`}>
         <div className="mt-8 max-w-[820px] space-y-4 text-[17px] leading-[1.65] text-ks-ink-2">
           {role.definition.map((p) => <p key={p}>{p}</p>)}
         </div>
@@ -232,7 +235,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* FAQ */}
-      <Section tag="Questions fréquentes" title={`Tout savoir sur le ${role.role}`}>
+      <Section bolt="-left-10 bottom-0 h-[220px] w-auto rotate-[20deg]" tag="Questions fréquentes" title={`Tout savoir sur le ${role.role}`}>
         <div className="mt-8 max-w-[860px] divide-y divide-[rgba(20,19,18,0.08)] rounded-[24px] bg-white px-6 shadow-ks-card md:px-8">
           {role.faq.map((f) => (
             <details key={f.q} className="group py-5">
