@@ -5,6 +5,7 @@ import { ROUTES } from "@/content/site";
 import { BRIEFS, RECRUITERS } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 import { saveHomeBrief } from "@/lib/homeBrief";
+import { detectVertical } from "@/lib/detectVertical";
 import { cn } from "@/lib/utils";
 
 const TYPE_MS = 24; // vitesse de frappe, par caractère
@@ -89,6 +90,14 @@ export default function BriefDemo() {
     setCustom("");
   };
 
+  // Pendant la frappe, l'onglet suit la fonction citée (« un CTO… ») ; l'IA confirme sur /besoin
+  const write = (text: string) => {
+    setCustom(text);
+    const v = detectVertical(text);
+    const i = v ? BRIEFS.findIndex((b) => b.domain.toLowerCase() === v) : -1;
+    if (i >= 0 && i !== index) setIndex(i);
+  };
+
   const needHref = `${ROUTES.recruit}?fonction=${brief.domain.toLowerCase()}`;
   const keepBrief = () => {
     if (custom?.trim()) saveHomeBrief(custom);
@@ -155,7 +164,7 @@ export default function BriefDemo() {
                 id="home-brief"
                 value={own ? custom : brief.text.slice(0, typed)}
                 onFocus={startTyping}
-                onChange={(e) => setCustom(e.target.value)}
+                onChange={(e) => write(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
                 }}

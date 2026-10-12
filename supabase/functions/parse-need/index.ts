@@ -49,7 +49,7 @@ ${VERTICALS.filter((v) => v.id !== "rpo").map((v) => `- ${v.id} : le client cher
 Spécialités possibles par fonction (n'utilise que celles de la fonction retenue) :
 ${VERTICALS.filter((v) => v.id !== "rpo").map((v) => `- ${v.id} : ${v.specialties.join(" ; ")}`).join("\n")}
 Pour la fonction rpo, les typologies de profils à recruter sont : ${PROFILE_TYPES.join(", ")}.
-Rythme : days_per_week = nombre de jours par semaine demandés (1 à 4) ; omets-le pour un temps plein ou s'il n'est pas précisé.
+Rythme : days_per_week = nombre de jours par semaine demandés (1 à 4) ; omets-le pour un temps plein ou si rien n'indique un temps partiel. Temps partiel sans nombre de jours (« part-time », « temps partiel », « temps partagé », « quelques jours par semaine ») : mets 2.
 Les secteurs / environnements possibles sont : ${SECTEURS.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
 Date d'arrivée souhaitée : nous sommes le ${new Date().toISOString().slice(0, 10)}. Si le texte donne une date ou une période de démarrage (« début novembre », « en janvier »), renseigne desired_start au format AAAA-MM-JJ (premier jour de la période). Si c'est urgent (« ASAP », « au plus vite ») ou non précisé, omets desired_start.
