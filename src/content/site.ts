@@ -16,6 +16,7 @@ export const ROUTES = {
 export const STUDIO_GRADIENT = "linear-gradient(100deg, #FF2E6E 0%, #B14DF5 55%, #4C7DFF 100%)";
 
 import { ROLE_PAGES, rolePath } from "./roles";
+import { MODEL_PAGES, modelPath } from "./models";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
 
@@ -27,6 +28,9 @@ const ROLE_ITEMS = ROLE_PAGES.map((r) => ({
   dot: palettes[verticalOf(r.vertical).palette].accent,
 }));
 
+/** Les modèles d'intervention (/modeles/…). */
+const MODEL_ITEMS = MODEL_PAGES.map((m) => ({ title: m.name, desc: m.short, href: modelPath(m), dot: palettes[m.palette].accent }));
+
 export type MenuItem = { title: string; desc: string; href: string; dot: string };
 export type Menu = { id: string; label: string; items: MenuItem[] };
 
@@ -37,21 +41,18 @@ export const MENUS: Menu[] = [
     items: ROLE_ITEMS,
   },
   {
-    id: "studio",
-    label: "Le studio",
-    items: [
-      { title: "Outils RH sur mesure", desc: "Onboarding, assistant RH, tri de candidatures.", href: "/studio", dot: "#7357D6" },
-      { title: "Réalisations", desc: "Des produits utilisés, pas des démos.", href: "/studio#realisations", dot: "#3D7BD0" },
-      { title: "Tarifs", desc: "Sprint ou Partenaire, sans engagement.", href: "/studio#tarifs", dot: "#2F9A63" },
-    ],
+    id: "modeles",
+    label: "Modèles",
+    items: MODEL_ITEMS,
   },
   {
     id: "res",
     label: "Ressources",
     items: [
-      { title: "Blog & articles", desc: "Recrutement freelance, RPO, Fractional Leaders.", href: "/ressources", dot: "#1F8F87" },
+      { title: "Blog & articles", desc: "Freelance, stratégie, structuration, leadership.", href: "/ressources", dot: "#1F8F87" },
       { title: "Podcast", desc: "[Nom du podcast]", href: "/#ressources", dot: "#FF2E6E" },
       { title: "Guides & études de cas", desc: "Méthodes et retours d’expérience.", href: "/#ressources", dot: "#E07A3A" },
+      { title: "Le studio IA", desc: "Outils RH sur mesure : onboarding, assistant RH, tri de candidatures.", href: "/studio", dot: "#7357D6" },
     ],
   },
 ];
@@ -60,6 +61,10 @@ export const FOOTER_COLUMNS = [
   {
     title: "Fractional Leaders",
     links: ROLE_ITEMS.map((r) => ({ label: r.title, href: r.href })),
+  },
+  {
+    title: "Modèles",
+    links: MODEL_ITEMS.map((m) => ({ label: m.title, href: m.href })),
   },
   {
     title: "La plateforme",
@@ -71,19 +76,12 @@ export const FOOTER_COLUMNS = [
     ],
   },
   {
-    title: "Le studio",
-    links: [
-      { label: "Méthode", href: "/studio#methode" },
-      { label: "Réalisations", href: "/studio#realisations" },
-      { label: "Tarifs", href: "/studio#tarifs" },
-    ],
-  },
-  {
     title: "Ressources",
     links: [
       { label: "Blog", href: "/ressources" },
       { label: "Podcast", href: "/#ressources" },
       { label: "Guides", href: "/#ressources" },
+      { label: "Le studio IA", href: "/studio" },
     ],
   },
 ];

@@ -14,18 +14,18 @@ export default function BlogIndex() {
   return (
     <SiteLayout>
       <SEO
-        title="Ressources : recruter et piloter avec des Fractional Leaders"
-        description="Guides et articles Kistone sur le recrutement freelance, le RPO et les dirigeants fractional (DRH, CFO, CTO, CRO, COO, CPO, CDO) : quand, comment, à quel prix."
+        title="Ressources : freelance, stratégie, structuration et leadership"
+        description="Analyses et guides Kistone pour dirigeants et freelances : travailler en freelance ou en fractional, stratégie, structuration des fonctions clés et leadership."
         path={BLOG_PATH}
       />
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg]" />
         <SectionTag>Ressources</SectionTag>
         <h1 className="mt-5 max-w-[860px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px]">
-          Recruter et piloter, sans jargon.
+          Freelance, stratégie et leadership, sans jargon.
         </h1>
         <p className="mt-5 max-w-[680px] text-lg leading-[1.5] text-ks-soft md:text-xl">
-          Nos guides sur le recrutement freelance, le RPO et les dirigeants fractional : quand y faire appel, comment bien les choisir, combien ça coûte.
+          Nos analyses sur le freelance, la stratégie, la structuration des fonctions clés et le leadership : des repères concrets pour les dirigeants et les freelances.
         </p>
         {loading ? (
           <p className="mt-14 text-ks-subtle">Chargement des articles…</p>

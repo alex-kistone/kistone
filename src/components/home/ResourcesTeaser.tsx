@@ -17,7 +17,7 @@ export default function ResourcesTeaser() {
         <div>
           <SectionTag className="ks-reveal">Ressources</SectionTag>
           <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
-            Recruter et outiller, sans jargon.
+            Freelance, stratégie et leadership, sans jargon.
           </h2>
         </div>
         {posts.length > 0 ? (

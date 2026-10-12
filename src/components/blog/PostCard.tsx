@@ -10,7 +10,7 @@ export default function PostCard({ post }: { post: BlogPost }) {
   return (
     <li className="ks-lift rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-3 shadow-ks-card">
       <SmartLink href={postPath(post)} className="flex h-full flex-col">
-        <div className="relative flex h-[200px] items-end overflow-hidden rounded-[20px] p-[18px]" style={{ background: p.tint }}>
+        <div className={`relative flex h-[200px] overflow-hidden rounded-[20px] p-[18px] ${post.cover_url ? "items-start" : "items-end"}`} style={{ background: p.tint }}>
           {post.cover_url ? (
             <img src={post.cover_url} alt={post.cover_alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
           ) : (

@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RolePage from "./pages/RolePage";
 import BlogIndex from "./pages/BlogIndex";
+import ModelPage from "./pages/ModelPage";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 
@@ -49,6 +50,7 @@ export const AppRoutes = () => (
     <Route path="/open-needs" element={<OpenNeeds />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
     <Route path="/recruter/:slug" element={<RolePage />} />
+    <Route path="/modeles/:slug" element={<ModelPage />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path="/ressources/:slug" element={<BlogPost />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

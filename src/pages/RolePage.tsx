@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
-import SectionTag from "@/components/site/SectionTag";
+import PageSection from "@/components/site/PageSection";
 import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
@@ -92,14 +92,7 @@ function ProfileCard({ p, palette }: { p: Shown; palette: string }) {
   );
 }
 
-const Section = ({ id, tag, title, children, className, bolt }: { id?: string; tag: string; title: string; children: React.ReactNode; className?: string; bolt?: string }) => (
-  <section id={id} className={cn("relative isolate mx-auto mt-24 max-w-ks scroll-mt-24 px-5 md:mt-32 md:px-8 xl:px-0", className)}>
-    {bolt && <BoltWatermark className={bolt} />}
-    <SectionTag>{tag}</SectionTag>
-    <h2 className="mt-5 max-w-[820px] font-ks-display text-[34px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[48px]">{title}</h2>
-    {children}
-  </section>
-);
+const Section = PageSection;
 
 export default function RolePage() {
   const { slug } = useParams();
