@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Cta from "@/components/site/Cta";
 import { ROUTES } from "@/content/site";
 import { BRIEFS, RECRUITERS } from "@/content/home";
 import { palettes } from "@/lib/palettes";
+import { saveHomeBrief } from "@/lib/homeBrief";
 import { cn } from "@/lib/utils";
 
 const TYPE_MS = 24; // vitesse de frappe, par caractère
@@ -24,6 +26,8 @@ function SparkIcon() {
  * Démo du produit : un besoin se tape tout seul, l'IA en extrait les critères, puis les
  * recruteurs correspondants apparaissent avec leur score. Un onglet par métier ; la démo
  * enchaîne les exemples tant que le visiteur ne choisit pas lui-même.
+ * Le visiteur peut aussi taper son propre besoin : « Déposer mon besoin » l'emmène sur
+ * /besoin avec la fonction choisie et la fiche pré-remplie par l'IA.
  */
 export default function BriefDemo() {
   const [index, setIndex] = useState(0);
@@ -31,7 +35,10 @@ export default function BriefDemo() {
   const [phase, setPhase] = useState<Phase>("typing");
   const [visible, setVisible] = useState(false);
   const [pinned, setPinned] = useState(false);
+  // Besoin saisi par le visiteur (null tant qu'il n'a pas cliqué dans la zone)
+  const [custom, setCustom] = useState<string | null>(null);
   const ref = useRef<HTMLElement>(null);
+  const navigate = useNavigate();
   const brief = BRIEFS[index];
 
   // La démo démarre quand elle entre à l'écran
@@ -43,9 +50,9 @@ export default function BriefDemo() {
     return () => io.disconnect();
   }, []);
 
-  // Frappe, puis critères, puis profils
+  // Frappe, puis critères, puis profils (arrêtée dès que le visiteur écrit lui-même)
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || custom !== null) return;
     if (reducedMotion()) {
       setTyped(brief.text.length);
       setPhase("matches");
@@ -69,15 +76,31 @@ export default function BriefDemo() {
       window.clearInterval(tick);
       timers.forEach(window.clearTimeout);
     };
-  }, [index, visible, pinned, brief.text.length]);
+  }, [index, visible, pinned, brief.text.length, custom]);
 
   const choose = (i: number) => {
     setPinned(true);
     setIndex(i);
   };
 
-  const showCriteria = phase !== "typing";
-  const showMatches = phase === "matches";
+  const startTyping = () => {
+    if (custom !== null) return;
+    setPinned(true);
+    setCustom("");
+  };
+
+  const needHref = `${ROUTES.recruit}?fonction=${brief.domain.toLowerCase()}`;
+  const keepBrief = () => {
+    if (custom?.trim()) saveHomeBrief(custom);
+  };
+  const submit = () => {
+    keepBrief();
+    navigate(needHref);
+  };
+
+  const own = custom !== null;
+  const showCriteria = !own && phase !== "typing";
+  const showMatches = own || phase === "matches";
 
   return (
     <div className="px-5 md:px-8">
@@ -123,14 +146,23 @@ export default function BriefDemo() {
               ))}
             </div>
 
-            <div className="rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-ks-bg p-4 sm:p-5">
-              <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">Votre besoin</span>
-              {/* Texte complet pour les lecteurs d'écran ; la frappe n'est qu'un effet visuel */}
-              <p className="sr-only">{brief.text}</p>
-              <p className="mt-2 min-h-[78px] text-[16px] leading-[1.55] text-ks-ink sm:text-[17px]" aria-hidden="true">
-                {brief.text.slice(0, typed)}
-                {phase === "typing" && <span className="ks-caret ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] bg-ks-pink" />}
-              </p>
+            <div className="rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-ks-bg p-4 transition-colors focus-within:border-ks-pink sm:p-5">
+              <label htmlFor="home-brief" className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">
+                Votre besoin{!own && <span className="normal-case tracking-normal"> · cliquez pour écrire le vôtre</span>}
+              </label>
+              {/* Zone de saisie : d'abord la démo qui se tape seule, puis le texte du visiteur */}
+              <textarea
+                id="home-brief"
+                value={own ? custom : brief.text.slice(0, typed)}
+                onFocus={startTyping}
+                onChange={(e) => setCustom(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
+                }}
+                placeholder={`Ex : ${brief.text}`}
+                rows={4}
+                className="mt-2 block min-h-[78px] w-full resize-none bg-transparent text-[16px] leading-[1.55] text-ks-ink outline-none placeholder:text-ks-subtle sm:text-[17px]"
+              />
             </div>
 
             <div aria-live="polite">
@@ -138,7 +170,7 @@ export default function BriefDemo() {
                 <span className={cn("flex h-6 w-6 items-center justify-center rounded-full", showCriteria ? "bg-ks-pink-100 text-ks-pink-ink" : "bg-ks-muted")}>
                   <SparkIcon />
                 </span>
-                {showCriteria ? "Critères extraits par l'IA" : "Analyse du besoin…"}
+                {own ? "L'IA extraira les critères à l'étape suivante" : showCriteria ? "Critères extraits par l'IA" : "Analyse du besoin…"}
               </p>
               <ul className="mt-3 flex min-h-[34px] flex-wrap gap-2" aria-label="Critères">
                 {showCriteria &&
@@ -210,7 +242,7 @@ export default function BriefDemo() {
                 );
               })}
             </ul>
-            <Cta href={ROUTES.recruit} arrow className="mt-3 w-full justify-center">
+            <Cta href={needHref} onClick={keepBrief} arrow className="mt-3 w-full justify-center">
               Déposer mon besoin
             </Cta>
           </div>

@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
+import { takeHomeBrief } from "@/lib/homeBrief";
 import { savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
 import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
@@ -155,8 +156,18 @@ const ClientNewNeed = () => {
     init();
   }, [navigate, isPublic]);
 
-  const handleGenerate = async () => {
-    if (freeText.trim().length < 10) {
+  // Besoin tapé sur l'accueil : repris ici et analysé tout de suite par l'IA
+  useEffect(() => {
+    if (!isPublic) return;
+    const brief = takeHomeBrief();
+    if (!brief) return;
+    setFreeText(brief);
+    handleGenerate(brief);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPublic]);
+
+  const handleGenerate = async (text: string = freeText) => {
+    if (text.trim().length < 10) {
       toast({ title: "Texte trop court", description: "Décrivez votre besoin en au moins quelques phrases.", variant: "destructive" });
       return;
     }
@@ -164,7 +175,7 @@ const ClientNewNeed = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const { data, error } = await supabase.functions.invoke("parse-need", {
-        body: { freeText: freeText.trim() },
+        body: { freeText: text.trim() },
         headers: session ? { Authorization: `Bearer ${session.access_token}` } : {},
       });
 
@@ -356,7 +367,7 @@ const ClientNewNeed = () => {
             type="button"
             variant="outline"
             className="gap-2"
-            onClick={handleGenerate}
+            onClick={() => handleGenerate()}
             disabled={generating || freeText.trim().length < 10}
           >
             {generating ? (
