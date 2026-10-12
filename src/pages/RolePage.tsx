@@ -179,7 +179,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Chiffres clés */}
-      <Section tag="Chiffres clés" title="Un dirigeant senior, sans les délais ni le coût d'un CDI">
+      <Section tag="Chiffres clés" title="Un dirigeant senior, avec la flexibilité du freelance">
         <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {figures.map((f) => (
             <div key={f.label} className="rounded-[24px] bg-white p-6 shadow-ks-card">

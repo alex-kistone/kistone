@@ -88,7 +88,7 @@ export const ROLE_PAGES: RolePage[] = [
     role: "DRH fractional",
     longName: "directeur des ressources humaines (CHRO)",
     h1: "Recrutez un DRH fractional",
-    lead: "Des DRH et CHRO présélectionnés pour vos enjeux RH, présentés en 48 h. Quelques jours par semaine ou à temps plein, sans frais de recrutement ni coût d'un CDI.",
+    lead: "Des DRH et CHRO présélectionnés pour vos enjeux RH, présentés en 48 h. Quelques jours par semaine ou à temps plein, avec la flexibilité du freelance et sans frais de recrutement.",
     seoTitle: "DRH fractional (CHRO) à temps partagé",
     seoDescription: "DRH à temps partagé ou à temps plein : un CHRO senior pour structurer vos RH, la rémunération et les relations sociales. Profil présenté en 48 h, facturé au jour.",
     rate: [800, 1300],
@@ -122,7 +122,7 @@ export const ROLE_PAGES: RolePage[] = [
     profile: "Un DRH ou HRBP senior avec 10 ans d'expérience ou plus, dont plusieurs en startup ou scale-up, habitué à structurer une fonction RH en croissance.",
     faq: [
       { q: "Qu'est-ce qu'un DRH à temps partagé ?", a: "C'est un DRH expérimenté qui travaille pour vous quelques jours par semaine, souvent 1 à 3, en freelance. Il apporte la séniorité d'un DRH sans le coût d'un poste à temps plein." },
-      { q: "Combien coûte un DRH fractional ?", a: "Comptez en général 800 à 1 300 € HT par jour. À 2 jours par semaine, le coût annuel reste bien inférieur à celui d'un DRH en CDI chargé." },
+      { q: "Combien coûte un DRH fractional ?", a: "Comptez en général 800 à 1 300 € HT par jour. À 2 jours par semaine, vous avez un DRH senior pour un budget ajusté à votre besoin réel." },
       { q: "Pour quelle taille d'entreprise ?", a: "Le format convient surtout entre 30 et 300 salariés : assez grand pour avoir de vrais sujets RH, pas encore assez pour un DRH à temps plein." },
       { q: "Peut-il gérer la paie ?", a: "Il pilote la paie et sa conformité, en s'appuyant sur votre prestataire ou votre gestionnaire de paie. Les spécialités de chaque profil sont indiquées avant la mise en relation." },
     ],
@@ -172,7 +172,7 @@ export const ROLE_PAGES: RolePage[] = [
     profile: "Un DAF ou CFO avec 10 à 20 ans d'expérience, souvent passé par l'audit puis la direction financière de startups, scale-ups ou PME, et habitué aux échanges avec les investisseurs.",
     faq: [
       { q: "Qu'est-ce qu'un CFO fractional ?", a: "Un directeur financier expérimenté qui travaille pour plusieurs entreprises, quelques jours par semaine chacune. Vous bénéficiez de son expertise au rythme dont vous avez besoin." },
-      { q: "Combien coûte un CFO fractional ?", a: "En général 900 à 1 500 € HT par jour selon l'expérience et le périmètre. À 2 jours par semaine, c'est une fraction du coût d'un DAF en CDI." },
+      { q: "Combien coûte un CFO fractional ?", a: "En général 900 à 1 500 € HT par jour selon l'expérience et le périmètre. À 2 jours par semaine, vous bénéficiez d'un DAF senior pour un budget ajusté à votre besoin réel." },
       { q: "CFO fractional ou expert-comptable ?", a: "L'expert-comptable tient et certifie les comptes. Le CFO fractional pilote : budget, trésorerie, financement, reporting et décisions stratégiques. Les deux travaillent ensemble." },
       { q: "Peut-il accompagner une levée de fonds ?", a: "Oui, c'est l'un des besoins les plus fréquents : business plan, data room, valorisation, échanges avec les fonds, puis reporting après la levée." },
     ],

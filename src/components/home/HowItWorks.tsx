@@ -81,7 +81,7 @@ export default function HowItWorks() {
       <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
         Un expert senior.
         <br />
-        Sans le CDI.
+        La flexibilité du freelance.
       </h2>
       <p className="ks-reveal mt-[18px] text-[17px] leading-[1.5] text-ks-soft md:text-[19px]">
         Il rejoint vos équipes, utilise vos outils et avance à votre rythme.
