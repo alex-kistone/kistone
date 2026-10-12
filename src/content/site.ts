@@ -49,7 +49,7 @@ export const MENUS: Menu[] = [
     id: "res",
     label: "Ressources",
     items: [
-      { title: "Blog & articles", desc: "Recrutement, RPO, outils RH.", href: "/#ressources", dot: "#1F8F87" },
+      { title: "Blog & articles", desc: "Recrutement freelance, RPO, Fractional Leaders.", href: "/ressources", dot: "#1F8F87" },
       { title: "Podcast", desc: "[Nom du podcast]", href: "/#ressources", dot: "#FF2E6E" },
       { title: "Guides & études de cas", desc: "Méthodes et retours d’expérience.", href: "/#ressources", dot: "#E07A3A" },
     ],
@@ -81,7 +81,7 @@ export const FOOTER_COLUMNS = [
   {
     title: "Ressources",
     links: [
-      { label: "Blog", href: "/#ressources" },
+      { label: "Blog", href: "/ressources" },
       { label: "Podcast", href: "/#ressources" },
       { label: "Guides", href: "/#ressources" },
     ],

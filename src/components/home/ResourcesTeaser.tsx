@@ -2,8 +2,14 @@ import SectionTag from "@/components/site/SectionTag";
 import { RESOURCES } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 import { BoltWatermark } from "@/components/brand/Bolt";
+import Cta from "@/components/site/Cta";
+import PostCard from "@/components/blog/PostCard";
+import { useBlogPosts } from "@/components/blog/useBlogPosts";
+import { BLOG_PATH } from "@/lib/blog";
 
+/** Ressources : les 3 derniers articles publiés ; maquette tant qu'il n'y en a pas. */
 export default function ResourcesTeaser() {
+  const { posts } = useBlogPosts();
   return (
     <section id="ressources" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col px-5 md:mt-[140px] md:px-8 xl:px-0">
       <BoltWatermark strokeWidth={16} className="-right-20 -top-40 h-[680px] w-auto rotate-[14deg]" />
@@ -14,10 +20,19 @@ export default function ResourcesTeaser() {
             Recruter et outiller, sans jargon.
           </h2>
         </div>
-        <span className="self-start rounded-full border border-ks-line-strong bg-white px-[22px] py-3 text-[15px] font-semibold text-ks-subtle md:self-auto">
-          Bientôt en ligne
-        </span>
+        {posts.length > 0 ? (
+          <Cta href={BLOG_PATH} variant="secondary" arrow className="self-start md:self-auto">Toutes les ressources</Cta>
+        ) : (
+          <span className="self-start rounded-full border border-ks-line-strong bg-white px-[22px] py-3 text-[15px] font-semibold text-ks-subtle md:self-auto">
+            Bientôt en ligne
+          </span>
+        )}
       </div>
+      {posts.length > 0 ? (
+        <ul className="mt-10 grid gap-5 md:grid-cols-3">
+          {posts.slice(0, 3).map((p) => <PostCard key={p.id} post={p} />)}
+        </ul>
+      ) : (
       <ul className="mt-10 grid gap-5 md:grid-cols-3">
         {RESOURCES.map((r) => {
           const p = palettes[r.palette];
@@ -37,6 +52,7 @@ export default function ResourcesTeaser() {
           );
         })}
       </ul>
+      )}
     </section>
   );
 }

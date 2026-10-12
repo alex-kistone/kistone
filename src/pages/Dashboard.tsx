@@ -38,6 +38,7 @@ import DashboardFilters from "@/components/platform/DashboardFilters";
 import AdminKPIPanel from "@/components/platform/AdminKPIPanel";
 import AdminMessagesPanel from "@/components/platform/AdminMessagesPanel";
 import AdminSupportPanel from "@/components/platform/AdminSupportPanel";
+import AdminBlogPanel from "@/components/platform/admin/blog/AdminBlogPanel";
 import AdminGlobalPipelinePanel from "@/components/platform/AdminGlobalPipelinePanel";
 import DossierSheet from "@/components/platform/admin/DossierSheet";
 import KycStatusPill from "@/components/platform/admin/KycStatusPill";
@@ -286,6 +287,7 @@ const Dashboard = () => {
               Factures
             </TabsTrigger>
             <TabsTrigger value="treasury" className="text-xs sm:text-sm">Trésorerie</TabsTrigger>
+            <TabsTrigger value="blog" className="text-xs sm:text-sm">Blog</TabsTrigger>
             <TabsTrigger value="assistant" className="gap-1.5 text-xs sm:gap-2 sm:text-sm">
               <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               Assistant
@@ -527,6 +529,10 @@ const Dashboard = () => {
             <AdminTreasuryPanel />
           </TabsContent>
 
+
+          <TabsContent value="blog">
+            <AdminBlogPanel />
+          </TabsContent>
 
           <TabsContent value="assistant">
             <AdminSupportPanel />
