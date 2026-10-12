@@ -54,7 +54,7 @@ export const STEPS = [
 ];
 
 export const ASSETS = [
-  { icon: "shield", title: "Profils vérifiés", desc: "Identité, statut, parcours et références contrôlés avant la première mission.", featured: true },
+  { icon: "shield", title: "Profils qualifiés", desc: "Parcours, expertise et références évalués en entretien avant la première mission.", featured: true },
   { icon: "clock", title: "Fractional ou temps plein", desc: "Quelques jours par semaine ou à plein temps. Vous ajustez selon vos besoins." },
   { icon: "team", title: "Intégré à votre équipe", desc: "Vos outils, vos rituels, vos objectifs. Un dirigeant qui travaille avec vous." },
   { icon: "pulse", title: "Spécialisés par fonction", desc: "RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO : un expert qui connaît vos enjeux." },
@@ -104,7 +104,7 @@ export const HERO_TRUST = {
     { initials: "TL", photo: "/people/thomas.jpg", palette: "blue" },
     { initials: "SR", photo: "/people/sarah.jpg", palette: "sand" },
   ] as { initials: string; photo: string; palette: PaletteName }[],
-  lead: "700+ experts vérifiés",
+  lead: "700+ experts qualifiés",
   points: ["Profil sous 48 h", "Sans engagement"],
 };
 

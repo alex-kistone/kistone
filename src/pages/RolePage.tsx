@@ -166,7 +166,7 @@ function RoleContent({ role }: { role: Role }) {
       </section>
 
       {/* Profils récents */}
-      <Section id="profils" tag="Profils récents" title={`Des ${role.role.replace(/ (fractional|freelance)$/, "")} vérifiés, prêts à démarrer`}>
+      <Section id="profils" tag="Profils récents" title={`Des ${role.role.replace(/ (fractional|freelance)$/, "")} qualifiés, prêts à démarrer`}>
         <p className="mt-4 max-w-[680px] text-[17px] leading-[1.55] text-ks-soft">
           Derniers profils inscrits sur Kistone, notés 4 ou 5 étoiles après entretien. Identités complètes communiquées lors de la mise en relation.
         </p>
