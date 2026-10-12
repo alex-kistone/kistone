@@ -251,6 +251,13 @@ const FreelancerAuth = () => {
             <Mail className="h-4 w-4" />
             {loading ? "Chargement..." : isLogin ? "Se connecter" : "Créer mon compte"}
           </Button>
+          {!isLogin && (
+            <p className="text-center text-xs leading-relaxed text-muted-foreground">
+              Une fois votre profil qualifié par Kistone, un extrait anonymisé (prénom et initiale, poste, expérience,
+              spécialités, disponibilité) peut apparaître sur nos pages publiques.{" "}
+              <Link to="/privacy" className="underline hover:text-foreground">En savoir plus</Link>
+            </p>
+          )}
         </form>
 
         {isLogin && (

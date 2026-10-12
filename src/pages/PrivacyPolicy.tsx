@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
         </Button>
 
         <h1 className="mb-2 text-3xl font-bold text-foreground">Politique de Confidentialité</h1>
-        <p className="mb-8 text-sm text-muted-foreground">Dernière mise à jour : 17 mars 2026</p>
+        <p className="mb-8 text-sm text-muted-foreground">Dernière mise à jour : 12 octobre 2026</p>
 
         <div className="prose prose-sm max-w-none space-y-8 text-foreground/90">
           <section>
@@ -46,6 +46,7 @@ const PrivacyPolicy = () => {
             <ul className="list-disc pl-6 space-y-1">
               <li>Gestion de votre compte utilisateur et authentification</li>
               <li>Mise en relation entre clients et freelances (matching)</li>
+              <li>Présentation anonymisée des profils freelances qualifiés sur les pages publiques du site</li>
               <li>Gestion des missions et des comptes rendus d'activité (CRA)</li>
               <li>Génération de contrats</li>
               <li>Communication relative aux services de la Plateforme</li>
@@ -70,9 +71,19 @@ const PrivacyPolicy = () => {
             <ul className="list-disc pl-6 space-y-1">
               <li>Nos équipes internes (recrutement, administration)</li>
               <li>Les clients de la Plateforme (dans le cadre du matching, sous forme anonymisée puis nominative après accord)</li>
+              <li>Les visiteurs du site, pour les seuls profils freelances qualifiés (voir ci-dessous)</li>
               <li>Nos sous-traitants techniques (hébergement, envoi d'emails)</li>
             </ul>
             <p>Nous ne vendons jamais vos données à des tiers.</p>
+            <p>
+              <strong>Profils freelances sur les pages publiques.</strong> Lorsqu'un profil freelance a été qualifié par l'équipe
+              Kistone (note de 4 ou 5 sur 5 après entretien), un extrait anonymisé peut être affiché sur les pages publiques du site
+              (par exemple « Recrutez un CFO fractional ») : prénom et initiale du nom, intitulé de poste, années d'expérience,
+              spécialités, rythme de travail et disponibilité. Ne sont jamais affichés : le nom complet, la photo, les coordonnées,
+              le profil LinkedIn, l'entreprise, les clients ni le tarif. Ce traitement repose sur l'intérêt légitime de Kistone à
+              présenter son réseau ; vous pouvez vous y opposer à tout moment en écrivant à l'adresse indiquée à l'article 1, et
+              l'extrait est alors retiré.
+            </p>
           </section>
 
           <section>
