@@ -7,7 +7,7 @@ export const ROUTES = {
   // « Je recrute » / « Partager un besoin » : on qualifie le besoin avant de créer le compte
   recruit: "/besoin",
   clientLogin: "/client",
-  freelance: "/register", // parcours « Je suis freelance » de la plateforme
+  freelance: "/freelances", // « Je suis freelance » : page de découverte, l'inscription se fait depuis la page
   login: "/login",
   studio: "/studio",
 };
@@ -72,7 +72,7 @@ export const FOOTER_COLUMNS = [
       { label: "Trouver un expert", href: "/#marketplace" },
       { label: "Comment ça marche", href: "/#comment" },
       { label: "Partager un besoin", href: "/besoin" },
-      { label: "Devenir freelance", href: "/#freelances" },
+      { label: "Devenir freelance", href: "/freelances" },
     ],
   },
   {

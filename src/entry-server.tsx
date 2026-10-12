@@ -7,7 +7,7 @@ import { MODEL_PAGES, modelPath } from "./content/models";
 import { BlogDataContext, type BlogPost } from "./lib/blog";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
-export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/ressources"];
+export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/freelances", "/ressources"];
 
 /** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
 export const LLMS_PAGES = [
@@ -15,6 +15,7 @@ export const LLMS_PAGES = [
   { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (fonction, rythme, budget) pour recevoir un profil présélectionné sous 48 h." },
   ...ROLE_PAGES.map((r) => ({ path: rolePath(r), title: r.seoTitle, desc: r.seoDescription })),
   ...MODEL_PAGES.map((m) => ({ path: modelPath(m), title: m.seoTitle, desc: m.seoDescription })),
+  { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la communauté Kistone : missions qualifiées par fonction, TJM intégral, rythme au choix, contrat, CRA et facturation gérés. Inscription gratuite." },
   { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur le freelance, la stratégie, la structuration des fonctions clés et le leadership." },
   { path: "/studio", title: "Studio IA", desc: "Outils RH sur mesure (onboarding, assistant RH, tri de candidatures) conçus et livrés par Kistone." },
 ];

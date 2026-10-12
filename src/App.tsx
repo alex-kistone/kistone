@@ -24,6 +24,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RolePage from "./pages/RolePage";
 import BlogIndex from "./pages/BlogIndex";
 import ModelPage from "./pages/ModelPage";
+import FreelancesPage from "./pages/FreelancesPage";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 
@@ -51,6 +52,7 @@ export const AppRoutes = () => (
     <Route path="/privacy" element={<PrivacyPolicy />} />
     <Route path="/recruter/:slug" element={<RolePage />} />
     <Route path="/modeles/:slug" element={<ModelPage />} />
+    <Route path="/freelances" element={<FreelancesPage />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path="/ressources/:slug" element={<BlogPost />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
