@@ -76,7 +76,7 @@ export const STUDIO_TILES: { title: string; desc: string; palette: PaletteName; 
 
 export const RESOURCES: { kind: string; title: string; meta: string; palette: PaletteName }[] = [
   { kind: "Article", title: "[Titre d’article : RPO freelance vs cabinet]", meta: "Blog · [x] min de lecture", palette: "apricot" },
-  { kind: "Podcast", title: "[Titre d’épisode]", meta: "Podcast · [durée]", palette: "lilac" },
+  { kind: "Comparatif", title: "Dirigeants fractional et intérim : les acteurs en France", meta: "Guide · 11 acteurs", palette: "lilac" },
   { kind: "Guide", title: "[Titre de guide : outiller ses RH avec l’IA]", meta: "Guide · PDF", palette: "teal" },
 ];
 

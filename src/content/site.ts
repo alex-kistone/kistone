@@ -53,7 +53,6 @@ export const MENUS: Menu[] = [
     label: "Ressources",
     items: [
       { title: "Blog & articles", desc: "Freelance, stratégie, structuration, leadership.", href: "/ressources", dot: "#1F8F87" },
-      { title: "Podcast", desc: "[Nom du podcast]", href: "/#ressources", dot: "#FF2E6E" },
       { title: "Comparatif des acteurs", desc: "Dirigeants fractional et intérim : qui fait quoi en France.", href: "/ressources/comparatif-acteurs-fractional", dot: "#1F2A44" },
       { title: "Guides & études de cas", desc: "Méthodes et retours d’expérience.", href: "/#ressources", dot: "#E07A3A" },
       { title: "Le studio IA", desc: "Outils RH sur mesure : onboarding, assistant RH, tri de candidatures.", href: "/studio", dot: "#7357D6" },
@@ -84,7 +83,6 @@ export const FOOTER_COLUMNS = [
     title: "Ressources",
     links: [
       { label: "Blog", href: "/ressources" },
-      { label: "Podcast", href: "/#ressources" },
       { label: "Guides", href: "/#ressources" },
       { label: "Le studio IA", href: "/studio" },
     ],
