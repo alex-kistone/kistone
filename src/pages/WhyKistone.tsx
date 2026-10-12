@@ -78,8 +78,8 @@ export default function WhyKistone() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-start">
           <div className="space-y-5 text-[18px] leading-[1.65] text-ks-ink-2">
             <p>
-              Mon premier métier, c'est le RPO : intégré aux équipes de startups et de scale-ups, je recrutais à leurs côtés
-              les talents qui allaient porter leur croissance. Une expertise qui m'a appris l'essentiel : bien comprendre un besoin,
+              Mon premier métier a été de mettre en relation des Freelance RPO avec les équipes RH de startups, scale-ups et ETI,
+              un dispositif efficace qui allait porter leur croissance. Une expertise qui m'a appris l'essentiel : bien comprendre un besoin,
               évaluer un parcours au-delà du CV, et ne présenter que le bon profil, au bon moment.
             </p>
             <p>
