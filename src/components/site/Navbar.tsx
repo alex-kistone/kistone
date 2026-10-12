@@ -65,7 +65,11 @@ function DesktopMenus() {
             {isOpen ? (
               <div
                 id={`menu-${m.id}`}
-                className="ks-drop absolute left-0 top-[52px] flex w-80 flex-col rounded-[20px] border border-[rgba(20,19,18,0.06)] bg-white p-2 shadow-ks-pop"
+                className={cn(
+                  "ks-drop absolute left-0 top-[52px] rounded-[20px] border border-[rgba(20,19,18,0.06)] bg-white p-2 shadow-ks-pop",
+                  // Menu long (les fonctions) : deux colonnes
+                  m.items.length > 5 ? "grid w-[620px] grid-cols-2" : "flex w-80 flex-col",
+                )}
               >
                 {m.items.map((it) => (
                   <SmartLink

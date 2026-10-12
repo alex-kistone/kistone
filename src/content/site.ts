@@ -12,6 +12,18 @@ export const ROUTES = {
 /** Dégradé du studio, pour les fonds posés en style inline (barres, jauges). */
 export const STUDIO_GRADIENT = "linear-gradient(100deg, #FF2E6E 0%, #B14DF5 55%, #4C7DFF 100%)";
 
+import { ROLE_PAGES, rolePath } from "./roles";
+import { palettes } from "@/lib/palettes";
+import { verticalOf } from "@/lib/verticals";
+
+/** Les pages métier (/recruter/…), dans le menu et le pied de page. */
+const ROLE_ITEMS = ROLE_PAGES.map((r) => ({
+  title: r.role,
+  desc: verticalOf(r.vertical).description,
+  href: rolePath(r),
+  dot: palettes[verticalOf(r.vertical).palette].accent,
+}));
+
 export type MenuItem = { title: string; desc: string; href: string; dot: string };
 export type Menu = { id: string; label: string; items: MenuItem[] };
 
@@ -19,12 +31,7 @@ export const MENUS: Menu[] = [
   {
     id: "mkt",
     label: "Fractional Leaders",
-    items: [
-      { title: "Trouver un expert", desc: "RPO, DRH, CFO, COO, CRO, CTO : freelances vérifiés.", href: "/#marketplace", dot: "#FF2E6E" },
-      { title: "Les six fonctions", desc: "À temps plein ou quelques jours par semaine.", href: "/#fonctions", dot: "#7357D6" },
-      { title: "Comment ça marche", desc: "Un profil en 48 h, un démarrage en une semaine.", href: "/#comment", dot: "#E07A3A" },
-      { title: "Devenir freelance", desc: "Missions qualifiées, administratif géré.", href: "/#freelances", dot: "#C99A12" },
-    ],
+    items: ROLE_ITEMS,
   },
   {
     id: "studio",
@@ -49,10 +56,14 @@ export const MENUS: Menu[] = [
 export const FOOTER_COLUMNS = [
   {
     title: "Fractional Leaders",
+    links: ROLE_ITEMS.map((r) => ({ label: r.title, href: r.href })),
+  },
+  {
+    title: "La plateforme",
     links: [
       { label: "Trouver un expert", href: "/#marketplace" },
-      { label: "Les six fonctions", href: "/#fonctions" },
       { label: "Comment ça marche", href: "/#comment" },
+      { label: "Partager un besoin", href: "/besoin" },
       { label: "Devenir freelance", href: "/#freelances" },
     ],
   },

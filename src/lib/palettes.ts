@@ -8,6 +8,8 @@ export const palettes = {
   lilac:   { tint: "#E8E2F6", accent: "#7357D6", soft: "#F2EEFB", ink: "#4B35A0" }, // Budget RH
   sand:    { tint: "#F5ECCB", accent: "#C99A12", soft: "#FBF5E2", ink: "#6E5208" }, // Freelances
   teal:    { tint: "#D5EDEA", accent: "#1F8F87", soft: "#E8F5F3", ink: "#16615C" }, // Engagement
+  olive:   { tint: "#E6EBD3", accent: "#7A8B2E", soft: "#F2F5E8", ink: "#4A5716" }, // Produit
+  slate:   { tint: "#E1E5EC", accent: "#5B6B85", soft: "#EEF1F5", ink: "#34425A" }, // Data
 } satisfies Record<string, Palette>;
 
 export type PaletteName = keyof typeof palettes;

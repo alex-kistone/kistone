@@ -21,6 +21,7 @@ import ClientProfile from "./pages/ClientProfile";
 import OpenNeeds from "./pages/OpenNeeds";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RolePage from "./pages/RolePage";
 import CookieConsent from "./components/platform/CookieConsent";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ export const AppRoutes = () => (
     <Route path="/client/profile" element={<ClientProfile />} />
     <Route path="/open-needs" element={<OpenNeeds />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
+    <Route path="/recruter/:slug" element={<RolePage />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>

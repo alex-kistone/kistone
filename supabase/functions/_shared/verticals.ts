@@ -10,7 +10,7 @@
  * (quelques jours par semaine).
  */
 
-export type Vertical = "rpo" | "drh" | "cfo" | "coo" | "cro" | "cto";
+export type Vertical = "rpo" | "drh" | "cfo" | "coo" | "cro" | "cto" | "cpo" | "cdo";
 
 export interface VerticalConfig {
   id: Vertical;
@@ -23,7 +23,7 @@ export interface VerticalConfig {
   /** Une ligne de description (landing, choix de la fonction). */
   description: string;
   /** Teinte de carte du design system (jamais rose). */
-  palette: "apricot" | "blue" | "sage" | "lilac" | "sand" | "teal";
+  palette: "apricot" | "blue" | "sage" | "lilac" | "sand" | "teal" | "olive" | "slate";
   /**
    * Spécialités proposées au freelance et au client. Pour le RPO, ce sont les métiers recrutés
    * (taxonomy.ts) ; pour les autres, les valeurs du champ Jarvi de la verticale, au caractère près.
@@ -67,6 +67,18 @@ const COO_SPECIALTIES = [
   "Achats", "Service client", "Automatisation & outils",
 ] as const;
 
+// Produit et Data (ajoutés le 2026-10-12) : projets et champs Jarvi à créer.
+const CPO_SPECIALTIES = [
+  "Stratégie produit", "Discovery & recherche utilisateur", "Roadmap & priorisation",
+  "Management d'équipes produit", "Product-led growth", "Pricing & monétisation", "Product ops",
+  "Design & UX", "Lancement de produit", "Produit IA",
+] as const;
+const CDO_SPECIALTIES = [
+  "Stratégie data", "Gouvernance & qualité des données", "Data engineering", "Analytics & BI",
+  "Data science & ML", "IA générative", "Plateforme data & cloud", "Management d'équipes data",
+  "RGPD & conformité", "Monétisation de la donnée",
+] as const;
+
 export const VERTICALS: readonly VerticalConfig[] = [
   {
     id: "rpo", short: "RPO", label: "Recrutement RPO", roles: "Recruteur freelance",
@@ -99,10 +111,22 @@ export const VERTICALS: readonly VerticalConfig[] = [
     jarvi: { projectId: "673fb8cf-3e51-4abe-8887-b16f1e23ebfd", specialtiesFieldId: "b1d64ff3-dbf6-4cdf-ae53-5ac4ce0b0d29" },
   },
   {
-    id: "cto", short: "CTO", label: "Tech, Data & IA", roles: "CTO · CDO · Head of AI",
-    description: "Architecture, équipes tech, data et intégration de l'IA.",
+    id: "cto", short: "CTO", label: "Tech & IA", roles: "CTO · Head of AI",
+    description: "Architecture, équipes tech, delivery et intégration de l'IA.",
     palette: "teal", specialties: CTO_SPECIALTIES, partTimeTag: "CTO Part-time",
     jarvi: { projectId: "f01d8cf4-86f8-4681-adbe-62abc4080fbe", specialtiesFieldId: "f09ec442-2d93-4bf5-b6b4-788e35d3a102" },
+  },
+  {
+    id: "cpo", short: "CPO", label: "Produit", roles: "CPO · Head of Product",
+    description: "Vision produit, roadmap, discovery et équipes produit.",
+    palette: "olive", specialties: CPO_SPECIALTIES, partTimeTag: "CPO Part-time",
+    jarvi: { projectId: null, specialtiesFieldId: null }, // projet et champ Jarvi à créer
+  },
+  {
+    id: "cdo", short: "CDO", label: "Data", roles: "CDO · Head of Data",
+    description: "Stratégie data, gouvernance, plateforme et équipes data.",
+    palette: "slate", specialties: CDO_SPECIALTIES, partTimeTag: "CDO Part-time",
+    jarvi: { projectId: null, specialtiesFieldId: null }, // projet et champ Jarvi à créer
   },
 ];
 

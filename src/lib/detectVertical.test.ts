@@ -7,6 +7,8 @@ describe("detectVertical", () => {
     expect(detectVertical("On cherche un DAF à temps partagé")).toBe("cfo");
     expect(detectVertical("Besoin d'une directrice commerciale pour ouvrir l'Allemagne")).toBe("cro");
     expect(detectVertical("Un recruteur pour 3 développeurs backend")).toBe("rpo");
+    expect(detectVertical("Un Head of Product pour reprendre la roadmap")).toBe("cpo");
+    expect(detectVertical("Nous cherchons un CDO pour la gouvernance des données")).toBe("cdo");
   });
   it("garde la première fonction citée", () => {
     expect(detectVertical("Un DRH pour accompagner notre nouveau CTO")).toBe("drh");

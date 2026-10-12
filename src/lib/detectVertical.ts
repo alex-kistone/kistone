@@ -10,6 +10,8 @@ const PATTERNS: [Vertical, RegExp][] = [
   ["drh", /\b(drh|rrh|directeur des ressources humaines|directrice des ressources humaines|head of people|people manager)\b/i],
   ["coo", /\b(coo|directeur des opérations|directrice des opérations|head of ops|head of operations)\b/i],
   ["cro", /\b(cro|directeur commercial|directrice commerciale|head of sales|vp sales|chief revenue)\b/i],
+  ["cpo", /\b(cpo|chief product officer|head of product|vp product|directeur produit|directrice produit)\b/i],
+  ["cdo", /\b(cdo|chief data officer|head of data|directeur data|directrice data|directeur de la donnée|directrice de la donnée)\b/i],
   ["rpo", /\b(rpo|recruteur|recruteuse|recruteurs|talent acquisition|recrutement)\b/i],
 ];
 

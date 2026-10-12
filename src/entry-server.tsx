@@ -2,9 +2,18 @@ import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async";
 import { AppProviders, AppRoutes } from "./App";
+import { ROLE_PAGES, rolePath } from "./content/roles";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
-export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy"];
+export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath)];
+
+/** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
+export const LLMS_PAGES = [
+  { path: "/", title: "Accueil", desc: "Plateforme Freelance · Fractional Leaders : dirigeants et recruteurs freelance (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO) pour les entreprises Tech & Digital, à temps plein ou quelques jours par semaine." },
+  { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (fonction, rythme, budget) pour recevoir un profil présélectionné sous 48 h." },
+  ...ROLE_PAGES.map((r) => ({ path: rolePath(r), title: r.seoTitle, desc: r.seoDescription })),
+  { path: "/studio", title: "Studio IA", desc: "Outils RH sur mesure (onboarding, assistant RH, tri de candidatures) conçus et livrés par Kistone." },
+];
 
 /**
  * Pré-rendu des pages publiques (scripts/prerender.mjs) : HTML complet et balises <head>

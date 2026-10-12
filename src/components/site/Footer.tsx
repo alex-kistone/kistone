@@ -17,7 +17,7 @@ export default function Footer() {
               <Cta href={ROUTES.freelance} variant="ghost-dark" className="h-[50px]">Je suis freelance</Cta>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-8 text-[15px] sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 text-[15px] sm:grid-cols-4">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title} className="flex flex-col gap-3.5">
                 <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">{col.title}</span>

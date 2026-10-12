@@ -48,6 +48,8 @@ const BRIEF_EXAMPLES: Record<Vertical, string> = {
   coo: "Ex : Nous ouvrons deux marchés et cherchons un COO pour structurer les process et manager les équipes ops…",
   cro: "Ex : Nous voulons ouvrir l'Allemagne et monter une équipe de 5 commerciaux : CRO à temps plein, démarrage en janvier…",
   cto: "Ex : Startup SaaS, nous cherchons un CTO 3 jours par semaine pour intégrer l'IA générative au produit et structurer l'équipe tech…",
+  cpo: "Ex : Éditeur SaaS B2B, nous cherchons un CPO 2 jours par semaine pour reprendre la roadmap, cadrer la discovery et faire grandir une équipe de 4 PM…",
+  cdo: "Ex : Retailer de 300 personnes, nous cherchons un CDO pour bâtir la plateforme data, fiabiliser le reporting et lancer nos premiers cas d'usage IA…",
 };
 
 const ClientNewNeed = () => {
