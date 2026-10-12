@@ -16,6 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
+import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import DesiredStartField from "@/components/platform/DesiredStartField";
@@ -217,19 +218,14 @@ const ClientEditNeed = () => {
 
           <DesiredStartField asap={start.asap} date={start.date} onChange={setStart} />
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="budgetMin">Budget TJM min (€/jour)</Label>
-              <Input id="budgetMin" type="number" min={1} aria-invalid={!!budgetError(budgetMin, budgetMax)} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="350" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="budgetMax">Budget TJM max (€/jour)</Label>
-              <Input id="budgetMax" type="number" min={1} aria-invalid={!!budgetError(budgetMin, budgetMax)} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="550" />
-            </div>
-          </div>
-          {budgetError(budgetMin, budgetMax) && (
-            <p className="-mt-4 text-sm text-destructive">{budgetError(budgetMin, budgetMax)}</p>
-          )}
+          <BudgetRangeField
+            min={budgetMin}
+            max={budgetMax}
+            onChange={(lo, hi) => {
+              setBudgetMin(lo);
+              setBudgetMax(hi);
+            }}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="missionLocation">Lieu de la mission</Label>
