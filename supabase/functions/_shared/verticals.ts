@@ -123,8 +123,8 @@ export const VERTICALS: readonly VerticalConfig[] = [
     jarvi: { projectId: "a8d4ac0f-d7fa-46b8-a8b3-3924bdc07d3e", specialtiesFieldId: "718474cc-7f1a-4890-9054-a4c7ff2aa458" },
   },
   {
-    id: "cdo", short: "CDO", label: "Data", roles: "CDO · Head of Data",
-    description: "Stratégie data, gouvernance, plateforme et équipes data.",
+    id: "cdo", short: "CDO", label: "Data & IA", roles: "CDO · Head of Data & AI",
+    description: "Stratégie data et IA, gouvernance, plateforme et cas d'usage IA.",
     palette: "slate", specialties: CDO_SPECIALTIES, partTimeTag: "CDO Part-time",
     jarvi: { projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c8d6c7ee-ecc3-4c00-aa74-e333ec106225" },
   },
