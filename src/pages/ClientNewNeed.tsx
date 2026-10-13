@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Sparkles, Loader2, Mic, MicOff, Plus, X } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,11 +21,13 @@ import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import { takeHomeBrief } from "@/lib/homeBrief";
+import { generateNeedTitle } from "@/lib/needTitle";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
 import { savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
 import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
+import MissionDurationField from "@/components/platform/MissionDurationField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
 import OnboardingSteps from "@/components/platform/OnboardingSteps";
@@ -42,17 +44,6 @@ const REMOTE_OPTIONS = [
   { value: "flexible", label: "Flexible" },
 ];
 
-/** Exemple de besoin rédigé librement, par fonction (zone de texte de l'IA). */
-const BRIEF_EXAMPLES: Record<Vertical, string> = {
-  rpo: "Ex : Je recherche un RPO senior, spécialiste des profils Dev Fullstack en startup, 3 jours sur site à Paris, budget autour des 500-600 €/jour, pour une mission de 6 mois…",
-  drh: "Ex : Scale-up de 120 personnes, nous cherchons un DRH 3 jours par semaine pour structurer la rémunération et les relations sociales…",
-  cfo: "Ex : Après notre série A, nous cherchons un CFO 2 jours par semaine pour le budget, la trésorerie et le reporting investisseurs…",
-  coo: "Ex : Nous ouvrons deux marchés et cherchons un COO pour structurer les process et manager les équipes ops…",
-  cro: "Ex : Nous voulons ouvrir l'Allemagne et monter une équipe de 5 commerciaux : CRO à temps plein, démarrage en janvier…",
-  cto: "Ex : Startup SaaS, nous cherchons un CTO 3 jours par semaine pour intégrer l'IA générative au produit et structurer l'équipe tech…",
-  cpo: "Ex : Éditeur SaaS B2B, nous cherchons un CPO 2 jours par semaine pour reprendre la roadmap, cadrer la discovery et faire grandir une équipe de 4 PM…",
-  cdo: "Ex : Retailer de 300 personnes, nous cherchons un CDO pour bâtir la plateforme data, fiabiliser le reporting et lancer nos premiers cas d'usage IA…",
-};
 
 const ClientNewNeed = () => {
   const navigate = useNavigate();
@@ -66,54 +57,11 @@ const ClientNewNeed = () => {
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
-  const [freeText, setFreeText] = useState("");
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
 
-  const startListening = useCallback(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast({ title: "Non supporté", description: "Votre navigateur ne supporte pas la reconnaissance vocale.", variant: "destructive" });
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "fr-FR";
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    let finalTranscript = freeText;
-
-    recognition.onresult = (event: any) => {
-      let interim = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += (finalTranscript ? " " : "") + transcript;
-        } else {
-          interim = transcript;
-        }
-      }
-      setFreeText(finalTranscript + (interim ? " " + interim : ""));
-    };
-
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-
-    recognition.start();
-    recognitionRef.current = recognition;
-    setIsListening(true);
-  }, [freeText, toast]);
-
-  const stopListening = useCallback(() => {
-    recognitionRef.current?.stop();
-    setIsListening(false);
-  }, []);
 
   const [companyName, setCompanyName] = useState("");
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
   const [profileTypes, setProfileTypes] = useState<string[]>([]);
   // Fonction recherchée (RPO ou département C-Level), spécialités et rythme
   const [vertical, setVertical] = useState<Vertical>(() => {
@@ -132,6 +80,7 @@ const ClientNewNeed = () => {
   // Date d'arrivée souhaitée : dès que possible (desired_start NULL) ou une date précise
   const [start, setStart] = useState<{ asap: boolean; date: string }>({ asap: true, date: "" });
   const [description, setDescription] = useState("");
+  const [durationMonths, setDurationMonths] = useState<number | null>(null);
   const [sectors, setSectors] = useState<string[]>([]);
 
   useEffect(() => {
@@ -166,12 +115,11 @@ const ClientNewNeed = () => {
     if (!isPublic) return;
     const brief = takeHomeBrief();
     if (!brief) return;
-    setFreeText(brief);
     handleGenerate(brief);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPublic]);
 
-  const handleGenerate = async (text: string = freeText) => {
+  const handleGenerate = async (text: string) => {
     if (text.trim().length < 10) {
       toast({ title: "Texte trop court", description: "Décrivez votre besoin en au moins quelques phrases.", variant: "destructive" });
       return;
@@ -187,7 +135,6 @@ const ClientNewNeed = () => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      if (data.job_title) setJobTitle(data.job_title);
       // L'IA ne peut proposer que des valeurs du référentiel : on écarte tout le reste.
       // Fonction détectée par l'IA : spécialités de cette fonction uniquement
       const detected: Vertical = isVertical(data.vertical) ? data.vertical : vertical;
@@ -204,6 +151,7 @@ const ClientNewNeed = () => {
       if (data.remote_policy) setRemotePolicy(data.remote_policy);
       if (typeof data.desired_start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data.desired_start)) setStart({ asap: false, date: data.desired_start });
       if (data.description) setDescription(data.description);
+      if (typeof data.duration_months === "number" && data.duration_months >= 1) setDurationMonths(Math.min(12, Math.round(data.duration_months)));
 
       toast({ title: "Fiche générée !", description: "Vérifiez et complétez les champs ci-dessous." });
     } catch (err: any) {
@@ -220,8 +168,20 @@ const ClientNewNeed = () => {
       toast({ title: "Budget TJM", description: budgetIssue, variant: "destructive" });
       return;
     }
+    setSaving(true);
+    // Intitulé rédigé par l'IA à partir du formulaire, pour l'admin et le suivi du besoin
+    const title = await generateNeedTitle({
+      vertical,
+      profileTypes,
+      specialties,
+      days: Number(days) < 5 ? Number(days) : null,
+      location: missionLocations.join(", "),
+      remotePolicy,
+      durationMonths,
+      description: description || null,
+    });
     const need: PendingNeed = {
-      job_title: jobTitle,
+      job_title: title,
       vertical,
       profile_types: vertical === "rpo" ? profileTypes : [],
       specialties: vertical === "rpo" ? [] : specialties,
@@ -231,17 +191,17 @@ const ClientNewNeed = () => {
       mission_location: missionLocations.join(", "),
       remote_policy: remotePolicy,
       desired_start: start.asap || !start.date ? null : start.date,
+      duration_months: durationMonths,
       description: description || null,
       sectors,
     };
     // Visiteur sans compte : le besoin est gardé, puis enregistré après l'inscription
     if (!userId) {
+      setSaving(false);
       savePendingNeed(need);
       navigate("/client?mode=signup&besoin=1");
       return;
     }
-    setSaving(true);
-
     try {
       const { error } = await supabase
         .from("client_needs" as any)
@@ -250,7 +210,7 @@ const ClientNewNeed = () => {
           company_name: companyName,
           contact_name: contactName,
           contact_email: contactEmail,
-          job_title: jobTitle,
+          job_title: title,
           vertical,
           profile_types: vertical === "rpo" ? profileTypes : [],
           specialties: vertical === "rpo" ? [] : specialties,
@@ -260,6 +220,7 @@ const ClientNewNeed = () => {
           mission_location: missionLocations.join(", "),
           remote_policy: remotePolicy,
           desired_start: start.asap || !start.date ? null : start.date,
+          duration_months: durationMonths,
           description: description || null,
           sectors,
         });
@@ -347,62 +308,15 @@ const ClientNewNeed = () => {
           )}
         </p>
 
-        {/* AI Generation Block */}
-        <div className="mb-8 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-6">
-          <div className="mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-accent" />
-            <h2 className="text-base font-semibold">Décrivez votre besoin librement</h2>
+        {/* Besoin tapé sur l'accueil : analysé par l'IA, qui pré-remplit le formulaire */}
+        {generating && (
+          <div className="mb-8 flex items-center gap-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-sm">
+            <Loader2 className="h-4 w-4 animate-spin text-accent" />
+            Analyse de votre besoin en cours : le formulaire se remplit tout seul.
           </div>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Rédigez en quelques phrases ce que vous recherchez. L'IA pré-remplira le formulaire pour vous.
-          </p>
-          <Textarea
-            value={freeText}
-            onChange={(e) => setFreeText(e.target.value)}
-            placeholder={BRIEF_EXAMPLES[vertical]}
-            rows={4}
-            className="mb-3"
-          />
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant={isListening ? "destructive" : "secondary"}
-              size="icon"
-              className="h-8 w-8 shrink-0"
-              onClick={isListening ? stopListening : startListening}
-              title={isListening ? "Arrêter la dictée" : "Dicter"}
-            >
-              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-            </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2"
-            onClick={() => handleGenerate()}
-            disabled={generating || freeText.trim().length < 10}
-          >
-            {generating ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Analyse en cours...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4" />
-                Générer la fiche
-              </>
-            )}
-          </Button>
-          </div>
-        </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Job info */}
-          <div className="space-y-2">
-            <Label htmlFor="jobTitle">Intitulé du poste recherché</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={vertical === "rpo" ? "Ex : RPO Tech" : `Ex : Fractional ${verticalOf(vertical).short}`} required />
-          </div>
-
           {/* Profile types - mirrors recruiter skills */}
           <NeedFunctionFields
             vertical={vertical}
@@ -436,6 +350,8 @@ const ClientNewNeed = () => {
           </div>
 
           <DesiredStartField asap={start.asap} date={start.date} onChange={setStart} />
+
+          <MissionDurationField value={durationMonths} onChange={setDurationMonths} />
 
           {/* Budget TJM */}
           <BudgetRangeField
@@ -523,7 +439,7 @@ const ClientNewNeed = () => {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Décrivez le contexte, les compétences clés, la durée de la mission..."
+              placeholder="Décrivez le contexte, les enjeux et les compétences clés..."
               rows={4}
             />
           </div>

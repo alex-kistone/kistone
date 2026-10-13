@@ -18,6 +18,8 @@ export interface PendingNeed {
   mission_location: string;
   remote_policy: string;
   desired_start: string | null;
+  /** Durée de mission en mois (1 à 12), null = à définir. */
+  duration_months?: number | null;
   description: string | null;
   sectors: string[];
 }

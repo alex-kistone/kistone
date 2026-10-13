@@ -1,3 +1,4 @@
+import { durationLabel } from "@/components/platform/MissionDurationField";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Briefcase, CalendarClock, Clock, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
@@ -22,6 +23,7 @@ interface OpenNeed {
   mission_location: string;
   remote_policy: string;
   desired_start: string | null;
+  duration_months: number | null;
   vertical: string;
   specialties: string[];
   days_per_week: number | null;
@@ -73,7 +75,7 @@ const OpenNeeds = () => {
     // Load open needs via secure view (no contact info exposed)
     const { data: needsData } = await supabase
       .from("client_needs_open" as any)
-      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start, vertical, specialties, days_per_week")
+      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start, duration_months, vertical, specialties, days_per_week")
       .order("created_at", { ascending: false });
 
     setNeeds((needsData as unknown as OpenNeed[]) || []);
@@ -183,6 +185,11 @@ const OpenNeeds = () => {
                       <span className="flex items-center gap-1">
                         <CalendarClock className="h-3.5 w-3.5" /> {desiredStartLabel(need.desired_start)}
                       </span>
+                      {need.duration_months && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5" /> {durationLabel(need.duration_months)}
+                        </span>
+                      )}
                       {(need.budget_tjm_min || need.budget_tjm_max) && (
                         <span className="flex items-center gap-1">
                           <Euro className="h-3.5 w-3.5" />

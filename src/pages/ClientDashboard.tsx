@@ -1,3 +1,4 @@
+import { durationLabel } from "@/components/platform/MissionDurationField";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CalendarClock, Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Medal, Globe } from "lucide-react";
@@ -28,6 +29,7 @@ interface ClientNeed {
   mission_location: string;
   remote_policy: string;
   desired_start: string | null;
+  duration_months?: number | null;
   vertical: string;
   specialties: string[];
   days_per_week: number | null;
@@ -529,6 +531,7 @@ const ClientDashboard = () => {
                         </span>
                       )}
                       <span className="flex items-center gap-1"><CalendarClock className="h-3.5 w-3.5" />Arrivée : {desiredStartLabel(need.desired_start).toLowerCase()}</span>
+                      {need.duration_months && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />Durée : {durationLabel(need.duration_months)}</span>}
                       <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />Déposé le {new Date(need.created_at).toLocaleDateString("fr-FR")}</span>
                     </div>
 

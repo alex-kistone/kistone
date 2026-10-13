@@ -1,3 +1,4 @@
+import { durationLabel } from "@/components/platform/MissionDurationField";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Plus, Sparkles } from "lucide-react";
@@ -320,6 +321,7 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
         </InfoCard>
         <InfoCard label="Budget">{budgetLabel(need)}</InfoCard>
         <InfoCard label="Arrivée souhaitée">{desiredStartLabel(need.desired_start)}</InfoCard>
+        <InfoCard label="Durée de mission">{durationLabel(need.duration_months)}</InfoCard>
         <InfoCard label="Créé le">{longDate(need.created_at)}</InfoCard>
         <InfoCard label="Statut"><StatusPill status={row.status} /></InfoCard>
       </div>

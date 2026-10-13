@@ -102,6 +102,10 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
                   type: "number",
                   description: "Budget TJM maximum en euros/jour",
                 },
+                duration_months: {
+                  type: "number",
+                  description: "Durée de la mission en mois (1 à 12 ; 12 pour un an ou plus) ; à omettre si non précisée",
+                },
                 desired_start: {
                   type: "string",
                   description: "Date d'arrivée souhaitée au format AAAA-MM-JJ ; à omettre si dès que possible ou non précisée",

@@ -121,6 +121,7 @@ export type Database = {
           created_at: string
           description: string | null
           desired_start: string | null
+          duration_months: number | null
           vertical: string
           id: string
           job_title: string
@@ -145,6 +146,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           desired_start?: string | null
+          duration_months?: number | null
           vertical?: string
           id?: string
           job_title: string
@@ -169,6 +171,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           desired_start?: string | null
+          duration_months?: number | null
           vertical?: string
           id?: string
           job_title?: string

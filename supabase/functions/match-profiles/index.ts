@@ -237,6 +237,7 @@ Règles :
 - Fonction : ${v.label} (${v.short})${isRpo ? `\n- Typologies à recruter : ${need.profile_types?.join(", ") || "non précisé"}` : `\n- Spécialités attendues : ${need.specialties?.join(", ") || "non précisé"}\n- Rythme demandé : ${rhythmLabel(need.days_per_week)}`}
 - Secteurs : ${need.sectors?.join(", ") || "non précisé"}
 - Lieu : ${need.mission_location} — remote : ${need.remote_policy}
+- Durée de mission : ${need.duration_months ? `${need.duration_months} mois${need.duration_months >= 12 ? " ou plus" : ""}` : "non précisée"}
 - Arrivée souhaitée : ${need.desired_start ? `le ${need.desired_start}` : "dès que possible"} (aujourd'hui : ${new Date().toISOString().slice(0, 10)})
 - Budget : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (marge incluse, à comparer au champ "tarif")
 - Description : ${need.description || "aucune"}

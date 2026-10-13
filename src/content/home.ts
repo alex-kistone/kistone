@@ -12,7 +12,7 @@ export const HERO = {
   subtitle: [
     "Des dirigeants et des recruteurs freelance pour les entreprises Tech & Digital, à temps plein ou quelques jours par semaine. En quelques jours, pas en quelques mois.",
   ],
-  primary: "Partager un besoin",
+  primary: "Accéder aux profils",
   secondary: "Je suis freelance",
   badgeChip: "Tech & Digital",
   reassurance: "Fractional et intérim",
