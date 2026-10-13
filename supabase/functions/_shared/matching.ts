@@ -15,8 +15,12 @@ import { FULL_TIME_DAYS, rhythmLabel } from "./verticals.ts";
 /** Retard toléré (jours) entre la date d'arrivée souhaitée et la disponibilité du profil. */
 export const START_TOLERANCE_DAYS = 30;
 
-/** Tolérance de dépassement du budget max client avant exclusion. */
-const BUDGET_TOLERANCE = 0.1;
+/**
+ * Marge de manœuvre sur le budget max client : un profil un peu plus cher reste proposé
+ * (négociable), avec une note budget dégressive ; exclu au-delà de +20 %.
+ */
+export const BUDGET_TOLERANCE = 0.2;
+const BUDGET_SOFT_ZONE = 0.1;
 
 /** Vocabulaire de la base (cf. REMOTE_OPTIONS dans ClientNewNeed.tsx / Profile.tsx). */
 export type RemotePolicy = "on-site" | "hybrid" | "full-remote" | "flexible";
@@ -181,8 +185,11 @@ function scoreBudget(need: Need, r: Recruiter): { pts: number; note: string | nu
   if (price > max * (1 + BUDGET_TOLERANCE)) {
     return { pts: 0, note: `Tarif de ${price} €/j, au-delà du budget (${max} €/j)`, excluded: true };
   }
+  if (price > max * (1 + BUDGET_SOFT_ZONE)) {
+    return { pts: MAX.budget * 0.4, note: `Tarif de ${price} €/j, au-dessus du budget (${max} €/j)`, excluded: false };
+  }
   if (price > max) {
-    return { pts: MAX.budget * 0.5, note: `Tarif de ${price} €/j, légèrement au-dessus du budget`, excluded: false };
+    return { pts: MAX.budget * 0.7, note: `Tarif de ${price} €/j, légèrement au-dessus du budget, négociable`, excluded: false };
   }
   if (price < min) {
     // Sous le budget : bon pour la marge, mais peut signaler un profil trop junior.

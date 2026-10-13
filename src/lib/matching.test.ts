@@ -48,12 +48,15 @@ describe("anglais dans le matching", () => {
 });
 
 describe("cohérence du matching", () => {
-  it("compare le prix client (TJM freelance + 20 %) au budget, tolérance 10 %", () => {
+  it("compare le prix client (TJM freelance + 20 %) au budget, avec une marge de manœuvre de 20 %", () => {
     const within = scoreRecruiter(need, profile({ tjm: 650 }), false)!; // 780 € client ≤ 800
     expect(within.breakdown.budget).toBe(25);
-    const slightlyAbove = scoreRecruiter(need, profile({ tjm: 700 }), false)!; // 840 ≤ 880
-    expect(slightlyAbove.breakdown.budget).toBe(12.5);
-    expect(scoreRecruiter(need, profile({ tjm: 750 }), false)).toBeNull(); // 900 > 880 : exclu
+    const slightlyAbove = scoreRecruiter(need, profile({ tjm: 700 }), false)!; // 840 ≤ 880 (+10 %)
+    expect(slightlyAbove.breakdown.budget).toBe(17.5);
+    const above = scoreRecruiter(need, profile({ tjm: 775 }), false)!; // 930 ≤ 960 (+20 %)
+    expect(above.breakdown.budget).toBe(10);
+    expect(within.score).toBeGreaterThan(above.score);
+    expect(scoreRecruiter(need, profile({ tjm: 810 }), false)).toBeNull(); // 972 > 960 : exclu
   });
 
   it("ne croise jamais deux verticales", () => {

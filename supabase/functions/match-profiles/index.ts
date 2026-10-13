@@ -239,7 +239,7 @@ Règles :
 - Lieu : ${need.mission_location} — remote : ${need.remote_policy}
 - Durée de mission : ${need.duration_months ? `${need.duration_months} mois${need.duration_months >= 12 ? " ou plus" : ""}` : "non précisée"}
 - Arrivée souhaitée : ${need.desired_start ? `le ${need.desired_start}` : "dès que possible"} (aujourd'hui : ${new Date().toISOString().slice(0, 10)})
-- Budget : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (marge incluse, à comparer au champ "tarif")
+- Budget : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (marge incluse, à comparer au champ "tarif"). Un tarif jusqu'à 20 % au-dessus du budget reste acceptable et négociable : ne l'écarte pas pour ce seul motif, signale-le simplement.
 - Description : ${need.description || "aucune"}
 
 PROFILS PRÉ-QUALIFIÉS
