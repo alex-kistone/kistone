@@ -92,8 +92,6 @@ const Profile = () => {
   const [vertical, setVertical] = useState<Vertical>("rpo");
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [weeklyCapacity, setWeeklyCapacity] = useState("5");
-  const [yearsExperience, setYearsExperience] = useState("");
-  const [previousCompanies, setPreviousCompanies] = useState<string[]>([]);
   // Informations société : gérées par « Mon dossier » ; lues ici pour la liste de complétion
   // Onglet piloté par le menu latéral (?tab=missions | admin)
   const [searchParams] = useSearchParams();
@@ -169,8 +167,6 @@ const Profile = () => {
       setVertical(isVertical(p.vertical) ? p.vertical : "rpo");
       setSpecialties(p.specialties || []);
       setWeeklyCapacity(String(p.weekly_capacity ?? FULL_TIME_DAYS));
-      setYearsExperience(p.years_experience?.toString() || "");
-      setPreviousCompanies(p.previous_companies || []);
     } else {
       // Première connexion : on pré-remplit avec le compte LinkedIn / Google, puis
       // on exige l'URL LinkedIn avant d'accéder au profil.
@@ -311,8 +307,6 @@ const Profile = () => {
         skills: isRpo ? skills : [],
         specialties: isRpo ? [] : specialties,
         weekly_capacity: Number(weeklyCapacity) || null,
-        years_experience: yearsExperience ? parseInt(yearsExperience) : null,
-        previous_companies: previousCompanies,
         clients,
         mobility,
         tjm: tjm ? parseInt(tjm) : null,
@@ -653,18 +647,6 @@ const Profile = () => {
                   <span className="text-sm">{sp}</span>
                 </label>
               ))}
-            </div>
-          </div>
-
-          {/* Séniorité et parcours */}
-          <div className="grid gap-4 sm:grid-cols-[160px_1fr]">
-            <div className="space-y-2">
-              <Label htmlFor="years">Années d'expérience</Label>
-              <Input id="years" type="number" min="0" max="60" value={yearsExperience} onChange={(e) => setYearsExperience(e.target.value)} placeholder="15" />
-            </div>
-            <div className="space-y-2">
-              <Label>Entreprises marquantes du parcours</Label>
-              <TagInput tags={previousCompanies} onTagsChange={setPreviousCompanies} placeholder="Ex : Qonto" />
             </div>
           </div>
 
