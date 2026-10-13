@@ -57,11 +57,11 @@ export default function BudgetRangeField({ min, max, onChange }: {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="budgetMin" className="text-xs text-muted-foreground">Minimum</Label>
-          <Input id="budgetMin" type="number" min={1} step={STEP} inputMode="numeric" value={min} onChange={(e) => onChange(e.target.value, max)} aria-invalid={!!error} />
+          <Input id="budgetMin" type="number" min={1} inputMode="numeric" value={min} onChange={(e) => onChange(e.target.value, max)} aria-invalid={!!error} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="budgetMax" className="text-xs text-muted-foreground">Maximum</Label>
-          <Input id="budgetMax" type="number" min={1} step={STEP} inputMode="numeric" value={max} onChange={(e) => onChange(min, e.target.value)} aria-invalid={!!error} />
+          <Input id="budgetMax" type="number" min={1} inputMode="numeric" value={max} onChange={(e) => onChange(min, e.target.value)} aria-invalid={!!error} />
         </div>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
