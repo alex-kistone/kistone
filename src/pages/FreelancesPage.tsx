@@ -42,16 +42,19 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
   },
   {
     tag: "Rémunération",
-    title: "Votre TJM, intégralement",
-    text: "Vous fixez votre tarif journalier. La rémunération de Kistone est facturée en plus au client : votre TJM n'est jamais réduit, et l'inscription est gratuite.",
+    title: "Payé intégralement, chaque fin de mois",
+    text: "Vous fixez votre TJM et vous savez dès le départ ce que vous percevez : tout est transparent. Chaque fin de mois, votre CRA validé déclenche votre paiement, pour l'intégralité de vos jours travaillés. Sans relance, sans surprise.",
     palette: "lilac",
     visual: () => (
       <div className="w-full rounded-2xl bg-white p-5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
-        <p className="text-[13px] text-ks-subtle">Votre TJM</p>
-        <p className="mt-1 font-ks-display text-[40px] font-bold tracking-[-0.04em]">1 000 €<span className="text-[16px] font-medium text-ks-subtle"> HT / jour</span></p>
+        <div className="flex items-center justify-between text-[13px] text-ks-subtle">
+          <span>Octobre · 8 jours × 1 000 € HT</span>
+          <span className="rounded-full bg-[#E8F5EE] px-2.5 py-1 text-[11px] font-medium text-[#17663F]">CRA validé</span>
+        </div>
+        <p className="mt-2 font-ks-display text-[40px] font-bold tracking-[-0.04em]">8 000 €<span className="text-[16px] font-medium text-ks-subtle"> HT</span></p>
         <p className="mt-3 flex items-center gap-2 text-[13px] font-medium text-[#17663F]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#2F9A63]" aria-hidden="true" />
-          Versé en totalité, sans commission prélevée
+          Payé intégralement en fin de mois
         </p>
       </div>
     ),
@@ -122,7 +125,7 @@ const CRITERIA = [
 ];
 
 const FAQ = [
-  { q: "L'inscription est-elle payante ?", a: "Non. L'inscription et l'utilisation de l'espace freelance sont gratuites. Kistone se rémunère par une marge facturée au client, en plus de votre TJM." },
+  { q: "L'inscription est-elle payante ?", a: "Non. L'inscription et l'utilisation de l'espace freelance sont gratuites." },
   { q: "Qui fixe le TJM ?", a: "Vous. Vous indiquez votre tarif journalier dans votre profil ; il peut être ajusté d'un commun accord selon la mission." },
   { q: "Quelles fonctions recherchez-vous ?", a: "RPO, DRH, CFO, COO, CRO, CTO, CPO et CDO, à temps partagé, à temps plein ou en contract-to-hire." },
   { q: "Quels documents faut-il fournir ?", a: "Avant la première mission : vos informations de société (SIRET), une attestation URSSAF, une assurance responsabilité civile professionnelle et un RIB. Tout se dépose dans votre espace." },
@@ -139,7 +142,7 @@ export default function FreelancesPage() {
     <SiteLayout>
       <SEO
         title="Espace freelance : rejoignez la communauté Kistone"
-        description="Dirigeants et recruteurs freelance (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO) : missions qualifiées, TJM intégral, rythme au choix, administratif et facturation gérés. Inscription gratuite."
+        description="Dirigeants et recruteurs freelance (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO) : missions qualifiées, rémunération transparente payée chaque mois, rythme au choix, administratif et facturation gérés. Inscription gratuite."
         path="/freelances"
         jsonLd={jsonLd}
       />
@@ -153,7 +156,7 @@ export default function FreelancesPage() {
             Rejoignez la communauté des <Highlight>Fractional Leaders</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
-            Des missions de direction et de recrutement qualifiées, au rythme que vous choisissez. Votre TJM, intégralement. L'administratif, on s'en occupe.
+            Des missions de direction et de recrutement qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Cta href={JOIN} size="lg" arrow className="shadow-ks-pink">Rejoindre Kistone</Cta>
