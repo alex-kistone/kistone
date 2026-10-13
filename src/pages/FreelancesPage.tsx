@@ -159,7 +159,6 @@ export default function FreelancesPage() {
             <Cta href={JOIN} size="lg" arrow className="shadow-ks-pink">Rejoindre Kistone</Cta>
             <Cta href={LOGIN} size="lg" variant="secondary">Se connecter</Cta>
           </div>
-          <p className="mt-4 text-sm text-ks-subtle">Inscription gratuite · Aucune commission sur votre TJM</p>
         </div>
         <div className="rounded-[28px] p-5" style={{ background: palettes.blue.tint }} aria-hidden="true">
           {BENEFITS[3].visual()}
