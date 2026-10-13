@@ -8,10 +8,15 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export function useAccount() {
   const [session, setSession] = useState<Session | null>(null);
+  // La session a-t-elle été lue ? (évite d'afficher puis de masquer ce qui dépend de la connexion)
+  const [ready, setReady] = useState(false);
   const [spacePath, setSpacePath] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setReady(true);
+    });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => subscription.unsubscribe();
   }, []);
@@ -33,5 +38,5 @@ export function useAccount() {
   const signOut = () => supabase.auth.signOut();
 
   // Tant que le rôle n'est pas résolu, /login redirige de lui-même vers le bon espace
-  return { loggedIn: Boolean(session), spacePath: spacePath ?? "/login", signOut };
+  return { loggedIn: Boolean(session), ready, spacePath: spacePath ?? "/login", signOut };
 }

@@ -193,11 +193,11 @@ function MobileMenu() {
 }
 
 export default function Navbar() {
-  const { loggedIn } = useAccount();
+  const { loggedIn, ready } = useAccount();
   return (
     <>
     {/* Bandeau de prise de rendez-vous : visiteurs seulement */}
-    {!loggedIn && <PromoBanner />}
+    {ready && !loggedIn && <PromoBanner />}
     <header className="sticky top-0 z-40 border-b border-ks-line bg-[rgba(245,241,234,0.82)] backdrop-blur-[16px]">
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
         <div className="flex items-center gap-10">
