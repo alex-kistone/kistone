@@ -19,6 +19,17 @@
 .ks-ghost:hover { background-color: #FBF8F3 !important; border-color: rgba(20,19,18,.22) !important; }
 .ks-ghost-dark { transition: background-color .2s ease, border-color .2s ease; }
 .ks-ghost-dark:hover { background-color: rgba(245,241,234,.08); border-color: rgba(245,241,234,.4) !important; }
+
+/* Balayage « pixel » au survol des boutons (Cta) : le bloc part hors champ à gauche et
+   traverse le bouton ; au départ de la souris il ressort par la droite. Flèche qui défile. */
+.ks-wipe-host .ks-wipe { transform: translateX(calc(-100% - 60px)); transition: transform .55s cubic-bezier(.7,0,.2,1); }
+.ks-wipe-host:hover .ks-wipe, .ks-wipe-host:focus-visible .ks-wipe { transform: translateX(0); }
+.ks-wipe-host.ks-btn:hover { transform: none; filter: none; }
+.ks-wipe-host.ks-ghost:hover { background-color: #fff !important; }
+.ks-wipe-host .ks-arrow-out, .ks-wipe-host .ks-arrow-in { transition: transform .45s cubic-bezier(.7,0,.2,1) .05s; }
+.ks-wipe-host .ks-arrow-in { transform: translateX(-120%); }
+.ks-wipe-host:hover .ks-arrow-out { transform: translateX(120%); }
+.ks-wipe-host:hover .ks-arrow-in { transform: translateX(0); }
 .ks-lift { transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s ease; }
 .ks-lift:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(20,19,18,.04), 0 28px 56px -24px rgba(60,40,20,.26); }
 
