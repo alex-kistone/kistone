@@ -21,6 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { type FullProfile } from "@/components/platform/ProfileDetailModal";
 import { METIERS } from "@/lib/taxonomy";
 import { VERTICALS } from "@/lib/verticals";
+import { REMOTE_LABEL } from "@/components/platform/admin/needs/needsModel";
 
 const SKILLS_OPTIONS = METIERS;
 
@@ -66,7 +67,8 @@ const DashboardFilters = ({
       })),
     [verticalFilter],
   );
-  const specialtyLabel = verticalFilter === "rpo" ? "Métiers" : verticalFilter === "all" ? "Métiers & spécialités" : "Spécialités";
+  const specialtyLabel = verticalFilter === "rpo" ? "Métiers RPO" : `Spécialités ${VERTICALS.find((v) => v.id === verticalFilter)?.short ?? ""}`;
+  const [remoteFilter, setRemoteFilter] = useState("all");
   // Changer de fonction efface les spécialités choisies (elles n'ont pas de sens ailleurs)
   const changeVertical = (v: string) => {
     setVerticalFilter(v);
@@ -97,6 +99,7 @@ const DashboardFilters = ({
   const activeFilterCount = [
     modelFilter !== "all",
     mobilityFilter !== "",
+    remoteFilter !== "all",
     tjmActive,
     skillsFilter.length > 0,
     sectorsFilter.length > 0,
@@ -107,6 +110,7 @@ const DashboardFilters = ({
   const clearAllFilters = () => {
     setModelFilter("all");
     setMobilityFilter("");
+    setRemoteFilter("all");
     setTjmRange([0, 1500]);
     setTjmActive(false);
     setSkillsFilter([]);
@@ -137,6 +141,14 @@ const DashboardFilters = ({
 
     if (modelFilter !== "all") {
       result = result.filter((p) => p.model?.includes(modelFilter));
+    }
+
+    if (remoteFilter !== "all") {
+      // Un freelance « Flexible » convient à toutes les politiques
+      result = result.filter((p) => {
+        const pref = (p as { remote_preference?: string | null }).remote_preference;
+        return pref === remoteFilter || pref === "flexible";
+      });
     }
 
     if (mobilityFilter) {
@@ -190,7 +202,7 @@ const DashboardFilters = ({
 
     onFiltered(result);
   }, [
-    profiles, search, verticalFilter, modelFilter, mobilityFilter,
+    profiles, search, verticalFilter, remoteFilter, modelFilter, mobilityFilter,
     tjmRange, tjmActive, skillsFilter, sectorsFilter,
     languageFilter, ratingFilter, sortBy,
   ]);
@@ -208,17 +220,6 @@ const DashboardFilters = ({
             className="pl-10"
           />
         </div>
-        <Select value={verticalFilter} onValueChange={changeVertical}>
-          <SelectTrigger className="w-full sm:w-[180px]" aria-label="Fonction">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Toutes les fonctions</SelectItem>
-            {VERTICALS.map((v) => (
-              <SelectItem key={v.id} value={v.id}>{v.short} · {v.label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         <Select value={sortBy} onValueChange={onSortByChange}>
           <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Trier par" />
@@ -251,6 +252,26 @@ const DashboardFilters = ({
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Premier niveau : la fonction (tous les CFO, tous les DRH…) */}
+      <div role="radiogroup" aria-label="Fonction" className="flex flex-wrap items-center gap-1.5">
+        {[{ id: "all", short: "Toutes" }, ...VERTICALS].map((v) => {
+          const on = verticalFilter === v.id;
+          const count = v.id === "all" ? profiles.length : profiles.filter((p) => ((p as { vertical?: string }).vertical ?? "rpo") === v.id).length;
+          return (
+            <button
+              key={v.id}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              onClick={() => changeVertical(v.id)}
+              className={`h-8 rounded-full px-3.5 text-xs font-medium transition-colors ${on ? "bg-foreground text-background" : "border bg-background text-foreground hover:bg-muted"}`}
+            >
+              {v.short} <span className={on ? "opacity-70" : "text-muted-foreground"}>{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Row 2: Filter chips */}
@@ -305,7 +326,8 @@ const DashboardFilters = ({
           </PopoverContent>
         </Popover>
 
-        {/* Métiers (RPO) ou spécialités, selon la fonction choisie */}
+        {/* Second niveau : métiers (RPO) ou spécialités de la fonction choisie */}
+        {verticalFilter !== "all" && (
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className={`h-8 text-xs ${skillsFilter.length > 0 ? "border-primary text-primary" : ""}`}>
@@ -337,6 +359,20 @@ const DashboardFilters = ({
             </div>
           </PopoverContent>
         </Popover>
+        )}
+
+        {/* Remote */}
+        <Select value={remoteFilter} onValueChange={setRemoteFilter}>
+          <SelectTrigger className={`h-8 w-[150px] text-xs ${remoteFilter !== "all" ? "border-primary text-primary" : ""}`} aria-label="Politique de remote">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tout remote</SelectItem>
+            {Object.entries(REMOTE_LABEL).map(([value, label]) => (
+              <SelectItem key={value} value={value}>{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         {/* Secteurs */}
         <Popover>
