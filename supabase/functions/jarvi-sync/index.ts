@@ -34,9 +34,24 @@ function asJarviValue(v: unknown): string {
   return String(v);
 }
 
+/**
+ * Appel à Jarvi qui patiente et réessaie quand Jarvi limite le débit (429) ou est indisponible
+ * (503) : jusqu'à 3 nouvelles tentatives, en respectant Retry-After (plafonné à 8 s).
+ */
+async function jarviFetch(url: string, init: RequestInit): Promise<Response> {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, init);
+    if ((res.status !== 429 && res.status !== 503) || attempt >= 3) return res;
+    const retryAfter = Number(res.headers.get("retry-after"));
+    const waitMs = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter, 8) * 1000 : 1500 * 2 ** attempt;
+    await res.body?.cancel();
+    await new Promise((r) => setTimeout(r, waitMs));
+  }
+}
+
 async function findByLinkedin(key: string, url: string): Promise<string | null> {
   const where = encodeURIComponent(JSON.stringify({ profileUrl: { _eq: url } }));
-  const res = await fetch(`${API}/profiles?where=${where}&limit=1`, { headers: { "X-API-KEY": key } });
+  const res = await jarviFetch(`${API}/profiles?where=${where}&limit=1`, { headers: { "X-API-KEY": key } });
   // Clé publique : la recherche est refusée, on passe directement à l'envoi (création ou
   // fusion par externalId) — sans rapprochement avec une fiche créée à la main dans Jarvi.
   if (res.status === 401 || res.status === 403) return null;
@@ -96,7 +111,7 @@ Deno.serve(async (req) => {
 
     // Point d'entrée « candidatures » : accepté avec la clé publique, il crée ou met à jour la
     // fiche (fusion par id / externalId) et la rattache au projet des inscriptions.
-    const res = await fetch(`${API}/applicants`, {
+    const res = await jarviFetch(`${API}/applicants`, {
       method: "POST",
       headers: { "X-API-KEY": key, "Content-Type": "application/json" },
       body: JSON.stringify(payload),
