@@ -5,12 +5,12 @@ export type ClientNeed = Tables<"client_needs">;
 
 export type ProfileSuggestion = Pick<
   Tables<"profile_suggestions">,
-  "id" | "need_id" | "anonymous_label" | "match_score" | "match_reasons" | "pipeline_status" | "recruiter_profile_id" | "super_tam" | "created_at" | "status_updated_at"
+  "id" | "need_id" | "anonymous_label" | "match_score" | "match_reasons" | "pipeline_status" | "recruiter_profile_id" | "created_at" | "status_updated_at"
 >;
 
 export type RecruiterProfile = Pick<
   Tables<"recruiter_profiles">,
-  "id" | "first_name" | "last_name" | "job_title" | "skills" | "sectors" | "model" | "mobility" | "tjm" | "admin_rating" | "available" | "availability_date" | "super_tam"
+  "id" | "first_name" | "last_name" | "job_title" | "skills" | "sectors" | "model" | "mobility" | "tjm" | "admin_rating" | "available" | "availability_date"
 >;
 
 export type StageKey = "suggested" | "shortlisted" | "interview" | "accepted";

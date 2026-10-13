@@ -302,7 +302,6 @@ const SuggestProfilePanel = ({ need, needs, suggestions, profiles, onAdd, onCanc
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="truncate text-xs font-medium">{p.first_name} {p.last_name}</span>
-                      {p.super_tam && <span title="Super TAM">🥇</span>}
                       {p.model && <Badge variant="secondary" className="h-4 text-[9px]">{p.model}</Badge>}
                       {p.available ? (
                         <Badge variant="outline" className="h-4 border-green-300 text-[9px] text-green-600">Dispo</Badge>

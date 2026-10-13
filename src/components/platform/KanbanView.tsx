@@ -74,7 +74,6 @@ const KanbanCard = ({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <span className="truncate text-sm font-semibold">{profile.first_name} {profile.last_name}</span>
-          {profile.super_tam && <span title="Super TAM">🥇</span>}
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {profile.model && (

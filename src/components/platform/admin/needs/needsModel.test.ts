@@ -16,7 +16,7 @@ const need = (id: string, over: Partial<ClientNeed> = {}): ClientNeed => ({
 
 const sugg = (id: string, needId: string, status: string, updated: string | null = null): ProfileSuggestion => ({
   id, need_id: needId, anonymous_label: "Profil A", match_score: 80, match_reasons: [], pipeline_status: status,
-  recruiter_profile_id: `p-${id}`, super_tam: false, created_at: daysAgo(20), status_updated_at: updated,
+  recruiter_profile_id: `p-${id}`, created_at: daysAgo(20), status_updated_at: updated,
 });
 
 describe("buildNeedRow", () => {

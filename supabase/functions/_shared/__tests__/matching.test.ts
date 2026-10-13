@@ -10,11 +10,11 @@ const need: any = {
 const base: any = {
   skills: [], sectors: [], tech_specialties: [], mobility: [], clients: [], languages: [],
   remote_preference: "flexible", model: "rpo", available: true, availability_date: null,
-  admin_rating: 0, super_tam: false, intro_text: "", missions: [], has_linkedin_license: false, job_title: null,
+  admin_rating: 0, intro_text: "", missions: [], has_linkedin_license: false, job_title: null,
 };
 
 const recruiters: any[] = [
-  { ...base, id: "a", first_name: "Sarah", skills: ["Tech", "SRE", "Go"], sectors: ["Fintech"], mobility: ["Paris"], tjm: 520, admin_rating: 5, super_tam: true, remote_preference: "on-site" },
+  { ...base, id: "a", first_name: "Sarah", skills: ["Tech", "SRE", "Go"], sectors: ["Fintech"], mobility: ["Paris"], tjm: 520, admin_rating: 5, remote_preference: "on-site" },
   { ...base, id: "b", first_name: "Thomas", skills: ["Retail"], sectors: ["Retail"], mobility: ["Lyon"], tjm: 400, admin_rating: 3 },
   { ...base, id: "c", first_name: "Cher", skills: ["Tech"], tjm: 900, admin_rating: 5 },                       // hors budget → exclu
   { ...base, id: "d", first_name: "Grille", skills: ["Tech", "SRE"], tjm: 500, admin_rating: 1 },              // note 1 → exclu

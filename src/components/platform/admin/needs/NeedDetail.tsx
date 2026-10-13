@@ -214,7 +214,6 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
       if (profile.tjm) reasons.push(`TJM : ${profile.tjm}€/jour`);
       if (profile.available) reasons.push("Disponible immédiatement");
       else if (profile.availability_date) reasons.push(`Disponible le ${new Date(profile.availability_date).toLocaleDateString("fr-FR")}`);
-      if (profile.super_tam) reasons.push("Super TAM");
     }
     if (reasons.length === 0) reasons.push("Sélection manuelle par l'admin");
 
@@ -229,7 +228,7 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
         pipeline_status: "suggested",
         recruiter_first_name: profile?.first_name || null,
       })
-      .select("id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, recruiter_profile_id, super_tam, created_at, status_updated_at")
+      .select("id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, recruiter_profile_id, created_at, status_updated_at")
       .single();
 
     if (error) {

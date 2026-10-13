@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
       .from("recruiter_profiles")
       .select(
         "id, vertical, first_name, job_title, skills, sectors, tech_specialties, mobility, clients, languages," +
-        " remote_preference, tjm, model, available, availability_date, admin_rating, admin_english_rating, admin_comments, super_tam," +
+        " remote_preference, tjm, model, available, availability_date, admin_rating, admin_english_rating, admin_comments," +
         " intro_text, missions, has_linkedin_license, specialties, weekly_capacity, years_experience, previous_companies",
       )
       .eq("onboarding_completed", true)
@@ -112,7 +112,6 @@ Deno.serve(async (req) => {
         match_score: Math.max(0, Math.min(100, score)),
         match_reasons: ai?.reasons?.length ? ai.reasons : s.notes.slice(0, 3),
         rule_score: s.score,
-        super_tam: s.recruiter.super_tam,
       };
     }).sort((a, b) => b.match_score - a.match_score);
 
@@ -172,7 +171,6 @@ async function rankWithClaude(
       note_admin: r.admin_rating ?? 0,
       avis_interne: r.admin_comments?.slice(0, 600) ?? "",
       niveau_anglais: englishLevel({ languages: Array.isArray(r.languages) ? r.languages as { language: string; level: string }[] : [], admin_english_rating: r.admin_english_rating ?? null }),
-      super_tam: r.super_tam,
       nb_missions_passees: pastMissions.length,
       // Détail des missions pour juger l'expertise réelle ; le nom des clients reste en base
       missions_passees: (pastMissions as Array<Record<string, unknown>>).slice(0, 5).map((m) => ({
@@ -224,7 +222,6 @@ Règles :
 - avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
 - niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré. Dans les raisons, exprime-le en mots (« anglais courant », « bon niveau d'anglais »), jamais avec un chiffre ou une échelle (pas de « niveau 4 », « 4/5 »).
 - Si le besoin EXIGE l'anglais (indispensable, obligatoire, requis, courant), c'est une condition : un profil à l'anglais limité passe derrière tous ceux qui ont le niveau, quelles que soient ses autres qualités.
-- super_tam = profil d'excellence, à mentionner dans les raisons.
 - Disponibilité : compare-la à la date d'arrivée souhaitée du besoin (ou à aujourd'hui si « dès que possible »). Les profils de la liste sont libres au plus tard 30 jours après cette date ; plus le retard est grand, moins le profil convient.
 - Ne t'écarte pas de plus de 25 points du score_regles sans raison explicite dans tes justifications.
 - Les raisons sont lues par le client : reste impersonnel et factuel. Ne mentionne JAMAIS une note, une étoile, un score, un avis ou un commentaire interne, ni qui a évalué ou jugé le profil (pas de « selon notre équipe », « évalué comme », « recommandé par »). Décris le profil lui-même : expérience, missions, métiers, secteurs, disponibilité, langues.

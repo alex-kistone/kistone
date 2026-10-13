@@ -10,7 +10,7 @@ const need = {
 const profile = (over: Partial<Recruiter>): Recruiter => ({
   id: "x", first_name: "X", job_title: null, skills: ["Tech"], sectors: ["Startup/scaleup"], tech_specialties: [],
   mobility: ["Paris"], clients: [], languages: [], remote_preference: "hybrid", tjm: 550, model: "RPO",
-  available: true, availability_date: null, admin_rating: 0, super_tam: false, intro_text: null, missions: [],
+  available: true, availability_date: null, admin_rating: 0, intro_text: null, missions: [],
   has_linkedin_license: false, ...over,
 } as Recruiter);
 

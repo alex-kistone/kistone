@@ -413,7 +413,6 @@ const Dashboard = () => {
                           <div className="min-w-0 flex-1">
                             <h3 className="truncate text-sm font-semibold sm:text-base flex items-center gap-1.5">
                               {profile.first_name} {profile.last_name}
-                              {profile.super_tam && <span title="Super TAM">🥇</span>}
                             </h3>
                             <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
                             {renderKycPill(profile)}

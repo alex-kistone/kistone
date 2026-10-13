@@ -90,7 +90,6 @@ const NeedKanban = ({ suggestions, profilesById, missionBySuggestion, onMove, on
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <span className="truncate text-sm font-medium">{name}</span>
-                          {s.super_tam && <span title="Super TAM">🥇</span>}
                         </div>
                         <span className="text-[10px] text-muted-foreground">
                           ({profilesById.get(s.recruiter_profile_id)?.first_name || s.anonymous_label})

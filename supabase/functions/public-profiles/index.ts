@@ -16,22 +16,20 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch profiles prioritizing super_tam, high ratings, then recent
+    // Profils les mieux notés d'abord, puis les plus récents
     const { data, error } = await supabase
       .from("recruiter_profiles")
-      .select("id, first_name, job_title, skills, mobility, tjm, model, available, availability_date, intro_text, missions, languages, has_linkedin_license, super_tam, admin_rating, photo_url, clients, created_at")
+      .select("id, first_name, job_title, skills, mobility, tjm, model, available, availability_date, intro_text, missions, languages, has_linkedin_license, admin_rating, photo_url, clients, created_at")
       .eq("model", "RPO")
-      .order("super_tam", { ascending: false, nullsFirst: false })
       .order("admin_rating", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(20);
 
     if (error) throw error;
 
-    // Shuffle with weighted priority: super_tam and 4-5 stars get higher chance
+    // Tirage pondéré : les profils 4-5 étoiles et récents ont plus de chances
     const weighted = (data || []).map((p) => {
       let weight = 1;
-      if (p.super_tam) weight += 3;
       if ((p.admin_rating || 0) >= 4) weight += 2;
       // Recent profiles (last 30 days) get a boost
       const daysSince = (Date.now() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24);
@@ -62,7 +60,6 @@ Deno.serve(async (req) => {
       clients: Array.isArray(p.clients) ? p.clients : [],
       languages: p.languages,
       has_linkedin_license: p.has_linkedin_license,
-      super_tam: p.super_tam,
       photo_url: p.photo_url,
     }));
 

@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     // Get suggestion and verify ownership
     const { data: suggestion, error: sugError } = await adminClient
       .from("profile_suggestions")
-      .select("id, need_id, recruiter_profile_id, match_score, match_reasons, anonymous_label, super_tam, recruiter_first_name")
+      .select("id, need_id, recruiter_profile_id, match_score, match_reasons, anonymous_label, recruiter_first_name")
       .eq("id", suggestion_id)
       .single();
 
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     // Fetch recruiter profile (anonymized fields only)
     const { data: profile } = await adminClient
       .from("recruiter_profiles")
-      .select("first_name, job_title, skills, clients, mobility, tjm, model, available, availability_date, super_tam, tech_specialties, intro_text, missions, languages, has_linkedin_license, sectors")
+      .select("first_name, job_title, skills, clients, mobility, tjm, model, available, availability_date, tech_specialties, intro_text, missions, languages, has_linkedin_license, sectors")
       .eq("id", suggestion.recruiter_profile_id)
       .single();
 
@@ -81,7 +81,6 @@ Deno.serve(async (req) => {
       model: profile.model,
       available: profile.available,
       availability_date: profile.availability_date,
-      super_tam: profile.super_tam,
       tech_specialties: profile.tech_specialties || [],
       intro_text: profile.intro_text,
       missions: profile.missions || [],

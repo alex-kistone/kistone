@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { rhythmLabel, verticalOf } from "@/lib/verticals";
 import { palettes } from "@/lib/palettes";
-import { X, MapPin, Briefcase, Globe, Linkedin, Phone, Mail, Calendar, CheckCircle2, Star, Medal, Award, MessageCircle, Settings2, UserPlus } from "lucide-react";
+import { X, MapPin, Briefcase, Globe, Linkedin, Phone, Mail, Calendar, CheckCircle2, Star, Award, MessageCircle, Settings2, UserPlus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,6 @@ export interface FullProfile {
   availability_date: string | null;
   created_at: string;
   admin_rating: number | null;
-  super_tam: boolean | null;
   tech_specialties: string[] | null;
   intro_text: string | null;
   missions: Mission[] | null;
@@ -112,11 +111,6 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <h2 className="truncate text-lg font-bold sm:text-xl">{profile.first_name} {profile.last_name}</h2>
-                {profile.super_tam && (
-                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold text-accent-foreground sm:text-xs">
-                    <Medal className="h-3 w-3" /> Super TAM
-                  </span>
-                )}
               </div>
               {profile.job_title && (
                 <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">{profile.job_title}</p>

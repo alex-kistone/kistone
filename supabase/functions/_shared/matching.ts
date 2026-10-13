@@ -73,7 +73,6 @@ export interface Recruiter {
   admin_english_rating?: number | null;
   /** Avis interne : transmis au classement IA, jamais montré au client. */
   admin_comments?: string | null;
-  super_tam: boolean;
   intro_text: string | null;
   missions: unknown;
   has_linkedin_license: boolean;
@@ -212,7 +211,7 @@ function scoreAvailability(need: Need, r: Recruiter, onMission: boolean, now = n
   const today = startOfDay(now);
   const asap = !need.desired_start;
   const wanted = asap ? today : new Date(Math.max(parseDay(need.desired_start!).getTime(), today.getTime()));
-  const isTopProfile = (r.admin_rating ?? 0) >= 4 || r.super_tam;
+  const isTopProfile = (r.admin_rating ?? 0) >= 4;
 
   // Date à partir de laquelle le profil est libre
   const freeFrom = r.available && !onMission ? today : r.availability_date ? parseDay(r.availability_date) : null;
@@ -295,7 +294,7 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean, com
     : Math.max(overlap(r.mobility ?? [], [need.mission_location]), mentionedIn(r.mobility ?? [], need.mission_location));
 
   const rating = r.admin_rating ?? 0;
-  const quality = MAX.quality * (RATING_WEIGHT[rating] ?? RATING_WEIGHT[0]) * 0.8 + (r.super_tam ? MAX.quality * 0.2 : 0);
+  const quality = MAX.quality * (RATING_WEIGHT[rating] ?? RATING_WEIGHT[0]);
   const english = scoreEnglish(needText, r);
 
   const breakdown: ScoreBreakdown = {
@@ -322,7 +321,6 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean, com
   else if (metiers.exact.length) notes.push(`Recrute déjà des profils ${metiers.exact.join(", ")}`);
   else notes.push(`Recrute sur un métier voisin (${(r.skills ?? []).join(", ")})`);
   if (commonSectors.length) notes.push(`Expérience ${commonSectors.join(", ")}`);
-  if (r.super_tam) notes.push("Badge Super TAM");
   // Motifs impersonnels : jamais de mention d'une note, d'un avis ou de qui a évalué le profil.
   for (const n of [english.note, budget.note, availability.note, remote.note]) if (n) notes.push(n);
   if (cap.offersLess) notes.push(`Disponible ${rhythmLabel(cap.capacity)}, le besoin demande ${rhythmLabel(cap.wanted).toLowerCase()}`);

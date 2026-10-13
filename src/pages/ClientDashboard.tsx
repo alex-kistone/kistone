@@ -1,7 +1,7 @@
 import { durationLabel } from "@/components/platform/MissionDurationField";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { CalendarClock, Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Medal, Globe } from "lucide-react";
+import { CalendarClock, Plus, LogOut, Building2, MapPin, Wifi, Euro, Briefcase, Clock, Trash2, Pencil, Sparkles, User, ChevronDown, ChevronUp, Circle, CheckCircle2, Users, Award, MessageCircle, HandHeart, X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -45,7 +45,6 @@ interface ProfileSuggestion {
   match_reasons: string[];
   pipeline_status: string;
   status_updated_at: string | null;
-  super_tam?: boolean;
   created_at?: string;
   recruiter_first_name?: string | null;
 }
@@ -60,7 +59,6 @@ interface AnonymizedProfile {
   model: string | null;
   available: boolean | null;
   availability_date: string | null;
-  super_tam: boolean | null;
   tech_specialties: string[];
   intro_text: string | null;
   missions: { client_name?: string; profile_types?: string; kpis?: string; duration?: string }[];
@@ -124,11 +122,6 @@ const ProfileDetailPopup = ({ profile, open, onClose }: { profile: AnonymizedPro
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <h2 className="truncate text-lg font-bold sm:text-xl">{profile.first_name}</h2>
-                {profile.super_tam && (
-                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold text-accent-foreground sm:text-xs">
-                    <Medal className="h-3 w-3" /> Super TAM
-                  </span>
-                )}
               </div>
               {profile.job_title && (
                 <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">{profile.job_title}</p>
@@ -324,7 +317,7 @@ const ClientDashboard = () => {
   const loadSuggestions = async () => {
     const { data, error } = await supabase
       .from("profile_suggestions" as any)
-      .select("id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, status_updated_at, super_tam, created_at, recruiter_first_name");
+      .select("id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, status_updated_at, created_at, recruiter_first_name");
 
     if (!error && data) {
       const grouped: Record<string, ProfileSuggestion[]> = {};
@@ -585,7 +578,6 @@ const ClientDashboard = () => {
                                   <div className="sm:hidden flex-1 min-w-0">
                                     <span className="font-semibold text-sm flex items-center gap-1.5">
                                       {displayName}
-                                      {s.super_tam && <span title="Super TAM">🥇</span>}
                                     </span>
                                     <div className="flex items-center gap-2 mt-0.5">
                                       <span className="text-xs font-medium text-muted-foreground">{s.match_score}%</span>
@@ -597,7 +589,6 @@ const ClientDashboard = () => {
                                   <div className="hidden sm:flex items-center justify-between mb-1">
                                     <span className="font-semibold text-sm flex items-center gap-1.5">
                                       {displayName}
-                                      {s.super_tam && <span title="Super TAM">🥇</span>}
                                     </span>
                                     <div className="flex items-center gap-2">
                                       <span className="text-xs font-medium text-muted-foreground">{s.match_score}%</span>

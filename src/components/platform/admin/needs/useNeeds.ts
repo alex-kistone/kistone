@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { buildNeedRow, type ClientNeed, type NeedRow, type ProfileSuggestion, type RecruiterProfile } from "./needsModel";
 
 const SUGGESTION_COLUMNS =
-  "id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, recruiter_profile_id, super_tam, created_at, status_updated_at";
+  "id, need_id, anonymous_label, match_score, match_reasons, pipeline_status, recruiter_profile_id, created_at, status_updated_at";
 const PROFILE_COLUMNS =
-  "id, first_name, last_name, job_title, skills, sectors, model, mobility, tjm, admin_rating, available, availability_date, super_tam";
+  "id, first_name, last_name, job_title, skills, sectors, model, mobility, tjm, admin_rating, available, availability_date";
 
 interface Options {
   /** Limite aux besoins d'un compte client (fiche client). */

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Star, Medal, X, Save } from "lucide-react";
+import { Star, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,7 +53,6 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
   const [comments, setComments] = useState("");
   const [rating, setRating] = useState(0);
   const [englishRating, setEnglishRating] = useState(0);
-  const [superTam, setSuperTam] = useState(false);
   const [techSpecialties, setTechSpecialties] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -67,7 +65,7 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
     setLoading(true);
     const { data, error } = await supabase
       .from("recruiter_profiles" as any)
-      .select("admin_comments, admin_rating, admin_english_rating, super_tam, tech_specialties")
+      .select("admin_comments, admin_rating, admin_english_rating, tech_specialties")
       .eq("id", profileId)
       .single();
 
@@ -76,7 +74,6 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
       setComments(d.admin_comments || "");
       setRating(d.admin_rating || 0);
       setEnglishRating(d.admin_english_rating || 0);
-      setSuperTam(d.super_tam || false);
       setTechSpecialties(d.tech_specialties || []);
     }
     setLoading(false);
@@ -90,7 +87,6 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
         admin_comments: comments || null,
         admin_rating: rating,
         admin_english_rating: englishRating || null,
-        super_tam: superTam,
         tech_specialties: techSpecialties,
       } as any)
       .eq("id", profileId);
@@ -142,15 +138,6 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
               <Label className="mb-2 block text-sm font-medium">Niveau d'anglais</Label>
               <StarRating value={englishRating} onChange={setEnglishRating} labels={ENGLISH_LABELS} label="Niveau d'anglais" />
               <p className="mt-1 text-xs text-muted-foreground">Prime sur le niveau déclaré par le freelance pour le matching.</p>
-            </div>
-
-            {/* Super TAM */}
-            <div className="flex items-center gap-3">
-              <Switch checked={superTam} onCheckedChange={setSuperTam} id="super-tam" />
-              <Label htmlFor="super-tam" className="flex items-center gap-2 text-sm font-medium">
-                <Medal className="h-4 w-4 text-amber-500" />
-                Badge Super TAM
-              </Label>
             </div>
 
             {/* Tech Specialties */}

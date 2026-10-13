@@ -74,7 +74,6 @@ const SuggestToClientDialog = ({ profile, open, onClose }: SuggestToClientDialog
         anonymous_label: profile.first_name,
         match_score: 100,
         match_reasons: ["Suggestion manuelle par l'admin"],
-        super_tam: profile.super_tam || false,
       }));
 
       const { error: insertError } = await supabase
