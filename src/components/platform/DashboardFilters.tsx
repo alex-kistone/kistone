@@ -55,7 +55,23 @@ const DashboardFilters = ({
   const [mobilityFilter, setMobilityFilter] = useState("");
   const [tjmRange, setTjmRange] = useState<[number, number]>([0, 1500]);
   const [tjmActive, setTjmActive] = useState(false);
+  // Métiers recrutés (RPO) ou spécialités (autres fonctions), selon la fonction choisie
   const [skillsFilter, setSkillsFilter] = useState<string[]>([]);
+  const specialtyGroups = useMemo(
+    () =>
+      VERTICALS.filter((v) => verticalFilter === "all" || v.id === verticalFilter).map((v) => ({
+        id: v.id,
+        label: v.short,
+        options: v.id === "rpo" ? [...SKILLS_OPTIONS] : [...v.specialties],
+      })),
+    [verticalFilter],
+  );
+  const specialtyLabel = verticalFilter === "rpo" ? "Métiers" : verticalFilter === "all" ? "Métiers & spécialités" : "Spécialités";
+  // Changer de fonction efface les spécialités choisies (elles n'ont pas de sens ailleurs)
+  const changeVertical = (v: string) => {
+    setVerticalFilter(v);
+    setSkillsFilter([]);
+  };
   const [sectorsFilter, setSectorsFilter] = useState<string[]>([]);
   const [languageFilter, setLanguageFilter] = useState("");
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -137,7 +153,7 @@ const DashboardFilters = ({
 
     if (skillsFilter.length > 0) {
       result = result.filter((p) =>
-        skillsFilter.some((skill) => p.skills?.includes(skill))
+        skillsFilter.some((skill) => p.skills?.includes(skill) || ((p as { specialties?: string[] }).specialties ?? []).includes(skill))
       );
     }
 
@@ -192,7 +208,7 @@ const DashboardFilters = ({
             className="pl-10"
           />
         </div>
-        <Select value={verticalFilter} onValueChange={setVerticalFilter}>
+        <Select value={verticalFilter} onValueChange={changeVertical}>
           <SelectTrigger className="w-full sm:w-[180px]" aria-label="Fonction">
             <SelectValue />
           </SelectTrigger>
@@ -289,27 +305,34 @@ const DashboardFilters = ({
           </PopoverContent>
         </Popover>
 
-        {/* Métiers recrutés */}
+        {/* Métiers (RPO) ou spécialités, selon la fonction choisie */}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className={`h-8 text-xs ${skillsFilter.length > 0 ? "border-primary text-primary" : ""}`}>
-              Métiers {skillsFilter.length > 0 && `(${skillsFilter.length})`}
+              {specialtyLabel} {skillsFilter.length > 0 && `(${skillsFilter.length})`}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-56 space-y-2" align="start">
-            <Label className="text-sm font-medium">Métiers recrutés</Label>
-            <div className="max-h-48 space-y-1.5 overflow-y-auto">
-              {SKILLS_OPTIONS.map((skill) => (
-                <label key={skill} className="flex cursor-pointer items-center gap-2">
-                  <Checkbox
-                    checked={skillsFilter.includes(skill)}
-                    onCheckedChange={(checked) => {
-                      if (checked) setSkillsFilter([...skillsFilter, skill]);
-                      else setSkillsFilter(skillsFilter.filter((s) => s !== skill));
-                    }}
-                  />
-                  <span className="text-xs">{skill}</span>
-                </label>
+          <PopoverContent className="w-64 space-y-2" align="start">
+            <Label className="text-sm font-medium">{specialtyLabel}</Label>
+            <div className="max-h-72 space-y-3 overflow-y-auto">
+              {specialtyGroups.map((g) => (
+                <div key={g.id} className="space-y-1.5">
+                  {specialtyGroups.length > 1 && (
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{g.label}</p>
+                  )}
+                  {g.options.map((skill) => (
+                    <label key={`${g.id}-${skill}`} className="flex cursor-pointer items-center gap-2">
+                      <Checkbox
+                        checked={skillsFilter.includes(skill)}
+                        onCheckedChange={(checked) => {
+                          if (checked) setSkillsFilter([...skillsFilter, skill]);
+                          else setSkillsFilter(skillsFilter.filter((s) => s !== skill));
+                        }}
+                      />
+                      <span className="text-xs">{skill}</span>
+                    </label>
+                  ))}
+                </div>
               ))}
             </div>
           </PopoverContent>
