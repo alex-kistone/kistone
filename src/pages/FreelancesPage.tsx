@@ -48,10 +48,10 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
     visual: () => (
       <div className="w-full rounded-2xl bg-white p-5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
         <div className="flex items-center justify-between text-[13px] text-ks-subtle">
-          <span>Octobre · 8 jours × 1 000 € HT</span>
+          <span>Octobre · 12 jours × 900 € HT</span>
           <span className="rounded-full bg-[#E8F5EE] px-2.5 py-1 text-[11px] font-medium text-[#17663F]">CRA validé</span>
         </div>
-        <p className="mt-2 font-ks-display text-[40px] font-bold tracking-[-0.04em]">8 000 €<span className="text-[16px] font-medium text-ks-subtle"> HT</span></p>
+        <p className="mt-2 font-ks-display text-[40px] font-bold tracking-[-0.04em]">10 800 €<span className="text-[16px] font-medium text-ks-subtle"> HT</span></p>
         <p className="mt-3 flex items-center gap-2 text-[13px] font-medium text-[#17663F]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#2F9A63]" aria-hidden="true" />
           Payé intégralement en fin de mois
