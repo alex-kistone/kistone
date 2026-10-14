@@ -69,11 +69,13 @@ type Props = {
   arrow?: boolean;
   className?: string;
   onClick?: () => void;
+  /** Couleur du balayage au survol, si celle de la variante ne se voit pas sur le fond (ex. bloc noir). */
+  wipeClassName?: string;
 };
 
 /** Bouton-lien du site (pill). Rose = CTA principal, blanc = secondaire. */
-export default function Cta({ href, children, variant = "primary", size = "md", arrow, className, onClick }: Props) {
-  const wipe = WIPE[variant];
+export default function Cta({ href, children, variant = "primary", size = "md", arrow, className, onClick, wipeClassName }: Props) {
+  const wipe = wipeClassName ?? WIPE[variant];
   return (
     <SmartLink
       href={href}
