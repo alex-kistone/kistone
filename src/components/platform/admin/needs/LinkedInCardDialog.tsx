@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Copy, Download, Linkedin } from "lucide-react";
+import { Copy, Download, Linkedin, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { freelanceRate } from "@/lib/pricing";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
@@ -290,6 +295,49 @@ export default function LinkedInCardDialog({ need, open, onOpenChange }: { need:
     .filter((n): n is string => !!n && n.length > 1)
     .filter((n) => Object.values(f).some((val) => val.toLowerCase().includes(n.toLowerCase())));
 
+  // Connexion LinkedIn de l'admin (publication directe via l'API)
+  const [li, setLi] = useState<{ configured: boolean; connected: boolean; name: string | null } | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const check = () =>
+      supabase.functions.invoke("linkedin-auth", { body: { action: "status" } }).then(({ data }) => {
+        if (data && !data.error) setLi({ configured: !!data.configured, connected: !!data.connected, name: data.name ?? null });
+      });
+    check();
+    // Après l'autorisation dans un autre onglet, l'état se met à jour au retour sur celui-ci
+    window.addEventListener("focus", check);
+    return () => window.removeEventListener("focus", check);
+  }, [open]);
+
+  const connectLinkedin = async () => {
+    const { data, error } = await supabase.functions.invoke("linkedin-auth", { body: { action: "start" } });
+    if (error || data?.error) {
+      toast({ title: "Connexion impossible", description: data?.error ?? error?.message, variant: "destructive" });
+      return;
+    }
+    window.open(data.url, "_blank");
+  };
+
+  const publishDirect = async () => {
+    if (!canvasRef.current) return;
+    setPublishing(true);
+    const { data, error } = await supabase.functions.invoke("linkedin-publish", {
+      body: { image: canvasRef.current.toDataURL("image/png"), text: postText, altText: `Mission freelance : ${f.title}` },
+    });
+    setPublishing(false);
+    setConfirming(false);
+    if (error || data?.error) {
+      const body = error ? await (error as { context?: { json?: () => Promise<{ error?: string; reconnect?: boolean }> } }).context?.json?.().catch(() => null) : data;
+      if (body?.reconnect) setLi((v) => (v ? { ...v, connected: false } : v));
+      toast({ title: "Publication impossible", description: body?.error ?? error?.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Publié sur LinkedIn", description: "Le post est en ligne sur votre profil." });
+    window.open(data.url, "_blank");
+  };
+
   const set = (k: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
 
   const download = () => {
@@ -382,13 +430,40 @@ export default function LinkedInCardDialog({ need, open, onOpenChange }: { need:
           <div className="space-y-3">
             <canvas ref={canvasRef} className="aspect-[4/5] w-full rounded-xl border shadow-sm" aria-label="Aperçu de la carte LinkedIn" />
             <div className="flex flex-col gap-2">
-              <Button onClick={publish} disabled={leaks.length > 0} className="gap-2 bg-[#0A66C2] text-white hover:bg-[#0A66C2]/90"><Linkedin className="h-4 w-4" />Publier sur LinkedIn</Button>
+              {li?.connected ? (
+                <>
+                  <Button onClick={() => setConfirming(true)} disabled={leaks.length > 0 || publishing} className="gap-2 bg-[#0A66C2] text-white hover:bg-[#0A66C2]/90">
+                    {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}Publier sur LinkedIn
+                  </Button>
+                  <p className="text-center text-xs text-muted-foreground">Connecté en tant que {li.name ?? "votre profil"}</p>
+                </>
+              ) : li?.configured ? (
+                <Button onClick={connectLinkedin} className="gap-2 bg-[#0A66C2] text-white hover:bg-[#0A66C2]/90"><Linkedin className="h-4 w-4" />Connecter LinkedIn</Button>
+              ) : null}
+              <Button variant={li?.connected || li?.configured ? "outline" : "default"} onClick={publish} disabled={leaks.length > 0} className="gap-2"><Linkedin className="h-4 w-4" />Publication assistée (coller l'image)</Button>
               <Button variant="outline" onClick={download} disabled={leaks.length > 0} className="gap-2"><Download className="h-4 w-4" />Télécharger l'image (PNG)</Button>
               <Button variant="outline" onClick={copyPost} disabled={leaks.length > 0} className="gap-2"><Copy className="h-4 w-4" />Copier le texte du post</Button>
             </div>
           </div>
         </div>
       </DialogContent>
+      <AlertDialog open={confirming} onOpenChange={setConfirming}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Publier sur LinkedIn ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              La carte et son texte seront publiés publiquement sur le profil de {li?.name ?? "votre compte LinkedIn"}. Vérifiez qu'aucune information
+              confidentielle n'y figure : une fois en ligne, le post se supprime depuis LinkedIn.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={publishing}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); publishDirect(); }} disabled={publishing}>
+              {publishing ? "Publication…" : "Publier"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

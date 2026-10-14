@@ -15,3 +15,6 @@ verify_jwt = false
 # Hook « Send Email » de Supabase Auth : appelé par Supabase, authentifié par signature (standardwebhooks)
 [functions.auth-email]
 verify_jwt = false
+
+[functions.linkedin-auth]
+verify_jwt = false
