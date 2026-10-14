@@ -1,7 +1,8 @@
 import { durationLabel } from "@/components/platform/MissionDurationField";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Plus, Sparkles } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Linkedin, Loader2, Plus, Sparkles } from "lucide-react";
+import LinkedInCardDialog from "./LinkedInCardDialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,6 +59,7 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
   const { needs, setNeeds, suggestions, setSuggestions, profiles, missionBySuggestion, setMissionBySuggestion, reload } = data;
   const [matching, setMatching] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
+  const [linkedinOpen, setLinkedinOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [missionDialog, setMissionDialog] = useState<MissionDialogData | null>(null);
   const need = row?.need ?? null;
@@ -293,6 +295,9 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
           >
             <Plus className="h-3.5 w-3.5" aria-hidden="true" /> Suggérer un profil
           </Button>
+          <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setLinkedinOpen(true)}>
+            <Linkedin className="h-3.5 w-3.5" aria-hidden="true" /> Carte LinkedIn
+          </Button>
           {pendingMissions.map((s) => (
             <Button key={s.id} size="sm" variant="outline" className="gap-1.5 border-[#17663F]/40 text-xs text-[#17663F]" onClick={() => openMissionDialog(s.id)}>
               Créer la mission{pendingMissions.length > 1 ? ` · ${nameOf(s)}` : ""}
@@ -373,6 +378,7 @@ const NeedDetail = ({ row, data, prevId, nextId, position, onBack, onNavigate }:
         />
       </section>
 
+      {need && <LinkedInCardDialog need={need} open={linkedinOpen} onOpenChange={setLinkedinOpen} />}
       {missionDialog && (
         <CreateMissionDialog
           open
