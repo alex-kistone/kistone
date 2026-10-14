@@ -3,18 +3,18 @@ import { ROUTES } from "@/content/site";
 import { FINAL_CTA } from "@/content/home";
 import { BoltWatermark } from "@/components/brand/Bolt";
 
-/** Dernier appel avant le pied de page (sombre) : grande carte rose poudré, deux portes d'entrée. */
+/** Dernier appel avant le pied de page (sombre) : grande carte blanche, deux portes d'entrée. */
 export default function FinalCTA() {
   return (
     <div className="px-5 md:px-8 xl:px-0">
       <section
         aria-labelledby="final-cta-title"
-        className="isolate ks-reveal relative mx-auto mt-24 max-w-ks overflow-hidden rounded-[28px] border border-[rgba(255,46,110,0.12)] bg-[linear-gradient(180deg,#FFD1DF_0%,#FFE3EC_55%,#FFEDF2_100%)] px-6 py-16 text-center shadow-ks-window md:mt-[140px] md:rounded-[36px] md:py-24"
+        className="isolate ks-reveal relative mx-auto mt-24 max-w-ks overflow-hidden rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white px-6 py-16 text-center shadow-ks-window md:mt-[140px] md:rounded-[36px] md:py-24"
       >
-        <BoltWatermark className="-bottom-20 -left-10 h-[360px] w-auto rotate-[-14deg] !text-ks-pink !opacity-[0.14]" />
+        <BoltWatermark className="-bottom-20 -left-10 h-[360px] w-auto rotate-[-14deg]" />
         <div
           className="pointer-events-none absolute left-1/2 top-0 h-[360px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{ background: "radial-gradient(closest-side, rgba(255,46,110,0.22), rgba(255,46,110,0))" }}
+          style={{ background: "radial-gradient(closest-side, rgba(255,46,110,0.16), rgba(255,46,110,0))" }}
           aria-hidden="true"
         />
         <h2 id="final-cta-title" className="relative font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
