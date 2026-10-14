@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { rhythmLabel, verticalOf } from "@/lib/verticals";
 import { palettes } from "@/lib/palettes";
-import { X, MapPin, Briefcase, Globe, Linkedin, Phone, Mail, Calendar, CheckCircle2, Star, Award, MessageCircle, Settings2, UserPlus } from "lucide-react";
+import { X, MapPin, Briefcase, Globe, Linkedin, Phone, Mail, Calendar, CheckCircle2, Star, Award, MessageCircle, Settings2, UserPlus, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import SuggestToClientDialog from "./SuggestToClientDialog";
+import FreelanceLinkedInCardDialog from "./admin/linkedin/FreelanceLinkedInCardDialog";
 
 interface Mission {
   client_name?: string;
@@ -57,6 +58,7 @@ interface ProfileDetailModalProps {
 
 const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }: ProfileDetailModalProps) => {
   const [suggestOpen, setSuggestOpen] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false);
 
   if (!open) return null;
 
@@ -77,6 +79,11 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
           {onOpenAdmin && (
             <button onClick={() => setSuggestOpen(true)} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" title="Suggérer à un client">
               <UserPlus className="h-5 w-5" />
+            </button>
+          )}
+          {onOpenAdmin && (
+            <button onClick={() => setCardOpen(true)} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" title="Carte LinkedIn anonyme">
+              <Share2 className="h-5 w-5" />
             </button>
           )}
           {profile.linkedin_url && (
@@ -257,6 +264,12 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
       </div>
 
       <SuggestToClientDialog profile={profile} open={suggestOpen} onClose={() => setSuggestOpen(false)} />
+      {onOpenAdmin && (
+        // Les clics du dialogue (rendu en portail) remontent l'arbre React : on ne ferme pas la fiche
+        <div onClick={(e) => e.stopPropagation()}>
+          <FreelanceLinkedInCardDialog profile={profile} open={cardOpen} onOpenChange={setCardOpen} />
+        </div>
+      )}
     </div>
   );
 };
