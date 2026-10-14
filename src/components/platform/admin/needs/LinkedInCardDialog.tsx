@@ -318,6 +318,31 @@ export default function LinkedInCardDialog({ need, open, onOpenChange }: { need:
     "#freelance #fractional #kistone",
   ].filter((l): l is string => typeof l === "string").join("\n").replace(/\n{3,}/g, "\n\n");
 
+  /**
+   * Publication assistée : l'image part dans le presse-papier, LinkedIn s'ouvre avec la
+   * fenêtre de post et le texte pré-rempli ; il reste à coller l'image (Cmd+V) et publier.
+   */
+  const publish = async () => {
+    // L'onglet s'ouvre tout de suite (sinon le navigateur le bloque après une attente)
+    const tab = window.open("about:blank", "_blank");
+    let imageCopied = false;
+    try {
+      const blob = await new Promise<Blob | null>((ok) => canvasRef.current?.toBlob(ok, "image/png") ?? ok(null));
+      if (blob && "ClipboardItem" in window) {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        imageCopied = true;
+      }
+    } catch { /* presse-papier refusé : on télécharge l'image à la place */ }
+    if (!imageCopied) download();
+    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(postText)}`;
+    if (tab) tab.location.href = url;
+    else window.open(url, "_blank");
+    toast({
+      title: "LinkedIn s'ouvre avec votre texte",
+      description: imageCopied ? "L'image est copiée : collez-la dans le post (Cmd+V), puis publiez." : "L'image a été téléchargée : ajoutez-la au post, puis publiez.",
+    });
+  };
+
   const copyPost = async () => {
     await navigator.clipboard.writeText(postText);
     toast({ title: "Texte du post copié", description: "Collez-le dans LinkedIn avec l'image." });
@@ -357,7 +382,8 @@ export default function LinkedInCardDialog({ need, open, onOpenChange }: { need:
           <div className="space-y-3">
             <canvas ref={canvasRef} className="aspect-[4/5] w-full rounded-xl border shadow-sm" aria-label="Aperçu de la carte LinkedIn" />
             <div className="flex flex-col gap-2">
-              <Button onClick={download} disabled={leaks.length > 0} className="gap-2"><Download className="h-4 w-4" />Télécharger l'image (PNG)</Button>
+              <Button onClick={publish} disabled={leaks.length > 0} className="gap-2 bg-[#0A66C2] text-white hover:bg-[#0A66C2]/90"><Linkedin className="h-4 w-4" />Publier sur LinkedIn</Button>
+              <Button variant="outline" onClick={download} disabled={leaks.length > 0} className="gap-2"><Download className="h-4 w-4" />Télécharger l'image (PNG)</Button>
               <Button variant="outline" onClick={copyPost} disabled={leaks.length > 0} className="gap-2"><Copy className="h-4 w-4" />Copier le texte du post</Button>
             </div>
           </div>
