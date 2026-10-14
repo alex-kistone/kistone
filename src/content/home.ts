@@ -164,7 +164,7 @@ export const PROOF = [
 export const ADMIN_CHECKLIST = ["Contrat de mission signé", "KYC vérifié", "CRA validé chaque mois", "Facture unique émise"];
 
 export const FINAL_CTA = {
-  title: "Votre prochain dirigeant",
+  title: "Votre prochain Leader",
   titleEnd: "est peut-être déjà disponible.",
   text: "Décrivez votre besoin en quelques lignes : vous recevez des profils sous 48 h.",
   primary: "Partager un besoin",
