@@ -154,7 +154,7 @@ export const BRIEFS: Brief[] = [
 /** Chiffres clés (promesses validées : 48 h ; communauté annoncée dans le hero). */
 export const PROOF = [
   { value: "48", unit: "h", label: "pour recevoir vos premiers profils" },
-  { value: "2 à 5", unit: "j", label: "par semaine, selon votre besoin réel" },
+  { value: "2 à 5", unit: "j", label: "par semaine, selon votre besoin" },
   { value: "700", unit: "+", label: "experts freelance qualifiés" },
 ];
 
