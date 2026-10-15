@@ -8,16 +8,12 @@ import { BoltWatermark } from "@/components/brand/Bolt";
  * Les fonctions de la plateforme : une carte teintée par fonction, qui ouvre le dépôt
  * de besoin avec la fonction déjà choisie (?fonction=cfo).
  */
-// Le titre suit le nombre de fonctions (« Huit fonctions clés. »)
-const COUNT_WORDS = ["Zéro", "Une", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sept", "Huit", "Neuf", "Dix", "Onze", "Douze"];
-const countWord = (n: number) => COUNT_WORDS[n] ?? String(n);
-
 export default function FunctionsGrid() {
   return (
     <section id="fonctions" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <BoltWatermark className="-right-6 -top-10 h-[320px] w-auto rotate-[14deg]" />
       <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-        {countWord(VERTICALS.length)} fonctions clés.
+        Des fonctions clés.
         <br />
         Un seul partenaire.
       </h2>
