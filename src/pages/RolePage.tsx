@@ -72,7 +72,7 @@ function ProfileCard({ p, palette }: { p: Shown; palette: string }) {
           <p className="truncate font-ks-display text-[19px] font-semibold tracking-[-0.02em]">{p.name}</p>
           <p className="truncate text-[13px] text-ks-soft">{p.job}{p.xp ? ` · ${p.xp} ans` : ""}</p>
         </div>
-        {p.rating ? <Stars n={p.rating} /> : <span className="rounded-full bg-ks-secondary px-2 py-0.5 text-[11px] text-ks-soft">Exemple</span>}
+        {p.rating ? <Stars n={p.rating} /> : <span className="text-[12px] text-ks-subtle">Exemple</span>}
       </div>
       {p.specialties.length > 0 && (
         <ul className="flex flex-wrap gap-1.5">
@@ -83,7 +83,7 @@ function ProfileCard({ p, palette }: { p: Shown; palette: string }) {
       )}
       <div className="mt-auto flex items-center justify-between border-t border-[rgba(20,19,18,0.08)] pt-3 text-[13px]">
         <span className="font-semibold">{rhythmLabel(p.days)}</span>
-        <span className={cn("flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium", p.available ? "bg-[#E8F5EE] text-[#17663F]" : "bg-ks-secondary text-ks-soft")}>
+        <span className={cn("flex items-center gap-1.5 text-[12px] font-medium", p.available ? "text-[#17663F]" : "text-ks-soft")}>
           <span className={cn("h-1.5 w-1.5 rounded-full", p.available ? "bg-[#2F9A63]" : "bg-[#B8B0A4]")} aria-hidden="true" />
           {p.available ? "Disponible" : "Bientôt disponible"}
         </span>
@@ -148,10 +148,8 @@ function RoleContent({ role }: { role: Role }) {
       {/* Promesse */}
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg] md:h-[760px]" />
-        <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: palettes[v.palette].tint, color: palettes[v.palette].ink }}>
-          {v.roles}
-        </span>
-        <h1 className="mt-6 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
+        <p className="text-[15px] font-semibold" style={{ color: palettes[v.palette].ink }}>{v.roles}</p>
+        <h1 className="mt-3 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
           {role.h1.split(v.short).flatMap((part, i) => (i === 0 ? [part] : [<Highlight key={i}>{v.short}</Highlight>, part]))}
         </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{role.lead}</p>
@@ -162,7 +160,7 @@ function RoleContent({ role }: { role: Role }) {
       </section>
 
       {/* Profils récents */}
-      <Section id="profils" tag="Profils récents" title={`Des ${v.short} qualifiés, prêts à démarrer`}>
+      <Section id="profils" title={`Des ${v.short} qualifiés, prêts à démarrer`}>
         <p className="mt-4 max-w-[680px] text-[17px] leading-[1.55] text-ks-soft">
           Derniers profils inscrits sur Kistone, notés 4 ou 5 étoiles après entretien. Identités complètes communiquées lors de la mise en relation.
         </p>
@@ -175,7 +173,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Chiffres clés */}
-      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" tag="Chiffres clés" title="Un dirigeant senior, avec la flexibilité du freelance">
+      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" title="Un dirigeant senior, avec la flexibilité du freelance">
         <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {figures.map((f) => (
             <div key={f.label} className="rounded-[24px] bg-white p-6 shadow-ks-card">
@@ -188,7 +186,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Quand recruter */}
-      <Section tag="Quand recruter" title={`Quand faire appel à un ${role.role} ?`}>
+      <Section title={`Quand faire appel à un ${role.role} ?`}>
         <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {role.when.map((w, i) => (
             <li key={w.title} className="rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
@@ -201,7 +199,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Définition et fiche de poste */}
-      <Section bolt="-right-16 top-0 h-[480px] w-auto rotate-[12deg]" tag="Fiche de poste" title={`${role.role} : définition et fiche de poste`}>
+      <Section bolt="-right-16 top-0 h-[480px] w-auto rotate-[12deg]" title={`${role.role} : définition et fiche de poste`}>
         <div className="mt-8 max-w-[820px] space-y-4 text-[17px] leading-[1.65] text-ks-ink-2">
           {role.definition.map((p) => <p key={p}>{p}</p>)}
         </div>
@@ -228,7 +226,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* FAQ */}
-      <Section bolt="-left-10 bottom-0 h-[220px] w-auto rotate-[20deg]" tag="Questions fréquentes" title={`Tout savoir sur le ${role.role}`}>
+      <Section bolt="-left-10 bottom-0 h-[220px] w-auto rotate-[20deg]" title={`Tout savoir sur le ${role.role}`}>
         <div className="mt-8 max-w-[860px] divide-y divide-[rgba(20,19,18,0.08)] rounded-[24px] bg-white px-6 shadow-ks-card md:px-8">
           {role.faq.map((f) => (
             <details key={f.q} className="group py-5">

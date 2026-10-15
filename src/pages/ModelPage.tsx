@@ -50,8 +50,8 @@ function ModelContent({ model }: { model: Model }) {
       {/* Promesse */}
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg] md:h-[760px]" />
-        <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: p.tint, color: p.ink }}>Modèle d'intervention</span>
-        <h1 className="mt-6 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
+        <p className="text-[15px] font-semibold" style={{ color: p.ink }}>Modèle d'intervention</p>
+        <h1 className="mt-3 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
           {model.h1.split(model.highlight).flatMap((part, i) => (i === 0 ? [part] : [<Highlight key={i}>{model.highlight}</Highlight>, part]))}
         </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{model.lead}</p>
@@ -70,14 +70,14 @@ function ModelContent({ model }: { model: Model }) {
       </section>
 
       {/* Définition */}
-      <PageSection tag="Définition" title={`${model.name} : de quoi parle-t-on ?`} bolt="-left-24 top-10 h-[300px] w-auto rotate-[-16deg]">
+      <PageSection title={`${model.name} : de quoi parle-t-on ?`} bolt="-left-24 top-10 h-[300px] w-auto rotate-[-16deg]">
         <div className="mt-8 max-w-[820px] space-y-4 text-[17px] leading-[1.65] text-ks-ink-2">
           {model.definition.map((d) => <p key={d}>{d}</p>)}
         </div>
       </PageSection>
 
       {/* Fonctionnement */}
-      <PageSection tag="Fonctionnement" title="Comment ça se passe avec Kistone">
+      <PageSection title="Comment ça se passe avec Kistone">
         <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {model.steps.map((s, i) => (
             <li key={s.title} className="rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
@@ -90,7 +90,7 @@ function ModelContent({ model }: { model: Model }) {
       </PageSection>
 
       {/* Situations */}
-      <PageSection tag="Situations" title="Dans quelles situations ?" bolt="-right-16 top-0 h-[460px] w-auto rotate-[12deg]">
+      <PageSection title="Dans quelles situations ?" bolt="-right-16 top-0 h-[460px] w-auto rotate-[12deg]">
         <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {model.situations.map((s) => (
             <li key={s.title} className="rounded-[24px] p-6" style={{ background: p.soft }}>
@@ -102,7 +102,7 @@ function ModelContent({ model }: { model: Model }) {
       </PageSection>
 
       {/* Ce que ça change */}
-      <PageSection tag="En pratique" title="Ce que ça change pour vous">
+      <PageSection title="Ce que ça change pour vous">
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
           <div className="rounded-[24px] bg-white p-7 shadow-ks-card">
             <h3 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">Les bénéfices</h3>
@@ -120,7 +120,7 @@ function ModelContent({ model }: { model: Model }) {
       </PageSection>
 
       {/* Comparaison */}
-      <PageSection tag="Comparer" title="Les trois modèles en un coup d'œil">
+      <PageSection title="Les trois modèles en un coup d'œil">
         <div className="mt-10 overflow-x-auto rounded-[24px] bg-white shadow-ks-card">
           <table className="w-full min-w-[640px] text-left text-[15px]">
             <thead>
@@ -152,7 +152,7 @@ function ModelContent({ model }: { model: Model }) {
       </PageSection>
 
       {/* FAQ */}
-      <PageSection tag="Questions fréquentes" title={`Tout savoir sur le modèle ${model.name}`} bolt="-left-10 bottom-0 h-[220px] w-auto rotate-[20deg]">
+      <PageSection title={`Tout savoir sur le modèle ${model.name}`} bolt="-left-10 bottom-0 h-[220px] w-auto rotate-[20deg]">
         <div className="mt-8 max-w-[860px] divide-y divide-[rgba(20,19,18,0.08)] rounded-[24px] bg-white px-6 shadow-ks-card md:px-8">
           {model.faq.map((f) => (
             <details key={f.q} className="group py-5">

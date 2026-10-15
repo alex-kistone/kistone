@@ -151,8 +151,7 @@ export default function FreelancesPage() {
       <section className="relative isolate mx-auto grid max-w-ks items-center gap-12 px-5 pt-12 md:px-8 md:pt-[72px] lg:grid-cols-[1.1fr_1fr] xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[640px] w-auto rotate-[14deg] md:h-[760px]" />
         <div>
-          <span className="rounded-full bg-ks-dark px-3 py-1 font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-fg">Espace freelance</span>
-          <h1 className="mt-6 font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
+          <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
             Rejoignez la communauté des <Highlight>Fractional Leaders</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
@@ -189,7 +188,7 @@ export default function FreelancesPage() {
       </div>
 
       {/* Fonctions */}
-      <PageSection tag="Fonctions" title="Les fonctions que nous recherchons" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
+      <PageSection title="Les fonctions que nous recherchons" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
         <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {ROLE_PAGES.map((r) => {
             const v = verticalOf(r.vertical);
@@ -207,7 +206,7 @@ export default function FreelancesPage() {
       </PageSection>
 
       {/* Comment rejoindre */}
-      <PageSection tag="Comment ça marche" title="Rejoindre Kistone en quatre étapes">
+      <PageSection title="Rejoindre Kistone en quatre étapes">
         <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <li key={s.title} className="rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
@@ -220,7 +219,7 @@ export default function FreelancesPage() {
       </PageSection>
 
       {/* Profil recherché */}
-      <PageSection tag="Profil" title="Les profils que nous accompagnons" bolt="-right-16 top-0 h-[380px] w-auto rotate-[12deg]">
+      <PageSection title="Les profils que nous accompagnons" bolt="-right-16 top-0 h-[380px] w-auto rotate-[12deg]">
         <ul className="mt-8 grid max-w-[900px] gap-3 md:grid-cols-2">
           {CRITERIA.map((c) => (
             <li key={c} className="flex gap-3 rounded-[20px] bg-white p-5 text-[15px] leading-[1.55] text-ks-ink-2 shadow-ks-card">
@@ -232,7 +231,7 @@ export default function FreelancesPage() {
       </PageSection>
 
       {/* FAQ */}
-      <PageSection tag="Questions fréquentes" title="Vos questions de freelance">
+      <PageSection title="Vos questions de freelance">
         <div className="mt-8 max-w-[860px] divide-y divide-[rgba(20,19,18,0.08)] rounded-[24px] bg-white px-6 shadow-ks-card md:px-8">
           {FAQ.map((f) => (
             <details key={f.q} className="group py-5">

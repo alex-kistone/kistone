@@ -58,14 +58,6 @@ export default function Hero() {
   return (
     <section className="mx-auto grid max-w-ks items-center gap-12 px-5 pt-12 md:px-8 md:pt-[72px] xl:grid-cols-[1.15fr_1fr] xl:gap-8 xl:px-0">
       <div className="flex flex-col items-center text-center xl:items-start xl:text-left">
-        {/* Badge hero : chip sombre + accroche */}
-        <p className="ks-reveal mb-7 inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-full border border-[rgba(20,19,18,0.08)] bg-white pl-1.5 pr-3.5 text-[13px] text-ks-ink-2 sm:gap-2.5 sm:pr-4 sm:text-sm shadow-[0_1px_2px_rgba(20,19,18,0.04)]">
-          <span className="flex h-6 items-center gap-1.5 rounded-full bg-ks-dark px-2.5 font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-dark-fg">
-            <span className="h-1.5 w-1.5 rounded-full bg-ks-pink" aria-hidden="true" />
-            {HERO.badgeChip}
-          </span>
-          {HERO.reassurance}
-        </p>
         <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px] xl:text-[66px]">
           {/* « Plateforme Freelance » sur une seule ligne en deux colonnes */}
           <span className="xl:whitespace-nowrap">

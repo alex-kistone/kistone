@@ -1,4 +1,3 @@
-import SectionTag from "@/components/site/SectionTag";
 import { RESOURCES } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 import { BoltWatermark } from "@/components/brand/Bolt";
@@ -15,8 +14,7 @@ export default function ResourcesTeaser() {
       <BoltWatermark strokeWidth={16} className="-right-20 -top-40 h-[680px] w-auto rotate-[14deg]" />
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <SectionTag className="ks-reveal">Ressources</SectionTag>
-          <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
+          <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
             Freelance, stratégie et leadership, sans jargon.
           </h2>
         </div>

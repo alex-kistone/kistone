@@ -73,7 +73,7 @@ export default function ComparisonPage() {
         </header>
 
         {/* Les quatre familles */}
-        <PageSection tag="Le marché" title="Quatre familles d'acteurs">
+        <PageSection title="Quatre familles d'acteurs">
           <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {(Object.keys(FAMILIES) as Family[]).map((f) => (
               <li key={f} className="rounded-[24px] bg-white p-6 shadow-ks-card">
@@ -86,7 +86,7 @@ export default function ComparisonPage() {
         </PageSection>
 
         {/* Tableau comparatif */}
-        <PageSection tag="Comparatif" title="Le tableau comparatif">
+        <PageSection title="Le tableau comparatif">
           <div className="mt-10 overflow-x-auto rounded-[24px] bg-white shadow-ks-card">
             <table className="w-full min-w-[920px] text-left text-[14px]">
               <thead>
@@ -114,7 +114,7 @@ export default function ComparisonPage() {
         </PageSection>
 
         {/* Fiches */}
-        <PageSection tag="Les acteurs" title="Les acteurs en détail" bolt="-left-24 top-40 h-[360px] w-auto rotate-[-14deg]">
+        <PageSection title="Les acteurs en détail" bolt="-left-24 top-40 h-[360px] w-auto rotate-[-14deg]">
           <div className="mt-10 grid gap-5 lg:grid-cols-2">
             {PLAYERS.map((p, i) => (
               <section key={p.name} id={anchor(p.name)} className={cn("scroll-mt-28 rounded-[28px] bg-white p-7 shadow-ks-card", p.name === "Kistone" && "ring-2 ring-ks-pink lg:col-span-2")}>
@@ -148,7 +148,7 @@ export default function ComparisonPage() {
         </PageSection>
 
         {/* Comment choisir */}
-        <PageSection tag="Comment choisir" title="Cinq questions pour choisir le bon acteur">
+        <PageSection title="Cinq questions pour choisir le bon acteur">
           <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             {COMPARISON.questions.map((q, i) => (
               <li key={q.title} className="rounded-[24px] bg-white p-6 shadow-ks-card">
@@ -161,7 +161,7 @@ export default function ComparisonPage() {
         </PageSection>
 
         {/* FAQ */}
-        <PageSection tag="Questions fréquentes" title="Vos questions">
+        <PageSection title="Vos questions">
           <div className="mt-8 max-w-[860px] divide-y divide-[rgba(20,19,18,0.08)] rounded-[24px] bg-white px-6 shadow-ks-card md:px-8">
             {COMPARISON.faq.map((f) => (
               <details key={f.q} className="group py-5">
@@ -176,7 +176,7 @@ export default function ComparisonPage() {
         </PageSection>
 
         {/* Méthodologie et transparence */}
-        <PageSection tag="Méthodologie" title="Comment ce comparatif a été réalisé">
+        <PageSection title="Comment ce comparatif a été réalisé">
           <div className="mt-6 max-w-[860px] space-y-3 text-[15px] leading-[1.65] text-ks-soft">
             <p>
               Ce comparatif est rédigé par Kistone, qui figure parmi les acteurs présentés : nous l'indiquons en toute transparence.

@@ -1,4 +1,3 @@
-import SectionTag from "@/components/site/SectionTag";
 import { RECRUITERS, STEPS } from "@/content/home";
 import { palettes, type PaletteName } from "@/lib/palettes";
 import { BoltWatermark } from "@/components/brand/Bolt";
@@ -79,8 +78,7 @@ export default function HowItWorks() {
   return (
     <section id="comment" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <BoltWatermark className="-left-20 top-0 h-[420px] w-auto rotate-[-10deg]" />
-      <SectionTag className="ks-reveal">Comment ça marche</SectionTag>
-      <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
+      <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
         Un expert senior.
         <br />
         La flexibilité du freelance.

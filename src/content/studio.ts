@@ -9,8 +9,6 @@ export const STUDIO_SEO = {
 };
 
 export const HERO = {
-  badgeDesktop: "Produits IA sur mesure pour les équipes RH",
-  badgeMobile: "Produits IA pour les RH",
   titleLine1: "Vos outils RH sur mesure.",
   titleLead: "Livrés en",
   titleHighlight: "30 jours.",
@@ -43,7 +41,6 @@ export const LOGOS = {
 };
 
 export const METHOD = {
-  tag: "Méthode",
   title: "Quatre étapes. Zéro jargon.",
   subtitle: "De votre besoin à un produit utilisé par vos équipes. Vous validez chaque étape.",
   steps: [
@@ -66,7 +63,6 @@ export type CaseStudy = {
 };
 
 export const CASES = {
-  tag: "Réalisations",
   titleA: "Des produits utilisés.",
   titleB: "Pas des démos.",
   subtitle: "Trois projets récents, livrés et adoptés par les équipes.",
@@ -95,7 +91,6 @@ export const USE_CASES = {
 export type WhyIcon = "shield" | "bolt" | "users" | "layers";
 
 export const WHY = {
-  tag: "Pourquoi Kistone",
   titleA: "Construit pour les RH.",
   titleB: "Pas pour la DSI.",
   lead: {
@@ -136,7 +131,6 @@ export type Plan = {
 };
 
 export const PRICING = {
-  tag: "Tarifs",
   title: "Un prix clair. Pas de surprise.",
   subtitle: "Choisissez le rythme. Changez quand vous voulez.",
   note: "Sans engagement · Résiliable à tout moment",
@@ -179,7 +173,6 @@ export const BOOKING = {
 };
 
 export const TESTIMONIALS = {
-  tag: "Témoignages",
   title: "Ce qu’en disent les DRH.",
   items: [
     { quote: "[Citation client : le problème de départ et le résultat obtenu, en 2 ou 3 phrases.]", name: "[Prénom Nom]", role: "[DRH · Entreprise]" },
@@ -191,7 +184,6 @@ export const TESTIMONIALS = {
 export type FaqItem = { id: string; q: string; a: string };
 
 export const FAQ = {
-  tag: "FAQ",
   title: "Vos questions, nos réponses.",
   subtitle: "Une question qui n’est pas là ? Posez-la pendant l’appel.",
   cta: "Réserver un appel",

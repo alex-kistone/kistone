@@ -1,5 +1,4 @@
 import Cta from "@/components/site/Cta";
-import SectionTag from "@/components/site/SectionTag";
 import { ROUTES } from "@/content/site";
 import { STUDIO_TILES } from "@/content/home";
 import { palettes } from "@/lib/palettes";
@@ -18,8 +17,7 @@ export default function StudioReminder() {
           aria-hidden="true"
         />
         <div className="relative">
-          <SectionTag dark studio>We are AI-first</SectionTag>
-          <h2 id="studio-title" className="mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[60px]">
+          <h2 id="studio-title" className="font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[60px]">
             Vos outils RH sur mesure. Livrés en 30 jours.
           </h2>
           <p className="mt-[18px] max-w-[480px] text-[17px] leading-[1.55] text-ks-dark-muted md:text-lg">

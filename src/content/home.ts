@@ -14,8 +14,6 @@ export const HERO = {
   ],
   primary: "Accéder aux profils",
   secondary: "Je suis freelance",
-  badgeChip: "Tech & Digital",
-  reassurance: "Fractional et intérim",
 };
 
 export type Recruiter = {

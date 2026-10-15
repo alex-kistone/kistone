@@ -34,7 +34,7 @@ function Card({ c, className }: { c: HeroCard; className: string }) {
       <PersonPhoto photo={c.photo} initials={c.initials} palette={c.palette} className="w-[24%] shrink-0 self-stretch" textClass="text-[26px]" />
       <div className="min-w-0 flex-1 px-5 pb-4 pt-5 text-left">
         <div className="flex items-center gap-2.5">
-          <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: p.tint, color: p.ink }}>{c.chip}</span>
+          <span className="text-[12px] font-semibold" style={{ color: p.ink }}>{c.chip}</span>
           <span className="truncate text-[13px] text-ks-soft">{c.role}</span>
         </div>
         <p className="mt-2.5 font-ks-display text-[26px] font-bold leading-none tracking-[-0.03em]">{c.name}</p>
@@ -49,7 +49,7 @@ function Card({ c, className }: { c: HeroCard; className: string }) {
             <p className="text-[12px] text-ks-soft">Capacité</p>
             <p className="font-ks-display text-[17px] font-semibold tracking-[-0.02em]">{c.capacity}</p>
           </div>
-          <span className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#E8F5EE] px-2.5 py-1 text-[12px] font-medium text-[#17663F]">
+          <span className="flex items-center gap-1.5 whitespace-nowrap text-[12px] font-medium text-[#17663F]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#2F9A63]" aria-hidden="true" />
             {c.availability}
           </span>

@@ -1,4 +1,3 @@
-import SectionTag from "@/components/site/SectionTag";
 import SmartLink from "@/components/site/SmartLink";
 import { ROUTES } from "@/content/site";
 import { palettes } from "@/lib/palettes";
@@ -17,8 +16,7 @@ export default function FunctionsGrid() {
   return (
     <section id="fonctions" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <BoltWatermark className="-right-6 -top-10 h-[320px] w-auto rotate-[14deg]" />
-      <SectionTag className="ks-reveal">Fonctions</SectionTag>
-      <h2 className="ks-reveal mt-5 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
+      <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
         {countWord(VERTICALS.length)} fonctions clés.
         <br />
         Un seul partenaire.

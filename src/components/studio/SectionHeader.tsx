@@ -1,14 +1,12 @@
 import type { ReactNode } from "react";
-import SectionTag from "@/components/site/SectionTag";
 
-type Props = { tag: string; title: ReactNode; subtitle?: string };
+type Props = { title: ReactNode; subtitle?: string };
 
-/** En-tête de section centré : tag pill, H2, sous-titre d'une ligne. */
-export default function SectionHeader({ tag, title, subtitle }: Props) {
+/** En-tête de section centré : H2, sous-titre d'une ligne. */
+export default function SectionHeader({ title, subtitle }: Props) {
   return (
     <div className="flex flex-col items-center text-center">
-      <SectionTag studio className="ks-reveal">{tag}</SectionTag>
-      <h2 className="ks-reveal mt-4 font-ks-display text-[40px] font-bold leading-[1.02] tracking-[-0.045em] md:mt-5 md:text-[56px] md:leading-none lg:text-[72px]">
+      <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-[1.02] tracking-[-0.045em] md:text-[56px] md:leading-none lg:text-[72px]">
         {title}
       </h2>
       {subtitle ? (

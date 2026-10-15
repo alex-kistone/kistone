@@ -43,8 +43,7 @@ export default function WhyKistone() {
       <section className="relative isolate mx-auto grid max-w-ks items-center gap-12 px-5 pt-12 md:px-8 md:pt-[72px] lg:grid-cols-[1.15fr_1fr] lg:gap-16 xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-28 -top-24 h-[680px] w-auto rotate-[14deg] md:h-[820px]" />
         <div>
-          <span className="rounded-full bg-ks-dark px-3 py-1 font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-fg">Pourquoi Kistone</span>
-          <h1 className="mt-6 font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
+          <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
             Notre conviction chez <Highlight>Kistone</Highlight>
           </h1>
           <div className="mt-8 space-y-5 text-[19px] leading-[1.6] text-ks-ink-2 md:text-[21px]">
@@ -74,7 +73,7 @@ export default function WhyKistone() {
       </section>
 
       {/* L'origine : le RPO */}
-      <PageSection tag="D'où vient Kistone" title="Tout a commencé par le recrutement" className="md:mt-36">
+      <PageSection title="Tout a commencé par le recrutement" className="md:mt-36">
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-start">
           <div className="space-y-5 text-[18px] leading-[1.65] text-ks-ink-2">
             <p>
@@ -102,7 +101,7 @@ export default function WhyKistone() {
         </div>
       </PageSection>
 
-      <PageSection tag="Nos engagements" title="Ce qui fait la différence" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
+      <PageSection title="Ce qui fait la différence" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
         <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {COMMITMENTS.map((c, i) => (
             <li key={c.title} className="rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">

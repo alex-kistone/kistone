@@ -60,10 +60,10 @@ export default function MatchFeed() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-[15px] font-semibold">{r.name}</span>
-                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: p.tint, color: p.ink }}>
+                  <span className="shrink-0 text-[12px] font-semibold" style={{ color: p.ink }}>
                     {verticalOf(r.vertical).short}
                   </span>
-                  <span className="hidden h-5 shrink-0 items-center gap-1 rounded-full bg-[#E8F5EE] px-2 text-[11px] font-medium text-[#17663F] sm:flex">
+                  <span className="hidden shrink-0 items-center gap-1 text-[12px] font-medium text-[#17663F] sm:flex">
                     <span className="h-1.5 w-1.5 rounded-full bg-ks-success" />
                     {r.rhythm}
                   </span>

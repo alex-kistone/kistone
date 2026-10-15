@@ -1,5 +1,4 @@
 import { useState } from "react";
-import SectionTag from "@/components/site/SectionTag";
 import { BOOKING_HREF, FAQ as CONTENT, type FaqItem } from "@/content/studio";
 import { Plus } from "./icons";
 
@@ -43,8 +42,7 @@ export default function FAQ() {
     <section id="faq" className="mt-24 scroll-mt-24 px-5 md:mt-[140px] md:px-8">
       <div className="mx-auto grid max-w-ks items-start gap-7 lg:grid-cols-[380px_minmax(0,1fr)] lg:gap-20">
         <div className="ks-reveal lg:sticky lg:top-28">
-          <SectionTag studio>{CONTENT.tag}</SectionTag>
-          <h2 className="mt-4 font-ks-display text-[40px] font-bold leading-[1.02] tracking-[-0.045em] md:mt-5 md:text-[56px] md:leading-none lg:text-[60px]">
+          <h2 className="font-ks-display text-[40px] font-bold leading-[1.02] tracking-[-0.045em] md:text-[56px] md:leading-none lg:text-[60px]">
             {CONTENT.title}
           </h2>
           <p className="mt-[18px] hidden text-[17px] leading-[1.55] text-ks-soft md:block">{CONTENT.subtitle}</p>

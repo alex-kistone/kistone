@@ -72,7 +72,7 @@ function StepVisual({ index }: { index: number }) {
 export default function MethodSteps() {
   return (
     <Section id="methode">
-      <SectionHeader tag={METHOD.tag} title={METHOD.title} subtitle={METHOD.subtitle} />
+      <SectionHeader title={METHOD.title} subtitle={METHOD.subtitle} />
       <ol className="mt-8 grid gap-3.5 md:mt-14 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
         {METHOD.steps.map((s, i) => (
           <li

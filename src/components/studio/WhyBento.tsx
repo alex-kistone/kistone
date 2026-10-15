@@ -19,7 +19,7 @@ export function PinkGlow({ className, strength = 0.35 }: { className: string; st
 export default function WhyBento() {
   return (
     <Section id="pourquoi">
-      <SectionHeader tag={WHY.tag} title={<TwoPartTitle a={WHY.titleA} b={WHY.titleB} />} />
+      <SectionHeader title={<TwoPartTitle a={WHY.titleA} b={WHY.titleB} />} />
       <div className="mt-8 grid grid-cols-2 gap-3 text-left md:mt-14 md:gap-5 lg:grid-cols-3">
         <article className="ks-lift ks-reveal relative col-span-2 flex flex-col justify-between gap-5 overflow-hidden rounded-3xl bg-ks-dark p-[26px] text-ks-dark-fg shadow-[0_24px_50px_-28px_rgba(20,19,18,0.5)] md:min-h-[260px] md:gap-8 md:rounded-[28px] md:p-9">
           <PinkGlow className="-right-[70px] -top-[70px] h-[200px] w-[200px] md:-right-20 md:-top-20 md:h-[280px] md:w-[280px]" />

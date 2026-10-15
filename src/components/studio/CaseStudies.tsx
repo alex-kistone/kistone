@@ -7,7 +7,7 @@ import UseCaseCard from "./UseCaseCard";
 export default function CaseStudies() {
   return (
     <Section id="realisations">
-      <SectionHeader tag={CASES.tag} title={<TwoPartTitle a={CASES.titleA} b={CASES.titleB} />} subtitle={CASES.subtitle} />
+      <SectionHeader title={<TwoPartTitle a={CASES.titleA} b={CASES.titleB} />} subtitle={CASES.subtitle} />
       <div className="mt-8 grid gap-3.5 md:mt-14 md:grid-cols-3 md:gap-4 lg:gap-5">
         {CASES.items.map((c) => (
           <CaseStudyCard key={c.client} c={c} />
