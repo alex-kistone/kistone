@@ -115,7 +115,7 @@ function RoleContent({ role }: { role: Role }) {
     { value: "48 h", label: "pour un premier profil présélectionné" },
     { value: "1 sem.", label: "pour démarrer la mission" },
     { value: "1 à 5 j", label: "par semaine, ajustables" },
-    { value: `${role.rate[0]}–${role.rate[1]} €`, label: "TJM indicatif HT" },
+    { value: `${role.rate[0]}–${role.rate[1]} €`, label: "Budget indicatif HT par jour" },
   ];
 
   const jsonLd = [

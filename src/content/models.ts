@@ -74,7 +74,7 @@ export const MODEL_PAGES: ModelPage[] = [
     faq: [
       { q: "Qu'est-ce qu'une mission freelance ?", a: "Un expert indépendant qui rejoint votre équipe à temps plein pour une durée définie, sur un projet ou une phase précise." },
       { q: "Combien de temps dure une mission ?", a: "Le plus souvent 3 à 12 mois. La mission peut être prolongée si le projet évolue." },
-      { q: "Combien coûte un expert IA en mission ?", a: "Il est facturé au jour, en général entre 600 et 1 500 € HT selon la famille et l'expérience. Les ordres de grandeur sont indiqués sur chaque fiche de poste." },
+      { q: "Combien coûte un expert IA en mission ?", a: "Il est facturé au jour, en général entre 500 et 1 600 € HT selon la famille et l'expérience. Les ordres de grandeur sont indiqués sur chaque fiche de poste." },
       { q: "Mission ou fractional ?", a: "La mission est à temps plein, sur une période définie : idéale pour construire. Le fractional est à temps partiel et dans la durée : idéal pour piloter une stratégie." },
     ],
   },
@@ -125,7 +125,7 @@ export const MODEL_PAGES: ModelPage[] = [
     faq: [
       { q: "Qu'est-ce qu'un leader IA fractional ?", a: "Un CTO, Head of AI ou Chief AI Officer expérimenté qui exerce son rôle pour votre entreprise quelques jours par semaine, en freelance, en parallèle d'autres missions." },
       { q: "Combien de jours par semaine ?", a: "Le plus souvent 1 à 3 jours par semaine. Le rythme se fixe au départ selon l'enjeu et peut évoluer pendant la mission." },
-      { q: "Combien coûte un AI Leader fractional ?", a: "Il est facturé au jour, en général entre 900 et 1 500 € HT selon l'expérience et le périmètre." },
+      { q: "Combien coûte un AI Leader fractional ?", a: "Il est facturé au jour, en général entre 1 000 et 1 600 € HT selon l'expérience et le périmètre." },
       { q: "Le fractional convient-il aux AI Engineers ?", a: "Rarement : construire un système d'IA demande en général un temps plein. Le fractional convient surtout aux rôles de leadership, qui fixent le cap et arbitrent." },
     ],
   },

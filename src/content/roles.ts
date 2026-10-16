@@ -1,11 +1,13 @@
 import type { Vertical } from "@/lib/verticals";
+import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 
 /**
  * Pages métier publiques (/recruter/…) : une par famille, pour le SEO et les moteurs IA.
  * Même trame pour toutes : promesse, profils récents, chiffres clés, quand recruter,
  * définition et fiche de poste, FAQ. Vocabulaire : jamais « management de transition ».
  *
- * TJM indicatifs (€ HT / jour, TJM du freelance) : ordres de grandeur du marché français, à valider.
+ * Budgets indicatifs (€ HT / jour, prix client, marge Kistone comprise) : ceux validés par Alex
+ * (src/lib/indicativeBudget.ts), repris ici pour que pages métiers et formulaire concordent.
  */
 export type SampleProfile = { name: string; job: string; xp: number; specialties: string[]; days: number | null; available: boolean };
 
@@ -44,7 +46,7 @@ export const ROLE_PAGES: RolePage[] = [
     lead: "Des AI Engineers et LLM Engineers sélectionnés et qualifiés, présentés en 48 h. RAG, agents, MLOps et infrastructure : pour passer vos projets d'IA du prototype à la production.",
     seoTitle: "AI Engineer freelance : LLM, RAG, agents et MLOps",
     seoDescription: "AI Engineer ou LLM Engineer freelance : RAG, agents IA, MLOps / LLMOps et infrastructure IA. Profils qualifiés présentés en 48 h, en mission ou en contract-to-hire, facturés au jour.",
-    rate: [650, 1000],
+    rate: INDICATIVE_BUDGET.engineer,
     when: [
       { title: "Un prototype à industrialiser", desc: "Votre POC d'IA générative impressionne en démo, mais il faut le fiabiliser, le sécuriser et le mettre en production." },
       { title: "Un RAG ou des agents à construire", desc: "Recherche dans vos documents, assistant métier, agents qui automatisent des tâches : il faut un spécialiste des LLM." },
@@ -74,7 +76,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un ingénieur logiciel ou data avec plusieurs années d'expérience, qui a déjà mis des projets d'IA générative en production et sait arbitrer entre qualité, coût et délai.",
     faq: [
-      { q: "Combien coûte un AI Engineer freelance ?", a: "En général 650 à 1 000 € HT par jour selon l'expérience et la spécialité (RAG, agents, MLOps). Kistone vous donne un prix clair avant le démarrage." },
+      { q: "Combien coûte un AI Engineer freelance ?", a: "En général 600 à 1 000 € HT par jour selon l'expérience et la spécialité (RAG, agents, MLOps). Kistone vous donne un prix clair avant le démarrage." },
       { q: "AI Engineer ou data scientist ?", a: "Le data scientist explore les données et construit des modèles. L'AI Engineer met l'IA en production : intégration des LLM, RAG, agents, déploiement et suivi en conditions réelles." },
       { q: "Peut-il rejoindre notre équipe en CDI ensuite ?", a: "Oui, avec le contract-to-hire : la mission commence en freelance et peut se transformer en embauche si les deux parties le souhaitent." },
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil qualifié sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
@@ -95,7 +97,7 @@ export const ROLE_PAGES: RolePage[] = [
     lead: "Des Product Managers, Product Owners et designers spécialisés IA, présentés en 48 h. Pour trouver les bons cas d'usage, concevoir des produits LLM utiles et les faire adopter.",
     seoTitle: "AI Product Manager freelance : produits IA et LLM",
     seoDescription: "Product Manager IA, Product Owner sur des produits LLM ou AI Designer en freelance : discovery, cas d'usage, roadmap et évaluation. Profils qualifiés présentés en 48 h.",
-    rate: [600, 900],
+    rate: INDICATIVE_BUDGET.product,
     when: [
       { title: "Trop d'idées d'IA, pas de priorités", desc: "Chaque équipe veut son assistant : il faut identifier les cas d'usage qui créent vraiment de la valeur." },
       { title: "Un produit LLM à lancer", desc: "Vous construisez un copilote, un assistant ou une fonctionnalité IA et avez besoin d'un PM qui connaît ses spécificités." },
@@ -125,7 +127,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un Product Manager ou Product Owner expérimenté qui a déjà lancé au moins un produit ou une fonctionnalité fondée sur l'IA générative, à l'aise avec les équipes techniques comme avec les métiers.",
     faq: [
-      { q: "Combien coûte un AI Product Manager freelance ?", a: "En général 600 à 900 € HT par jour selon l'expérience et le périmètre du produit." },
+      { q: "Combien coûte un AI Product Manager freelance ?", a: "En général 500 à 800 € HT par jour selon l'expérience et le périmètre du produit." },
       { q: "Qu'est-ce qui change par rapport à un PM classique ?", a: "Un produit IA ne se teste pas comme un logiciel classique : ses réponses varient. L'AI PM sait définir des critères de qualité, organiser l'évaluation et concevoir une expérience qui reste fiable." },
       { q: "Travaille-t-il avec nos développeurs ?", a: "Oui. Il pilote la roadmap avec votre équipe tech ou avec un AI Engineer freelance, que Kistone peut aussi vous présenter." },
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil qualifié sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
@@ -146,7 +148,7 @@ export const ROLE_PAGES: RolePage[] = [
     lead: "CTO, Head of AI ou Chief AI Officer, en fractional ou en mission, présentés en 48 h. Pour définir votre stratégie IA, structurer l'équipe et faire passer les projets à l'échelle.",
     seoTitle: "AI Leader freelance : CTO, Head of AI, Chief AI Officer",
     seoDescription: "CTO, Head of AI ou Chief AI Officer en fractional ou en mission : stratégie IA, gouvernance et AI Act, équipes et plateformes. Profils seniors qualifiés présentés en 48 h.",
-    rate: [900, 1500],
+    rate: INDICATIVE_BUDGET.leader,
     when: [
       { title: "Une stratégie IA à définir", desc: "Le comité de direction veut de l'IA partout : il faut une feuille de route réaliste, chiffrée et priorisée." },
       { title: "Des projets IA qui piétinent", desc: "Les POC se multiplient sans passer en production : il faut un leader pour arbitrer et industrialiser." },
@@ -176,7 +178,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un CTO, Head of AI ou directeur data avec 10 ans d'expérience ou plus, qui a déjà mené des projets d'IA jusqu'en production et dirigé des équipes techniques.",
     faq: [
-      { q: "Combien coûte un AI Leader freelance ?", a: "En général 900 à 1 500 € HT par jour selon l'expérience et le périmètre. En fractional, à 2 jours par semaine, vous bénéficiez d'un dirigeant senior pour un budget ajusté à votre besoin." },
+      { q: "Combien coûte un AI Leader freelance ?", a: "En général 1 000 à 1 600 € HT par jour selon l'expérience et le périmètre. En fractional, à 2 jours par semaine, vous bénéficiez d'un dirigeant senior pour un budget ajusté à votre besoin." },
       { q: "Fractional ou mission ?", a: "Le fractional (quelques jours par semaine) convient pour piloter une stratégie dans la durée. La mission à temps plein convient à un lancement ou à une phase de construction intense." },
       { q: "Head of AI ou Chief AI Officer ?", a: "Le Head of AI dirige l'équipe qui construit les systèmes d'IA. Le Chief AI Officer pilote la transformation IA de toute l'entreprise, au niveau du comité de direction." },
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil qualifié sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
@@ -197,7 +199,7 @@ export const ROLE_PAGES: RolePage[] = [
     lead: "Des recruteurs tech et IA intégrés à vos équipes en 48 h pour internaliser vos talents en CDI : AI Engineers, data, développeurs, product. Facturés au jour, sans honoraires au placement.",
     seoTitle: "Tech recruiter freelance : recrutez vos talents IA en CDI",
     seoDescription: "Tech recruiter freelance (RPO) intégré à vos équipes en 48 h pour recruter en CDI vos AI Engineers, data, développeurs et product. Facturé au jour, sans honoraires au placement.",
-    rate: [450, 700],
+    rate: INDICATIVE_BUDGET.rpo,
     when: [
       { title: "Des talents IA à internaliser", desc: "Vos experts IA sont en freelance et vous voulez construire une équipe interne durable." },
       { title: "Des profils pénuriques", desc: "AI Engineers, data engineers, développeurs seniors : vos annonces ne suffisent plus, il faut chasser." },
@@ -227,7 +229,7 @@ export const ROLE_PAGES: RolePage[] = [
     ],
     profile: "Un recruteur avec au moins 5 ans d'expérience sur des profils tech, souvent passé par un cabinet puis une équipe Talent Acquisition en startup ou scale-up, qui connaît le marché des talents IA.",
     faq: [
-      { q: "Combien coûte un Tech recruiter freelance ?", a: "Il est facturé au jour, en général entre 450 et 700 € HT selon la spécialité et l'expérience. Pour plusieurs recrutements en parallèle, c'est le plus souvent bien moins cher que des honoraires de cabinet à 20 % du salaire." },
+      { q: "Combien coûte un Tech recruiter freelance ?", a: "Il est facturé au jour, en général entre 500 et 600 € HT selon la spécialité et l'expérience. Pour plusieurs recrutements en parallèle, c'est le plus souvent bien moins cher que des honoraires de cabinet à 20 % du salaire." },
       { q: "Quelle différence avec un cabinet de recrutement ?", a: "Le cabinet est payé au succès, poste par poste. Le Tech recruiter freelance travaille au sein de votre équipe, sur l'ensemble de vos postes, et vous gardez le vivier et le process construits." },
       { q: "Pourquoi un recruteur sur une plateforme d'experts IA ?", a: "Beaucoup de clients commencent avec des experts IA freelance, puis veulent internaliser ces compétences. Le Tech recruiter les aide à construire leur équipe en CDI." },
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
