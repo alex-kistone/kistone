@@ -37,7 +37,8 @@ export default function LinkedinRequiredDialog({ open, firstVisit, initialVertic
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
+  // Pendant l'onboarding, l'aide pour retrouver son URL LinkedIn est dépliée d'emblée
+  const [showHelp, setShowHelp] = useState(!!firstVisit);
 
   const save = async () => {
     const url = normalizeLinkedinUrl(value);
