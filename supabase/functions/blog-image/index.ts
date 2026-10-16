@@ -30,8 +30,8 @@ const STYLE = "Realistic editorial photograph for a business magazine. Natural s
 const W = 1536;
 const H = 1024;
 
-// Portraits d'illustration : même direction que les portraits déjà sur le site
-const PORTRAIT_STYLE = "Photorealistic professional headshot. Soft natural light, plain warm beige studio background, head and shoulders centered, looking at the camera, editorial corporate photography. No text, no letters, no logos, no watermark.";
+// Portraits d'illustration : le décor et l'âge viennent de la description, pour varier les profils
+const PORTRAIT_STYLE = "Photorealistic professional headshot. Soft natural light, head and shoulders centered, looking at the camera, shallow depth of field, editorial photography. Use exactly the background described above. No text, no letters, no logos, no watermark.";
 const PORTRAIT_SIZE = 800;
 
 /** Pose un dégradé sombre en bas, puis le logo et la tagline en bas à gauche. */
