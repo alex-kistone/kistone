@@ -192,7 +192,7 @@ export const ROLE_PAGES: RolePage[] = [
   {
     vertical: "rpo",
     slug: "tech-recruiter",
-    role: "Tech recruiter",
+    role: "Tech Recruiter (RPO)",
     longName: "recruteur tech et IA (RPO)",
     h1: "Recrutez un Tech recruiter freelance",
     highlight: "Tech recruiter",
