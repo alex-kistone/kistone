@@ -7,7 +7,7 @@ import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { ROLE_PAGES, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
+import { LEGACY_ROLE_SLUGS, ROLE_PAGES, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
 import { ROUTES } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { palettes } from "@/lib/palettes";
@@ -97,7 +97,11 @@ const Section = PageSection;
 export default function RolePage() {
   const { slug } = useParams();
   const role = roleBySlug(slug);
-  if (!role) return <Navigate to="/" replace />;
+  if (!role) {
+    // Anciennes pages C-Level : vers la famille la plus proche, sinon l'accueil
+    const legacy = slug ? LEGACY_ROLE_SLUGS[slug] : null;
+    return <Navigate to={legacy ? rolePath({ slug: legacy }) : "/"} replace />;
+  }
   return <RoleContent key={role.slug} role={role} />;
 }
 
@@ -150,7 +154,7 @@ function RoleContent({ role }: { role: Role }) {
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg] md:h-[760px]" />
         <p className="text-[15px] font-semibold" style={{ color: palettes[v.palette].ink }}>{v.roles}</p>
         <h1 className="mt-3 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
-          {role.h1.split(v.short).flatMap((part, i) => (i === 0 ? [part] : [<Highlight key={i}>{v.short}</Highlight>, part]))}
+          {role.h1.split(role.highlight).flatMap((part, i) => (i === 0 ? [part] : [<Highlight key={i}>{role.highlight}</Highlight>, part]))}
         </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{role.lead}</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">

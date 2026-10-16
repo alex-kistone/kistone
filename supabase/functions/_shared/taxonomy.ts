@@ -8,37 +8,35 @@
 export { VERTICALS, DEFAULT_VERTICAL, type Vertical } from "./verticals.ts";
 
 /**
- * Métiers recrutés (verticale RPO) : cochés par le freelance (skills) et par le client (profile_types).
- * Même liste, au caractère près, que le champ Jarvi « Spécialités RPO »
- * (adc61fa4-ad68-4f12-983b-69afe9c03d4c) : la synchro est 1 pour 1.
+ * Métiers recrutés (verticale RPO, recentrée Tech / Data / IA le 2026-10-16) : cochés par le
+ * freelance (skills) et par le client (profile_types). Synchronisés avec le champ Jarvi
+ * « Spécialités RPO » (adc61fa4-ad68-4f12-983b-69afe9c03d4c), les valeurs manquantes y sont créées.
  */
 export const METIERS = [
-  "Tech",
-  "Data",
+  "Data/AI",
+  "Dev",
+  "Infra",
   "Product",
   "GTM",
-  "Finance",
-  "Corporate",
-  "Immobilier",
 ] as const;
 
 /** Secteurs d'activité / environnements. */
 export const SECTEURS = ["Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie", "Autre"] as const;
 
 /**
- * Familles de métiers proches : un recruteur Tech sait souvent recruter en Data,
- * un recruteur Finance sur les fonctions Corporate. Le matching leur accorde un crédit partiel.
+ * Familles de métiers proches : un recruteur Dev sait souvent recruter en Data/AI ou en Infra.
+ * Le matching leur accorde un crédit partiel.
  */
 export const METIER_FAMILIES: readonly (readonly string[])[] = [
-  ["Tech", "Data", "Product"],
-  ["Finance", "Corporate"],
+  ["Data/AI", "Dev", "Infra", "Product"],
+  ["GTM"],
 ];
 
 /** Anciennes valeurs encore possibles dans des profils ou besoins existants. */
 export const METIER_ALIASES: Record<string, string> = {
-  CFO: "Finance",
+  Tech: "Dev",
+  Data: "Data/AI",
+  IA: "Data/AI",
   Sales: "GTM",
   "Digital & Marketing": "GTM",
-  "Fonctions support": "Corporate",
-  "Fonctions supports": "Corporate",
 };

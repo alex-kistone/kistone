@@ -1,18 +1,14 @@
 import type { Vertical } from "@/lib/verticals";
 
 /**
- * Fonction évoquée dans un besoin tapé librement (accueil), pour basculer l'onglet pendant
+ * Famille évoquée dans un besoin tapé librement (accueil), pour basculer l'onglet pendant
  * la frappe. Indicatif seulement : l'IA de /besoin tranche ensuite. Première mention gagnante.
  */
 const PATTERNS: [Vertical, RegExp][] = [
-  ["cto", /\b(cto|directeur technique|directrice technique|head of (engineering|tech|ai)|vp engineering)\b/i],
-  ["cfo", /\b(cfo|daf|directeur financier|directrice financière|head of finance)\b/i],
-  ["drh", /\b(drh|rrh|directeur des ressources humaines|directrice des ressources humaines|head of people|people manager)\b/i],
-  ["coo", /\b(coo|directeur des opérations|directrice des opérations|head of ops|head of operations)\b/i],
-  ["cro", /\b(cro|directeur commercial|directrice commerciale|head of sales|vp sales|chief revenue)\b/i],
-  ["cpo", /\b(cpo|chief product officer|head of product|vp product|directeur produit|directrice produit)\b/i],
-  ["cdo", /\b(cdo|chief data officer|head of data|directeur data|directrice data|directeur de la donnée|directrice de la donnée)\b/i],
-  ["rpo", /\b(rpo|recruteur|recruteuse|recruteurs|talent acquisition|recrutement)\b/i],
+  ["leader", /\b(cto|caio|chief ai officer|head of (ai|data|engineering|tech)|vp (engineering|ai)|directeur technique|directrice technique|directeur ia|directrice ia)\b/i],
+  ["product", /\b(product manager|product owner|chef de produit|cheffe de produit|pm ia|ai designer|designer ia|ux ia|head of product|cpo)\b/i],
+  ["engineer", /\b(ai engineer|llm engineer|ml engineer|machine learning|mlops|llmops|rag|agents? ia|ai agents?|data engineer|data scientist|ing[ée]nieur(e)? (ia|ml|data)|d[ée]veloppeur(se)? ia|genai)\b/i],
+  ["rpo", /\b(rpo|tech recruiter|recruteur|recruteuse|recruteurs|talent acquisition|recrutement)\b/i],
 ];
 
 export function detectVertical(text: string): Vertical | null {

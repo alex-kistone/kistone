@@ -1,26 +1,31 @@
 /**
- * Les départements (verticales) de la plateforme : RPO, la première, puis les fonctions
- * C-Level fractional. Chaque verticale a ses spécialités, son projet et son champ Jarvi ;
- * le socle (comptes, dossiers, contrats, CRA, facturation) est commun.
+ * Les familles (verticales) de la plateforme : trois familles d'experts IA (Engineer, Product,
+ * Leader) et le RPO « Tech recruiter », qui aide le client à internaliser ses talents IA en CDI.
+ * Chaque verticale a ses spécialités, son projet et son champ Jarvi ; le socle (comptes,
+ * dossiers, contrats, CRA, facturation) est commun.
  *
  * Partagé par le site et les fonctions : pas d'API Deno ici (importé via src/lib/verticals.ts).
  * Ajouter une verticale = une entrée ici + la valeur dans les contraintes SQL `*_vertical_check`.
  *
- * Vocabulaire : jamais « management de transition ». On parle de temps plein ou de fractional
- * (quelques jours par semaine).
+ * Vocabulaire : jamais « management de transition ». On parle de mission, de temps plein ou de
+ * fractional (quelques jours par semaine).
  */
 
-export type Vertical = "rpo" | "drh" | "cfo" | "coo" | "cro" | "cto" | "cpo" | "cdo";
+export type Vertical = "rpo" | "engineer" | "product" | "leader";
 
 export interface VerticalConfig {
   id: Vertical;
   /** Libellé court, affiché dans les onglets et les badges. */
   short: string;
-  /** Intitulé de la fonction. */
+  /** Intitulé de la famille. */
   label: string;
-  /** Rôles couverts, pour les cartes (« CFO · DAF »). */
+  /** Famille du choix client : « AI » pour les experts IA, « RPO » pour le recrutement. */
+  group: "AI" | "RPO";
+  /** Profil recherché, après « Je recherche » (« un Tech recruiter », « un AI Engineer »). */
+  seeking: string;
+  /** Rôles couverts, pour les cartes (« AI Engineer · LLM Engineer »). */
   roles: string;
-  /** Une ligne de description (landing, choix de la fonction). */
+  /** Une ligne de description (landing, choix de la famille). */
   description: string;
   /** Teinte de carte du design system (jamais rose). */
   palette: "apricot" | "blue" | "sage" | "lilac" | "sand" | "teal" | "olive" | "slate";
@@ -29,7 +34,7 @@ export interface VerticalConfig {
    * (taxonomy.ts) ; pour les autres, les valeurs du champ Jarvi de la verticale, au caractère près.
    */
   specialties: readonly string[];
-  /** Valeur Jarvi ajoutée automatiquement quand le freelance est à temps partiel (« CFO Part-time »). */
+  /** Valeur Jarvi ajoutée automatiquement quand le freelance est à temps partiel (« AI Leader Part-time »). */
   partTimeTag?: string;
   jarvi: {
     /** Projet « New X via plateforme » où arrive tout freelance inscrit. */
@@ -39,102 +44,61 @@ export interface VerticalConfig {
   };
 }
 
-// Valeurs Jarvi relevées le 2026-10-09 (« Spécialité CFO », « Spécialité RH »). Les formats
-// « CFO Part-time » / « DRH Part-time » ne sont pas proposés : ils se déduisent de la capacité.
-const CFO_SPECIALTIES = [
-  "Analyse de rentabilité", "Budget & Forecast", "Comptabilité", "Consolidation", "Controle de gestion",
-  "FP&A", "M&A / Levée de fonds", "Process & outils", "Reporting / Closing", "Trésorerie",
+// Listes validées par Alex le 2026-10-16 ; les valeurs sont créées dans les champs Jarvi
+// « Spécialités AI Engineer / AI Product / AI Leader » à la première synchro.
+const ENGINEER_SPECIALTIES = [
+  "LLM & IA générative", "RAG & recherche sémantique", "Agents IA", "MLOps / LLMOps",
+  "Infrastructure IA & GPU", "Fine-tuning & évaluation", "Machine learning",
+  "Intégration IA (API, back-end)", "Data engineering", "Vision & NLP",
 ] as const;
-const DRH_SPECIALTIES = [
-  "Compensations & bénéfices", "culture / Marque employeur", "Diversité & inclusion", "Formations",
-  "HRBP", "HR Ops", "HR strategy", "Paye", "Relations sociales", "Transformation RH",
+const PRODUCT_SPECIALTIES = [
+  "Product Manager IA", "Product Owner produits LLM", "AI Designer / UX IA", "Discovery & cas d'usage IA",
+  "Évaluation & qualité des modèles", "Prompt & conversation design", "Roadmap & priorisation",
+  "Go-to-market produit IA", "AI Act & conformité", "Product ops",
 ] as const;
-// Listes proposées (créées dans Jarvi à la première synchro) : CTO axé IA, CRO et COO
-// orientés management d'équipe et ouverture de marché.
-const CTO_SPECIALTIES = [
-  "Stratégie IA & GenAI", "Intégration IA / LLM", "Data & MLOps", "Architecture & scalabilité",
-  "Management d'équipes tech", "Delivery & agilité", "Cloud & DevOps", "Cybersécurité",
-  "Due diligence tech", "Produit & engineering",
-] as const;
-const CRO_SPECIALTIES = [
-  "Management d'équipe commerciale", "Ouverture de marché", "Expansion internationale",
-  "Stratégie go-to-market", "Sales Ops / RevOps", "Pricing", "Grands comptes",
-  "Partenariats & channel", "Customer Success & rétention", "Structuration du pipeline",
-] as const;
-const COO_SPECIALTIES = [
-  "Management d'équipe", "Structuration & process", "Scaling des opérations", "Ouverture de marché",
-  "Supply chain & logistique", "Transformation & conduite du changement", "Pilotage de la performance",
-  "Achats", "Service client", "Automatisation & outils",
-] as const;
-
-// Produit et Data (ajoutés le 2026-10-12) : valeurs créées dans les champs Jarvi « Spécialités CPO / CDO ».
-const CPO_SPECIALTIES = [
-  "Stratégie produit", "Discovery & recherche utilisateur", "Roadmap & priorisation",
-  "Management d'équipes produit", "Product-led growth", "Pricing & monétisation", "Product ops",
-  "Design & UX", "Lancement de produit", "Produit IA",
-] as const;
-const CDO_SPECIALTIES = [
-  "Stratégie data", "Gouvernance & qualité des données", "Data engineering", "Analytics & BI",
-  "Data science & ML", "IA générative", "Plateforme data & cloud", "Management d'équipes data",
-  "RGPD & conformité", "Monétisation de la donnée",
+const LEADER_SPECIALTIES = [
+  "CTO", "Head of AI", "Chief AI Officer", "Stratégie IA & GenAI", "Transformation IA",
+  "Gouvernance & AI Act", "Management d'équipes IA & data", "Build vs buy & plateformes",
+  "Due diligence IA", "Acculturation des dirigeants",
 ] as const;
 
 export const VERTICALS: readonly VerticalConfig[] = [
   {
-    id: "rpo", short: "RPO", label: "Recrutement RPO", roles: "Recruteur freelance",
-    description: "Des recruteurs seniors intégrés à vos équipes pour vos embauches.",
+    id: "engineer", short: "AI Engineer", label: "Ingénierie IA", group: "AI", seeking: "un AI Engineer",
+    roles: "AI Engineer · LLM Engineer · MLOps",
+    description: "LLM, RAG et agents, MLOps et infrastructure IA : des ingénieurs qui mettent l'IA en production.",
+    palette: "blue", specialties: ENGINEER_SPECIALTIES,
+    jarvi: { projectId: "a8d4ac0f-d7fa-46b8-a8b3-3924bdc07d3e", specialtiesFieldId: "eaba6143-8e57-4384-89a4-08693de4e9c5" },
+  },
+  {
+    id: "product", short: "AI Product", label: "Produit IA", group: "AI", seeking: "un AI Product",
+    roles: "Product Manager IA · AI Designer",
+    description: "Product Managers, Product Owners et designers qui conçoivent des produits IA utiles.",
+    palette: "lilac", specialties: PRODUCT_SPECIALTIES,
+    jarvi: { projectId: "627670cb-b090-4061-a534-fb5f195e4637", specialtiesFieldId: "26d7fa39-43fc-4c90-af0e-c790180bae2a" },
+  },
+  {
+    id: "leader", short: "AI Leader", label: "Leadership IA", group: "AI", seeking: "un AI Leader",
+    roles: "CTO · Head of AI · Chief AI Officer",
+    description: "CTO, Head of AI ou Chief AI Officer, en fractional ou en mission, pour porter votre stratégie IA.",
+    palette: "teal", specialties: LEADER_SPECIALTIES, partTimeTag: "AI Leader Part-time",
+    jarvi: { projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c5f1c316-4911-478b-bded-220bebe7c639" },
+  },
+  {
+    id: "rpo", short: "RPO", label: "Tech recruiter", group: "RPO", seeking: "un Tech recruiter",
+    roles: "Tech recruiter freelance",
+    description: "Des recruteurs tech et IA intégrés à vos équipes pour internaliser vos talents en CDI.",
     palette: "sage", specialties: [], // métiers recrutés : METIERS (taxonomy.ts)
     jarvi: { projectId: "a28725c1-24c0-46b4-bb63-afd1854df1d9", specialtiesFieldId: "adc61fa4-ad68-4f12-983b-69afe9c03d4c" },
-  },
-  {
-    id: "drh", short: "DRH", label: "Ressources humaines", roles: "DRH · CHRO",
-    description: "Organisation, rémunération, relations sociales et structuration RH.",
-    palette: "apricot", specialties: DRH_SPECIALTIES, partTimeTag: "DRH Part-time",
-    jarvi: { projectId: "bbe43e4b-7a5a-4363-b937-4c218af120d8", specialtiesFieldId: "00a2639f-470d-4efb-93e2-83ababdafe5d" },
-  },
-  {
-    id: "cfo", short: "CFO", label: "Finance", roles: "CFO · DAF",
-    description: "Pilotage financier, closing, reporting investisseurs et levée de fonds.",
-    palette: "lilac", specialties: CFO_SPECIALTIES, partTimeTag: "CFO Part-time",
-    jarvi: { projectId: "4e8961fd-53f4-417d-9add-6a95ce4bf0a3", specialtiesFieldId: "f96c2a0c-dac9-4c86-bf3c-8b6dd20229a1" },
-  },
-  {
-    id: "coo", short: "COO", label: "Opérations", roles: "COO · Head of Ops",
-    description: "Process, scaling des opérations, pilotage de la performance.",
-    palette: "sand", specialties: COO_SPECIALTIES, partTimeTag: "COO Part-time",
-    jarvi: { projectId: "627670cb-b090-4061-a534-fb5f195e4637", specialtiesFieldId: "007887f9-a5f0-4659-8fae-5b485aa8884f" },
-  },
-  {
-    id: "cro", short: "CRO", label: "Revenue", roles: "CRO · Head of Sales",
-    description: "Stratégie commerciale, équipes, ouverture de marché et pipeline.",
-    palette: "blue", specialties: CRO_SPECIALTIES, partTimeTag: "CRO Part-time",
-    jarvi: { projectId: "673fb8cf-3e51-4abe-8887-b16f1e23ebfd", specialtiesFieldId: "b1d64ff3-dbf6-4cdf-ae53-5ac4ce0b0d29" },
-  },
-  {
-    id: "cto", short: "CTO", label: "Tech & IA", roles: "CTO · Head of AI",
-    description: "Architecture, équipes tech, delivery et intégration de l'IA.",
-    palette: "teal", specialties: CTO_SPECIALTIES, partTimeTag: "CTO Part-time",
-    jarvi: { projectId: "f01d8cf4-86f8-4681-adbe-62abc4080fbe", specialtiesFieldId: "f09ec442-2d93-4bf5-b6b4-788e35d3a102" },
-  },
-  {
-    id: "cpo", short: "CPO", label: "Produit", roles: "CPO · Head of Product",
-    description: "Vision produit, roadmap, discovery et équipes produit.",
-    palette: "olive", specialties: CPO_SPECIALTIES, partTimeTag: "CPO Part-time",
-    jarvi: { projectId: "a8d4ac0f-d7fa-46b8-a8b3-3924bdc07d3e", specialtiesFieldId: "718474cc-7f1a-4890-9054-a4c7ff2aa458" },
-  },
-  {
-    id: "cdo", short: "CDO", label: "Data & IA", roles: "CDO · Head of Data & AI",
-    description: "Stratégie data et IA, gouvernance, plateforme et cas d'usage IA.",
-    palette: "slate", specialties: CDO_SPECIALTIES, partTimeTag: "CDO Part-time",
-    jarvi: { projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c8d6c7ee-ecc3-4c00-aa74-e333ec106225" },
   },
 ];
 
 export const VERTICAL_IDS = VERTICALS.map((v) => v.id);
+/** Valeur par défaut des colonnes `vertical` en base. */
 export const DEFAULT_VERTICAL: Vertical = "rpo";
 
 export const verticalOf = (id: string | null | undefined): VerticalConfig =>
-  VERTICALS.find((v) => v.id === id) ?? VERTICALS[0];
+  VERTICALS.find((v) => v.id === id) ?? VERTICALS.find((v) => v.id === DEFAULT_VERTICAL)!;
 
 export const isVertical = (id: unknown): id is Vertical => typeof id === "string" && (VERTICAL_IDS as string[]).includes(id);
 
@@ -145,7 +109,7 @@ export const FULL_TIME_DAYS = 5;
 export const rhythmLabel = (days: number | null | undefined) =>
   !days || days >= FULL_TIME_DAYS ? "Temps plein" : `${days} j / sem`;
 
-/** « RPO · Tech, Data » ou « CFO · Trésorerie, FP&A » : la fonction et ce qui est attendu. */
+/** « RPO · Dev, Data/AI » ou « AI Engineer · RAG, Agents IA » : la famille et ce qui est attendu. */
 export function needSummary(n: { vertical?: string | null; profile_types?: string[] | null; specialties?: string[] | null }): string {
   const v = verticalOf(n.vertical);
   const items = v.id === "rpo" ? n.profile_types ?? [] : n.specialties ?? [];

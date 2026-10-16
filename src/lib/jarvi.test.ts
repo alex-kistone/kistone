@@ -63,27 +63,29 @@ describe("toJarviFields", () => {
   });
 });
 
-describe("toJarviFields · départements C-Level", () => {
-  const CFO_FIELD = "f96c2a0c-dac9-4c86-bf3c-8b6dd20229a1";
-  const cfo = { ...base, vertical: "cfo" as const, specialties: ["Trésorerie", "FP&A"], skills: [], model: null };
+describe("toJarviFields · familles IA", () => {
+  const LEADER_FIELD = "c5f1c316-4911-478b-bded-220bebe7c639";
+  const ENGINEER_FIELD = "eaba6143-8e57-4384-89a4-08693de4e9c5";
+  const leader = { ...base, vertical: "leader" as const, specialties: ["Head of AI", "Transformation IA"], skills: [], model: null };
 
-  it("envoie les spécialités dans le champ de la verticale, sans les champs propres au RPO", () => {
-    const { fields } = toJarviFields(cfo, JARVI_SPECIALITES);
-    expect(fields[CFO_FIELD]).toEqual(["Trésorerie", "FP&A"]);
+  it("envoie les spécialités dans le champ de la famille, sans les champs propres au RPO", () => {
+    const { fields } = toJarviFields(leader, JARVI_SPECIALITES);
+    expect(fields[LEADER_FIELD]).toEqual(["Head of AI", "Transformation IA"]);
     expect(JARVI_FIELDS.specialites in fields).toBe(false);
     expect(JARVI_FIELDS.modele in fields).toBe(false);
     expect(JARVI_FIELDS.linkedinRecruiter in fields).toBe(false);
     expect(fields[JARVI_FIELDS.tjm]).toBe(550);
   });
 
-  it("ajoute « CFO Part-time » quand le freelance n'est pas à temps plein", () => {
-    expect(toJarviFields({ ...cfo, weekly_capacity: 2 }, JARVI_SPECIALITES).fields[CFO_FIELD]).toContain("CFO Part-time");
-    expect(toJarviFields({ ...cfo, weekly_capacity: 5 }, JARVI_SPECIALITES).fields[CFO_FIELD]).not.toContain("CFO Part-time");
+  it("ajoute « AI Leader Part-time » quand le leader n'est pas à temps plein", () => {
+    expect(toJarviFields({ ...leader, weekly_capacity: 2 }, JARVI_SPECIALITES).fields[LEADER_FIELD]).toContain("AI Leader Part-time");
+    expect(toJarviFields({ ...leader, weekly_capacity: 5 }, JARVI_SPECIALITES).fields[LEADER_FIELD]).not.toContain("AI Leader Part-time");
   });
 
-  it("range les spécialités COO dans leur propre champ Jarvi", () => {
-    const { fields } = toJarviFields({ ...cfo, vertical: "coo" as const, specialties: ["Achats"] }, JARVI_SPECIALITES);
-    expect(fields["007887f9-a5f0-4659-8fae-5b485aa8884f"]).toContain("Achats");
-    expect(fields[CFO_FIELD]).toBeUndefined();
+  it("range les spécialités AI Engineer dans leur propre champ Jarvi, sans tag de rythme", () => {
+    const { fields, unmapped } = toJarviFields({ ...leader, vertical: "engineer" as const, specialties: ["Agents IA", "Inconnue"], weekly_capacity: 3 }, JARVI_SPECIALITES);
+    expect(fields[ENGINEER_FIELD]).toEqual(["Agents IA"]);
+    expect(unmapped).toContain("Spécialité « Inconnue »");
+    expect(fields[LEADER_FIELD]).toBeUndefined();
   });
 });
