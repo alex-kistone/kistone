@@ -73,20 +73,24 @@ export const PAIN = {
   ],
 };
 
-/** Les besoins les plus fréquents : un rôle précis, qui pré-remplit le dépôt de besoin. */
-export const ROLE_CATALOG: { role: string; vertical: Vertical }[] = [
-  { role: "LLM Engineer", vertical: "engineer" },
-  { role: "RAG Engineer", vertical: "engineer" },
-  { role: "AI Agents Engineer", vertical: "engineer" },
-  { role: "MLOps / LLMOps Engineer", vertical: "engineer" },
-  { role: "AI Product Manager", vertical: "product" },
-  { role: "Product Owner IA", vertical: "product" },
-  { role: "AI Designer", vertical: "product" },
-  { role: "Fractional CTO", vertical: "leader" },
-  { role: "Head of AI", vertical: "leader" },
-  { role: "Chief AI Officer", vertical: "leader" },
-  { role: "Tech recruiter IA & data", vertical: "rpo" },
-  { role: "Tech recruiter Dev & Infra", vertical: "rpo" },
+/**
+ * Les besoins les plus fréquents : un rôle précis, qui pré-remplit le dépôt de besoin.
+ * `budget` = budget client indicatif (€ HT / jour, marge Kistone comprise), affiché sur la carte
+ * et repris dans la fiche. Tech recruiter validé par Alex (500–600 €) ; les autres sont à valider.
+ */
+export const ROLE_CATALOG: { role: string; vertical: Vertical; budget: [number, number] }[] = [
+  { role: "LLM Engineer", vertical: "engineer", budget: [800, 1150] },
+  { role: "RAG Engineer", vertical: "engineer", budget: [800, 1150] },
+  { role: "AI Agents Engineer", vertical: "engineer", budget: [850, 1200] },
+  { role: "MLOps / LLMOps Engineer", vertical: "engineer", budget: [800, 1100] },
+  { role: "AI Product Manager", vertical: "product", budget: [800, 1100] },
+  { role: "Product Owner IA", vertical: "product", budget: [650, 900] },
+  { role: "AI Designer", vertical: "product", budget: [650, 900] },
+  { role: "Fractional CTO", vertical: "leader", budget: [1100, 1700] },
+  { role: "Head of AI", vertical: "leader", budget: [1100, 1600] },
+  { role: "Chief AI Officer", vertical: "leader", budget: [1300, 1800] },
+  { role: "Tech recruiter IA & data", vertical: "rpo", budget: [500, 600] },
+  { role: "Tech recruiter Dev & Infra", vertical: "rpo", budget: [500, 600] },
 ];
 
 /** La squad IA : plusieurs familles sur un même projet, coordonnées par Kistone. */

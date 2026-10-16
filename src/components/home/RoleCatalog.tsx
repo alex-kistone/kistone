@@ -12,15 +12,17 @@ import { verticalOf } from "@/lib/verticals";
  */
 export default function RoleCatalog() {
   const navigate = useNavigate();
-  const pick = (role: string, vertical: string) => {
-    saveHomeBrief(`Je recherche un ${role}.`);
+  // Budget client indicatif, repris par l'IA dans la fiche
+  const fmt = (n: number) => n.toLocaleString("fr-FR");
+  const pick = (role: string, vertical: string, [lo, hi]: [number, number]) => {
+    saveHomeBrief(`Je recherche un ${role}. Budget TJM entre ${lo} et ${hi} € HT par jour.`);
     navigate(`${ROUTES.recruit}?fonction=${vertical}`);
   };
   return (
     <Section id="besoins">
       <SectionHeader
         title={<TwoPartTitle a="Les besoins les plus fréquents." b="Choisissez, on cadre le reste." />}
-        subtitle="Un rôle précis en un clic : le formulaire se pré-remplit, vous ajustez en quelques secondes."
+        subtitle="Un rôle précis en un clic : le formulaire se pré-remplit, budget indicatif compris, vous ajustez en quelques secondes."
       />
       <ul className="mt-8 grid gap-3 sm:grid-cols-2 md:mt-14 lg:grid-cols-3 lg:gap-4">
         {ROLE_CATALOG.map((r) => {
@@ -30,12 +32,15 @@ export default function RoleCatalog() {
             <li key={r.role} className="ks-reveal">
               <button
                 type="button"
-                onClick={() => pick(r.role, r.vertical)}
+                onClick={() => pick(r.role, r.vertical, r.budget)}
                 className="ks-uc group flex w-full items-center justify-between gap-4 rounded-[20px] border border-[rgba(20,19,18,0.06)] bg-white px-5 py-4 text-left shadow-ks-card transition-transform hover:-translate-y-0.5"
               >
                 <span className="min-w-0">
                   <span className="block font-ks-display text-[18px] font-semibold tracking-[-0.02em]">{r.role}</span>
                   <span className="mt-0.5 block text-[13px] font-medium" style={{ color: p.ink }}>{v.id === "rpo" ? "RPO · Tech recruiter" : v.short}</span>
+                  <span className="mt-2 block text-[13px] text-ks-soft">
+                    <span className="font-semibold text-ks-ink">{fmt(r.budget[0])} – {fmt(r.budget[1])} €</span> HT / jour
+                  </span>
                 </span>
                 <span className="ks-more flex shrink-0 items-center gap-1.5 text-[14px] font-semibold">
                   Je recherche <span className="ks-arrow" aria-hidden="true">→</span>
