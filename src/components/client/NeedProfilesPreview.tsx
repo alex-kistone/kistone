@@ -1,19 +1,26 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Languages } from "lucide-react";
 import { CALENDLY_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLE_PAGES } from "@/content/roles";
 import { palettes } from "@/lib/palettes";
 import { rhythmLabel, verticalOf } from "@/lib/verticals";
 import { durationLabel } from "@/components/platform/MissionDurationField";
+import PersonAvatar from "@/components/home/PersonAvatar";
+import { englishLevelLabel } from "@/lib/englishLevel";
+import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 import type { PendingNeed } from "@/lib/pendingNeed";
 
 type Featured = {
   display_name: string; job_title: string | null; years_experience: number | null; specialties: string[] | null;
   weekly_capacity: number | null; available: boolean | null; availability_date: string | null;
+  photo_url: string | null; client_tjm: number | null; english_level: number | null;
 };
-type Shown = { name: string; job: string; xp: number | null; specialties: string[]; days: number | null; available: boolean; sample: boolean };
+type Shown = {
+  name: string; job: string; xp: number | null; specialties: string[]; days: number | null; available: boolean; sample: boolean;
+  photo: string | null; rate: number | null; english: number | null;
+};
 
 const SHOWN = 3;
 const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -40,11 +47,12 @@ function useMatchingProfiles(need: PendingNeed): { profiles: Shown[]; real: numb
       .map((f) => ({
         name: f.display_name, job: f.job_title || verticalOf(need.vertical).short, xp: f.years_experience,
         specialties: f.specialties ?? [], days: f.weekly_capacity, available: f.available !== false, sample: false,
+        photo: f.photo_url, rate: f.client_tjm, english: f.english_level,
       }))
       .sort((a, b) => overlap(b.specialties) - overlap(a.specialties))
       .slice(0, SHOWN);
     const samples: Shown[] = (ROLE_PAGES.find((r) => r.vertical === need.vertical)?.samples ?? [])
-      .map((s) => ({ ...s, sample: true }));
+      .map((s) => ({ ...s, sample: true, photo: `/people/${s.name.toLowerCase()}.jpg`, rate: null, english: null }));
     return { profiles: [...real, ...samples].slice(0, SHOWN), real: real.length };
   }, [featured, need]);
 }
@@ -55,6 +63,7 @@ export default function NeedProfilesPreview({ need }: { need: PendingNeed }) {
   const p = palettes[v.palette];
   const { profiles, real } = useMatchingProfiles(need);
   const wanted = new Set(need.vertical === "rpo" ? need.profile_types : need.specialties);
+  const budget = INDICATIVE_BUDGET[v.id];
 
   const facts = [
     need.budget_tjm_min || need.budget_tjm_max
@@ -95,9 +104,7 @@ export default function NeedProfilesPreview({ need }: { need: PendingNeed }) {
           {profiles.map((pr) => (
             <li key={pr.name} className="rounded-[20px] border border-border bg-card p-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-heading text-[15px] font-semibold" style={{ background: p.tint, color: p.ink }} aria-hidden="true">
-                  {initials(pr.name)}
-                </span>
+                <PersonAvatar r={{ initials: initials(pr.name), palette: v.palette, photo: pr.photo ?? undefined }} className="h-12 w-12 font-heading" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{pr.name}</p>
                   <p className="truncate text-sm text-muted-foreground">{pr.job}{pr.xp ? ` · ${pr.xp} ans` : ""}</p>
@@ -117,6 +124,19 @@ export default function NeedProfilesPreview({ need }: { need: PendingNeed }) {
                   <span> · {rhythmLabel(pr.days)}</span>
                 </p>
               )}
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border pt-3 text-[13px]">
+                <span>
+                  {pr.rate
+                    ? <><span className="font-semibold">{pr.rate} € HT</span><span className="text-muted-foreground"> / jour, tout compris</span></>
+                    : <span className="text-muted-foreground">{budget[0]} – {budget[1]} € HT / jour selon le profil</span>}
+                </span>
+                {pr.english ? (
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Languages className="h-3.5 w-3.5" aria-hidden="true" />
+                    Anglais {englishLevelLabel(pr.english).toLowerCase()}
+                  </span>
+                ) : null}
+              </div>
             </li>
           ))}
         </ul>
