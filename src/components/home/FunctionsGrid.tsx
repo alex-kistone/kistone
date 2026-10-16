@@ -1,4 +1,4 @@
-import SmartLink from "@/components/site/SmartLink";
+import Cta from "@/components/site/Cta";
 import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
 import { ROUTES } from "@/content/site";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
@@ -28,11 +28,9 @@ function FamilyCard({ v }: { v: VerticalConfig }) {
       <div className="flex flex-1 flex-col gap-2 px-3 pb-3">
         <h3 className="font-ks-display text-[24px] font-semibold tracking-[-0.02em]">{v.short}</h3>
         <p className="text-[15px] leading-[1.55] text-ks-soft">{v.description}</p>
-        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-[15px] font-semibold">
-          <SmartLink href={`${ROUTES.recruit}?fonction=${v.id}`} className="ks-more flex items-center gap-1.5">
-            Je recherche {v.seeking.split(" ").slice(1).join(" ")} <span className="ks-arrow" aria-hidden="true">→</span>
-          </SmartLink>
-          {page && <SmartLink href={rolePath(page)} className="text-ks-subtle hover:text-ks-ink">Fiche de poste</SmartLink>}
+        <div className="mt-auto flex flex-wrap items-center gap-2 pt-4">
+          <Cta href={`${ROUTES.recruit}?fonction=${v.id}`} variant="studio" arrow>Je recherche {v.seeking}</Cta>
+          {page && <Cta href={rolePath(page)} variant="secondary">Fiche de poste</Cta>}
         </div>
       </div>
     </article>
@@ -66,11 +64,9 @@ export default function FunctionsGrid() {
           </h3>
           <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft md:text-base">{rpo.description}</p>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2 text-[15px] font-semibold">
-          <SmartLink href={`${ROUTES.recruit}?fonction=rpo`} className="ks-more flex items-center gap-1.5">
-            Je recherche un Tech recruiter <span className="ks-arrow" aria-hidden="true">→</span>
-          </SmartLink>
-          {rpoPage && <SmartLink href={rolePath(rpoPage)} className="text-ks-subtle hover:text-ks-ink">Fiche de poste</SmartLink>}
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Cta href={`${ROUTES.recruit}?fonction=rpo`} variant="studio" arrow>Je recherche un Tech recruiter</Cta>
+          {rpoPage && <Cta href={rolePath(rpoPage)} variant="secondary">Fiche de poste</Cta>}
         </div>
       </div>
     </Section>

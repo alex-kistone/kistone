@@ -8,10 +8,7 @@ import { saveHomeBrief } from "@/lib/homeBrief";
 import { detectVertical } from "@/lib/detectVertical";
 import { cn } from "@/lib/utils";
 
-const TYPE_MS = 24; // vitesse de frappe, par caractère
-const HOLD_MS = 5200; // durée d'affichage du résultat avant l'exemple suivant
-
-type Phase = "typing" | "criteria" | "matches";
+const ROTATE_MS = 4800; // un nouvel exemple en filigrane toutes les 4,8 s
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -24,20 +21,17 @@ function SparkIcon() {
 }
 
 /**
- * Démo du produit : un besoin se tape tout seul, l'IA en extrait les critères, puis les
- * experts correspondants apparaissent avec leur score. Un onglet par famille ; la démo
- * enchaîne les exemples tant que le visiteur ne choisit pas lui-même.
- * Le visiteur peut aussi taper son propre besoin : « Déposer mon besoin » l'emmène sur
- * /besoin avec la famille choisie et la fiche pré-remplie par l'IA.
+ * Démo du produit : un exemple de besoin s'affiche en filigrane dans la zone de saisie et change
+ * au hasard, avec les critères que l'IA en extrait ; les profils correspondants défilent à côté.
+ * Un onglet par famille. Le visiteur peut taper son propre besoin : « Découvrir les profils »
+ * l'emmène sur /besoin avec la famille choisie et la fiche pré-remplie par l'IA.
  */
 export default function BriefDemo() {
   const [index, setIndex] = useState(0);
-  const [typed, setTyped] = useState(0);
-  const [phase, setPhase] = useState<Phase>("typing");
   const [visible, setVisible] = useState(false);
   const [pinned, setPinned] = useState(false);
-  // Besoin saisi par le visiteur (null tant qu'il n'a pas cliqué dans la zone)
-  const [custom, setCustom] = useState<string | null>(null);
+  // Besoin saisi par le visiteur
+  const [custom, setCustom] = useState("");
   const ref = useRef<HTMLElement>(null);
   const navigate = useNavigate();
   const brief = BRIEFS[index];
@@ -51,44 +45,24 @@ export default function BriefDemo() {
     return () => io.disconnect();
   }, []);
 
-  // Frappe, puis critères, puis profils (arrêtée dès que le visiteur écrit lui-même)
+  // Exemple suivant tiré au hasard (jamais le même deux fois de suite), tant que le visiteur
+  // n'a ni choisi un onglet, ni commencé à écrire
   useEffect(() => {
-    if (!visible || custom !== null) return;
-    if (reducedMotion()) {
-      setTyped(brief.text.length);
-      setPhase("matches");
-      return;
-    }
-    setTyped(0);
-    setPhase("typing");
-    let n = 0;
-    const timers: number[] = [];
-    const tick = window.setInterval(() => {
-      n += 1;
-      setTyped(n);
-      if (n >= brief.text.length) {
-        window.clearInterval(tick);
-        timers.push(window.setTimeout(() => setPhase("criteria"), 350));
-        timers.push(window.setTimeout(() => setPhase("matches"), 1300));
-        if (!pinned) timers.push(window.setTimeout(() => setIndex((i) => (i + 1) % BRIEFS.length), 1300 + HOLD_MS));
-      }
-    }, TYPE_MS);
-    return () => {
-      window.clearInterval(tick);
-      timers.forEach(window.clearTimeout);
-    };
-  }, [index, visible, pinned, brief.text.length, custom]);
+    if (!visible || pinned || custom || reducedMotion()) return;
+    const id = window.setInterval(() => {
+      setIndex((i) => {
+        const others = BRIEFS.map((_, k) => k).filter((k) => k !== i);
+        return others[Math.floor(Math.random() * others.length)];
+      });
+    }, ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [visible, pinned, custom]);
 
   const choose = (i: number) => {
     setPinned(true);
     setIndex(i);
   };
 
-  const startTyping = () => {
-    if (custom !== null) return;
-    setPinned(true);
-    setCustom("");
-  };
 
   // Pendant la frappe, l'onglet suit la famille citée (« un AI Engineer… ») ; l'IA confirme sur /besoin
   const write = (text: string) => {
@@ -99,17 +73,17 @@ export default function BriefDemo() {
   };
 
   // Avec un besoin tapé : fonction présélectionnée et fiche pré-remplie ; sinon, choix de la fonction
-  const needHref = custom?.trim() ? `${ROUTES.recruit}?fonction=${brief.vertical}` : ROUTES.recruit;
+  const needHref = custom.trim() ? `${ROUTES.recruit}?fonction=${brief.vertical}` : ROUTES.recruit;
   const keepBrief = () => {
-    if (custom?.trim()) saveHomeBrief(custom);
+    if (custom.trim()) saveHomeBrief(custom);
   };
   const submit = () => {
     keepBrief();
     navigate(needHref);
   };
 
-  const own = custom !== null;
-  const showCriteria = !own && phase !== "typing";
+  const own = custom.trim() !== "";
+  const showCriteria = !own;
 
   return (
     <div className="px-5 md:px-8">
@@ -159,19 +133,32 @@ export default function BriefDemo() {
               <label htmlFor="home-brief" className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">
                 Votre besoin{!own && <span className="normal-case tracking-normal"> · cliquez pour écrire le vôtre</span>}
               </label>
-              {/* Zone de saisie : d'abord la démo qui se tape seule, puis le texte du visiteur */}
-              <textarea
-                id="home-brief"
-                value={own ? custom : brief.text.slice(0, typed)}
-                onFocus={startTyping}
-                onChange={(e) => write(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
-                }}
-                placeholder={`Ex : ${brief.text}`}
-                rows={4}
-                className="mt-2 block min-h-[78px] w-full resize-none bg-transparent text-[16px] leading-[1.55] text-ks-ink outline-none placeholder:text-ks-subtle sm:text-[17px]"
-              />
+              {/* Zone de saisie : un exemple en filigrane (qui change), puis le texte du visiteur */}
+              <div className="relative mt-2">
+                {!custom && (
+                  <p
+                    key={index}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 text-[16px] leading-[1.55] text-[#A9A399] sm:text-[17px]"
+                    style={{ animation: "ks-chip-in .6s ease both" }}
+                  >
+                    Ex : {brief.text}
+                  </p>
+                )}
+                <textarea
+                  id="home-brief"
+                  value={custom}
+                  onFocus={() => setPinned(true)}
+                  onChange={(e) => write(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
+                  }}
+                  aria-describedby="home-brief-example"
+                  rows={4}
+                  className="relative block min-h-[78px] w-full resize-none bg-transparent text-[16px] leading-[1.55] text-ks-ink outline-none sm:text-[17px]"
+                />
+                <span id="home-brief-example" className="sr-only">Exemple : {brief.text}</span>
+              </div>
             </div>
 
             <Cta href={needHref} onClick={keepBrief} arrow className="-mt-1 self-start">
@@ -183,13 +170,13 @@ export default function BriefDemo() {
                 <span className={cn("flex h-6 w-6 items-center justify-center rounded-full", showCriteria ? "bg-ks-pink-100 text-ks-pink-ink" : "bg-ks-muted")}>
                   <SparkIcon />
                 </span>
-                {own ? "L'IA extraira les critères à l'étape suivante" : showCriteria ? "Critères extraits par l'IA" : "Analyse du besoin…"}
+                {own ? "L'IA extraira les critères à l'étape suivante" : "Critères extraits par l'IA"}
               </p>
               <ul className="mt-3 flex min-h-[34px] flex-wrap gap-2" aria-label="Critères">
                 {showCriteria &&
                   brief.criteria.map((c, i) => (
                     <li
-                      key={`${brief.domain}-${c}`}
+                      key={`${index}-${c}`}
                       className="ks-pop-in rounded-full border border-[rgba(20,19,18,0.1)] bg-white px-3 py-1.5 text-[13px] font-medium"
                       style={{ animationDelay: `${i * 90}ms` }}
                     >
