@@ -1,4 +1,5 @@
 import { RECRUITERS, STEPS } from "@/content/home";
+import PersonAvatar from "./PersonAvatar";
 import { palettes, type PaletteName } from "@/lib/palettes";
 import { BoltWatermark } from "@/components/brand/Bolt";
 
@@ -35,9 +36,7 @@ function ShortlistMini() {
         const p = palettes[r.palette];
         return (
           <div key={r.name} className="flex items-center gap-2.5 rounded-2xl bg-white p-2.5 shadow-[0_10px_24px_-16px_rgba(60,40,20,0.35)]">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-ks-display text-[11px] font-semibold" style={{ background: p.tint, color: p.ink }}>
-              {r.initials}
-            </span>
+            <PersonAvatar r={r} className="h-8 w-8 text-[11px]" />
             <div className="min-w-0 flex-1">
               <div className="truncate text-[12px] font-semibold">{r.name}</div>
               <div className="mt-1 h-1 rounded-full bg-ks-secondary">

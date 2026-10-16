@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { RECRUITERS } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
+import PersonAvatar from "./PersonAvatar";
 
 const STEP_MS = 2400; // un nouveau profil toutes les 2,4 s
 const VISIBLE = 4;
@@ -54,9 +55,7 @@ export default function MatchFeed() {
               className={`flex items-center gap-3.5 rounded-[18px] bg-white p-3.5 shadow-[0_1px_2px_rgba(20,19,18,0.04)] transition-opacity duration-500 sm:p-4 ${fresh ? "ks-pop-in" : ""}`}
               style={{ opacity: 1 - i * 0.16 }}
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-ks-display text-[15px] font-semibold" style={{ background: p.tint, color: p.ink }}>
-                {r.initials}
-              </span>
+              <PersonAvatar r={r} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-[15px] font-semibold">{r.name}</span>

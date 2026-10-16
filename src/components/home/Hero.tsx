@@ -3,6 +3,7 @@ import { ROUTES } from "@/content/site";
 import { HERO, RECRUITERS, type Recruiter } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
+import PersonAvatar from "./PersonAvatar";
 
 /** Carte profil du bandeau : initiales teintées, poste, famille, rythme et disponibilité. */
 function ProfileCard({ r, hidden }: { r: Recruiter; hidden?: boolean }) {
@@ -13,9 +14,7 @@ function ProfileCard({ r, hidden }: { r: Recruiter; hidden?: boolean }) {
       className="mr-3 flex w-[260px] shrink-0 flex-col gap-3.5 rounded-[22px] border border-[rgba(20,19,18,0.06)] bg-white p-4 text-left shadow-ks-card md:mr-5 md:w-[300px] md:rounded-[26px] md:p-5"
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-ks-display text-[15px] font-semibold" style={{ background: p.tint, color: p.ink }}>
-          {r.initials}
-        </span>
+        <PersonAvatar r={r} />
         <div className="min-w-0">
           <p className="truncate text-[15px] font-semibold">{r.name}</p>
           <p className="truncate text-[13px] text-ks-subtle">{r.role}</p>
