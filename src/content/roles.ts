@@ -90,7 +90,7 @@ export const ROLE_PAGES: RolePage[] = [
   {
     vertical: "product",
     slug: "ai-product-manager",
-    role: "AI Product Manager",
+    role: "AI Product",
     longName: "Product Manager IA",
     h1: "Recrutez un AI Product Manager freelance",
     highlight: "AI Product",
