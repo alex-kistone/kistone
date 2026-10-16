@@ -31,18 +31,18 @@ export type Recruiter = {
 
 // Profils fictifs, pour illustrer la plateforme en attendant les vrais.
 export const RECRUITERS: Recruiter[] = [
-  { initials: "LN", name: "Lina N.", role: "AI Engineer · RAG", vertical: "engineer", rhythm: "Temps plein", xp: "8 ans", palette: "blue", photo: "/people/lina.jpg" },
-  { initials: "HP", name: "Hugo P.", role: "LLM Engineer · agents", vertical: "engineer", rhythm: "Temps plein", xp: "6 ans", palette: "blue", photo: "/people/hugo.jpg" },
-  { initials: "CD", name: "Claire D.", role: "Product Manager IA", vertical: "product", rhythm: "Temps plein", xp: "9 ans", palette: "lilac", photo: "/people/camille.jpg" },
-  { initials: "MG", name: "Marc G.", role: "Head of AI", vertical: "leader", rhythm: "2 j / sem", xp: "14 ans", palette: "teal", photo: "/people/marc.jpg" },
-  { initials: "SK", name: "Sami K.", role: "MLOps Engineer", vertical: "engineer", rhythm: "4 j / sem", xp: "9 ans", palette: "blue", photo: "/people/sami.jpg" },
-  { initials: "JM", name: "Julie M.", role: "Tech recruiter · IA & data", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage", photo: "/people/sarah.jpg" },
-  { initials: "YB", name: "Yanis B.", role: "Product Owner · produits LLM", vertical: "product", rhythm: "4 j / sem", xp: "7 ans", palette: "lilac", photo: "/people/yanis.jpg" },
-  { initials: "NR", name: "Nadia R.", role: "CTO · IA", vertical: "leader", rhythm: "3 j / sem", xp: "16 ans", palette: "teal", photo: "/people/nadia.jpg" },
-  { initials: "EL", name: "Emma L.", role: "AI Designer", vertical: "product", rhythm: "Temps plein", xp: "8 ans", palette: "lilac", photo: "/people/emma.jpg" },
-  { initials: "AT", name: "Adam T.", role: "Data engineer · IA", vertical: "engineer", rhythm: "Temps plein", xp: "7 ans", palette: "blue", photo: "/people/adam.jpg" },
-  { initials: "PV", name: "Paul V.", role: "Chief AI Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal", photo: "/people/thomas.jpg" },
-  { initials: "TR", name: "Thomas R.", role: "Tech recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage", photo: "/people/thomas-r.jpg" },
+  { initials: "LN", name: "Lina", role: "AI Engineer · RAG", vertical: "engineer", rhythm: "Temps plein", xp: "8 ans", palette: "blue", photo: "/people/lina.jpg" },
+  { initials: "HP", name: "Hugo", role: "LLM Engineer · agents", vertical: "engineer", rhythm: "Temps plein", xp: "6 ans", palette: "blue", photo: "/people/hugo.jpg" },
+  { initials: "CD", name: "Claire", role: "Product Manager IA", vertical: "product", rhythm: "Temps plein", xp: "9 ans", palette: "lilac", photo: "/people/camille.jpg" },
+  { initials: "MG", name: "Marc", role: "Head of AI", vertical: "leader", rhythm: "2 j / sem", xp: "14 ans", palette: "teal", photo: "/people/marc.jpg" },
+  { initials: "SK", name: "Sami", role: "MLOps Engineer", vertical: "engineer", rhythm: "4 j / sem", xp: "9 ans", palette: "blue", photo: "/people/sami.jpg" },
+  { initials: "JM", name: "Julie", role: "Tech recruiter · IA & data", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage", photo: "/people/sarah.jpg" },
+  { initials: "YB", name: "Yanis", role: "Product Owner · produits LLM", vertical: "product", rhythm: "4 j / sem", xp: "7 ans", palette: "lilac", photo: "/people/yanis.jpg" },
+  { initials: "NR", name: "Nadia", role: "CTO · IA", vertical: "leader", rhythm: "3 j / sem", xp: "16 ans", palette: "teal", photo: "/people/nadia.jpg" },
+  { initials: "EL", name: "Emma", role: "AI Designer", vertical: "product", rhythm: "Temps plein", xp: "8 ans", palette: "lilac", photo: "/people/emma.jpg" },
+  { initials: "AT", name: "Adam", role: "Data engineer · IA", vertical: "engineer", rhythm: "Temps plein", xp: "7 ans", palette: "blue", photo: "/people/adam.jpg" },
+  { initials: "PV", name: "Paul", role: "Chief AI Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal", photo: "/people/thomas.jpg" },
+  { initials: "TR", name: "Thomas", role: "Tech recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage", photo: "/people/thomas-r.jpg" },
 ];
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
@@ -159,28 +159,28 @@ export const BRIEFS: Brief[] = [
     domain: "AI Engineer",
     text: "Notre POC d'assistant interne marche en démo : on cherche un AI Engineer pour industrialiser le RAG et le passer en production.",
     criteria: ["AI Engineer", "RAG & recherche sémantique", "MLOps / LLMOps", "Mission 6 mois"],
-    matches: [{ name: "Lina N.", score: 95 }, { name: "Hugo P.", score: 88 }],
+    matches: [{ name: "Lina", score: 95 }, { name: "Hugo", score: 88 }],
   },
   {
     vertical: "product",
     domain: "AI Product",
     text: "Nous lançons un copilote pour nos clients : besoin d'un Product Manager IA pour prioriser les cas d'usage et piloter la roadmap.",
     criteria: ["AI Product", "Discovery & cas d'usage IA", "Roadmap & priorisation", "Temps plein"],
-    matches: [{ name: "Claire D.", score: 93 }, { name: "Yanis B.", score: 86 }],
+    matches: [{ name: "Claire", score: 93 }, { name: "Yanis", score: 86 }],
   },
   {
     vertical: "leader",
     domain: "AI Leader",
     text: "Le comité de direction veut une stratégie IA : on cherche un Head of AI 2 jours par semaine pour la feuille de route et la gouvernance.",
     criteria: ["AI Leader", "2 j / sem", "Stratégie IA & GenAI", "Gouvernance & AI Act"],
-    matches: [{ name: "Marc G.", score: 94 }, { name: "Paul V.", score: 87 }],
+    matches: [{ name: "Marc", score: 94 }, { name: "Paul", score: 87 }],
   },
   {
     vertical: "rpo",
     domain: "Tech recruiter",
     text: "On veut internaliser notre équipe IA : un recruteur pour 4 AI Engineers en CDI, à Paris en hybride, dès que possible.",
     criteria: ["Tech recruiter", "Data/AI", "Paris · hybride", "4 postes"],
-    matches: [{ name: "Julie M.", score: 94 }, { name: "Thomas R.", score: 88 }],
+    matches: [{ name: "Julie", score: 94 }, { name: "Thomas", score: 88 }],
   },
 ];
 

@@ -56,7 +56,7 @@ function HeroDecor() {
           <div className="flex items-center gap-3">
             <img src="/people/lina.jpg" alt="" className="h-10 w-10 shrink-0 rounded-full object-cover object-top" style={{ background: "#DDE8F5" }} />
             <div className="min-w-0">
-              <p className="text-[14px] font-semibold">Lina N.</p>
+              <p className="text-[14px] font-semibold">Lina</p>
               <p className="text-[12px] text-ks-subtle">AI Engineer · RAG</p>
             </div>
             <span className="ml-auto font-ks-display text-[20px] font-bold tracking-[-0.03em] ks-grad-text">95%</span>

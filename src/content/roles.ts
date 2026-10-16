@@ -82,9 +82,9 @@ export const ROLE_PAGES: RolePage[] = [
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil qualifié sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
     ],
     samples: [
-      { name: "Lina N.", job: "AI Engineer · RAG", xp: 8, specialties: ["RAG & recherche sémantique", "LLM & IA générative"], days: null, available: true },
-      { name: "Hugo P.", job: "LLM Engineer", xp: 6, specialties: ["Agents IA", "Intégration IA (API, back-end)"], days: null, available: true },
-      { name: "Sami K.", job: "MLOps Engineer", xp: 9, specialties: ["MLOps / LLMOps", "Infrastructure IA & GPU"], days: 4, available: false },
+      { name: "Lina", job: "AI Engineer · RAG", xp: 8, specialties: ["RAG & recherche sémantique", "LLM & IA générative"], days: null, available: true },
+      { name: "Hugo", job: "LLM Engineer", xp: 6, specialties: ["Agents IA", "Intégration IA (API, back-end)"], days: null, available: true },
+      { name: "Sami", job: "MLOps Engineer", xp: 9, specialties: ["MLOps / LLMOps", "Infrastructure IA & GPU"], days: 4, available: false },
     ],
   },
   {
@@ -133,9 +133,9 @@ export const ROLE_PAGES: RolePage[] = [
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil qualifié sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
     ],
     samples: [
-      { name: "Claire D.", job: "Product Manager IA", xp: 9, specialties: ["Product Manager IA", "Discovery & cas d'usage IA"], days: null, available: true },
-      { name: "Yanis B.", job: "Product Owner · produits LLM", xp: 7, specialties: ["Product Owner produits LLM", "Évaluation & qualité des modèles"], days: 4, available: true },
-      { name: "Emma L.", job: "AI Designer", xp: 8, specialties: ["AI Designer / UX IA", "Prompt & conversation design"], days: null, available: false },
+      { name: "Claire", job: "Product Manager IA", xp: 9, specialties: ["Product Manager IA", "Discovery & cas d'usage IA"], days: null, available: true },
+      { name: "Yanis", job: "Product Owner · produits LLM", xp: 7, specialties: ["Product Owner produits LLM", "Évaluation & qualité des modèles"], days: 4, available: true },
+      { name: "Emma", job: "AI Designer", xp: 8, specialties: ["AI Designer / UX IA", "Prompt & conversation design"], days: null, available: false },
     ],
   },
   {
@@ -184,9 +184,9 @@ export const ROLE_PAGES: RolePage[] = [
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil qualifié sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
     ],
     samples: [
-      { name: "Marc G.", job: "Head of AI", xp: 14, specialties: ["Head of AI", "Stratégie IA & GenAI"], days: 2, available: true },
-      { name: "Nadia R.", job: "CTO · IA", xp: 16, specialties: ["CTO", "Build vs buy & plateformes"], days: 3, available: true },
-      { name: "Paul V.", job: "Chief AI Officer", xp: 18, specialties: ["Chief AI Officer", "Gouvernance & AI Act"], days: null, available: false },
+      { name: "Marc", job: "Head of AI", xp: 14, specialties: ["Head of AI", "Stratégie IA & GenAI"], days: 2, available: true },
+      { name: "Nadia", job: "CTO · IA", xp: 16, specialties: ["CTO", "Build vs buy & plateformes"], days: 3, available: true },
+      { name: "Paul", job: "Chief AI Officer", xp: 18, specialties: ["Chief AI Officer", "Gouvernance & AI Act"], days: null, available: false },
     ],
   },
   {
@@ -235,9 +235,9 @@ export const ROLE_PAGES: RolePage[] = [
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
     ],
     samples: [
-      { name: "Julie M.", job: "Tech recruiter · IA & data", xp: 9, specialties: ["Data/AI", "Product"], days: null, available: true },
-      { name: "Thomas R.", job: "Tech recruiter", xp: 6, specialties: ["Dev", "Infra"], days: 3, available: true },
-      { name: "Inès B.", job: "Recruteuse GTM", xp: 8, specialties: ["GTM"], days: 4, available: false },
+      { name: "Julie", job: "Tech recruiter · IA & data", xp: 9, specialties: ["Data/AI", "Product"], days: null, available: true },
+      { name: "Thomas", job: "Tech recruiter", xp: 6, specialties: ["Dev", "Infra"], days: 3, available: true },
+      { name: "Inès", job: "Recruteuse GTM", xp: 8, specialties: ["GTM"], days: 4, available: false },
     ],
   },
 ];
