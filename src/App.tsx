@@ -27,6 +27,7 @@ import ModelPage from "./pages/ModelPage";
 import FreelancesPage from "./pages/FreelancesPage";
 import WhyKistone from "./pages/WhyKistone";
 import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
+import SessionGuard from "./components/SessionGuard";
 import { LEGACY_COMPARISON_SLUG } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
@@ -80,6 +81,7 @@ export const AppProviders = ({ children }: { children: ReactNode }) => (
 const App = () => (
   <AppProviders>
     <BrowserRouter>
+      <SessionGuard />
       <AppRoutes />
       <CookieConsent />
     </BrowserRouter>
