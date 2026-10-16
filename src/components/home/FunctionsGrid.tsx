@@ -1,55 +1,78 @@
 import SmartLink from "@/components/site/SmartLink";
+import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
 import { ROUTES } from "@/content/site";
+import { ROLE_PAGES, rolePath } from "@/content/roles";
 import { palettes } from "@/lib/palettes";
-import { VERTICALS } from "@/lib/verticals";
-import { BoltWatermark } from "@/components/brand/Bolt";
+import { VERTICALS, type VerticalConfig } from "@/lib/verticals";
+
+const pageOf = (v: VerticalConfig) => ROLE_PAGES.find((r) => r.vertical === v.id);
+
+/** Carte d'une famille : visuel teinté (rôles et spécialités), titre, description, deux liens. */
+function FamilyCard({ v }: { v: VerticalConfig }) {
+  const p = palettes[v.palette];
+  const page = pageOf(v);
+  return (
+    <article className="ks-uc ks-lift ks-reveal flex flex-col gap-5 rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-3 shadow-ks-card">
+      <div className="ks-ui relative overflow-hidden rounded-[20px] p-5" style={{ background: p.tint }}>
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-[0.14]" style={{ background: p.accent }} aria-hidden="true" />
+        <p className="relative font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: p.ink }}>{v.roles}</p>
+        <ul className="relative mt-4 flex flex-col gap-2 text-[14px]">
+          {v.specialties.slice(0, 4).map((s) => (
+            <li key={s} className="flex items-center gap-2.5 rounded-xl bg-white/70 px-3 py-2 text-ks-ink-2">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: p.accent }} aria-hidden="true" />
+              {s}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="flex flex-1 flex-col gap-2 px-3 pb-3">
+        <h3 className="font-ks-display text-[24px] font-semibold tracking-[-0.02em]">{v.short}</h3>
+        <p className="text-[15px] leading-[1.55] text-ks-soft">{v.description}</p>
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-[15px] font-semibold">
+          <SmartLink href={`${ROUTES.recruit}?fonction=${v.id}`} className="ks-more flex items-center gap-1.5">
+            Je recherche {v.seeking.split(" ").slice(1).join(" ")} <span className="ks-arrow" aria-hidden="true">→</span>
+          </SmartLink>
+          {page && <SmartLink href={rolePath(page)} className="text-ks-subtle hover:text-ks-ink">Fiche de poste</SmartLink>}
+        </div>
+      </div>
+    </article>
+  );
+}
 
 /**
- * Les fonctions de la plateforme : une carte teintée par fonction, qui ouvre le dépôt
- * de besoin avec la fonction déjà choisie (?fonction=cfo).
+ * Les familles de la plateforme : trois familles d'experts IA, puis le Tech recruiter pour
+ * internaliser les talents en CDI. Chaque carte ouvre le dépôt de besoin avec la famille choisie.
  */
 export default function FunctionsGrid() {
+  const ai = VERTICALS.filter((v) => v.group === "AI");
+  const rpo = VERTICALS.find((v) => v.id === "rpo")!;
+  const rpoPage = pageOf(rpo);
   return (
-    <section id="fonctions" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
-      <BoltWatermark className="-right-6 -top-10 h-[320px] w-auto rotate-[14deg]" />
-      <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-        Des fonctions clés.
-        <br />
-        Un seul partenaire.
-      </h2>
-      <p className="ks-reveal mt-[18px] text-[17px] leading-[1.5] text-ks-soft md:text-[19px]">
-        Des experts seniors, à temps plein ou quelques jours par semaine.
-      </p>
-      <ul className="mt-14 grid w-full gap-5 text-left sm:grid-cols-2 lg:grid-cols-4">
-        {VERTICALS.map((v, i) => {
-          const p = palettes[v.palette];
-          return (
-            <li key={v.id} className="ks-reveal">
-              <SmartLink
-                href={`${ROUTES.recruit}?fonction=${v.id}`}
-                className="ks-lift flex h-full flex-col rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-3 shadow-ks-card"
-              >
-                <div className="flex h-[120px] items-start justify-between rounded-[20px] p-[18px]" style={{ background: p.tint }}>
-                  <span className="font-ks-display text-[44px] font-bold leading-none tracking-[-0.04em]" style={{ color: p.ink }}>
-                    {v.short}
-                  </span>
-                  <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: p.ink }} aria-hidden="true">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="flex flex-1 flex-col gap-2 px-3 pb-3 pt-5">
-                  <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">{v.roles}</span>
-                  <h3 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">{v.label}</h3>
-                  <p className="text-[15px] leading-[1.55] text-ks-soft">{v.description}</p>
-                  <span className="mt-auto pt-3 text-sm font-semibold text-ks-ink">
-                    Trouver un {v.id === "rpo" ? "recruteur" : v.short} <span aria-hidden="true">→</span>
-                  </span>
-                </div>
-              </SmartLink>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+    <Section id="fonctions">
+      <SectionHeader
+        title={<TwoPartTitle a="Trois familles d'experts IA." b="Un seul partenaire." />}
+        subtitle="Engineering, produit, leadership : le bon expert pour chaque étape de votre projet IA."
+      />
+      <div className="mt-8 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-5">
+        {ai.map((v) => <FamilyCard key={v.id} v={v} />)}
+      </div>
+
+      {/* Le RPO : internaliser les talents IA en CDI */}
+      <div className="ks-reveal mt-4 flex flex-col gap-5 rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-7 shadow-ks-card md:mt-5 md:flex-row md:items-center md:justify-between md:p-9">
+        <div className="max-w-[640px]">
+          <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: palettes[rpo.palette].ink }}>Recruter en CDI</p>
+          <h3 className="mt-3 font-ks-display text-[26px] font-semibold leading-[1.1] tracking-[-0.02em] md:text-[30px]">
+            Un Tech recruiter pour internaliser vos talents IA.
+          </h3>
+          <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft md:text-base">{rpo.description}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2 text-[15px] font-semibold">
+          <SmartLink href={`${ROUTES.recruit}?fonction=rpo`} className="ks-more flex items-center gap-1.5">
+            Je recherche un Tech recruiter <span className="ks-arrow" aria-hidden="true">→</span>
+          </SmartLink>
+          {rpoPage && <SmartLink href={rolePath(rpoPage)} className="text-ks-subtle hover:text-ks-ink">Fiche de poste</SmartLink>}
+        </div>
+      </div>
+    </Section>
   );
 }

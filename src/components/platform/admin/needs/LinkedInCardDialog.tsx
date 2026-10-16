@@ -113,7 +113,7 @@ export default function LinkedInCardDialog({ need, open, onOpenChange }: { need:
     "",
     f.cta,
     "",
-    "#freelance #fractional #kistone",
+    "#freelance #IA #kistone",
   ].filter((l): l is string => typeof l === "string").join("\n").replace(/\n{3,}/g, "\n\n");
 
   const v = verticalOf(need.vertical);

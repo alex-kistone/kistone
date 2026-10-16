@@ -1,134 +1,69 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Cta from "@/components/site/Cta";
 import { ROUTES } from "@/content/site";
-import { HERO, HERO_TRUST } from "@/content/home";
-import HeroCards, { PersonPhoto } from "./HeroCards";
-import Highlight from "@/components/site/Highlight";
-import { cn } from "@/lib/utils";
+import { HERO, RECRUITERS, type Recruiter } from "@/content/home";
+import { palettes } from "@/lib/palettes";
+import { verticalOf } from "@/lib/verticals";
 
-const STEP_MS = 2000;
-
-/** Les métiers en toutes lettres ; un trait rose glisse de l'un à l'autre. Rien d'autre ne bouge. */
-function FunctionsUnderline({ words }: { words: string[] }) {
-  const [index, setIndex] = useState(0);
-  const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
-  const refs = useRef<(HTMLLIElement | null)[]>([]);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % words.length), STEP_MS);
-    return () => window.clearInterval(id);
-  }, [words.length]);
-
-  // Position du trait sous le mot actif (recalculée au chargement des polices et au redimensionnement)
-  useLayoutEffect(() => {
-    const measure = () => {
-      const el = refs.current[index];
-      if (el) setBar({ left: el.offsetLeft, width: el.offsetWidth });
-    };
-    measure();
-    document.fonts?.ready.then(measure);
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [index]);
-
+/** Carte profil du bandeau : initiales teintées, poste, famille, rythme et disponibilité. */
+function ProfileCard({ r, hidden }: { r: Recruiter; hidden?: boolean }) {
+  const p = palettes[r.palette];
   return (
-    <div className="relative mt-7 inline-block pb-3">
-      <ul className="flex items-baseline gap-[14px] font-ks-display text-[19px] font-semibold tracking-[-0.02em] sm:gap-9 sm:text-[28px]" aria-label="Métiers">
-        {words.map((w, i) => (
-          <li
-            key={w}
-            ref={(el) => (refs.current[i] = el)}
-            className={cn("transition-colors duration-300", i === index ? "text-ks-ink" : "text-[#8F8980]")}
-          >
-            {w}
-          </li>
-        ))}
-      </ul>
-      <span
-        className="absolute bottom-0 left-0 h-[3px] rounded-full bg-ks-pink transition-[transform,width] duration-500 ease-[cubic-bezier(.2,.7,.2,1)]"
-        style={bar ? { width: bar.width, transform: `translateX(${bar.left}px)` } : { width: 0 }}
-        aria-hidden="true"
-      />
+    <div
+      aria-hidden={hidden || undefined}
+      className="mr-3 flex w-[260px] shrink-0 flex-col gap-3.5 rounded-[22px] border border-[rgba(20,19,18,0.06)] bg-white p-4 text-left shadow-ks-card md:mr-5 md:w-[300px] md:rounded-[26px] md:p-5"
+    >
+      <div className="flex items-center gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-ks-display text-[15px] font-semibold" style={{ background: p.tint, color: p.ink }}>
+          {r.initials}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-[15px] font-semibold">{r.name}</p>
+          <p className="truncate text-[13px] text-ks-subtle">{r.role}</p>
+        </div>
+      </div>
+      <div className="flex items-center justify-between border-t border-[rgba(20,19,18,0.06)] pt-3 text-[13px]">
+        <span className="font-semibold" style={{ color: p.ink }}>{verticalOf(r.vertical).short}</span>
+        <span className="text-ks-soft">{r.xp} · {r.rhythm}</span>
+        <span className="flex items-center gap-1.5 font-medium text-[#17663F]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#2F9A63]" aria-hidden="true" />
+          Dispo
+        </span>
+      </div>
     </div>
   );
 }
 
+/** Accueil : promesse centrée (style du studio), puis un bandeau de profils en boucle. */
 export default function Hero() {
   return (
-    <section className="mx-auto grid max-w-ks items-center gap-12 px-5 pt-12 md:px-8 md:pt-[72px] xl:grid-cols-[1.15fr_1fr] xl:gap-8 xl:px-0">
-      <div className="flex flex-col items-center text-center xl:items-start xl:text-left">
-        <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[84px] xl:text-[66px]">
-          {/* « Plateforme Freelance » sur une seule ligne en deux colonnes */}
-          <span className="xl:whitespace-nowrap">
-            {HERO.title.split(HERO.titleHighlight).flatMap((part, i) =>
-              i === 0
-                ? [part]
-                : [
-                    <Highlight key={i}>{HERO.titleHighlight}</Highlight>,
-                    part,
-                  ],
-            )}
-          </span>
-          <br />
-          <span className="text-[#8F8980]">{HERO.titleSecond}</span>
+    <>
+      <section className="flex flex-col items-center px-5 pt-12 text-center md:px-8 lg:pt-[88px]">
+        <p className="ks-reveal font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle md:text-xs">{HERO.eyebrow}</p>
+        <h1 className="ks-reveal mt-5 max-w-[1100px] font-ks-display text-[46px] font-bold leading-none tracking-[-0.05em] text-ks-ink md:mt-6 md:text-[64px] md:leading-[0.98] md:tracking-[-0.048em] lg:text-[84px] xl:text-[96px]">
+          {HERO.titleLead} <span className="ks-grad-text">{HERO.titleHighlight}</span>
+          <br className="hidden sm:block" /> {HERO.titleEnd}
         </h1>
 
-        <FunctionsUnderline words={HERO.functions} />
+        <p className="ks-reveal mt-5 max-w-[820px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">{HERO.subtitle}</p>
 
-        <div className="ks-reveal mt-6 flex max-w-[760px] flex-col gap-3 text-lg leading-[1.5] text-ks-soft md:text-xl">
-          {HERO.subtitle.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-        </div>
-
-        <div className="ks-reveal mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-          <Cta href={ROUTES.recruit} size="lg" arrow className="shadow-ks-pink">
+        <div className="ks-reveal mt-7 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:gap-3 md:mt-10">
+          <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow className="h-[54px] sm:h-14">
             {HERO.primary}
           </Cta>
-          <Cta href={ROUTES.freelance} size="lg" variant="secondary">
+          <Cta href={ROUTES.freelance} variant="secondary" size="lg" className="h-[54px] shadow-[0_1px_2px_rgba(20,19,18,0.05)] sm:h-14">
             {HERO.secondary}
           </Cta>
         </div>
-        <HeroTrust />
-      </div>
-      {/* Pile de cartes : à partir de la tablette (trop dense sur mobile) */}
-      <div className="ks-reveal hidden w-full md:block">
-        <HeroCards />
-      </div>
-    </section>
-  );
-}
+        <p className="mt-3.5 text-[13px] text-ks-subtle md:mt-[18px] md:text-sm">{HERO.note}</p>
+      </section>
 
-/** Réassurance : pile de photos des experts, communauté, promesses validées. */
-function HeroTrust() {
-  return (
-    <div className="ks-reveal mt-8 flex flex-col items-center gap-3 text-sm text-ks-soft sm:flex-row sm:gap-5">
-      <div className="flex items-center gap-3">
-        <span className="flex -space-x-2.5" aria-hidden="true">
-          {HERO_TRUST.avatars.map((a) => (
-            <PersonPhoto
-              key={a.initials}
-              photo={a.photo}
-              initials={a.initials}
-              palette={a.palette}
-              className="h-9 w-9 rounded-full border-2 border-ks-bg"
-              textClass="text-[12px]"
-            />
-          ))}
-        </span>
-        <span className="font-semibold text-ks-ink">{HERO_TRUST.lead}</span>
+      {/* Profils d'illustration en boucle (60 s), pause au survol */}
+      <div className="ks-marquee mt-11 pb-6 pt-1 md:mt-[72px] md:pb-10 md:pt-2" aria-label="Exemples de profils d'experts IA">
+        <div className="ks-track ks-track-slow">
+          {RECRUITERS.map((r) => <ProfileCard key={r.name} r={r} />)}
+          {RECRUITERS.map((r) => <ProfileCard key={`${r.name}-dup`} r={r} hidden />)}
+        </div>
       </div>
-      <ul className="flex items-center gap-4">
-        {HERO_TRUST.points.map((pt) => (
-          <li key={pt} className="flex items-center gap-1.5">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF2E6E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M5 12.5l4.5 4.5L19 7.5" />
-            </svg>
-            {pt}
-          </li>
-        ))}
-      </ul>
-    </div>
+    </>
   );
 }

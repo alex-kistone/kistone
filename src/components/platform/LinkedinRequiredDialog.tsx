@@ -64,9 +64,9 @@ export default function LinkedinRequiredDialog({ open, firstVisit, initialVertic
           <>
         <DialogHeader>
           <DialogTitle className="text-2xl leading-tight">Bienvenue sur Kistone</DialogTitle>
-          <DialogDescription>Quelle est votre fonction ? Votre profil et les missions proposées en dépendent.</DialogDescription>
+          <DialogDescription>Quel est votre métier ? Votre profil et les missions proposées en dépendent.</DialogDescription>
         </DialogHeader>
-        <div role="radiogroup" aria-label="Votre fonction" className="grid grid-cols-2 gap-2.5">
+        <div role="radiogroup" aria-label="Votre métier" className="grid grid-cols-2 gap-2.5">
           {VERTICALS.map((v) => {
             const p = palettes[v.palette];
             const on = vertical === v.id;

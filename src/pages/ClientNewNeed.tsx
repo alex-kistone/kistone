@@ -248,8 +248,8 @@ const ClientNewNeed = () => {
       {isPublic && !picked ? (
         <main className="container mx-auto max-w-4xl px-4 py-12 md:py-16">
           <h1 className="mb-2 text-3xl font-bold md:text-4xl">De quel profil avez-vous besoin ?</h1>
-          <p className="mb-10 text-muted-foreground">Choisissez la fonction : le formulaire s'adapte à votre besoin.</p>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <p className="mb-10 text-muted-foreground">Un expert IA en freelance, ou un recruteur pour internaliser vos talents : le formulaire s'adapte à votre besoin.</p>
+          <ul className="grid gap-4 sm:grid-cols-2">
             {VERTICALS.map((v) => {
               const p = palettes[v.palette];
               return (
@@ -259,8 +259,8 @@ const ClientNewNeed = () => {
                     onClick={() => { setVertical(v.id); setPicked(true); window.scrollTo(0, 0); }}
                     className="flex h-full w-full flex-col items-start gap-4 rounded-[28px] border border-border bg-card p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
                   >
-                    <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: p.tint, color: p.ink }}>{v.short}</span>
-                    <span className="text-xl font-bold leading-tight">Je cherche un <Highlight>{v.id === "rpo" ? "recruteur" : v.short}</Highlight></span>
+                    <span className="text-xs font-semibold" style={{ color: p.ink }}>[{v.group}]</span>
+                    <span className="text-xl font-bold leading-tight">Je recherche {v.seeking.split(" ")[0]} <Highlight>{v.seeking.split(" ").slice(1).join(" ")}</Highlight></span>
                     <span className="text-sm text-muted-foreground">{v.description}</span>
                     <span className="h-1 w-12 rounded-full" style={{ background: p.accent }} aria-hidden="true" />
                   </button>

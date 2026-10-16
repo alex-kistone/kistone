@@ -6,7 +6,7 @@ import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
 import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { MODEL_PAGES, modelBySlug, modelPath, type ModelPage as Model } from "@/content/models";
+import { LEGACY_MODEL_SLUGS, MODEL_PAGES, modelBySlug, modelPath, type ModelPage as Model } from "@/content/models";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
 import { CALENDLY_URL, ROUTES } from "@/content/site";
 import { palettes } from "@/lib/palettes";
@@ -16,7 +16,10 @@ const BASE_URL = "https://kistone.fr";
 export default function ModelPage() {
   const { slug } = useParams();
   const model = modelBySlug(slug);
-  if (!model) return <Navigate to="/" replace />;
+  if (!model) {
+    const legacy = slug ? LEGACY_MODEL_SLUGS[slug] : undefined;
+    return <Navigate to={legacy ? modelPath({ slug: legacy }) : "/"} replace />;
+  }
   return <ModelContent key={model.slug} model={model} />;
 }
 
@@ -56,7 +59,7 @@ function ModelContent({ model }: { model: Model }) {
         </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{model.lead}</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <Cta href={ROUTES.recruit} size="lg" arrow className="shadow-ks-pink">Partager un besoin</Cta>
+          <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow>Partager un besoin</Cta>
           <Cta href={CALENDLY_URL} size="lg" variant="secondary">En parler 30 min</Cta>
         </div>
         <dl className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -170,14 +173,14 @@ function ModelContent({ model }: { model: Model }) {
       <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
         <div className="rounded-[32px] bg-ks-dark px-7 py-12 text-ks-dark-fg md:px-14 md:py-16">
           <h2 className="max-w-[720px] font-ks-display text-[32px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[48px]">
-            Le bon dirigeant, au bon rythme.
+            Le bon expert IA, au bon rythme.
           </h2>
           <div className="mt-8 flex flex-wrap gap-3">
             <Cta href={ROUTES.recruit} size="lg" arrow>Partager un besoin</Cta>
             {others.map((m) => <Cta key={m.slug} href={modelPath(m)} size="lg" variant="ghost-dark">Modèle {m.name}</Cta>)}
           </div>
-          <nav aria-label="Fonctions" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">
-            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Les fonctions</p>
+          <nav aria-label="Métiers" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">
+            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Les métiers</p>
             <ul className="mt-4 flex flex-wrap gap-2">
               {ROLE_PAGES.map((r) => (
                 <li key={r.slug}>

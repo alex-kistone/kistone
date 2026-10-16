@@ -41,14 +41,14 @@ serve(async (req) => {
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
         max_tokens: 16000,
-        system: `Tu es un assistant RH expert. Kistone place des recruteurs RPO freelance et des dirigeants C-Level fractional (quelques jours par semaine ou temps plein). À partir d'une description libre d'un besoin, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
+        system: `Tu es un assistant RH expert. Kistone place des experts IA freelance (AI Engineers, AI Product, AI Leaders), en mission, en fractional (quelques jours par semaine) ou en contract-to-hire, et des Tech recruiters freelance (RPO) qui recrutent des talents en CDI pour le client. À partir d'une description libre d'un besoin, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
 
-Fonction recherchée (vertical) :
-- rpo : le client cherche un recruteur pour recruter des profils (ex. « un recruteur pour 3 développeurs »).
+Famille recherchée (vertical) :
+- rpo : le client cherche un recruteur pour recruter des profils en CDI (ex. « un recruteur pour 3 AI Engineers »).
 ${VERTICALS.filter((v) => v.id !== "rpo").map((v) => `- ${v.id} : le client cherche un ${v.roles} lui-même (${v.description})`).join("\n")}
-Spécialités possibles par fonction (n'utilise que celles de la fonction retenue) :
+Spécialités possibles par famille (n'utilise que celles de la famille retenue) :
 ${VERTICALS.filter((v) => v.id !== "rpo").map((v) => `- ${v.id} : ${v.specialties.join(" ; ")}`).join("\n")}
-Pour la fonction rpo, les typologies de profils à recruter sont : ${PROFILE_TYPES.join(", ")}.
+Pour la famille rpo, les typologies de profils à recruter sont : ${PROFILE_TYPES.join(", ")}.
 Rythme : days_per_week = nombre de jours par semaine demandés (1 à 4) ; omets-le pour un temps plein ou si rien n'indique un temps partiel. Temps partiel sans nombre de jours (« part-time », « temps partiel », « temps partagé », « quelques jours par semaine ») : mets 2.
 Les secteurs / environnements possibles sont : ${SECTEURS.join(", ")}.
 Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible.
@@ -66,7 +66,7 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
               properties: {
                 job_title: {
                   type: "string",
-                  description: "Intitulé court : « RPO <métier> » pour un recruteur (RPO Tech, RPO Data), sinon « Fractional <fonction> » seulement si un nombre de jours par semaine est donné, « <fonction> temps plein » si le temps plein est explicite, et « <fonction> » seul sinon (Fractional CFO, CTO temps plein, CRO)",
+                  description: "Intitulé court du poste recherché : « Tech recruiter <métier> » pour un recruteur (Tech recruiter Data/AI, Tech recruiter Dev), sinon le rôle précis cité ou déduit (AI Engineer RAG, LLM Engineer, Product Manager IA, Head of AI, Fractional CTO 2 j/sem si un nombre de jours est donné)",
                 },
                 vertical: {
                   type: "string",

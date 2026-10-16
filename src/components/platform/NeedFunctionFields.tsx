@@ -33,7 +33,7 @@ type Props = {
 const toggle = (list: string[], value: string, on: boolean) => (on ? [...list, value] : list.filter((x) => x !== value));
 
 /**
- * Le « quoi » d'un besoin : la fonction recherchée (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO), puis les
+ * Le « quoi » d'un besoin : la famille recherchée (AI Engineer, AI Product, AI Leader, RPO), puis les
  * métiers à recruter (RPO) ou les spécialités attendues (C-Level), et le rythme souhaité.
  */
 export default function NeedFunctionFields({ vertical, onVertical, profileTypes, onProfileTypes, specialties, onSpecialties, days, onDays, hideFunctionChoice }: Props) {
@@ -44,8 +44,8 @@ export default function NeedFunctionFields({ vertical, onVertical, profileTypes,
     <>
       {!hideFunctionChoice && (
       <div className="space-y-3">
-        <Label id="need-function-label">Fonction recherchée</Label>
-        <div role="radiogroup" aria-labelledby="need-function-label" className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+        <Label id="need-function-label">Profil recherché</Label>
+        <div role="radiogroup" aria-labelledby="need-function-label" className="grid grid-cols-2 gap-2.5">
           {VERTICALS.map((v) => {
             const p = palettes[v.palette];
             const on = v.id === vertical;
@@ -58,7 +58,7 @@ export default function NeedFunctionFields({ vertical, onVertical, profileTypes,
                 onClick={() => {
                   if (v.id === vertical) return;
                   onVertical(v.id);
-                  // Les spécialités d'une fonction n'ont pas de sens pour une autre
+                  // Les spécialités d'une famille n'ont pas de sens pour une autre
                   onSpecialties([]);
                 }}
                 className={cn(
@@ -66,8 +66,8 @@ export default function NeedFunctionFields({ vertical, onVertical, profileTypes,
                   on ? "border-foreground ring-1 ring-foreground" : "border-border hover:bg-muted/50",
                 )}
               >
-                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: p.tint, color: p.ink }}>{v.short}</span>
-                <span className="text-sm font-semibold leading-tight">{v.label}</span>
+                <span className="text-[11px] font-semibold" style={{ color: p.ink }}>[{v.group}]</span>
+                <span className="text-sm font-semibold leading-tight">{v.id === "rpo" ? v.label : v.short}</span>
               </button>
             );
           })}

@@ -3,7 +3,7 @@ import { palettes, type PaletteName } from "@/lib/palettes";
 import { BoltWatermark } from "@/components/brand/Bolt";
 
 /** Une teinte de carte par étape (jamais le rose, réservé aux détails clés). */
-const STEP_TINTS: PaletteName[] = ["apricot", "sage", "blue"];
+const STEP_TINTS: PaletteName[] = ["blue", "lilac", "teal"];
 
 /** Étape 1 : le besoin saisi, ses critères. */
 function BriefMini() {
@@ -13,7 +13,7 @@ function BriefMini() {
       <div className="h-2 w-[85%] rounded-full bg-ks-secondary" />
       <div className="h-2 w-[62%] rounded-full bg-ks-secondary" />
       <div className="mt-1 flex flex-wrap gap-1.5">
-        {["CFO", "2 j / sem", "Trésorerie"].map((c) => (
+        {["AI Engineer", "RAG", "Mission 6 mois"].map((c) => (
           <span key={c} className="rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: p.soft, color: p.ink }}>
             {c}
           </span>
@@ -79,7 +79,7 @@ export default function HowItWorks() {
     <section id="comment" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <BoltWatermark className="-left-20 top-0 h-[420px] w-auto rotate-[-10deg]" />
       <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-        Un expert senior.
+        Un expert IA qualifié.
         <br />
         La flexibilité du freelance.
       </h2>
@@ -96,7 +96,7 @@ export default function HowItWorks() {
                 <Visual />
               </div>
               <div className="flex flex-col gap-2.5 px-5 pb-5 pt-6">
-                <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">{s.num}</span>
+                <span className="self-start font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">{s.num}</span>
                 <h3 className="font-ks-display text-[24px] font-semibold tracking-[-0.02em]">{s.title}</h3>
                 <p className="text-base leading-[1.55] text-ks-soft">{s.desc}</p>
               </div>

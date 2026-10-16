@@ -188,7 +188,7 @@ const ClientEditNeed = () => {
 
           <div className="space-y-2">
             <Label htmlFor="jobTitle">Intitulé du poste recherché</Label>
-            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={vertical === "rpo" ? "Ex : RPO Tech" : `Ex : Fractional ${verticalOf(vertical).short}`} required />
+            <Input id="jobTitle" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={vertical === "rpo" ? "Ex : Tech recruiter Data/AI" : `Ex : ${verticalOf(vertical).short} senior`} required />
           </div>
 
           <NeedFunctionFields

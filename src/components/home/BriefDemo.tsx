@@ -25,10 +25,10 @@ function SparkIcon() {
 
 /**
  * Démo du produit : un besoin se tape tout seul, l'IA en extrait les critères, puis les
- * recruteurs correspondants apparaissent avec leur score. Un onglet par métier ; la démo
+ * experts correspondants apparaissent avec leur score. Un onglet par famille ; la démo
  * enchaîne les exemples tant que le visiteur ne choisit pas lui-même.
  * Le visiteur peut aussi taper son propre besoin : « Déposer mon besoin » l'emmène sur
- * /besoin avec la fonction choisie et la fiche pré-remplie par l'IA.
+ * /besoin avec la famille choisie et la fiche pré-remplie par l'IA.
  */
 export default function BriefDemo() {
   const [index, setIndex] = useState(0);
@@ -90,16 +90,16 @@ export default function BriefDemo() {
     setCustom("");
   };
 
-  // Pendant la frappe, l'onglet suit la fonction citée (« un CTO… ») ; l'IA confirme sur /besoin
+  // Pendant la frappe, l'onglet suit la famille citée (« un AI Engineer… ») ; l'IA confirme sur /besoin
   const write = (text: string) => {
     setCustom(text);
     const v = detectVertical(text);
-    const i = v ? BRIEFS.findIndex((b) => b.domain.toLowerCase() === v) : -1;
+    const i = v ? BRIEFS.findIndex((b) => b.vertical === v) : -1;
     if (i >= 0 && i !== index) setIndex(i);
   };
 
   // Avec un besoin tapé : fonction présélectionnée et fiche pré-remplie ; sinon, choix de la fonction
-  const needHref = custom?.trim() ? `${ROUTES.recruit}?fonction=${brief.domain.toLowerCase()}` : ROUTES.recruit;
+  const needHref = custom?.trim() ? `${ROUTES.recruit}?fonction=${brief.vertical}` : ROUTES.recruit;
   const keepBrief = () => {
     if (custom?.trim()) saveHomeBrief(custom);
   };

@@ -13,12 +13,12 @@ export default function FreelanceCTA() {
       >
         <BoltWatermark className="-bottom-24 -right-10 h-[440px] w-auto rotate-[12deg]" />
         <div>
-          <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">Je suis freelance</span>
+          <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">Je suis freelance</span>
           <h2 id="freelances-title" className="mt-4 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
-            Des missions fractional. Zéro administratif.
+            Des missions IA qualifiées. Zéro administratif.
           </h2>
           <p className="mt-[18px] max-w-[480px] text-[17px] leading-[1.55] text-ks-soft md:text-lg">
-            Rejoignez la plateforme : missions qualifiées en RPO, DRH, CFO, COO, CRO, CTO, CPO ou CDO, contrat, CRA et facturation gérés pour vous.
+            AI Engineer, AI Product, AI Leader ou Tech recruiter : rejoignez la plateforme. Contrat, KYC, CRA et facturation gérés pour vous, et un paiement intégral chaque fin de mois.
           </p>
           <Cta href={ROUTES.freelance} variant="dark" size="lg" arrow className="mt-7">
             Rejoindre la plateforme

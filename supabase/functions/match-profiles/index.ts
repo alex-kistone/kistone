@@ -197,8 +197,8 @@ async function rankWithClaude(
   const isRpo = (need.vertical ?? "rpo") === "rpo";
   const v = verticalOf(need.vertical);
   const intro = isRpo
-    ? "Tu es un expert du recrutement RPO chez Kistone. Tu classes des recruteurs freelances face à un besoin client."
-    : `Tu es un expert des dirigeants C-Level fractional chez Kistone. Tu classes des freelances ${v.roles} (fonction ${v.label}) face à un besoin client.`;
+    ? "Tu es un expert du recrutement tech et IA (RPO) chez Kistone. Tu classes des Tech recruiters freelances face à un besoin client."
+    : `Tu es un expert des métiers de l'IA chez Kistone. Tu classes des freelances ${v.roles} (famille ${v.label}) face à un besoin client.`;
   const analysis = isRpo
     ? `Analyse des compétences :
 - Les métiers recrutés sont : ${METIER_FAMILIES.flat().join(", ")}. Familles voisines : ${METIER_FAMILIES.map((f) => f.join(" / ")).join(" ; ")}. Un recruteur d'une famille voisine peut convenir, un recruteur d'une autre famille rarement.

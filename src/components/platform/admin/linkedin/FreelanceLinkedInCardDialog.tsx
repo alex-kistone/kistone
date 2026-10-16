@@ -77,7 +77,7 @@ export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChang
     let title = (profile.job_title ?? "").trim();
     for (const t of terms) title = title.replace(wordRe(t, "giu"), "").replace(/\s{2,}/g, " ").replace(/^[\s,·@-]+|[\s,·@-]+$/g, "");
     return {
-      title: title || (v.id === "rpo" ? "Recruteur freelance" : `Fractional ${v.short}`),
+      title: title || (v.id === "rpo" ? "Tech recruiter freelance" : `${v.short} freelance`),
       meta: [profile.years_experience ? `${profile.years_experience} ans d'expérience` : "", rhythmLabel(profile.weekly_capacity)].filter(Boolean).join(" · "),
       pitch: profilePitch(profile, terms),
       // Une seule ville : la tuile tient sur une ligne
@@ -132,7 +132,7 @@ export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChang
     "",
     f.cta,
     "",
-    `#freelance #fractional #${v.short.toLowerCase()} #kistone`,
+    `#freelance #IA #${v.short.replace(/\s+/g, "")} #kistone`,
   ].filter((l): l is string => typeof l === "string").join("\n").replace(/\n{3,}/g, "\n\n");
 
   return (

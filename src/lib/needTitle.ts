@@ -13,11 +13,11 @@ export type NeedTitleInput = {
   description: string | null;
 };
 
-/** Intitulé de secours, sans IA : « RPO Tech », « Fractional CFO », « CTO temps plein ». */
+/** Intitulé de secours, sans IA : « Tech recruiter Data/AI », « Fractional AI Leader », « AI Engineer ». */
 export function fallbackNeedTitle(n: Pick<NeedTitleInput, "vertical" | "profileTypes" | "days">): string {
   const v = verticalOf(n.vertical);
-  if (v.id === "rpo") return n.profileTypes.length ? `RPO ${n.profileTypes.slice(0, 2).join(" & ")}` : "RPO";
-  return n.days && n.days < 5 ? `Fractional ${v.short}` : `${v.short} temps plein`;
+  if (v.id === "rpo") return n.profileTypes.length ? `Tech recruiter ${n.profileTypes.slice(0, 2).join(" & ")}` : "Tech recruiter";
+  return n.days && n.days < 5 ? `Fractional ${v.short}` : v.short;
 }
 
 /**
@@ -27,7 +27,7 @@ export function fallbackNeedTitle(n: Pick<NeedTitleInput, "vertical" | "profileT
 export async function generateNeedTitle(n: NeedTitleInput): Promise<string> {
   const v = verticalOf(n.vertical);
   const brief = [
-    `Fonction recherchée : ${v.short} (${v.roles}).`,
+    `Famille recherchée : ${v.short} (${v.roles}).`,
     v.id === "rpo" ? `Métiers à recruter : ${n.profileTypes.join(", ") || "non précisés"}.` : `Spécialités attendues : ${n.specialties.join(", ") || "non précisées"}.`,
     `Rythme : ${n.days && n.days < 5 ? `${n.days} jours par semaine` : "temps plein"}.`,
     n.location ? `Lieu : ${n.location} (${remoteLabel(n.remotePolicy)}).` : "",

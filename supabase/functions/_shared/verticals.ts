@@ -23,6 +23,8 @@ export interface VerticalConfig {
   group: "AI" | "RPO";
   /** Profil recherché, après « Je recherche » (« un Tech recruiter », « un AI Engineer »). */
   seeking: string;
+  /** Fiche de poste publique : /recruter/<pageSlug>. */
+  pageSlug: string;
   /** Rôles couverts, pour les cartes (« AI Engineer · LLM Engineer »). */
   roles: string;
   /** Une ligne de description (landing, choix de la famille). */
@@ -64,28 +66,28 @@ const LEADER_SPECIALTIES = [
 
 export const VERTICALS: readonly VerticalConfig[] = [
   {
-    id: "engineer", short: "AI Engineer", label: "Ingénierie IA", group: "AI", seeking: "un AI Engineer",
+    id: "engineer", short: "AI Engineer", label: "Ingénierie IA", group: "AI", seeking: "un AI Engineer", pageSlug: "ai-engineer",
     roles: "AI Engineer · LLM Engineer · MLOps",
     description: "LLM, RAG et agents, MLOps et infrastructure IA : des ingénieurs qui mettent l'IA en production.",
     palette: "blue", specialties: ENGINEER_SPECIALTIES,
     jarvi: { projectId: "a8d4ac0f-d7fa-46b8-a8b3-3924bdc07d3e", specialtiesFieldId: "eaba6143-8e57-4384-89a4-08693de4e9c5" },
   },
   {
-    id: "product", short: "AI Product", label: "Produit IA", group: "AI", seeking: "un AI Product",
+    id: "product", short: "AI Product", label: "Produit IA", group: "AI", seeking: "un AI Product", pageSlug: "ai-product-manager",
     roles: "Product Manager IA · AI Designer",
     description: "Product Managers, Product Owners et designers qui conçoivent des produits IA utiles.",
     palette: "lilac", specialties: PRODUCT_SPECIALTIES,
     jarvi: { projectId: "627670cb-b090-4061-a534-fb5f195e4637", specialtiesFieldId: "26d7fa39-43fc-4c90-af0e-c790180bae2a" },
   },
   {
-    id: "leader", short: "AI Leader", label: "Leadership IA", group: "AI", seeking: "un AI Leader",
+    id: "leader", short: "AI Leader", label: "Leadership IA", group: "AI", seeking: "un AI Leader", pageSlug: "ai-leader",
     roles: "CTO · Head of AI · Chief AI Officer",
     description: "CTO, Head of AI ou Chief AI Officer, en fractional ou en mission, pour porter votre stratégie IA.",
     palette: "teal", specialties: LEADER_SPECIALTIES, partTimeTag: "AI Leader Part-time",
     jarvi: { projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c5f1c316-4911-478b-bded-220bebe7c639" },
   },
   {
-    id: "rpo", short: "RPO", label: "Tech recruiter", group: "RPO", seeking: "un Tech recruiter",
+    id: "rpo", short: "RPO", label: "Tech recruiter", group: "RPO", seeking: "un Tech recruiter", pageSlug: "tech-recruiter",
     roles: "Tech recruiter freelance",
     description: "Des recruteurs tech et IA intégrés à vos équipes pour internaliser vos talents en CDI.",
     palette: "sage", specialties: [], // métiers recrutés : METIERS (taxonomy.ts)

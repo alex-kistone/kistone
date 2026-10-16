@@ -20,13 +20,13 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
   {
     tag: "Opportunités",
     title: "Des missions qui vous ressemblent",
-    text: "Fini les sollicitations au hasard. Vous recevez des besoins qualifiés dans votre fonction et vos spécialités, avec le contexte, le rythme, le lieu et le budget dès le départ. Vous vous positionnez en un clic sur ceux qui vous intéressent.",
+    text: "Fini les sollicitations au hasard. Vous recevez des besoins qualifiés dans votre famille et vos spécialités, avec le contexte, le rythme, le lieu et le budget dès le départ. Vous vous positionnez en un clic sur ceux qui vous intéressent.",
     palette: "sage",
     visual: () => (
       <ul className="flex w-full flex-col gap-2">
         {[
-          { t: "Fractional CFO · Scale-up SaaS", m: "2 j / sem · Paris hybride" },
-          { t: "Fractional DRH · PME industrielle", m: "3 j / sem · Lyon" },
+          { t: "AI Engineer · Scale-up SaaS", m: "Temps plein · Paris hybride" },
+          { t: "Head of AI · ETI industrielle", m: "2 j / sem · Lyon" },
           { t: "RPO Tech · 5 développeurs", m: "Temps plein · Remote" },
         ].map((o) => (
           <li key={o.t} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
@@ -62,7 +62,7 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
   {
     tag: "Rythme",
     title: "Le rythme que vous choisissez",
-    text: "Quelques jours par semaine auprès de plusieurs entreprises, une mission à temps plein le temps d'une période clé, ou une mission qui peut déboucher sur un recrutement : vous indiquez votre capacité, on vous propose ce qui s'y accorde.",
+    text: "Une mission à temps plein le temps d'un projet, quelques jours par semaine auprès de plusieurs entreprises, ou une mission qui peut déboucher sur un recrutement : vous indiquez votre capacité, on vous propose ce qui s'y accorde.",
     palette: "apricot",
     visual: () => (
       <div className="flex w-full flex-col gap-2">
@@ -111,23 +111,24 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
 ];
 
 const STEPS = [
-  { title: "Créez votre profil", desc: "Connexion LinkedIn, puis votre fonction, vos spécialités, votre rythme et votre TJM. Une dizaine de minutes." },
+  { title: "Créez votre profil", desc: "Connexion LinkedIn, puis votre métier, vos spécialités, votre rythme et votre TJM. Une dizaine de minutes." },
   { title: "Entretien de qualification", desc: "Un échange avec l'équipe Kistone pour comprendre votre parcours, vos réussites et le type de missions que vous cherchez." },
   { title: "Recevez des missions", desc: "Les besoins qui correspondent à votre profil arrivent dans « Mes opportunités ». Vous vous positionnez, on prépare la rencontre." },
   { title: "Démarrez sereinement", desc: "Contrat, dossier administratif, CRA et facturation dans votre espace : vous vous concentrez sur la mission." },
 ];
 
 const CRITERIA = [
-  "Au moins 10 ans d'expérience pour les fonctions de direction (5 ans pour le recrutement RPO)",
-  "Des réussites concrètes en startup, scale-up ou PME en croissance",
+  "Des projets d'IA menés jusqu'en production, ou des produits IA lancés",
+  "Au moins 10 ans d'expérience pour les AI Leaders (5 ans pour les Tech recruiters)",
+  "Des réussites concrètes en startup, scale-up, PME ou grand groupe",
   "Une structure juridique pour facturer (société ou micro-entreprise)",
-  "L'envie de travailler en proximité avec les dirigeants, au sein de leurs équipes",
+  "L'envie de travailler au sein des équipes de vos clients, avec leurs outils et leurs rituels",
 ];
 
 const FAQ = [
   { q: "L'inscription est-elle payante ?", a: "Non. L'inscription et l'utilisation de l'espace freelance sont gratuites." },
   { q: "Qui fixe le TJM ?", a: "Vous. Vous indiquez votre tarif journalier dans votre profil ; il peut être ajusté d'un commun accord selon la mission." },
-  { q: "Quelles fonctions recherchez-vous ?", a: "RPO, DRH, CFO, COO, CRO, CTO, CPO et CDO, à temps partagé, à temps plein ou en contract-to-hire." },
+  { q: "Quels profils recherchez-vous ?", a: "Des AI Engineers (LLM, RAG, agents, MLOps), des AI Product (Product Managers IA, Product Owners, AI Designers), des AI Leaders (CTO, Head of AI, Chief AI Officer) et des Tech recruiters, en mission, en fractional ou en contract-to-hire." },
   { q: "Quels documents faut-il fournir ?", a: "Avant la première mission : vos informations de société (SIRET), une attestation URSSAF, une assurance responsabilité civile professionnelle et un RIB. Tout se dépose dans votre espace." },
   { q: "Comment suis-je payé ?", a: "Chaque mois, le client valide votre compte rendu d'activité ; vous déposez votre facture dans votre espace et Kistone la règle, sans relance de votre part." },
 ];
@@ -141,8 +142,8 @@ export default function FreelancesPage() {
   return (
     <SiteLayout>
       <SEO
-        title="Espace freelance : rejoignez la communauté Kistone"
-        description="Dirigeants et recruteurs freelance (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO) : missions qualifiées, rémunération transparente payée chaque mois, rythme au choix, administratif et facturation gérés. Inscription gratuite."
+        title="Espace freelance : rejoignez la plateforme des experts IA"
+        description="AI Engineers, AI Product, AI Leaders et Tech recruiters freelance : missions qualifiées, rémunération transparente payée chaque mois, rythme au choix, administratif et facturation gérés. Inscription gratuite."
         path="/freelances"
         jsonLd={jsonLd}
       />
@@ -152,13 +153,13 @@ export default function FreelancesPage() {
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[640px] w-auto rotate-[14deg] md:h-[760px]" />
         <div>
           <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
-            Rejoignez la communauté des <Highlight>Fractional Leaders</Highlight>
+            Rejoignez la plateforme des <Highlight>experts IA</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
-            Des missions de direction et de recrutement qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
+            Des missions IA qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Cta href={JOIN} size="lg" arrow className="shadow-ks-pink">Rejoindre Kistone</Cta>
+            <Cta href={JOIN} variant="studio" size="lg" arrow>Rejoindre Kistone</Cta>
             <Cta href={LOGIN} size="lg" variant="secondary">Se connecter</Cta>
           </div>
         </div>
@@ -187,8 +188,8 @@ export default function FreelancesPage() {
         })}
       </div>
 
-      {/* Fonctions */}
-      <PageSection title="Les fonctions que nous recherchons" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
+      {/* Métiers */}
+      <PageSection title="Les métiers que nous recherchons" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
         <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {ROLE_PAGES.map((r) => {
             const v = verticalOf(r.vertical);

@@ -23,7 +23,7 @@ import { MODEL_PAGES, modelPath } from "./models";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
 
-/** Les pages métier (/recruter/…), dans le menu et le pied de page. */
+/** Les fiches de poste (/recruter/…), dans le menu et le pied de page. */
 const ROLE_ITEMS = ROLE_PAGES.map((r) => ({
   title: r.role,
   desc: verticalOf(r.vertical).description,
@@ -40,7 +40,7 @@ export type Menu = { id: string; label: string; items: MenuItem[] };
 export const MENUS: Menu[] = [
   {
     id: "mkt",
-    label: "Fractional Leaders",
+    label: "Experts IA",
     items: ROLE_ITEMS,
   },
   {
@@ -62,7 +62,7 @@ export const MENUS: Menu[] = [
 
 export const FOOTER_COLUMNS = [
   {
-    title: "Fractional Leaders",
+    title: "Experts IA",
     links: ROLE_ITEMS.map((r) => ({ label: r.title, href: r.href })),
   },
   {

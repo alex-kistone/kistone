@@ -13,13 +13,13 @@ export default function FinalCTA() {
       >
         <BoltWatermark className="-bottom-20 -left-10 h-[360px] w-auto rotate-[-14deg]" />
         <h2 id="final-cta-title" className="relative font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-          {FINAL_CTA.title}
+          {FINAL_CTA.title.split("expert IA")[0]}<span className="ks-grad-text">expert IA</span>
           <br />
-          <span className="ks-highlight">{FINAL_CTA.titleEnd}</span>
+          {FINAL_CTA.titleEnd}
         </h2>
         <p className="relative mx-auto mt-5 max-w-[520px] text-[17px] leading-[1.55] text-ks-soft md:text-lg">{FINAL_CTA.text}</p>
         <div className="relative mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-          <Cta href={ROUTES.recruit} size="lg" arrow className="shadow-ks-pink">
+          <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow>
             {FINAL_CTA.primary}
           </Cta>
           <Cta href={ROUTES.freelance} size="lg" variant="secondary">

@@ -19,7 +19,7 @@ export default function PromoBanner() {
 
   return (
     <div className="relative bg-ks-pink px-12 py-2.5 text-center text-[14px] text-white sm:text-[15px]">
-      <span>Échangez gratuitement avec des Fractional Leaders <strong className="font-semibold">dès cette semaine</strong> !</span>{" "}
+      <span>Échangez gratuitement avec des experts IA <strong className="font-semibold">dès cette semaine</strong> !</span>{" "}
       <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="ml-1 inline-flex items-center gap-1 font-semibold underline underline-offset-4 hover:no-underline sm:ml-3">
         Réserver un appel
         <span aria-hidden="true">→</span>

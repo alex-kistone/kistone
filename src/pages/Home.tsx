@@ -2,35 +2,40 @@ import SEO from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
 import Hero from "@/components/home/Hero";
 import BriefDemo from "@/components/home/BriefDemo";
-import ProofStrip from "@/components/home/ProofStrip";
+import KeyFigures from "@/components/studio/KeyFigures";
 import FunctionsGrid from "@/components/home/FunctionsGrid";
-import FinalCTA from "@/components/home/FinalCTA";
-import LogoTicker from "@/components/home/LogoTicker";
 import HowItWorks from "@/components/home/HowItWorks";
 import WhyMarketplace from "@/components/home/WhyMarketplace";
+import ModelsTeaser from "@/components/home/ModelsTeaser";
 import FreelanceCTA from "@/components/home/FreelanceCTA";
 import StudioReminder from "@/components/home/StudioReminder";
 import ResourcesTeaser from "@/components/home/ResourcesTeaser";
+import FinalCTA from "@/components/home/FinalCTA";
+import { KEY_FIGURES } from "@/content/home";
+import "@/site/studio.css";
 
+/** Accueil : la plateforme freelance des experts IA, dans le style de la page /studio. */
 export default function Home() {
   return (
     <SiteLayout>
       <SEO
-        title="Kistone · Plateforme Freelance · Fractional Leaders"
-        description="Dirigeants et recruteurs freelance pour les entreprises Tech & Digital : RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO, à temps plein ou quelques jours par semaine."
+        title="Kistone · Plateforme freelance des experts IA"
+        description="AI Engineers, AI Product Managers et AI Leaders freelance, sélectionnés et qualifiés : un premier profil en 48 h, en mission, en fractional ou en contract-to-hire. Et des Tech recruiters pour internaliser vos talents IA."
         path="/"
       />
-      <Hero />
-      <BriefDemo />
-      <LogoTicker />
-      <FunctionsGrid />
-      <ProofStrip />
-      <HowItWorks />
-      <WhyMarketplace />
-      <FreelanceCTA />
-      <StudioReminder />
-      <ResourcesTeaser />
-      <FinalCTA />
+      <div className="overflow-x-clip">
+        <Hero />
+        <KeyFigures figures={KEY_FIGURES} />
+        <BriefDemo />
+        <FunctionsGrid />
+        <HowItWorks />
+        <WhyMarketplace />
+        <ModelsTeaser />
+        <FreelanceCTA />
+        <StudioReminder />
+        <ResourcesTeaser />
+        <FinalCTA />
+      </div>
     </SiteLayout>
   );
 }

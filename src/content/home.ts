@@ -1,26 +1,26 @@
 import { palettes, type PaletteName } from "@/lib/palettes";
+import type { Vertical } from "@/lib/verticals";
 
 // Contenus de l'accueil. Les [placeholders] restent tels quels en attendant le vrai contenu.
 
 export const HERO = {
-  // « Plateforme Freelance » / « Fractional Leaders » (jamais « management de transition »)
-  title: "Plateforme Freelance",
-  titleHighlight: "Freelance",
-  titleSecond: "Fractional Leaders",
-  // Un soulignement rose passe d'une fonction à l'autre sous le titre
-  functions: ["RPO", "DRH", "CFO", "COO", "CRO", "CTO"],
-  subtitle: [
-    "Des dirigeants et des recruteurs freelance pour les entreprises Tech & Digital, à temps plein ou quelques jours par semaine. En quelques jours, pas en quelques mois.",
-  ],
+  // Plateforme freelance des experts IA (jamais « management de transition »)
+  eyebrow: "Plateforme freelance des experts IA",
+  titleLead: "Votre prochain",
+  titleHighlight: "expert IA",
+  titleEnd: "est déjà disponible.",
+  subtitle:
+    "AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l'administratif géré pour vous.",
   primary: "Accéder aux profils",
   secondary: "Je suis freelance",
+  note: "Profils qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
 };
 
 export type Recruiter = {
   initials: string;
   name: string;
   role: string;
-  /** Fonction (rpo, drh, cfo, coo, cro, cto). */
+  /** Famille (engineer, product, leader, rpo). */
   vertical: string;
   rhythm: string;
   xp: string;
@@ -29,38 +29,38 @@ export type Recruiter = {
 
 // Profils fictifs, pour illustrer la plateforme en attendant les vrais.
 export const RECRUITERS: Recruiter[] = [
-  { initials: "JM", name: "Julie M.", role: "Recruteuse Tech & Produit", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage" },
-  { initials: "TR", name: "Thomas R.", role: "Recruteur Tech", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "blue" },
-  { initials: "CM", name: "Camille M.", role: "Fractional DRH", vertical: "drh", rhythm: "3 j / sem", xp: "12 ans", palette: "apricot" },
-  { initials: "VB", name: "Valérie B.", role: "DRH · Transformation RH", vertical: "drh", rhythm: "2 j / sem", xp: "15 ans", palette: "apricot" },
-  { initials: "TL", name: "Thomas L.", role: "Fractional CFO · ex-Qonto", vertical: "cfo", rhythm: "2 j / sem", xp: "15 ans", palette: "lilac" },
-  { initials: "YK", name: "Youssef K.", role: "CFO · levées de fonds", vertical: "cfo", rhythm: "Temps plein", xp: "13 ans", palette: "lilac" },
-  { initials: "AD", name: "Aminata D.", role: "COO · scaling des opérations", vertical: "coo", rhythm: "3 j / sem", xp: "14 ans", palette: "sand" },
-  { initials: "RP", name: "Rohit P.", role: "COO · supply chain", vertical: "coo", rhythm: "Temps plein", xp: "11 ans", palette: "sand" },
-  { initials: "SB", name: "Sylvie B.", role: "CRO · ouverture de marché", vertical: "cro", rhythm: "Temps plein", xp: "14 ans", palette: "blue" },
-  { initials: "KB", name: "Karim B.", role: "Head of Sales · SaaS B2B", vertical: "cro", rhythm: "2 j / sem", xp: "12 ans", palette: "blue" },
-  { initials: "LN", name: "Lina N.", role: "CTO · intégration IA", vertical: "cto", rhythm: "3 j / sem", xp: "16 ans", palette: "teal" },
-  { initials: "MG", name: "Marc G.", role: "Head of AI · data", vertical: "cto", rhythm: "2 j / sem", xp: "10 ans", palette: "teal" },
+  { initials: "LN", name: "Lina N.", role: "AI Engineer · RAG", vertical: "engineer", rhythm: "Temps plein", xp: "8 ans", palette: "blue" },
+  { initials: "HP", name: "Hugo P.", role: "LLM Engineer · agents", vertical: "engineer", rhythm: "Temps plein", xp: "6 ans", palette: "blue" },
+  { initials: "CD", name: "Claire D.", role: "Product Manager IA", vertical: "product", rhythm: "Temps plein", xp: "9 ans", palette: "lilac" },
+  { initials: "MG", name: "Marc G.", role: "Head of AI", vertical: "leader", rhythm: "2 j / sem", xp: "14 ans", palette: "teal" },
+  { initials: "SK", name: "Sami K.", role: "MLOps Engineer", vertical: "engineer", rhythm: "4 j / sem", xp: "9 ans", palette: "blue" },
+  { initials: "JM", name: "Julie M.", role: "Tech recruiter · IA & data", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage" },
+  { initials: "YB", name: "Yanis B.", role: "Product Owner · produits LLM", vertical: "product", rhythm: "4 j / sem", xp: "7 ans", palette: "lilac" },
+  { initials: "NR", name: "Nadia R.", role: "CTO · IA", vertical: "leader", rhythm: "3 j / sem", xp: "16 ans", palette: "teal" },
+  { initials: "EL", name: "Emma L.", role: "AI Designer", vertical: "product", rhythm: "Temps plein", xp: "8 ans", palette: "lilac" },
+  { initials: "AT", name: "Adam T.", role: "Data engineer · IA", vertical: "engineer", rhythm: "Temps plein", xp: "7 ans", palette: "blue" },
+  { initials: "PV", name: "Paul V.", role: "Chief AI Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal" },
+  { initials: "TR", name: "Thomas R.", role: "Tech recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage" },
 ];
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
 
 export const STEPS = [
-  { num: "Étape 01", title: "Partagez votre besoin", desc: "On qualifie ensemble l'enjeu, le temps utile et le budget." },
-  { num: "Étape 02", title: "Un profil en 48 h", desc: "Un freelance senior, présélectionné sur la fonction et vos enjeux." },
-  { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, conformité, onboarding : puis un suivi régulier de la mission." },
+  { num: "Étape 01", title: "Partagez votre besoin", desc: "Quelques lignes suffisent : l'IA en extrait les critères, on les qualifie avec vous." },
+  { num: "Étape 02", title: "Matching et profil en 48 h", desc: "Un expert IA sélectionné et qualifié en entretien, choisi pour votre contexte." },
+  { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, KYC et onboarding gérés : l'expert démarre, on suit la mission avec vous." },
 ];
 
 export const ASSETS = [
-  { icon: "shield", title: "Profils qualifiés", desc: "Parcours, expertise et références évalués en entretien avant la première mission.", featured: true },
-  { icon: "clock", title: "Fractional ou temps plein", desc: "Quelques jours par semaine ou à plein temps. Vous ajustez selon vos besoins." },
-  { icon: "team", title: "Intégré à votre équipe", desc: "Vos outils, vos rituels, vos objectifs. Un dirigeant qui travaille avec vous." },
-  { icon: "pulse", title: "Spécialisés par fonction", desc: "RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO : un expert qui connaît vos enjeux." },
+  { icon: "shield", title: "Profils sélectionnés et qualifiés", desc: "Parcours, projets IA et références évalués en entretien avant la première mission.", featured: true },
+  { icon: "pulse", title: "Matching sur vos critères", desc: "Stack, cas d'usage, séniorité, rythme et budget : seuls les profils pertinents remontent." },
+  { icon: "clock", title: "Réactivité", desc: "Un premier profil en 48 h et un démarrage en une semaine, pas en trois mois." },
+  { icon: "team", title: "Le bon format", desc: "Mission, fractional ou contract-to-hire : vous ajustez selon votre besoin." },
 ] as const;
 
 export const FREELANCE_SPACE = [
-  { label: "Mission CFO · Scale-up SaaS · 2 j/sem.", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
-  { label: "CRA d'octobre · 8 jours", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
+  { label: "Mission AI Engineer · Scale-up SaaS", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
+  { label: "CRA d'octobre · 18 jours", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
   { label: "Facture d'octobre", status: "Envoyée", bg: palettes.blue.soft, fg: palettes.blue.ink },
   { label: "Nouvelle mission proposée", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
 ];
@@ -78,93 +78,57 @@ export const RESOURCES: { kind: string; title: string; meta: string; palette: Pa
   { kind: "Guide", title: "[Titre de guide : outiller ses RH avec l’IA]", meta: "Guide · PDF", palette: "teal" },
 ];
 
-// ── Refonte 2027 ────────────────────────────────────────────────────────────
-
-/** Rangée de réassurance sous le hero (promesses validées uniquement). */
-/**
- * Cartes profils à droite du hero (profils d'illustration, portraits générés par IA).
- * Photo dans public/people/ : sans fichier, la carte affiche les initiales.
- */
-export type HeroCard = {
-  initials: string; name: string; chip: string; role: string; meta: string; tags: string[];
-  palette: PaletteName; photo: string; capacity: string; availability: string;
-};
-export const HERO_CARDS: HeroCard[] = [
-  { initials: "SR", name: "Sarah R.", chip: "Legal", role: "Legal counsel", meta: "9 ans · Tech & SaaS", tags: ["Contrats", "Conformité", "Gouvernance"], palette: "sand", photo: "/people/sarah.jpg", capacity: "2j / semaine", availability: "Dispo immédiatement" },
-  { initials: "TL", name: "Thomas L.", chip: "CFO", role: "Fractional CFO", meta: "15 ans · ex-Qonto, Spendesk", tags: ["Closing", "Cash forecast", "Série A/B"], palette: "blue", photo: "/people/thomas.jpg", capacity: "2j / semaine", availability: "Dispo sous 1 sem." },
-  { initials: "CM", name: "Camille M.", chip: "DRH", role: "Fractional DRH", meta: "12 ans · ex-Doctolib, Alan", tags: ["Comp & ben", "People ops", "Onboarding"], palette: "sage", photo: "/people/camille.jpg", capacity: "3j / semaine", availability: "Dispo sous 2 sem." },
-];
-
-export const HERO_TRUST = {
-  // Avatars de la ligne de réassurance : les profils des cartes
-  avatars: [
-    { initials: "CM", photo: "/people/camille.jpg", palette: "sage" },
-    { initials: "TL", photo: "/people/thomas.jpg", palette: "blue" },
-    { initials: "SR", photo: "/people/sarah.jpg", palette: "sand" },
-  ] as { initials: string; photo: string; palette: PaletteName }[],
-  lead: "700+ experts qualifiés",
-  points: ["Profil sous 48 h", "Sans engagement"],
-};
-
 /**
  * Démo « brief → matching » : un besoin se tape tout seul, l'IA en extrait les critères,
  * puis les profils correspondants apparaissent. Un exemple par fonction (onglets).
  * Profils fictifs en attendant les vrais : la démo illustre le produit.
  */
-export type Brief = { domain: string; text: string; criteria: string[]; matches: { name: string; score: number }[] };
+export type Brief = { vertical: Vertical; domain: string; text: string; criteria: string[]; matches: { name: string; score: number }[] };
 export const BRIEFS: Brief[] = [
   {
-    domain: "RPO",
-    text: "Je cherche un recruteur pour 3 développeurs backend, à Paris en hybride, dès que possible.",
-    criteria: ["RPO Tech", "Paris · hybride", "Dès que possible", "3 postes"],
+    vertical: "engineer",
+    domain: "AI Engineer",
+    text: "Notre POC d'assistant interne marche en démo : on cherche un AI Engineer pour industrialiser le RAG et le passer en production.",
+    criteria: ["AI Engineer", "RAG & recherche sémantique", "MLOps / LLMOps", "Mission 6 mois"],
+    matches: [{ name: "Lina N.", score: 95 }, { name: "Hugo P.", score: 88 }],
+  },
+  {
+    vertical: "product",
+    domain: "AI Product",
+    text: "Nous lançons un copilote pour nos clients : besoin d'un Product Manager IA pour prioriser les cas d'usage et piloter la roadmap.",
+    criteria: ["AI Product", "Discovery & cas d'usage IA", "Roadmap & priorisation", "Temps plein"],
+    matches: [{ name: "Claire D.", score: 93 }, { name: "Yanis B.", score: 86 }],
+  },
+  {
+    vertical: "leader",
+    domain: "AI Leader",
+    text: "Le comité de direction veut une stratégie IA : on cherche un Head of AI 2 jours par semaine pour la feuille de route et la gouvernance.",
+    criteria: ["AI Leader", "2 j / sem", "Stratégie IA & GenAI", "Gouvernance & AI Act"],
+    matches: [{ name: "Marc G.", score: 94 }, { name: "Paul V.", score: 87 }],
+  },
+  {
+    vertical: "rpo",
+    domain: "Tech recruiter",
+    text: "On veut internaliser notre équipe IA : un recruteur pour 4 AI Engineers en CDI, à Paris en hybride, dès que possible.",
+    criteria: ["Tech recruiter", "Data/AI", "Paris · hybride", "4 postes"],
     matches: [{ name: "Julie M.", score: 94 }, { name: "Thomas R.", score: 88 }],
-  },
-  {
-    domain: "DRH",
-    text: "Scale-up de 120 personnes : on cherche un DRH 3 jours par semaine pour structurer la rémunération et les relations sociales.",
-    criteria: ["DRH", "3 j / sem", "Compensations & bénéfices", "Relations sociales"],
-    matches: [{ name: "Camille M.", score: 93 }, { name: "Valérie B.", score: 86 }],
-  },
-  {
-    domain: "CFO",
-    text: "Après notre série A, besoin d'un CFO 2 jours par semaine pour le budget, la trésorerie et le reporting investisseurs.",
-    criteria: ["CFO", "2 j / sem", "Trésorerie", "Budget & Forecast"],
-    matches: [{ name: "Thomas L.", score: 95 }, { name: "Youssef K.", score: 84 }],
-  },
-  {
-    domain: "COO",
-    text: "Nous ouvrons deux nouveaux marchés : il nous faut un COO pour structurer les process et manager les équipes ops.",
-    criteria: ["COO", "Ouverture de marché", "Structuration & process", "Management d'équipe"],
-    matches: [{ name: "Aminata D.", score: 92 }, { name: "Rohit P.", score: 81 }],
-  },
-  {
-    domain: "CRO",
-    text: "On veut ouvrir l'Allemagne et monter une équipe de 5 commerciaux : CRO à temps plein, démarrage en janvier.",
-    criteria: ["CRO", "Temps plein", "Expansion internationale", "Management d'équipe"],
-    matches: [{ name: "Sylvie B.", score: 96 }, { name: "Karim B.", score: 79 }],
-  },
-  {
-    domain: "CTO",
-    text: "Startup SaaS : on cherche un CTO 3 jours par semaine pour intégrer l'IA générative au produit et structurer l'équipe tech.",
-    criteria: ["CTO", "3 j / sem", "Intégration IA / LLM", "Management d'équipes tech"],
-    matches: [{ name: "Lina N.", score: 94 }, { name: "Marc G.", score: 87 }],
   },
 ];
 
-/** Chiffres clés (promesses validées : 48 h ; communauté annoncée dans le hero). */
-export const PROOF = [
-  { value: "48", unit: "h", label: "pour recevoir vos premiers profils" },
-  { value: "2 à 5", unit: "j", label: "par semaine, selon votre besoin" },
-  { value: "700", unit: "+", label: "experts freelance qualifiés" },
+/** Chiffres clés (promesses validées uniquement). */
+export const KEY_FIGURES = [
+  { value: "48", unit: "h", label: "pour recevoir un premier profil qualifié" },
+  { value: "1", unit: "semaine", label: "pour démarrer la mission" },
+  { value: "30", unit: "min", label: "pour cadrer votre besoin avec nous" },
 ];
 
 /** Cadre administratif : la liste se coche toute seule dans la carte sombre. */
 export const ADMIN_CHECKLIST = ["Contrat de mission signé", "KYC vérifié", "CRA validé chaque mois", "Facture unique émise"];
 
 export const FINAL_CTA = {
-  title: "Votre prochain Leader",
-  titleEnd: "est peut-être déjà disponible.",
-  text: "Décrivez votre besoin en quelques lignes : vous recevez des profils sous 48 h.",
-  primary: "Partager un besoin",
+  title: "Votre prochain expert IA",
+  titleEnd: "est déjà disponible.",
+  text: "Décrivez votre besoin en quelques lignes : vous recevez un premier profil qualifié sous 48 h.",
+  primary: "Accéder aux profils",
   secondary: "Je suis freelance",
 };

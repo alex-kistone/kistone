@@ -1,15 +1,17 @@
 import { KEY_FIGURES } from "@/content/studio";
 
-/** Trois chiffres clés XXL (délais vérifiables uniquement), unités en rose. */
-export default function KeyFigures() {
+type Figure = { value: string; unit: string; label: string };
+
+/** Trois chiffres clés XXL (délais vérifiables uniquement), unités en dégradé. */
+export default function KeyFigures({ figures = KEY_FIGURES }: { figures?: readonly Figure[] }) {
   return (
     <section className="mt-8 px-5 md:mt-16 md:px-8" aria-label="Chiffres clés">
       <div className="ks-reveal mx-auto grid max-w-ks border-t border-[rgba(20,19,18,0.08)] md:grid-cols-3 md:border-b">
-        {KEY_FIGURES.map((f, i) => (
+        {figures.map((f, i) => (
           <div
             key={f.label}
             className={`flex flex-col gap-2 border-b border-[rgba(20,19,18,0.08)] py-7 md:gap-3 md:border-b-0 md:px-6 md:py-12 lg:px-10 ${
-              i < KEY_FIGURES.length - 1 ? "md:border-r" : ""
+              i < figures.length - 1 ? "md:border-r" : ""
             }`}
           >
             <div className="whitespace-nowrap font-ks-display text-[80px] font-bold leading-[0.9] tracking-[-0.05em] xl:text-[112px]">

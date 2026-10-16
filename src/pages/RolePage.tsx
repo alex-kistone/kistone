@@ -24,7 +24,7 @@ type Featured = {
   weekly_capacity: number | null; available: boolean | null; availability_date: string | null; rating: number;
 };
 
-/** Derniers profils 4-5 étoiles de la fonction (anonymisés), complétés par des exemples. */
+/** Derniers profils 4-5 étoiles de la famille (anonymisés), complétés par des exemples. */
 function useProfiles(role: Role): Shown[] {
   const samples: Shown[] = role.samples.map((s) => ({ ...s, rating: null }));
   const [real, setReal] = useState<Shown[]>([]);
@@ -158,13 +158,13 @@ function RoleContent({ role }: { role: Role }) {
         </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{role.lead}</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <Cta href={needHref} size="lg" arrow className="shadow-ks-pink">Partager mon besoin {v.short}</Cta>
+          <Cta href={needHref} variant="studio" size="lg" arrow>Partager mon besoin {v.short}</Cta>
           <Cta href="#profils" size="lg" variant="secondary">Voir les profils</Cta>
         </div>
       </section>
 
       {/* Profils récents */}
-      <Section id="profils" title={`Des ${v.short} qualifiés, prêts à démarrer`}>
+      <Section id="profils" title={`Des profils ${role.role} qualifiés, prêts à démarrer`}>
         <p className="mt-4 max-w-[680px] text-[17px] leading-[1.55] text-ks-soft">
           Derniers profils inscrits sur Kistone, notés 4 ou 5 étoiles après entretien. Identités complètes communiquées lors de la mise en relation.
         </p>
@@ -177,7 +177,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Chiffres clés */}
-      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" title="Un dirigeant senior, avec la flexibilité du freelance">
+      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" title="Un expert qualifié, avec la flexibilité du freelance">
         <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {figures.map((f) => (
             <div key={f.label} className="rounded-[24px] bg-white p-6 shadow-ks-card">
@@ -244,7 +244,7 @@ function RoleContent({ role }: { role: Role }) {
         </div>
       </Section>
 
-      {/* Appel final et autres fonctions */}
+      {/* Appel final et autres métiers */}
       <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
         <div className="rounded-[32px] bg-ks-dark px-7 py-12 text-ks-dark-fg md:px-14 md:py-16">
           <h2 className="max-w-[720px] font-ks-display text-[32px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[48px]">
@@ -254,8 +254,8 @@ function RoleContent({ role }: { role: Role }) {
             <Cta href={needHref} size="lg" arrow>Partager mon besoin {v.short}</Cta>
             <Cta href={ROUTES.freelance} size="lg" variant="ghost-dark">Je suis {v.short} freelance</Cta>
           </div>
-          <nav aria-label="Autres fonctions" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">
-            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Autres fonctions</p>
+          <nav aria-label="Autres métiers" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">
+            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Autres métiers</p>
             <ul className="mt-4 flex flex-wrap gap-2">
               {ROLE_PAGES.filter((r) => r.slug !== role.slug).map((r) => (
                 <li key={r.slug}>

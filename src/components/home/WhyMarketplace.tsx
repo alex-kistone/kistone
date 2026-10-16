@@ -35,7 +35,7 @@ export default function WhyMarketplace() {
       <article className="ks-lift ks-reveal relative flex min-h-[280px] flex-col justify-between gap-8 overflow-hidden rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg md:col-span-2 md:p-10">
         <div
           className="pointer-events-none absolute -right-[90px] -top-[90px] h-[300px] w-[300px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(255,46,110,0.32), rgba(255,46,110,0) 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(177,77,245,0.35), rgba(255,46,110,0.12) 45%, rgba(76,125,255,0) 72%)" }}
           aria-hidden="true"
         />
         <div className="relative flex flex-col gap-3.5">
@@ -78,7 +78,7 @@ export default function WhyMarketplace() {
           <span
             className={cn(
               "flex h-11 w-11 items-center justify-center rounded-[14px]",
-              "featured" in a && a.featured ? "bg-ks-pink-100" : "bg-ks-muted",
+              "featured" in a && a.featured ? "bg-[#F1E7FE]" : "bg-ks-muted",
             )}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141312" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

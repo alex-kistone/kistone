@@ -43,9 +43,9 @@
   box-decoration-break: clone;
 }
 
-/* Studio : dégradé rose → violet → bleu, réservé aux éléments du studio.
-   La marketplace et l'interface commune gardent le rose en aplat. */
-.ks-site { --ks-grad: linear-gradient(100deg, #FF2E6E 0%, #B14DF5 55%, #4C7DFF 100%); }
+/* Dégradé rose → violet → bleu du studio, repris par le site vitrine des experts IA
+   (pivot du 2026-10-16). L'interface des espaces client et freelance garde le rose en aplat. */
+:root { --ks-grad: linear-gradient(100deg, #FF2E6E 0%, #B14DF5 55%, #4C7DFF 100%); }
 .ks-grad-text { background-image: var(--ks-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .ks-grad-bg { background-image: var(--ks-grad); }
 .ks-grad-dot { background: conic-gradient(#FF2E6E, #B14DF5, #4C7DFF, #FF2E6E); }
