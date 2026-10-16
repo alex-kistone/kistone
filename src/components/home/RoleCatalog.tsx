@@ -5,6 +5,7 @@ import { ROLE_CATALOG } from "@/content/home";
 import { saveHomeBrief } from "@/lib/homeBrief";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
+import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 
 /**
  * Les besoins les plus fréquents : un rôle précis en un clic. Le clic ouvre /besoin avec la
@@ -32,14 +33,14 @@ export default function RoleCatalog() {
             <li key={r.role} className="ks-reveal">
               <button
                 type="button"
-                onClick={() => pick(r.role, r.vertical, r.budget)}
+                onClick={() => pick(r.role, r.vertical, INDICATIVE_BUDGET[r.vertical])}
                 className="ks-uc group flex w-full items-center justify-between gap-4 rounded-[20px] border border-[rgba(20,19,18,0.06)] bg-white px-5 py-4 text-left shadow-ks-card transition-transform hover:-translate-y-0.5"
               >
                 <span className="min-w-0">
                   <span className="block font-ks-display text-[18px] font-semibold tracking-[-0.02em]">{r.role}</span>
                   <span className="mt-0.5 block text-[13px] font-medium" style={{ color: p.ink }}>{v.id === "rpo" ? "RPO · Tech recruiter" : v.short}</span>
                   <span className="mt-2 block text-[13px] text-ks-soft">
-                    <span className="font-semibold text-ks-ink">{fmt(r.budget[0])} – {fmt(r.budget[1])} €</span> HT / jour
+                    <span className="font-semibold text-ks-ink">{fmt(INDICATIVE_BUDGET[r.vertical][0])} – {fmt(INDICATIVE_BUDGET[r.vertical][1])} €</span> HT / jour
                   </span>
                 </span>
                 <span className="ks-more flex shrink-0 items-center gap-1.5 text-[14px] font-semibold">
