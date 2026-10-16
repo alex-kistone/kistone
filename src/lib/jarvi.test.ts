@@ -77,6 +77,13 @@ describe("toJarviFields · familles IA", () => {
     expect(fields[JARVI_FIELDS.tjm]).toBe(550);
   });
 
+  it("renseigne le champ « Métier » avec la famille du freelance", () => {
+    expect(toJarviFields(leader, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("AI Leader");
+    expect(toJarviFields({ ...leader, vertical: "engineer" as const }, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("AI Engineer");
+    expect(toJarviFields({ ...leader, vertical: "product" as const }, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("AI Product");
+    expect(toJarviFields(base, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("RPO");
+  });
+
   it("ajoute « AI Leader Part-time » quand le leader n'est pas à temps plein", () => {
     expect(toJarviFields({ ...leader, weekly_capacity: 2 }, JARVI_SPECIALITES).fields[LEADER_FIELD]).toContain("AI Leader Part-time");
     expect(toJarviFields({ ...leader, weekly_capacity: 5 }, JARVI_SPECIALITES).fields[LEADER_FIELD]).not.toContain("AI Leader Part-time");

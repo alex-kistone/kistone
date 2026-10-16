@@ -40,6 +40,7 @@ export const JARVI_FIELDS = {
   specialitesTech: "964b658c-fae5-4760-a562-2cd9657b2d13", // Spécialités RPO Tech
   notes: "db48da33-1764-4e07-a354-f2efcc7b7c83", // 🗒️Notes : commentaires admin
   autresLangues: "02ee6c11-edda-4817-986c-22bed97593f7", // Autres langues : « Langue (niveau) »
+  metier: "aaddbdfb-5fa2-479c-8f6e-947fe4818166", // Métier (choix unique) : la famille du freelance
 } as const;
 
 const MODEL_TO_JARVI: Record<string, string> = { RPO: "RPO", "Succès": "Success" };
@@ -143,6 +144,7 @@ export function toJarviFields(p: PlatformProfileForJarvi, jarviSpecialites: read
   return {
     fields: {
       ...verticalFields,
+      [JARVI_FIELDS.metier]: vertical.jarvi.metier,
       [JARVI_FIELDS.tjm]: p.tjm,
       [JARVI_FIELDS.dispo]: p.available,
       [JARVI_FIELDS.dateDispo]: p.available ? null : p.availability_date,
