@@ -17,7 +17,7 @@
  * virgules) ; à confirmer au premier essai réel.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { JARVI_PROJECTS, JARVI_SPECIALITES, jarviFieldsToReset, toJarviFields } from "../_shared/jarvi.ts";
+import { JARVI_PROJECTS, JARVI_SPECIALITES, toJarviFields } from "../_shared/jarvi.ts";
 
 const API = "https://functions.prod.jarvi.tech/v1/public-api/rest/v2";
 const corsHeaders = {
@@ -109,21 +109,6 @@ Deno.serve(async (req) => {
     };
     for (const [fieldId, value] of Object.entries(fields)) payload[fieldId] = asJarviValue(value);
 
-    // Fiche déjà dans Jarvi : on vide d'abord les champs gérés par la synchro, car Jarvi ajoute
-    // les choix sans retirer les anciens (cf. jarviFieldsToReset). Un échec n'empêche pas la synchro.
-    let reset = "nouvelle fiche";
-    if (jarviId) {
-      const blank: Record<string, string> = { id: jarviId };
-      for (const fieldId of jarviFieldsToReset(p.vertical ?? "rpo")) blank[fieldId] = "";
-      const r = await jarviFetch(`${API}/profiles`, {
-        method: "POST",
-        headers: { "X-API-KEY": key, "Content-Type": "application/json" },
-        body: JSON.stringify(blank),
-      });
-      reset = r.ok ? "ok" : `refusée (${r.status}) : ${(await r.text()).slice(0, 160)}`;
-      if (r.ok) await r.body?.cancel();
-    }
-
     // Point d'entrée « candidatures » : accepté avec la clé publique, il crée ou met à jour la
     // fiche (fusion par id / externalId) et la rattache au projet des inscriptions.
     const res = await jarviFetch(`${API}/applicants`, {
@@ -138,7 +123,7 @@ Deno.serve(async (req) => {
     await db.from("recruiter_profiles").update({
       jarvi_profile_id: profileId, jarvi_synced_at: new Date().toISOString(), jarvi_sync_error: null,
     }).eq("id", p.id);
-    return json({ jarvi_profile_id: profileId, matched: jarviId ? "existant" : "créé", reset, unmapped });
+    return json({ jarvi_profile_id: profileId, matched: jarviId ? "existant" : "créé", unmapped });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     await db.from("recruiter_profiles").update({ jarvi_sync_error: message }).eq("id", p.id);

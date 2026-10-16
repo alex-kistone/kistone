@@ -45,24 +45,9 @@ export const JARVI_FIELDS = {
 
 const MODEL_TO_JARVI: Record<string, string> = { RPO: "RPO", "Succès": "Success" };
 
-/**
- * Champs que la synchro remet à zéro avant d'écrire les valeurs du profil. L'API Jarvi ajoute
- * les choix d'un champ à choix multiple sans retirer les anciens (vérifié le 2026-10-16) : sans
- * cette remise à zéro, une ville, un secteur ou une spécialité retirés sur la plateforme resteraient
- * dans Jarvi, tout comme les champs d'une ancienne famille. Les champs admin (note, commentaires)
- * ne sont jamais effacés ; « Spécialités RPO Tech » (admin) ne l'est que hors RPO.
- */
-export function jarviFieldsToReset(vertical: Vertical): string[] {
-  return [
-    ...VERTICALS.map((v) => v.jarvi.specialtiesFieldId).filter((id): id is string => !!id),
-    JARVI_FIELDS.modele,
-    JARVI_FIELDS.linkedinRecruiter,
-    JARVI_FIELDS.secteurs,
-    JARVI_FIELDS.mobilite,
-    JARVI_FIELDS.autresLangues,
-    ...(vertical === "rpo" ? [] : [JARVI_FIELDS.specialitesTech]),
-  ];
-}
+// Limite de l'API publique Jarvi (vérifiée le 2026-10-16) : un champ à choix multiple reçoit les
+// nouveaux choix sans perdre les anciens, et une valeur vide est ignorée. Une ville, un secteur ou
+// une spécialité retirés sur la plateforme restent donc dans Jarvi, à nettoyer à la main.
 
 /** Spécialités tech (fiche admin) : valeurs du champ Jarvi « Spécialités RPO Tech ». */
 export const JARVI_TECH_SPECIALTIES = ["Cyber", "Data/AI", "Dev", "Infra", "SAP"];
