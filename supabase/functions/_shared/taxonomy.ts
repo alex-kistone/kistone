@@ -18,6 +18,7 @@ export const METIERS = [
   "Infra",
   "Product",
   "GTM",
+  "Autre", // un métier hors de cette liste (le freelance le précise dans sa présentation)
 ] as const;
 
 /** Secteurs d'activité / environnements. */
