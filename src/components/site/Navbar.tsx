@@ -117,7 +117,7 @@ function AccountActions({ size = "md", className, onDone }: { size?: "md" | "lg"
     };
     return (
       <>
-        <Cta href={spacePath} size={size} onClick={onDone} className={className}>Accéder à mon espace</Cta>
+        <Cta href={spacePath} variant="studio" size={size} onClick={onDone} className={className}>Accéder à mon espace</Cta>
         <button
           type="button"
           onClick={logout}
@@ -135,7 +135,7 @@ function AccountActions({ size = "md", className, onDone }: { size?: "md" | "lg"
   return (
     <>
       <Cta href={ROUTES.freelance} size={size} variant="secondary" onClick={onDone} className={className}>Espace Freelance</Cta>
-      <Cta href={ROUTES.clientLogin} size={size} onClick={onDone} className={className}>Connexion</Cta>
+      <Cta href={ROUTES.clientLogin} variant="studio" size={size} onClick={onDone} className={className}>Connexion</Cta>
     </>
   );
 }
