@@ -9,6 +9,9 @@
  * Secrets : GEMINI_API_KEY (prioritaire ; modèle GEMINI_IMAGE_MODEL, gemini-2.5-flash-image par
  * défaut) ou OPENAI_API_KEY (gpt-image-1). Sans clé, 503 avec la marche à suivre.
  * Test du montage sans OpenAI : { prompt, test_photo_url } (photo JPEG ou PNG existante).
+ *
+ * Mode portrait : { prompt, kind: "portrait" } — portrait carré d'illustration (profils fictifs
+ * du site), sans logo ni bandeau, recadré en 800 × 800 et déposé dans « blog-images/portraits ».
  */
 import { decode, Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 import { requireAdmin } from "../_shared/adminAuth.ts";
@@ -26,6 +29,10 @@ const STYLE = "Realistic editorial photograph for a business magazine. Natural s
 
 const W = 1536;
 const H = 1024;
+
+// Portraits d'illustration : même direction que les portraits déjà sur le site
+const PORTRAIT_STYLE = "Photorealistic professional headshot. Soft natural light, plain warm beige studio background, head and shoulders centered, looking at the camera, editorial corporate photography. No text, no letters, no logos, no watermark.";
+const PORTRAIT_SIZE = 800;
 
 /** Pose un dégradé sombre en bas, puis le logo et la tagline en bas à gauche. */
 async function brandCover(photoBytes: Uint8Array): Promise<Uint8Array> {
@@ -49,15 +56,21 @@ async function brandCover(photoBytes: Uint8Array): Promise<Uint8Array> {
   return await photo.encodeJPEG(86);
 }
 
+/** Portrait recadré au carré, sans habillage. */
+async function squarePortrait(photoBytes: Uint8Array): Promise<Uint8Array> {
+  const photo = (await decode(photoBytes)) as Image;
+  return await photo.cover(PORTRAIT_SIZE, PORTRAIT_SIZE).encodeJPEG(86);
+}
+
 /** Photo générée par Gemini (format 3:2, recadrée ensuite en 1536 × 1024). */
-async function geminiPhoto(key: string, prompt: string): Promise<Uint8Array> {
+async function geminiPhoto(key: string, prompt: string, portrait = false): Promise<Uint8Array> {
   const model = Deno.env.get("GEMINI_IMAGE_MODEL") || "gemini-2.5-flash-image";
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: "POST",
     headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: `${prompt}\n\n${STYLE}` }] }],
-      generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "3:2" } },
+      contents: [{ parts: [{ text: `${prompt}\n\n${portrait ? PORTRAIT_STYLE : STYLE}` }] }],
+      generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: portrait ? "1:1" : "3:2" } },
     }),
   });
   if (!res.ok) throw new Error(`Gemini ${res.status} : ${(await res.text()).slice(0, 300)}`);
@@ -84,7 +97,8 @@ Deno.serve(async (req) => {
   const admin = await requireAdmin(req);
   if (!admin) return json({ error: "Réservé aux administrateurs." }, 403);
 
-  const { prompt, test_photo_url } = await req.json().catch(() => ({}));
+  const { prompt, test_photo_url, kind } = await req.json().catch(() => ({}));
+  const portrait = kind === "portrait";
   if (!prompt || String(prompt).trim().length < 5) return json({ error: "Description de l'image manquante." }, 400);
 
   const gemini = Deno.env.get("GEMINI_API_KEY")?.trim().replace(/^["']|["']$/g, "");
@@ -99,10 +113,10 @@ Deno.serve(async (req) => {
     const photo = test_photo_url
       ? new Uint8Array(await (await fetch(String(test_photo_url))).arrayBuffer())
       : gemini
-      ? await geminiPhoto(gemini, String(prompt).trim())
+      ? await geminiPhoto(gemini, String(prompt).trim(), portrait)
       : await openAiPhoto(openai!, String(prompt).trim());
-    const cover = await brandCover(photo);
-    const path = `covers/${crypto.randomUUID()}.jpg`;
+    const cover = portrait ? await squarePortrait(photo) : await brandCover(photo);
+    const path = `${portrait ? "portraits" : "covers"}/${crypto.randomUUID()}.jpg`;
     const { error } = await admin.db.storage.from("blog-images").upload(path, cover, { contentType: "image/jpeg" });
     if (error) return json({ error: `Stockage : ${error.message}` }, 500);
     return json({ url: admin.db.storage.from("blog-images").getPublicUrl(path).data.publicUrl });
