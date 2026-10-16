@@ -21,6 +21,7 @@ import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import { takeHomeBrief } from "@/lib/homeBrief";
+import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 import { generateNeedTitle } from "@/lib/needTitle";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
@@ -110,6 +111,11 @@ const ClientNewNeed = () => {
     init();
   }, [navigate, isPublic]);
 
+  // Arrivée depuis l'accueil (démo ou catalogue de rôles) : toujours en haut de la page
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Besoin tapé sur l'accueil : repris ici et analysé tout de suite par l'IA
   useEffect(() => {
     if (!isPublic) return;
@@ -145,8 +151,15 @@ const ClientNewNeed = () => {
       if (metiers.length) setProfileTypes(metiers);
       const secteurs = (data.sectors ?? []).filter((t: string) => (SECTEURS as readonly string[]).includes(t));
       if (secteurs.length) setSectors(secteurs);
-      if (data.budget_tjm_min) setBudgetMin(String(data.budget_tjm_min));
-      if (data.budget_tjm_max) setBudgetMax(String(data.budget_tjm_max));
+      if (data.budget_tjm_min || data.budget_tjm_max) {
+        if (data.budget_tjm_min) setBudgetMin(String(data.budget_tjm_min));
+        if (data.budget_tjm_max) setBudgetMax(String(data.budget_tjm_max));
+      } else {
+        // Aucun budget dans le texte : fourchette indicative de la famille, modifiable
+        const [lo, hi] = INDICATIVE_BUDGET[detected];
+        setBudgetMin(String(lo));
+        setBudgetMax(String(hi));
+      }
       if (data.mission_location) setMissionLocations(data.mission_location.split(",").map((s: string) => s.trim()).filter(Boolean));
       if (data.remote_policy) setRemotePolicy(data.remote_policy);
       if (typeof data.desired_start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data.desired_start)) setStart({ asap: false, date: data.desired_start });
