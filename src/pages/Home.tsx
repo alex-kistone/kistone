@@ -2,7 +2,6 @@ import SEO from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
 import Hero from "@/components/home/Hero";
 import BriefDemo from "@/components/home/BriefDemo";
-import KeyFigures from "@/components/studio/KeyFigures";
 import FunctionsGrid from "@/components/home/FunctionsGrid";
 import PainSituations from "@/components/home/PainSituations";
 import RoleCatalog from "@/components/home/RoleCatalog";
@@ -14,7 +13,6 @@ import FreelanceCTA from "@/components/home/FreelanceCTA";
 import StudioReminder from "@/components/home/StudioReminder";
 import ResourcesTeaser from "@/components/home/ResourcesTeaser";
 import FinalCTA from "@/components/home/FinalCTA";
-import { KEY_FIGURES } from "@/content/home";
 import "@/site/studio.css";
 
 /** Accueil : la plateforme freelance des experts IA, dans le style de la page /studio. */
@@ -28,7 +26,6 @@ export default function Home() {
       />
       <div className="overflow-x-clip">
         <Hero />
-        <KeyFigures figures={KEY_FIGURES} />
         <PainSituations />
         <BriefDemo />
         <FunctionsGrid />

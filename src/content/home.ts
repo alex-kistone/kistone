@@ -185,13 +185,6 @@ export const BRIEFS: Brief[] = [
   },
 ];
 
-/** Chiffres clés (promesses validées uniquement). */
-export const KEY_FIGURES = [
-  { value: "48", unit: "h", label: "pour recevoir un premier profil qualifié" },
-  { value: "1", unit: "semaine", label: "pour démarrer la mission" },
-  { value: "30", unit: "min", label: "pour cadrer votre besoin avec nous" },
-];
-
 /** Cadre administratif : la liste se coche toute seule dans la carte sombre. */
 export const ADMIN_CHECKLIST = ["Contrat de mission signé", "KYC vérifié", "CRA validé chaque mois", "Facture unique émise"];
 
