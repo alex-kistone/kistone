@@ -17,9 +17,9 @@ export const LLMS_PAGES = [
   { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (famille d'expert IA ou Tech recruiter, rythme, budget) pour recevoir un profil qualifié sous 48 h." },
   ...ROLE_PAGES.map((r) => ({ path: rolePath(r), title: r.seoTitle, desc: r.seoDescription })),
   ...MODEL_PAGES.map((m) => ({ path: modelPath(m), title: m.seoTitle, desc: m.seoDescription })),
-  { path: "/pourquoi-kistone", title: "Pourquoi Kistone", desc: "La conviction d'Alexandre Guégo, fondateur : après le freelancing, le fractional leadership deviendra un mode normal de construction des équipes de direction." },
+  { path: "/pourquoi-kistone", title: "Pourquoi Kistone", desc: "La conviction d'Alexandre Guégo, fondateur : l'IA a totalement transformé la façon de travailler, et le freelance (mission, fractional, contract-to-hire) est le modèle pour accéder vite aux experts IA qualifiés." },
   { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la plateforme des experts IA : missions qualifiées (AI Engineer, AI Product, AI Leader, Tech recruiter), rémunération transparente payée chaque fin de mois, rythme au choix, contrat, CRA et facturation gérés. Inscription gratuite." },
-  { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur le freelance, la stratégie, la structuration des fonctions clés et le leadership." },
+  { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur les projets IA, les formats d'intervention (mission freelance, fractional, contract-to-hire) et le recrutement des talents IA." },
   { path: COMPARISON_PATH, title: COMPARISON.seoTitle, desc: COMPARISON.seoDescription },
   { path: "/studio", title: "Studio IA", desc: "Outils RH sur mesure (onboarding, assistant RH, tri de candidatures) conçus et livrés par Kistone." },
 ];

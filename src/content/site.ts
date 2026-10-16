@@ -52,9 +52,9 @@ export const MENUS: Menu[] = [
     id: "res",
     label: "Ressources",
     items: [
-      { title: "Blog & articles", desc: "Freelance, stratégie, structuration, leadership.", href: "/ressources", dot: "#1F8F87" },
+      { title: "Blog & articles", desc: "Projets IA, formats d’intervention, recrutement des talents IA.", href: "/ressources", dot: "#1F8F87" },
       { title: "Comparatif des plateformes", desc: "Trouver un expert IA freelance : qui fait quoi en France.", href: "/ressources/comparatif-plateformes-freelance-ia", dot: "#1F2A44" },
-      { title: "Guides & études de cas", desc: "Méthodes et retours d’expérience.", href: "/#ressources", dot: "#E07A3A" },
+      { title: "Guides", desc: "Méthodes pour lancer, piloter et staffer vos projets IA.", href: "/#ressources", dot: "#E07A3A" },
       { title: "Le studio IA", desc: "Outils RH sur mesure : onboarding, assistant RH, tri de candidatures.", href: "/studio", dot: "#7357D6" },
     ],
   },

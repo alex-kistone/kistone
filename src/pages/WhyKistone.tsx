@@ -7,13 +7,14 @@ import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { CALENDLY_URL, ROUTES } from "@/content/site";
 import { MODEL_PAGES, modelPath } from "@/content/models";
+import { palettes } from "@/lib/palettes";
 
 /** Engagements tirés de la conviction d'Alex (texte de la page). */
 const COMMITMENTS = [
-  { title: "Un référent métier", desc: "Chaque besoin est qualifié par un référent qui connaît la fonction." },
-  { title: "Un parcours réel", desc: "Chaque profil est évalué sur son parcours réel, pas sur un CV." },
-  { title: "Un profil en 48 h", desc: "Nous nous engageons à proposer un profil en 48 h." },
-  { title: "Le bon format", desc: "Fractional, mission, intérim ou contract-to-hire, selon votre besoin." },
+  { title: "Un référent IA", desc: "Chaque besoin est cadré par un référent qui connaît les métiers de l'IA." },
+  { title: "Des réalisations, pas un CV", desc: "Chaque profil est évalué sur ce qu'il a construit et mis en production." },
+  { title: "Un profil en 48 h", desc: "Un premier profil qualifié vous est présenté sous 48 h." },
+  { title: "Le bon format", desc: "Mission freelance, fractional ou contract-to-hire, selon votre projet." },
 ];
 
 /** /pourquoi-kistone : qui est Alex et la conviction qui fonde Kistone. */
@@ -35,7 +36,7 @@ export default function WhyKistone() {
     <SiteLayout>
       <SEO
         title="Pourquoi Kistone : notre conviction"
-        description="Les dix dernières années ont installé le freelancing ; les prochaines installeront le fractional leadership. La conviction d'Alexandre Guégo, fondateur de Kistone."
+        description="L'IA a totalement transformé la façon de travailler, et le freelance est le modèle pour accéder aux experts qui la maîtrisent. La conviction d'Alexandre Guégo, fondateur de Kistone, la plateforme freelance des experts IA."
         path="/pourquoi-kistone"
         jsonLd={jsonLd}
       />
@@ -48,15 +49,15 @@ export default function WhyKistone() {
           </h1>
           <div className="mt-8 space-y-5 text-[19px] leading-[1.6] text-ks-ink-2 md:text-[21px]">
             <p className="font-ks-display text-[24px] font-semibold leading-[1.3] tracking-[-0.02em] text-ks-ink md:text-[28px]">
-              Les dix dernières années ont installé le freelancing ; les prochaines installeront le fractional leadership comme un mode normal de construction des équipes de direction.
+              L'<Highlight>IA</Highlight> a totalement transformé la façon de travailler. Pour en tirer parti, il faut des experts qui la maîtrisent, maintenant : le freelance est le modèle qui vous y donne accès.
             </p>
             <p>
-              C'est la raison d'être de Kistone, la plateforme freelance des Fractional leaders Tech &amp; Digital : des dirigeants RH, Finance, Sales &amp; Marketing, Tech, Data &amp; IA et Product pour les startups, scaleups et ETI. Chaque besoin est qualifié par un référent métier, chaque profil est évalué sur son parcours réel, et nous nous engageons à proposer un profil en 48h, en format fractional, mission, intérim ou contract-to-hire.
+              C'est la raison d'être de Kistone, la plateforme freelance spécialiste des métiers de l'IA : des AI Engineers pour construire, des AI Product Managers pour faire adopter, des AI Leaders pour fixer le cap. Ils interviennent en mission freelance, en fractional ou en contract-to-hire ; et quand vient le moment d'internaliser, nos Tech recruiters vous aident à recruter vos talents IA en CDI. Chaque besoin est cadré par un référent IA, chaque profil est évalué sur ce qu'il a réellement construit, et nous nous engageons à vous présenter un premier profil qualifié en 48 h.
             </p>
-            <p>Vous réfléchissez à renforcer votre comité de direction sans recruter à temps plein ? Échangeons 30 minutes.</p>
+            <p>Vous avez un projet IA à lancer ou à passer en production ? Échangeons 30 minutes.</p>
           </div>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Cta href={CALENDLY_URL} size="lg" arrow className="shadow-ks-pink">Échangeons 30 minutes</Cta>
+            <Cta href={CALENDLY_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
             <Cta href={ROUTES.recruit} size="lg" variant="secondary">Partager un besoin</Cta>
           </div>
         </div>
@@ -82,14 +83,14 @@ export default function WhyKistone() {
               évaluer un parcours au-delà du CV, et ne présenter que le bon profil, au bon moment.
             </p>
             <p>
-              Au fil des missions, une même demande revenait. Après les recruteurs, il fallait un DRH pour structurer les équipes,
-              un CFO pour préparer la levée, un CTO pour tenir la plateforme : des dirigeants seniors, souvent pour quelques jours
-              par semaine seulement.
+              Au fil des missions, une même demande revenait. Après les recruteurs, il fallait un AI Engineer pour passer un
+              prototype en production, un AI Product Manager pour lancer un copilote, un AI Leader pour bâtir une feuille de route :
+              des compétences rares, que les équipes n'avaient pas encore en interne.
             </p>
             <p>
-              Kistone est né de ce constat : appliquer à toutes les fonctions de direction l'exigence de qualification forgée dans
-              le recrutement. Le RPO reste notre socle, et cette culture du recrutement fait notre différence, jusqu'au
-              contract-to-hire, quand une mission a vocation à devenir un recrutement.
+              Kistone est né de ce constat : appliquer aux métiers de l'IA l'exigence de qualification forgée dans le recrutement.
+              Le RPO reste notre socle : nos Tech recruiters vous aident à internaliser vos talents IA en CDI, et le contract-to-hire
+              permet à une mission de devenir un recrutement.
             </p>
           </div>
           <blockquote className="rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg">
@@ -101,35 +102,47 @@ export default function WhyKistone() {
         </div>
       </PageSection>
 
+      {/* Le modèle freelance, mis en avant */}
+      <PageSection title="Le freelance, le bon modèle pour l'IA">
+        <p className="mt-6 max-w-[760px] text-[18px] leading-[1.65] text-ks-ink-2">
+          Les modèles, les outils et les usages de l'IA évoluent en permanence. Les experts qui ont choisi le freelance enchaînent
+          les projets, restent à la pointe et transmettent ce qu'ils savent à vos équipes. Vous accédez à cette expertise en
+          quelques jours, au rythme dont votre projet a besoin.
+        </p>
+        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+          {MODEL_PAGES.map((m) => (
+            <li key={m.slug}>
+              <SmartLink href={modelPath(m)} className="ks-lift flex h-full flex-col rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: palettes[m.palette].accent }} aria-hidden="true" />
+                <h3 className="mt-4 font-ks-display text-[22px] font-semibold tracking-[-0.02em]">{m.name}</h3>
+                <p className="mt-2 flex-1 text-[15px] leading-[1.55] text-ks-soft">{m.short}</p>
+                <span className="mt-5 text-[15px] font-medium text-ks-ink">Découvrir le modèle →</span>
+              </SmartLink>
+            </li>
+          ))}
+        </ul>
+      </PageSection>
+
       <PageSection title="Ce qui fait la différence" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
         <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {COMMITMENTS.map((c, i) => (
             <li key={c.title} className="rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
-              <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-pink">0{i + 1}</span>
+              <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">0{i + 1}</span>
               <h3 className="mt-3 font-ks-display text-[20px] font-semibold tracking-[-0.02em]">{c.title}</h3>
               <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft">{c.desc}</p>
             </li>
           ))}
         </ul>
-        <p className="mt-8 text-[15px] text-ks-soft">
-          Découvrir les modèles :{" "}
-          {MODEL_PAGES.map((m, i) => (
-            <span key={m.slug}>
-              {i > 0 && " · "}
-              <SmartLink href={modelPath(m)} className="font-medium text-ks-ink underline-offset-4 hover:underline">{m.name}</SmartLink>
-            </span>
-          ))}
-        </p>
       </PageSection>
 
       <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
         <div className="relative isolate overflow-hidden rounded-[32px] bg-ks-dark px-7 py-12 text-ks-dark-fg md:px-14 md:py-16">
           <BoltWatermark tone="light" className="-bottom-24 -right-10 h-[420px] w-auto rotate-[14deg]" />
           <h2 className="max-w-[760px] font-ks-display text-[32px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[48px]">
-            Renforcer votre comité de direction, sans recruter à temps plein.
+            Votre prochain <span className="ks-grad-text whitespace-nowrap">expert IA</span>, en freelance.
           </h2>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Cta href={CALENDLY_URL} size="lg" arrow>Échangeons 30 minutes</Cta>
+            <Cta href={CALENDLY_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
             <Cta href={ROUTES.freelance} size="lg" variant="ghost-dark">Je suis freelance</Cta>
           </div>
         </div>
