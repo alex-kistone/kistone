@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { CalendarDays } from "lucide-react";
+import { CALENDLY_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLE_PAGES } from "@/content/roles";
 import { palettes } from "@/lib/palettes";
@@ -118,6 +120,23 @@ export default function NeedProfilesPreview({ need }: { need: PendingNeed }) {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Échange avec Alex avant de créer son compte */}
+      <section className="flex flex-col items-start gap-3 rounded-[24px] border border-border bg-card p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="font-semibold">Une question avant de vous lancer ?</p>
+          <p className="text-sm text-muted-foreground">On cadre votre besoin ensemble, en 30 minutes.</p>
+        </div>
+        <a
+          href={CALENDLY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-border bg-background px-5 text-sm font-semibold transition-colors hover:bg-muted"
+        >
+          <CalendarDays className="h-4 w-4" aria-hidden="true" />
+          Échangeons 30 minutes
+        </a>
       </section>
     </div>
   );
