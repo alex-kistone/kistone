@@ -59,7 +59,8 @@ const users = {
   admin: { email: `e2e-admin-${STAMP}@${DOMAIN}` },
   client: { email: `e2e-client-${STAMP}@${DOMAIN}` },
   freelance: { email: `e2e-freelance-${STAMP}@${DOMAIN}` },
-  cfo: { email: `e2e-cfo-${STAMP}@${DOMAIN}` },
+  leader: { email: `e2e-leader-${STAMP}@${DOMAIN}` },
+  engineer: { email: `e2e-engineer-${STAMP}@${DOMAIN}` },
 };
 
 function createAccount(u) {
@@ -117,7 +118,8 @@ async function run() {
   const admin = await signIn(users.admin);
   const client = await signIn(users.client);
   const free = await signIn(users.freelance);
-  const cfoUser = await signIn(users.cfo);
+  const leaderUser = await signIn(users.leader);
+  const engineerUser = await signIn(users.engineer);
   must("Client · rôle attribué comme à l'inscription", !(await invoke(client, "assign-client-role", {})).error);
   must("Freelance · rôle attribué comme à l'inscription", !(await invoke(free, "assign-freelance-role", {})).error);
   const both = await invoke(client, "assign-freelance-role", {});
@@ -127,7 +129,7 @@ async function run() {
   const { data: rp, error: rpErr } = await free.from("recruiter_profiles").insert({
     user_id: users.freelance.id, email: users.freelance.email, first_name: "Camille", last_name: `E2E-${STAMP}`,
     linkedin_url: `https://www.linkedin.com/in/e2e-${STAMP}`, job_title: "Recruteuse Tech & Data",
-    skills: ["Tech", "Data"], sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid",
+    skills: ["Dev", "Data/AI"], sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid",
     tjm: 550, available: true, model: "RPO",
   }).select("id, onboarding_completed").single();
   must("Freelance · crée son profil (complet)", !rpErr && rp.onboarding_completed, rpErr?.message);
@@ -136,7 +138,7 @@ async function run() {
   must("Client · crée son profil", !cp.error, cp.error?.message);
   const { data: need, error: nErr } = await client.from("client_needs").insert({
     user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
-    job_title: `${TAG} Recruteur Tech`, mission_location: "Paris", remote_policy: "hybrid", profile_types: ["Tech"],
+    job_title: `${TAG} Tech recruiter Dev`, mission_location: "Paris", remote_policy: "hybrid", profile_types: ["Dev"],
     sectors: ["Startup/scaleup"], budget_tjm_min: 600, budget_tjm_max: 800, description: "Recrutement de 5 développeurs backend.",
   }).select("id").single();
   must("Client · dépose un besoin", !nErr, nErr?.message);
@@ -315,32 +317,58 @@ async function run() {
   expect("Admin", aK, ["kyc_submitted", "cra_approved", "freelance_invoice_submitted"]);
   check("Client · ne reçoit aucune notification du freelance", !cK.some((k) => k.startsWith("freelance_invoice") || k.startsWith("cra_rejected")));
 
-  section("Départements C-Level (CFO fractional)");
-  must("CFO · rôle freelance attribué", !(await invoke(cfoUser, "assign-freelance-role", {})).error);
-  const { data: cfoProfile, error: cfoErr } = await cfoUser.from("recruiter_profiles").insert({
-    user_id: users.cfo.id, email: users.cfo.email, first_name: "Thomas", last_name: `E2E-${STAMP}`, vertical: "cfo",
-    linkedin_url: `https://www.linkedin.com/in/e2e-cfo-${STAMP}`, job_title: "CFO fractional",
-    specialties: ["Trésorerie", "FP&A", "Budget & Forecast"], weekly_capacity: 3, years_experience: 15, previous_companies: ["Qonto"],
-    sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid", tjm: 1000, available: true,
+  section("Familles IA (AI Engineer à temps plein, AI Leader fractional)");
+  must("AI Leader · rôle freelance attribué", !(await invoke(leaderUser, "assign-freelance-role", {})).error);
+  must("AI Engineer · rôle freelance attribué", !(await invoke(engineerUser, "assign-freelance-role", {})).error);
+  const { data: leaderProfile, error: leaderErr } = await leaderUser.from("recruiter_profiles").insert({
+    user_id: users.leader.id, email: users.leader.email, first_name: "Marc", last_name: `E2E-${STAMP}`, vertical: "leader",
+    linkedin_url: `https://www.linkedin.com/in/e2e-leader-${STAMP}`, job_title: "Head of AI",
+    specialties: ["Head of AI", "Stratégie IA & GenAI", "Gouvernance & AI Act"], weekly_capacity: 2, years_experience: 14,
+    previous_companies: ["Doctolib"], sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid", tjm: 1100, available: true,
   }).select("id, onboarding_completed").single();
-  must("CFO · profil complet avec ses spécialités (sans métiers RPO)", !cfoErr && cfoProfile.onboarding_completed, cfoErr?.message);
-  const { data: cfoNeed, error: cfoNeedErr } = await client.from("client_needs").insert({
+  must("AI Leader · profil complet avec ses spécialités (sans métiers RPO)", !leaderErr && leaderProfile.onboarding_completed, leaderErr?.message);
+  const { data: engineerProfile, error: engineerErr } = await engineerUser.from("recruiter_profiles").insert({
+    user_id: users.engineer.id, email: users.engineer.email, first_name: "Lina", last_name: `E2E-${STAMP}`, vertical: "engineer",
+    linkedin_url: `https://www.linkedin.com/in/e2e-engineer-${STAMP}`, job_title: "AI Engineer · RAG",
+    specialties: ["RAG & recherche sémantique", "Agents IA", "MLOps / LLMOps"], weekly_capacity: 5, years_experience: 8,
+    previous_companies: ["Mistral AI"], sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid", tjm: 750, available: true,
+  }).select("id, onboarding_completed").single();
+  must("AI Engineer · profil complet avec ses spécialités", !engineerErr && engineerProfile.onboarding_completed, engineerErr?.message);
+
+  const { data: engNeed, error: engNeedErr } = await client.from("client_needs").insert({
     user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
-    job_title: `${TAG} CFO fractional`, vertical: "cfo", specialties: ["Trésorerie", "FP&A"], days_per_week: 2,
-    mission_location: "Paris", remote_policy: "hybrid", budget_tjm_min: 1000, budget_tjm_max: 1400,
-    description: "Après la série A : budget, trésorerie et reporting investisseurs, 2 jours par semaine.",
+    job_title: `${TAG} AI Engineer RAG`, vertical: "engineer", specialties: ["RAG & recherche sémantique", "Agents IA"],
+    mission_location: "Paris", remote_policy: "hybrid", budget_tjm_min: 800, budget_tjm_max: 1000, duration_months: 6,
+    description: "Industrialiser notre assistant RAG interne et le passer en production, avec des agents pour le support.",
   }).select("id").single();
-  must("Client · dépose un besoin CFO 2 j/sem", !cfoNeedErr, cfoNeedErr?.message);
-  const cfoOpp = await cfoUser.from("client_needs_open").select("id, vertical");
-  check("CFO · voit le besoin CFO dans ses opportunités", !!cfoOpp.data?.some((n) => n.id === cfoNeed.id), cfoOpp.error?.message);
-  check("CFO · ne voit pas les besoins RPO", !cfoOpp.data?.some((n) => n.vertical !== "cfo"));
+  must("Client · dépose un besoin AI Engineer à temps plein", !engNeedErr, engNeedErr?.message);
+  const { data: leadNeed, error: leadNeedErr } = await client.from("client_needs").insert({
+    user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
+    job_title: `${TAG} Fractional AI Leader`, vertical: "leader", specialties: ["Head of AI", "Stratégie IA & GenAI"], days_per_week: 2,
+    mission_location: "Paris", remote_policy: "hybrid", budget_tjm_min: 1200, budget_tjm_max: 1500,
+    description: "Définir la feuille de route IA et la gouvernance, 2 jours par semaine.",
+  }).select("id").single();
+  must("Client · dépose un besoin AI Leader 2 j/sem", !leadNeedErr, leadNeedErr?.message);
+
+  const engOpp = await engineerUser.from("client_needs_open").select("id, vertical");
+  check("AI Engineer · voit le besoin AI Engineer dans ses opportunités", !!engOpp.data?.some((n) => n.id === engNeed.id), engOpp.error?.message);
+  check("AI Engineer · ne voit que les besoins de sa famille", !engOpp.data?.some((n) => n.vertical !== "engineer"));
+  const leadOpp = await leaderUser.from("client_needs_open").select("id, vertical");
+  check("AI Leader · voit le besoin AI Leader", !!leadOpp.data?.some((n) => n.id === leadNeed.id), leadOpp.error?.message);
+  check("AI Leader · ne voit que les besoins de sa famille", !leadOpp.data?.some((n) => n.vertical !== "leader"));
   const rpoOpp = await free.from("client_needs_open").select("id");
-  check("Recruteur RPO · ne voit pas le besoin CFO", !rpoOpp.data?.some((n) => n.id === cfoNeed.id));
-  const cfoMatch = await invoke(admin, "match-profiles", { need_id: cfoNeed.id });
-  must("Admin · lance le matching CFO", !cfoMatch.error, cfoMatch.error);
-  const cfoSugg = sql(`select recruiter_profile_id from public.profile_suggestions where need_id = ${q(cfoNeed.id)};`);
-  check("Matching CFO · propose le CFO", cfoSugg.some((x) => x.recruiter_profile_id === cfoProfile.id), `${cfoSugg.length} profil(s)`);
-  check("Matching CFO · ne propose jamais le recruteur RPO", !cfoSugg.some((x) => x.recruiter_profile_id === ids.profile));
+  check("Tech recruiter · ne voit pas les besoins IA", !rpoOpp.data?.some((n) => n.id === engNeed.id || n.id === leadNeed.id));
+
+  const engMatch = await invoke(admin, "match-profiles", { need_id: engNeed.id });
+  must("Admin · lance le matching AI Engineer", !engMatch.error, engMatch.error);
+  const engSugg = sql(`select recruiter_profile_id from public.profile_suggestions where need_id = ${q(engNeed.id)};`);
+  check("Matching AI Engineer · propose l'AI Engineer", engSugg.some((x) => x.recruiter_profile_id === engineerProfile.id), `${engSugg.length} profil(s)`);
+  check("Matching AI Engineer · ne propose ni l'AI Leader ni le recruteur", !engSugg.some((x) => x.recruiter_profile_id === leaderProfile.id || x.recruiter_profile_id === ids.profile));
+  const leadMatch = await invoke(admin, "match-profiles", { need_id: leadNeed.id });
+  must("Admin · lance le matching AI Leader", !leadMatch.error, leadMatch.error);
+  const leadSugg = sql(`select recruiter_profile_id from public.profile_suggestions where need_id = ${q(leadNeed.id)};`);
+  check("Matching AI Leader · propose l'AI Leader (2 j/sem)", leadSugg.some((x) => x.recruiter_profile_id === leaderProfile.id), `${leadSugg.length} profil(s)`);
+  check("Matching AI Leader · ne propose pas l'AI Engineer", !leadSugg.some((x) => x.recruiter_profile_id === engineerProfile.id));
 }
 
 // ── Nettoyage ──────────────────────────────────────────────────────────────────
