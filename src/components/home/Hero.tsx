@@ -54,7 +54,7 @@ function HeroDecor() {
       <div className="absolute right-[2.5%] top-[52px] w-[240px] rotate-[4deg]">
         <div className={`ks-float ${card}`} style={{ animationDelay: "-2s" }}>
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-ks-display text-[14px] font-semibold" style={{ background: "#DDE8F5", color: "#1E4F8F" }}>LN</span>
+            <img src="/people/lina.jpg" alt="" className="h-10 w-10 shrink-0 rounded-full object-cover object-top" style={{ background: "#DDE8F5" }} />
             <div className="min-w-0">
               <p className="text-[14px] font-semibold">Lina N.</p>
               <p className="text-[12px] text-ks-subtle">AI Engineer · RAG</p>
