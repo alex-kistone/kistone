@@ -41,7 +41,7 @@ export const LOGOS = {
 };
 
 export const METHOD = {
-  title: "Quatre étapes. Zéro jargon.",
+  title: "Quatre étapes, de l'idée à l'outil.",
   subtitle: "De votre besoin à un produit utilisé par vos équipes. Vous validez chaque étape.",
   steps: [
     { num: "01", title: "Diagnostic", desc: "15 minutes pour cerner le problème et le gain attendu." },

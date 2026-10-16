@@ -176,15 +176,15 @@ const Login = () => {
   const tabs: { key: UserType; label: string; icon: typeof Building2; desc: string }[] = [
     {
       key: "client",
-      label: "Je recrute",
+      label: "Je cherche un expert",
       icon: Building2,
-      desc: "Trouvez un recruteur freelance pour vos besoins.",
+      desc: "Trouvez l'expert IA qualifié pour votre projet.",
     },
     {
       key: "recruiter",
       label: "Je suis freelance",
       icon: Users,
-      desc: "Accédez à des missions et développez votre activité.",
+      desc: "Accédez à des missions IA et développez votre activité.",
     },
   ];
 

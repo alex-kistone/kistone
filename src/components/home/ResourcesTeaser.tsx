@@ -15,7 +15,7 @@ export default function ResourcesTeaser() {
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
-            Freelance, stratégie et leadership, sans jargon.
+            Réussir vos projets <span className="ks-grad-text">IA</span>.
           </h2>
         </div>
         {posts.length > 0 ? (
