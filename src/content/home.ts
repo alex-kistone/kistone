@@ -144,7 +144,7 @@ export const STUDIO_TILES: { title: string; desc: string; palette: PaletteName; 
 
 export const RESOURCES: { kind: string; title: string; meta: string; palette: PaletteName }[] = [
   { kind: "Article", title: "[Titre d’article : RPO freelance vs cabinet]", meta: "Blog · [x] min de lecture", palette: "apricot" },
-  { kind: "Comparatif", title: "Trouver un expert IA freelance : les plateformes en France", meta: "Guide · 9 acteurs", palette: "lilac" },
+  { kind: "Comparatif", title: "Trouver un expert IA freelance : les plateformes en France", meta: "Guide · 13 acteurs", palette: "lilac" },
   { kind: "Guide", title: "[Titre de guide : outiller ses RH avec l’IA]", meta: "Guide · PDF", palette: "teal" },
 ];
 

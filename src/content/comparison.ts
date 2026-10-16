@@ -1,15 +1,17 @@
 /**
  * Comparatif des plateformes pour trouver un expert IA freelance (Ressources).
- * Informations tirées des sites publics de chaque acteur (relevé du 16 octobre 2026) :
+ * Informations tirées des sites publics de chaque acteur (relevé du 16 octobre 2026 ; spécialistes
+ * d'autres fonctions relevés le 12 octobre 2026) :
  * rester factuel et positif, mettre en avant les atouts de chacun. Les chiffres cités sont
  * ceux que les acteurs annoncent eux-mêmes. Jamais « management de transition ».
  */
-export type Family = "specialist" | "selective" | "global" | "open";
+export type Family = "specialist" | "selective" | "global" | "function" | "open";
 
 export const FAMILIES: Record<Family, { label: string; desc: string }> = {
   specialist: { label: "Spécialiste des métiers de l'IA", desc: "Uniquement des profils IA et data : ingénieurs, produit, leadership, avec un matching dédié." },
   selective: { label: "Plateforme sélective tech et data", desc: "Des freelances tech, data et IA présélectionnés, souvent pour les grands comptes." },
   global: { label: "Réseau international sélectif", desc: "Un vivier mondial très sélectif, en anglais, souvent à distance." },
+  function: { label: "Spécialiste d'une autre fonction", desc: "Une expertise profonde sur une fonction de direction : RH, marketing et revenu, finance, leadership tech." },
   open: { label: "Place de marché ou job board ouvert", desc: "Un très large vivier de freelances, en libre recherche, sur tous les métiers." },
 };
 
@@ -128,6 +130,64 @@ export const PLAYERS: Player[] = [
     ],
   },
   {
+    name: "Le Club des RH",
+    url: "https://www.leclubdesrh.fr/",
+    family: "function",
+    scope: "Ressources humaines (DRH, paie, recrutement, formation…)",
+    models: "Temps partagé, intérim, régie, projet, RPO, audit, formation",
+    idealFor: "Les entreprises qui cherchent un expert RH pointu, du DRH à temps partagé à l'audit de paie",
+    summary: "Plateforme de consultants RH indépendants, couvrant plus de 30 métiers RH selon son site. Son offre va de l'audit et du conseil à l'externalisation (DRH à temps partagé, paie, RPO) et à la formation, via un organisme certifié Qualiopi.",
+    strengths: [
+      "Une profondeur rare sur toute la fonction RH, de la paie à la QVCT",
+      "Une shortlist de 2 à 3 consultants sous 48 h",
+      "Un contrat tripartite, une facture unique et le suivi des temps en ligne",
+      "Une offre de formation certifiée Qualiopi",
+    ],
+  },
+  {
+    name: "Mateerz",
+    url: "https://mateerz.com/",
+    family: "function",
+    scope: "Marketing et revenu (CMO, CRO / CSO, growth)",
+    models: "Fractional, intérim, squads, agence hybride, recrutement",
+    idealFor: "Les startups et scale-ups B2B qui veulent structurer leur marketing ou leur machine commerciale",
+    summary: "Spécialiste du leadership marketing et revenu : CMO et CRO à temps partagé, mais aussi squads de freelances, agence hybride et go-to-market, avec des bureaux à Paris, Barcelone et Londres.",
+    strengths: [
+      "Une expertise très poussée sur le marketing, la croissance et le revenu",
+      "Une sélection exigeante des profils",
+      "Des formats complémentaires : du dirigeant seul à l'équipe d'exécution",
+      "Une présence internationale (Paris, Barcelone, Londres)",
+    ],
+  },
+  {
+    name: "CO-CTO",
+    url: "https://co-cto.fr/en",
+    family: "function",
+    scope: "Tech, produit et IA (CTO, CPO, Chief AI Officer)",
+    models: "Fractional, audit, due diligence, recrutement",
+    idealFor: "Les startups qui ont besoin d'un CTO senior, d'un audit technique ou d'une due diligence avant une levée",
+    summary: "Collectif de CTO, CPO et responsables IA (environ 700 selon son site), spécialisé dans l'accompagnement tech des startups et scale-ups : CTO à temps partagé, audit, due diligence technique et recrutement de CTO.",
+    strengths: [
+      "Une communauté de CTO très expérimentés (18 ans en moyenne selon son site)",
+      "Une forte expertise en audit et due diligence technique",
+      "Une couverture produit et IA en plus de la tech",
+    ],
+  },
+  {
+    name: "MyCFO",
+    url: "https://mycfo.fr/",
+    family: "function",
+    scope: "Finance et comptabilité",
+    models: "CFO à temps partagé, renfort, expertise comptable",
+    idealFor: "Les startups et PME qui veulent réunir pilotage financier et tenue comptable chez un même partenaire",
+    summary: "Cabinet de conseil financier et comptable implanté à Paris, Nice et près de Genève. Il propose des CFO à temps partagé aux startups et PME, et des renforts comptables et financiers aux ETI et grands groupes.",
+    strengths: [
+      "Finance et comptabilité réunies chez un même partenaire",
+      "Une expertise technique solide (normes françaises, IFRS, fiscalité, FP&A)",
+      "Une présence en France et en Suisse",
+    ],
+  },
+  {
     name: "Malt",
     url: "https://www.malt.fr/",
     family: "open",
@@ -161,10 +221,10 @@ export const COMPARISON = {
   slug: "comparatif-plateformes-freelance-ia",
   title: "Trouver un expert IA freelance : comparatif des plateformes en France",
   seoTitle: "Expert IA freelance : comparatif des plateformes 2026",
-  seoDescription: "Kistone, TalentAI, Koïno, Crème de la Crème, Comet, LeHibou, Toptal, Malt, Free-Work : qui propose quels profils IA, pour quels besoins, et comment choisir.",
+  seoDescription: "Kistone, TalentAI, Koïno, Crème de la Crème, Comet, LeHibou, Toptal, Malt, Free-Work, et les spécialistes Mateerz, Le Club des RH, CO-CTO, MyCFO : qui propose quels profils, pour quels besoins, et comment choisir.",
   date: "2026-10-16",
-  lead: "Spécialistes de l'IA, plateformes sélectives tech et data, réseaux internationaux, places de marché ouvertes : pour recruter un AI Engineer, un AI Product Manager ou un leader IA en freelance, l'offre s'est structurée. Voici une grille de lecture objective des principaux acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
-  answer: "Pour trouver un expert IA freelance, il existe quatre familles d'acteurs : les spécialistes des métiers de l'IA (comme Kistone), les plateformes sélectives tech et data, les réseaux internationaux sélectifs et les places de marché ou job boards ouverts. Le bon choix dépend du profil recherché (ingénierie, produit ou leadership), du niveau de sélection attendu, de l'urgence, de la langue de travail et de l'envie d'internaliser ensuite le talent.",
+  lead: "Spécialistes de l'IA, plateformes sélectives tech et data, réseaux internationaux, spécialistes d'autres fonctions, places de marché ouvertes : pour recruter un AI Engineer, un AI Product Manager ou un leader IA en freelance, l'offre s'est structurée. Voici une grille de lecture objective des principaux acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
+  answer: "Pour trouver un expert IA freelance, il existe quatre familles d'acteurs : les spécialistes des métiers de l'IA (comme Kistone), les plateformes sélectives tech et data, les réseaux internationaux sélectifs et les places de marché ou job boards ouverts. Pour les autres fonctions de direction (RH, marketing et revenu, finance), des spécialistes dédiés existent aussi. Le bon choix dépend du profil recherché (ingénierie, produit ou leadership), du niveau de sélection attendu, de l'urgence, de la langue de travail et de l'envie d'internaliser ensuite le talent.",
   questions: [
     { title: "Quel profil ?", desc: "Construire (AI Engineer), concevoir et faire adopter (AI Product) ou fixer le cap (AI Leader) : un spécialiste de l'IA connaît ces nuances." },
     { title: "Quel niveau de sélection ?", desc: "Profils qualifiés en entretien et présentés par l'acteur, ou libre accès à un large vivier à évaluer vous-même." },

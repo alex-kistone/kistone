@@ -16,6 +16,7 @@ const FAMILY_TONE: Record<Family, string> = {
   specialist: "bg-[#E8E2F6] text-[#4B35A0]",
   selective: "bg-[#D5EDEA] text-[#16615C]",
   global: "bg-[#FBE6D4] text-[#94471A]",
+  function: "bg-[#F5ECCB] text-[#6E5208]",
   open: "bg-[#DDE8F5] text-[#1E4F8F]",
 };
 
@@ -73,8 +74,8 @@ export default function ComparisonPage() {
         </header>
 
         {/* Les quatre familles */}
-        <PageSection title="Quatre familles d'acteurs">
-          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <PageSection title="Cinq familles d'acteurs">
+          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {(Object.keys(FAMILIES) as Family[]).map((f) => (
               <li key={f} className="rounded-[24px] bg-white p-6 shadow-ks-card">
                 <span className={cn("rounded-full px-2.5 py-1 text-[12px] font-semibold", FAMILY_TONE[f])}>{FAMILIES[f].label}</span>
