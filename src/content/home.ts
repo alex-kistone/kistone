@@ -45,11 +45,62 @@ export const RECRUITERS: Recruiter[] = [
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
 
-export const STEPS = [
-  { num: "Étape 01", title: "Partagez votre besoin", desc: "Quelques lignes suffisent : l'IA en extrait les critères, on les qualifie avec vous." },
-  { num: "Étape 02", title: "Matching et profil en 48 h", desc: "Un expert IA sélectionné et qualifié en entretien, choisi pour votre contexte." },
+export const STEPS: { num: string; title: string; desc: string; link?: { label: string; href: string } }[] = [
+  { num: "Étape 01", title: "Partagez votre besoin", desc: "Quelques lignes suffisent : l'IA en extrait les critères (famille, stack, rythme, budget)." },
+  {
+    num: "Étape 02",
+    title: "Un référent IA le cadre avec vous",
+    desc: "30 minutes au téléphone pour préciser l'enjeu, le format et le budget. Puis un profil qualifié sous 48 h.",
+    link: { label: "Réserver 30 minutes", href: "https://calendly.com/alexandre-kistone/30mins-meetup" },
+  },
   { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, KYC et onboarding gérés : l'expert démarre, on suit la mission avec vous." },
 ];
+
+/**
+ * « Passer en production » : les situations qui amènent un client vers Kistone, chacune vers
+ * la famille qui y répond. Le recrutement en CDI n'est jamais présenté comme un problème :
+ * l'expert démarre et le Tech recruiter accélère l'embauche, les deux ensemble.
+ */
+export const PAIN = {
+  titleA: "Une démo d'IA, c'est facile.",
+  titleB: "La mettre en production, c'est un métier.",
+  subtitle: "Les compétences IA sont rares, et les projets n'attendent pas. Par où commencez-vous ?",
+  cards: [
+    { tag: "POC bloqué", title: "Un prototype qui ne passe pas en production", desc: "La démo convainc, mais il faut fiabiliser, évaluer, sécuriser et déployer.", vertical: "engineer" as Vertical },
+    { tag: "Expertise absente", title: "Personne dans l'équipe ne maîtrise l'IA", desc: "LLM, RAG, agents, évaluation : une compétence pointue dont vous avez besoin maintenant.", vertical: "product" as Vertical },
+    { tag: "Pas de cap", title: "Beaucoup d'idées d'IA, pas de feuille de route", desc: "Il faut prioriser les cas d'usage, choisir les plateformes et poser la gouvernance.", vertical: "leader" as Vertical },
+    { tag: "Recrutement long", title: "Un recrutement IA qui prend du temps", desc: "Un expert démarre en mission dès maintenant, et notre Tech recruiter accélère l'embauche en CDI.", vertical: "rpo" as Vertical },
+  ],
+};
+
+/** Les besoins les plus fréquents : un rôle précis, qui pré-remplit le dépôt de besoin. */
+export const ROLE_CATALOG: { role: string; vertical: Vertical }[] = [
+  { role: "LLM Engineer", vertical: "engineer" },
+  { role: "RAG Engineer", vertical: "engineer" },
+  { role: "AI Agents Engineer", vertical: "engineer" },
+  { role: "MLOps / LLMOps Engineer", vertical: "engineer" },
+  { role: "AI Product Manager", vertical: "product" },
+  { role: "Product Owner IA", vertical: "product" },
+  { role: "AI Designer", vertical: "product" },
+  { role: "Fractional CTO", vertical: "leader" },
+  { role: "Head of AI", vertical: "leader" },
+  { role: "Chief AI Officer", vertical: "leader" },
+  { role: "Tech recruiter IA & data", vertical: "rpo" },
+  { role: "Tech recruiter Dev & Infra", vertical: "rpo" },
+];
+
+/** La squad IA : plusieurs familles sur un même projet, coordonnées par Kistone. */
+export const SQUAD = {
+  label: "Squad IA",
+  title: "Une équipe IA complète, coordonnée par Kistone.",
+  text: "Un AI Leader quelques jours par semaine pour le cap, un AI Engineer pour construire, un AI Product pour l'adoption : composés pour votre projet, ils démarrent ensemble.",
+  members: [
+    { vertical: "leader" as Vertical, rhythm: "2 j / sem", role: "Fixe le cap et arbitre" },
+    { vertical: "engineer" as Vertical, rhythm: "Temps plein", role: "Construit et met en production" },
+    { vertical: "product" as Vertical, rhythm: "Temps plein", role: "Conçoit et fait adopter" },
+  ],
+  points: ["Un seul interlocuteur Kistone", "Des profils choisis pour travailler ensemble", "Contrats, CRA et facturation sur la plateforme"],
+};
 
 export const ASSETS = [
   { icon: "shield", title: "Profils sélectionnés et qualifiés", desc: "Parcours, projets IA et références évalués en entretien avant la première mission.", featured: true },
@@ -57,6 +108,19 @@ export const ASSETS = [
   { icon: "clock", title: "Réactivité", desc: "Un premier profil en 48 h et un démarrage en une semaine, pas en trois mois." },
   { icon: "team", title: "Le bon format", desc: "Mission, fractional ou contract-to-hire : vous ajustez selon votre besoin." },
 ] as const;
+
+/** Espace freelance : ce que la plateforme supprime (les irritants du freelance). */
+export const FREELANCE_STRIKE = {
+  title: "Fini les…",
+  subtitle: "Ce que vous ne ferez plus jamais pour décrocher et suivre une mission.",
+  items: [
+    "Devis envoyés sans réponse",
+    "Briefs flous et budgets découverts au troisième appel",
+    "Bons de commande qui n'arrivent jamais",
+    "Relances pour être payé",
+    "Paperasse à refaire pour chaque client",
+  ],
+};
 
 export const FREELANCE_SPACE = [
   { label: "Mission AI Engineer · Scale-up SaaS", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },

@@ -6,7 +6,7 @@ import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
 import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { FREELANCE_SPACE } from "@/content/home";
+import { FREELANCE_SPACE, FREELANCE_STRIKE } from "@/content/home";
 import { MODEL_PAGES, modelPath } from "@/content/models";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
 import { palettes, type PaletteName } from "@/lib/palettes";
@@ -20,7 +20,7 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
   {
     tag: "Opportunités",
     title: "Des missions qui vous ressemblent",
-    text: "Fini les sollicitations au hasard. Vous recevez des besoins qualifiés dans votre famille et vos spécialités, avec le contexte, le rythme, le lieu et le budget dès le départ. Vous vous positionnez en un clic sur ceux qui vous intéressent.",
+    text: "Fini les sollicitations au hasard. Vous recevez des besoins qualifiés dans votre famille et vos spécialités, avec un brief complet et un budget de référence avant tout échange : le contexte, le rythme, le lieu et le TJM. Vous vous positionnez en un clic sur ceux qui vous intéressent.",
     palette: "sage",
     visual: () => (
       <ul className="flex w-full flex-col gap-2">
@@ -187,6 +187,26 @@ export default function FreelancesPage() {
           );
         })}
       </div>
+
+      {/* Ce que la plateforme supprime */}
+      <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
+        <div className="ks-reveal grid gap-4 rounded-3xl bg-ks-secondary p-[26px] md:grid-cols-2 md:gap-12 md:rounded-[28px] md:p-10 lg:p-12">
+          <div>
+            <h2 className="font-ks-display text-[38px] font-bold leading-none tracking-[-0.045em] md:text-5xl lg:text-[56px]">{FREELANCE_STRIKE.title}</h2>
+            <p className="mt-2.5 text-[15px] leading-normal text-ks-soft md:mt-3.5 md:text-[17px] md:leading-[1.55]">{FREELANCE_STRIKE.subtitle}</p>
+          </div>
+          <ul className="flex flex-col">
+            {FREELANCE_STRIKE.items.map((item) => (
+              <li key={item} className="flex min-h-[50px] items-center gap-3 border-b border-[rgba(20,19,18,0.08)] py-2 text-[15px] text-ks-soft md:min-h-[54px] md:gap-3.5 md:text-base">
+                <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-white text-[#B14DF5] md:h-6 md:w-6" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </span>
+                <span className="line-through decoration-[rgba(177,77,245,0.55)] decoration-[length:1.5px]">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
       {/* Métiers */}
       <PageSection title="Les métiers que nous recherchons" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">

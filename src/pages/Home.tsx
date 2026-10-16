@@ -4,6 +4,9 @@ import Hero from "@/components/home/Hero";
 import BriefDemo from "@/components/home/BriefDemo";
 import KeyFigures from "@/components/studio/KeyFigures";
 import FunctionsGrid from "@/components/home/FunctionsGrid";
+import PainSituations from "@/components/home/PainSituations";
+import RoleCatalog from "@/components/home/RoleCatalog";
+import SquadOffer from "@/components/home/SquadOffer";
 import HowItWorks from "@/components/home/HowItWorks";
 import WhyMarketplace from "@/components/home/WhyMarketplace";
 import ModelsTeaser from "@/components/home/ModelsTeaser";
@@ -26,10 +29,13 @@ export default function Home() {
       <div className="overflow-x-clip">
         <Hero />
         <KeyFigures figures={KEY_FIGURES} />
+        <PainSituations />
         <BriefDemo />
         <FunctionsGrid />
+        <RoleCatalog />
         <HowItWorks />
         <WhyMarketplace />
+        <SquadOffer />
         <ModelsTeaser />
         <FreelanceCTA />
         <StudioReminder />

@@ -55,6 +55,7 @@ Les politiques de remote possibles sont : on-site, hybrid, full-remote, flexible
 Date d'arrivée souhaitée : nous sommes le ${new Date().toISOString().slice(0, 10)}. Si le texte donne une date ou une période de démarrage (« début novembre », « en janvier »), renseigne desired_start au format AAAA-MM-JJ (premier jour de la période). Si c'est urgent (« ASAP », « au plus vite ») ou non précisé, omets desired_start.
 Le budget est un TJM client en euros HT par jour. N'invente pas de fourchette : si un seul montant est donné (« autour de 600 € »), renseigne uniquement budget_tjm_max ; si une fourchette est donnée, le minimum doit être strictement inférieur au maximum.
 
+La description reformule le besoin du client en une à trois phrases claires, écrites pour être lues par un freelance : ne signale jamais les informations absentes (« aucun détail n'a été précisé »).
 Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide pour les arrays).`,
         messages: [{ role: "user", content: freeText }],
         tools: [

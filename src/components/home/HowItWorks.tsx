@@ -99,6 +99,11 @@ export default function HowItWorks() {
                 <span className="self-start font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">{s.num}</span>
                 <h3 className="font-ks-display text-[24px] font-semibold tracking-[-0.02em]">{s.title}</h3>
                 <p className="text-base leading-[1.55] text-ks-soft">{s.desc}</p>
+                {s.link && (
+                  <a href={s.link.href} target="_blank" rel="noopener noreferrer" className="ks-more mt-1 flex items-center gap-1.5 self-start text-[15px] font-semibold">
+                    {s.link.label} <span className="ks-arrow" aria-hidden="true">→</span>
+                  </a>
+                )}
               </div>
             </li>
           );
