@@ -10,7 +10,6 @@ import HowItWorks from "@/components/home/HowItWorks";
 import WhyMarketplace from "@/components/home/WhyMarketplace";
 import ModelsTeaser from "@/components/home/ModelsTeaser";
 import FreelanceCTA from "@/components/home/FreelanceCTA";
-import StudioReminder from "@/components/home/StudioReminder";
 import ResourcesTeaser from "@/components/home/ResourcesTeaser";
 import FinalCTA from "@/components/home/FinalCTA";
 import "@/site/studio.css";
@@ -35,7 +34,6 @@ export default function Home() {
         <SquadOffer />
         <ModelsTeaser />
         <FreelanceCTA />
-        <StudioReminder />
         <ResourcesTeaser />
         <FinalCTA />
       </div>
