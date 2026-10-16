@@ -20,6 +20,8 @@ export interface PendingNeed {
   desired_start: string | null;
   /** Durée de mission en mois (1 à 12), null = à définir. */
   duration_months?: number | null;
+  /** Niveau d'anglais requis (1 à 5), null = non requis. */
+  english_level?: number | null;
   description: string | null;
   sectors: string[];
 }

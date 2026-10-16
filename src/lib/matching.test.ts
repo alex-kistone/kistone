@@ -156,3 +156,22 @@ describe("anglais seulement contextuel", () => {
     expect(s.notes).toContain("Anglais limité");
   });
 });
+
+describe("niveau d'anglais demandé par le client", () => {
+  const avance = { ...need, english_level: 3 } as Need;
+
+  it("compte le niveau atteint, un cran en dessous en partie, et manque l'exigence plus bas", () => {
+    const courant = scoreRecruiter(avance, profile({ languages: [{ language: "Anglais", level: "courant" }] }), false)!;
+    const inter = scoreRecruiter(avance, profile({ languages: [{ language: "Anglais", level: "intermédiaire" }] }), false)!;
+    const debutant = scoreRecruiter(avance, profile({ languages: [{ language: "Anglais", level: "débutant" }] }), false)!;
+    expect(courant.breakdown.english).toBe(10);
+    expect(inter.breakdown.english).toBe(5);
+    expect(debutant.breakdown.english).toBe(0);
+    expect(debutant.notes).toContain("Anglais insuffisant pour le niveau demandé");
+  });
+
+  it("prime sur le texte du besoin, même quand celui-ci ne parle pas d'anglais", () => {
+    const s = scoreRecruiter({ ...need, english_level: 4 } as Need, profile({ languages: [{ language: "Anglais", level: "avancé" }] }), false)!;
+    expect(s.breakdown.english).toBe(5);
+  });
+});

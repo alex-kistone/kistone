@@ -29,6 +29,7 @@ import { loadPendingNeed, savePendingNeed, type PendingNeed } from "@/lib/pendin
 import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
+import EnglishLevelField from "@/components/platform/EnglishLevelField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
 import OnboardingSteps, { NEED_FIRST_STEPS } from "@/components/platform/OnboardingSteps";
@@ -82,6 +83,7 @@ const ClientNewNeed = () => {
   const [start, setStart] = useState<{ asap: boolean; date: string }>({ asap: true, date: "" });
   const [description, setDescription] = useState("");
   const [durationMonths, setDurationMonths] = useState<number | null>(null);
+  const [englishLevel, setEnglishLevel] = useState<number | null>(null);
   const [sectors, setSectors] = useState<string[]>([]);
 
   useEffect(() => {
@@ -131,6 +133,7 @@ const ClientNewNeed = () => {
     setRemotePolicy(draft.remote_policy || "on-site");
     setStart(draft.desired_start ? { asap: false, date: draft.desired_start } : { asap: true, date: "" });
     setDurationMonths(draft.duration_months ?? null);
+    setEnglishLevel(draft.english_level ?? null);
     setDescription(draft.description ?? "");
     setSectors(draft.sectors ?? []);
     setPicked(true);
@@ -185,6 +188,7 @@ const ClientNewNeed = () => {
       if (data.remote_policy) setRemotePolicy(data.remote_policy);
       if (typeof data.desired_start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data.desired_start)) setStart({ asap: false, date: data.desired_start });
       if (data.description) setDescription(data.description);
+      if (typeof data.english_level === "number" && data.english_level >= 2 && data.english_level <= 5) setEnglishLevel(Math.round(data.english_level));
       if (typeof data.duration_months === "number" && data.duration_months >= 1) setDurationMonths(Math.min(12, Math.round(data.duration_months)));
 
       toast({ title: "Fiche générée !", description: "Vérifiez et complétez les champs ci-dessous." });
@@ -226,6 +230,7 @@ const ClientNewNeed = () => {
       remote_policy: remotePolicy,
       desired_start: start.asap || !start.date ? null : start.date,
       duration_months: durationMonths,
+      english_level: englishLevel,
       description: description || null,
       sectors,
     };
@@ -255,6 +260,7 @@ const ClientNewNeed = () => {
           remote_policy: remotePolicy,
           desired_start: start.asap || !start.date ? null : start.date,
           duration_months: durationMonths,
+          english_level: englishLevel,
           description: description || null,
           sectors,
         });
@@ -389,6 +395,7 @@ const ClientNewNeed = () => {
           <DesiredStartField asap={start.asap} date={start.date} onChange={setStart} />
 
           <MissionDurationField value={durationMonths} onChange={setDurationMonths} />
+          <EnglishLevelField value={englishLevel} onChange={setEnglishLevel} />
 
           {/* Budget TJM */}
           <BudgetRangeField

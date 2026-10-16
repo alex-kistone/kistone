@@ -44,6 +44,8 @@ export interface Need {
   specialties?: string[] | null;
   /** Jours par semaine demandés ; null = temps plein. */
   days_per_week?: number | null;
+  /** Niveau d'anglais requis (1 à 5, échelle des freelances) ; null = déduit du texte du besoin. */
+  english_level?: number | null;
 }
 
 export interface Recruiter {
@@ -116,12 +118,22 @@ const ENGLISH_REQUIRED = /\b(anglais|english)\b[^.]{0,60}\b(indispensable|obliga
 /** Plafond d'un profil à l'anglais limité quand le besoin l'exige. */
 export const ENGLISH_MISS_CAP = 55;
 
-/** Critère anglais : neutre si le besoin n'en parle pas, sinon selon le niveau retenu. */
-function scoreEnglish(needText: string, r: Recruiter): { pts: number; note: string | null; missedRequirement?: boolean } {
-  if (!ENGLISH_HINT.test(needText)) return { pts: MAX.english, note: null };
-  const required = ENGLISH_REQUIRED.test(needText);
+/**
+ * Critère anglais. Niveau requis renseigné par le client : comparé au niveau du freelance
+ * (atteint = plein, un cran en dessous = partiel, plus bas = exigence manquée). Sinon, neutre si
+ * le besoin n'en parle pas, ou déduit du texte.
+ */
+function scoreEnglish(needText: string, r: Recruiter, requiredLevel?: number | null): { pts: number; note: string | null; missedRequirement?: boolean } {
   const languages = Array.isArray(r.languages) ? (r.languages as { language: string; level: string }[]) : [];
   const level = englishLevel({ languages, admin_english_rating: r.admin_english_rating ?? null });
+  if (requiredLevel && requiredLevel >= 2) {
+    if (level == null) return { pts: MAX.english * 0.3, note: "Niveau d'anglais à vérifier" };
+    if (level >= requiredLevel) return { pts: MAX.english, note: level >= 4 ? "Anglais courant" : "Niveau d'anglais suffisant" };
+    if (level === requiredLevel - 1) return { pts: MAX.english * 0.5, note: "Anglais un peu en dessous du niveau demandé" };
+    return { pts: 0, note: "Anglais insuffisant pour le niveau demandé", missedRequirement: true };
+  }
+  if (!ENGLISH_HINT.test(needText)) return { pts: MAX.english, note: null };
+  const required = ENGLISH_REQUIRED.test(needText);
   if (level == null) return { pts: MAX.english * 0.4, note: null };
   if (level >= 4) return { pts: MAX.english, note: "Anglais courant" };
   if (level === 3) return { pts: MAX.english * 0.6, note: "Bon niveau d'anglais" };
@@ -295,7 +307,7 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean, com
 
   const rating = r.admin_rating ?? 0;
   const quality = MAX.quality * (RATING_WEIGHT[rating] ?? RATING_WEIGHT[0]);
-  const english = scoreEnglish(needText, r);
+  const english = scoreEnglish(needText, r, need.english_level);
 
   const breakdown: ScoreBreakdown = {
     budget: budget.pts,

@@ -1,7 +1,8 @@
 import { durationLabel } from "@/components/platform/MissionDurationField";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, CalendarClock, Clock, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
+import { Briefcase, CalendarClock, Clock, Languages, MapPin, Monitor, Euro, Send, Check } from "lucide-react";
+import { englishLevelLabel } from "@/lib/englishLevel";
 import { desiredStartLabel } from "@/lib/needStart";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,7 @@ interface OpenNeed {
   remote_policy: string;
   desired_start: string | null;
   duration_months: number | null;
+  english_level: number | null;
   vertical: string;
   specialties: string[];
   days_per_week: number | null;
@@ -75,7 +77,7 @@ const OpenNeeds = () => {
     // Load open needs via secure view (no contact info exposed)
     const { data: needsData } = await supabase
       .from("client_needs_open" as any)
-      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start, duration_months, vertical, specialties, days_per_week")
+      .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start, duration_months, english_level, vertical, specialties, days_per_week")
       .order("created_at", { ascending: false });
 
     setNeeds((needsData as unknown as OpenNeed[]) || []);
@@ -188,6 +190,11 @@ const OpenNeeds = () => {
                       {need.duration_months && (
                         <span className="flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5" /> {durationLabel(need.duration_months)}
+                        </span>
+                      )}
+                      {need.english_level && (
+                        <span className="flex items-center gap-1">
+                          <Languages className="h-3.5 w-3.5" /> Anglais {englishLevelLabel(need.english_level).toLowerCase()}
                         </span>
                       )}
                       {(need.budget_tjm_min || need.budget_tjm_max) && (

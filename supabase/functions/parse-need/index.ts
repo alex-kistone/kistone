@@ -103,6 +103,10 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
                   type: "number",
                   description: "Budget TJM maximum en euros/jour",
                 },
+                english_level: {
+                  type: "integer",
+                  description: "Niveau d'anglais requis, seulement s'il est évoqué : 2 intermédiaire, 3 avancé (réunions, écrits), 4 courant, 5 natif ou bilingue. À omettre sinon.",
+                },
                 duration_months: {
                   type: "number",
                   description: "Durée de la mission en mois (1 à 12 ; 12 pour un an ou plus) ; à omettre si non précisée",

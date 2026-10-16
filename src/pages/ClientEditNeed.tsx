@@ -21,6 +21,7 @@ import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
 import { isVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
+import EnglishLevelField from "@/components/platform/EnglishLevelField";
 import AppShell from "@/components/platform/AppShell";
 import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
@@ -54,6 +55,7 @@ const ClientEditNeed = () => {
   const [missionLocation, setMissionLocation] = useState("");
   const [remotePolicy, setRemotePolicy] = useState("on-site");
   const [durationMonths, setDurationMonths] = useState<number | null>(null);
+  const [englishLevel, setEnglishLevel] = useState<number | null>(null);
   // Date d'arrivée souhaitée : dès que possible (desired_start NULL) ou une date précise
   const [start, setStart] = useState<{ asap: boolean; date: string }>({ asap: true, date: "" });
   const [description, setDescription] = useState("");
@@ -92,6 +94,7 @@ const ClientEditNeed = () => {
       setRemotePolicy(need.remote_policy);
       setStart(need.desired_start ? { asap: false, date: need.desired_start } : { asap: true, date: "" });
       setDurationMonths(need.duration_months ?? null);
+      setEnglishLevel(need.english_level ?? null);
       setDescription(need.description || "");
       setLoading(false);
     };
@@ -126,6 +129,7 @@ const ClientEditNeed = () => {
           remote_policy: remotePolicy,
           desired_start: start.asap || !start.date ? null : start.date,
           duration_months: durationMonths,
+          english_level: englishLevel,
           description: description || null,
         })
         .eq("id", id);
@@ -223,6 +227,7 @@ const ClientEditNeed = () => {
           <DesiredStartField asap={start.asap} date={start.date} onChange={setStart} />
 
           <MissionDurationField value={durationMonths} onChange={setDurationMonths} />
+          <EnglishLevelField value={englishLevel} onChange={setEnglishLevel} />
 
           <BudgetRangeField
             min={budgetMin}
