@@ -100,7 +100,7 @@ export const STATIC_POSTS: BlogPost[] = [
     content: FRACTIONAL_STUDY,
     published_at: "2026-10-12T12:00:00.000Z",
   }),
-  // Le comparatif a sa propre page (/ressources/comparatif-acteurs-fractional) ; cette entrée l'affiche dans la liste.
+  // Le comparatif a sa propre page (/ressources/comparatif-plateformes-freelance-ia) ; cette entrée l'affiche dans la liste.
   base({
     id: "static-comparatif-acteurs",
     slug: COMPARISON.slug,

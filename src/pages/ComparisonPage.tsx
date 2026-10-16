@@ -13,15 +13,15 @@ const BASE_URL = "https://kistone.fr";
 export const COMPARISON_PATH = `${BLOG_PATH}/${COMPARISON.slug}`;
 
 const FAMILY_TONE: Record<Family, string> = {
-  selective: "bg-[#FFE3EC] text-[#8F1747]",
   specialist: "bg-[#E8E2F6] text-[#4B35A0]",
-  firm: "bg-[#FBE6D4] text-[#94471A]",
+  selective: "bg-[#D5EDEA] text-[#16615C]",
+  global: "bg-[#FBE6D4] text-[#94471A]",
   open: "bg-[#DDE8F5] text-[#1E4F8F]",
 };
 
 const anchor = (name: string) => name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-");
 
-/** Comparatif des acteurs du fractional et de l'intérim (Ressources), pré-rendu. */
+/** Comparatif des plateformes pour trouver un expert IA freelance (Ressources), pré-rendu. */
 export default function ComparisonPage() {
   const url = `${BASE_URL}${COMPARISON_PATH}`;
   const jsonLd = [
@@ -40,7 +40,7 @@ export default function ComparisonPage() {
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      name: "Acteurs du fractional et de l'intérim de direction en France",
+      name: "Plateformes pour trouver un expert IA freelance en France",
       itemListElement: PLAYERS.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.name, url: p.url })),
     },
     {
@@ -134,7 +134,7 @@ export default function ComparisonPage() {
                 <p className="mt-2 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Modèles :</strong> {p.models}</p>
                 {p.name === "Kistone" ? (
                   <div className="mt-6 flex flex-wrap gap-3">
-                    <Cta href={ROUTES.recruit} arrow>Partager un besoin</Cta>
+                    <Cta href={ROUTES.recruit} variant="studio" arrow>Accéder aux profils</Cta>
                     <Cta href={ROUTES.freelance} variant="secondary">Rejoindre en tant que freelance</Cta>
                   </div>
                 ) : (

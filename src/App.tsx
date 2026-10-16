@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Studio from "./pages/Studio";
 import FreelancerAuth from "./pages/FreelancerAuth";
@@ -27,6 +27,7 @@ import ModelPage from "./pages/ModelPage";
 import FreelancesPage from "./pages/FreelancesPage";
 import WhyKistone from "./pages/WhyKistone";
 import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
+import { LEGACY_COMPARISON_SLUG } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 
@@ -58,6 +59,7 @@ export const AppRoutes = () => (
     <Route path="/pourquoi-kistone" element={<WhyKistone />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path={COMPARISON_PATH} element={<ComparisonPage />} />
+    <Route path={`/ressources/${LEGACY_COMPARISON_SLUG}`} element={<Navigate to={COMPARISON_PATH} replace />} />
     <Route path="/ressources/:slug" element={<BlogPost />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
