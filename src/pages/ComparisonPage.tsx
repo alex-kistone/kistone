@@ -20,6 +20,15 @@ const FAMILY_TONE: Record<Family, string> = {
   open: "bg-[#DDE8F5] text-[#1E4F8F]",
 };
 
+/** Pastille de couleur de chaque famille (cartes « Cinq familles d'acteurs »). */
+const FAMILY_DOT: Record<Family, string> = {
+  specialist: "bg-[#7357D6]",
+  selective: "bg-[#1F8F87]",
+  global: "bg-[#E07A3A]",
+  function: "bg-[#C99A12]",
+  open: "bg-[#3D7BD0]",
+};
+
 const anchor = (name: string) => name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-");
 
 /** Comparatif des plateformes pour trouver un expert IA freelance (Ressources), pré-rendu. */
@@ -75,12 +84,13 @@ export default function ComparisonPage() {
 
         {/* Les quatre familles */}
         <PageSection title="Cinq familles d'acteurs">
-          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {(Object.keys(FAMILIES) as Family[]).map((f) => (
-              <li key={f} className="rounded-[24px] bg-white p-6 shadow-ks-card">
-                <span className={cn("rounded-full px-2.5 py-1 text-[12px] font-semibold", FAMILY_TONE[f])}>{FAMILIES[f].label}</span>
-                <p className="mt-4 text-[15px] leading-[1.55] text-ks-soft">{FAMILIES[f].desc}</p>
-                <p className="mt-3 text-[13px] text-ks-subtle">{PLAYERS.filter((p) => p.family === f).map((p) => p.name).join(" · ")}</p>
+              <li key={f} className="flex flex-col rounded-[24px] bg-white p-6 shadow-ks-card sm:last:col-span-2 xl:last:col-span-1">
+                <span className={cn("h-2.5 w-2.5 rounded-full", FAMILY_DOT[f])} aria-hidden="true" />
+                <h3 className="mt-4 font-ks-display text-[19px] font-semibold leading-[1.25] tracking-[-0.02em] text-balance">{FAMILIES[f].label}</h3>
+                <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft">{FAMILIES[f].desc}</p>
+                <p className="mt-auto pt-4 text-[13px] text-ks-subtle">{PLAYERS.filter((p) => p.family === f).map((p) => p.name).join(" · ")}</p>
               </li>
             ))}
           </ul>
@@ -122,7 +132,7 @@ export default function ComparisonPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="font-ks-mono text-[12px] text-ks-subtle">{String(i + 1).padStart(2, "0")}</span>
                   <h2 className="font-ks-display text-[26px] font-bold tracking-[-0.03em]">{p.name}</h2>
-                  <span className={cn("rounded-full px-2.5 py-1 text-[12px] font-medium", FAMILY_TONE[p.family])}>{FAMILIES[p.family].label}</span>
+                  <span className={cn("whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-medium", FAMILY_TONE[p.family])}>{FAMILIES[p.family].label}</span>
                 </div>
                 <p className="mt-4 text-[15px] leading-[1.6] text-ks-ink-2">{p.summary}</p>
                 <h3 className="mt-5 font-ks-display text-[17px] font-semibold">Points forts</h3>
