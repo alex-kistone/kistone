@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/KistoneHeader";
-import OnboardingSteps from "@/components/platform/OnboardingSteps";
-import { submitPendingNeed } from "@/lib/pendingNeed";
+import OnboardingSteps, { NEED_FIRST_STEPS } from "@/components/platform/OnboardingSteps";
+import { loadPendingNeed, submitPendingNeed } from "@/lib/pendingNeed";
 
 /**
  * Onboarding d'un nouveau client, étape 1 : coordonnées et entreprise.
@@ -24,6 +24,8 @@ const ClientOnboarding = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
+  // Besoin saisi avant l'inscription : cette étape est alors la dernière avant l'envoi
+  const [pendingNeed] = useState(() => loadPendingNeed());
 
   useEffect(() => {
     const load = async () => {
@@ -79,10 +81,12 @@ const ClientOnboarding = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto max-w-2xl px-4 py-12">
-        <OnboardingSteps current={1} />
-        <h1 className="mb-2 text-3xl font-bold">Bienvenue chez Kistone</h1>
+        {pendingNeed ? <OnboardingSteps steps={NEED_FIRST_STEPS} current={3} /> : <OnboardingSteps current={1} />}
+        <h1 className="mb-2 text-3xl font-bold">{pendingNeed ? "Dernière étape : vos coordonnées" : "Bienvenue chez Kistone"}</h1>
         <p className="mb-8 text-muted-foreground">
-          Quelques informations pour vous connaître, puis vous déposerez votre premier besoin.
+          {pendingNeed
+            ? `Votre besoin « ${pendingNeed.job_title || "sans titre"} » part à l'équipe Kistone dès que vous validez : vos premiers profils arrivent sous 48 h.`
+            : "Quelques informations pour vous connaître, puis vous déposerez votre premier besoin."}
         </p>
 
         {loading ? (
@@ -117,7 +121,7 @@ const ClientOnboarding = () => {
             </div>
 
             <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={saving}>
-              {saving ? "Enregistrement..." : "Continuer"}
+              {saving ? "Enregistrement..." : pendingNeed ? "Envoyer mon besoin" : "Continuer"}
             </Button>
           </form>
         )}

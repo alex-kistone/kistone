@@ -25,13 +25,13 @@ import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 import { generateNeedTitle } from "@/lib/needTitle";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
-import { savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
+import { loadPendingNeed, savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
 import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
-import OnboardingSteps from "@/components/platform/OnboardingSteps";
+import OnboardingSteps, { NEED_FIRST_STEPS } from "@/components/platform/OnboardingSteps";
 import TagInput from "@/components/platform/TagInput";
 import { METIERS, SECTEURS } from "@/lib/taxonomy";
 
@@ -115,6 +115,27 @@ const ClientNewNeed = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // « Modifier » depuis l'écran de compte : le besoin déjà saisi revient dans le formulaire
+  useEffect(() => {
+    if (!isPublic || searchParams.get("edit") !== "1") return;
+    const draft = loadPendingNeed();
+    if (!draft) return;
+    if (isVertical(draft.vertical)) setVertical(draft.vertical);
+    setProfileTypes(draft.profile_types ?? []);
+    setSpecialties(draft.specialties ?? []);
+    setDays(draft.days_per_week ? String(draft.days_per_week) : "5");
+    setBudgetMin(draft.budget_tjm_min ? String(draft.budget_tjm_min) : "");
+    setBudgetMax(draft.budget_tjm_max ? String(draft.budget_tjm_max) : "");
+    setMissionLocations(draft.mission_location ? draft.mission_location.split(",").map((x) => x.trim()).filter(Boolean) : []);
+    setRemotePolicy(draft.remote_policy || "on-site");
+    setStart(draft.desired_start ? { asap: false, date: draft.desired_start } : { asap: true, date: "" });
+    setDurationMonths(draft.duration_months ?? null);
+    setDescription(draft.description ?? "");
+    setSectors(draft.sectors ?? []);
+    setPicked(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPublic]);
 
   // Besoin tapé sur l'accueil : repris ici et analysé tout de suite par l'IA
   useEffect(() => {
@@ -288,10 +309,13 @@ const ClientNewNeed = () => {
       ) : (
       <main className="container mx-auto max-w-2xl px-4 py-12">
         {isPublic ? (
-          <Button variant="ghost" size="sm" onClick={() => setPicked(false)} className="mb-6 gap-2 text-muted-foreground">
-            <ArrowLeft className="h-4 w-4" />
-            Changer de profil
-          </Button>
+          <>
+            <OnboardingSteps steps={NEED_FIRST_STEPS} current={1} />
+            <Button variant="ghost" size="sm" onClick={() => setPicked(false)} className="-mt-2 mb-6 gap-2 text-muted-foreground">
+              <ArrowLeft className="h-4 w-4" />
+              Changer de profil
+            </Button>
+          </>
         ) : onboarding ? (
           <OnboardingSteps current={2} />
         ) : (
@@ -458,8 +482,13 @@ const ClientNewNeed = () => {
           </div>
 
           <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={saving}>
-            {saving ? "Enregistrement..." : userId ? "Déposer mon besoin" : "Continuer : créer mon compte"}
+            {saving ? "Enregistrement..." : userId ? "Déposer mon besoin" : "Voir les profils correspondants"}
           </Button>
+          {!userId && (
+            <p className="text-center text-sm text-muted-foreground">
+              Étape suivante : un aperçu des profils qui correspondent, puis votre compte pour les recevoir. Gratuit et sans engagement.
+            </p>
+          )}
         </form>
       </main>
       )}

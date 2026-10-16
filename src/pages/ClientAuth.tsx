@@ -14,6 +14,8 @@ import SignupSent from "@/components/auth/SignupSent";
 import { isFreeEmail, FREE_EMAIL_MESSAGE } from "@/lib/emailDomains";
 import { clientHomePath } from "@/lib/clientOnboarding";
 import { loadPendingNeed, submitPendingNeed } from "@/lib/pendingNeed";
+import OnboardingSteps, { NEED_FIRST_STEPS } from "@/components/platform/OnboardingSteps";
+import NeedProfilesPreview from "@/components/client/NeedProfilesPreview";
 
 const ClientAuth = () => {
   const navigate = useNavigate();
@@ -176,7 +178,7 @@ const ClientAuth = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <SignupSent email={sentTo} redirectTo={confirmRedirect} onBack={() => { setSentTo(null); setIsLogin(true); }} />
+        <SignupSent email={sentTo} redirectTo={confirmRedirect} pendingNeed={!!pendingNeed} onBack={() => { setSentTo(null); setIsLogin(true); }} />
       </div>
     );
   }
@@ -186,17 +188,31 @@ const ClientAuth = () => {
       <Header />
       <BoltWatermark strokeWidth={14} className="-left-40 top-40 h-[760px] w-auto rotate-[-14deg]" />
       <BoltWatermark className="-right-10 top-24 hidden h-[300px] w-auto rotate-[16deg] md:block" />
-      <main className="mx-3 my-8 flex max-w-[480px] flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:mx-auto sm:my-16 sm:px-10 sm:py-12">
-        <AccountSwitch current="client" signup={!isLogin} />
+      {/* Parcours « Accéder aux profils » : étape 2, avec le besoin et l'aperçu des profils à gauche */}
+      {pendingNeed && (
+        <div className="mx-auto max-w-[1080px] px-4 pt-8 sm:pt-12">
+          <OnboardingSteps steps={NEED_FIRST_STEPS} current={2} className="mb-0" />
+        </div>
+      )}
+      <div className={pendingNeed ? "mx-auto grid max-w-[1080px] items-start gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_480px]" : undefined}>
+      {pendingNeed && <NeedProfilesPreview need={pendingNeed} />}
+      <main
+        className={pendingNeed
+          ? "flex w-full flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:px-10 sm:py-12"
+          : "mx-3 my-8 flex max-w-[480px] flex-col items-center rounded-[28px] border border-border bg-card px-5 py-10 shadow-md sm:mx-auto sm:my-16 sm:px-10 sm:py-12"}
+      >
+        {!pendingNeed && <AccountSwitch current="client" signup={!isLogin} />}
         <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[16px] bg-ks-pink-100">
           <img src="/logos/bolt-black.png" alt="" aria-hidden="true" width={251} height={402} className="h-9 w-auto" />
         </div>
         <h1 className="mb-3 text-center font-heading text-[34px] font-bold leading-none tracking-[-0.045em] sm:text-[40px]">
-          {isLogin ? "Espace Client" : "Créez votre espace client"}
+          {pendingNeed ? (isLogin ? "Connectez-vous" : "Recevez vos profils") : isLogin ? "Espace Client" : "Créez votre espace client"}
         </h1>
         <p className="mb-8 text-center text-muted-foreground">
           {pendingNeed
-            ? `Votre besoin « ${pendingNeed.job_title || "sans titre"} » est prêt. ${isLogin ? "Connectez-vous" : "Créez votre compte"} pour l'envoyer.`
+            ? isLogin
+              ? "Connectez-vous pour envoyer votre besoin et recevoir vos profils qualifiés."
+              : "Créez votre compte pour recevoir ces profils et échanger avec votre référent Kistone. Gratuit et sans engagement."
             : isLogin
             ? "Connectez-vous pour gérer vos besoins en recrutement."
             : "Inscrivez-vous pour déposer vos besoins en recrutement."}
@@ -298,6 +314,7 @@ const ClientAuth = () => {
           {isLogin ? "Pas encore de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
         </button>
       </main>
+      </div>
     </div>
   );
 };

@@ -1,12 +1,15 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Vos coordonnées", "Votre premier besoin"];
+/** Inscription directe : coordonnées, puis premier besoin. */
+export const SIGNUP_STEPS = ["Vos coordonnées", "Votre premier besoin"];
+/** Parcours public « Accéder aux profils » : le besoin d'abord, puis le compte et les coordonnées. */
+export const NEED_FIRST_STEPS = ["Votre besoin", "Votre compte", "Vos coordonnées"];
 
-/** Fil d'étapes de l'onboarding client (étape courante : 1 ou 2). */
-const OnboardingSteps = ({ current }: { current: 1 | 2 }) => (
-  <ol className="mb-8 flex items-center gap-3" aria-label="Étapes de l'inscription">
-    {STEPS.map((label, i) => {
+/** Fil d'étapes de l'onboarding client (étape courante numérotée à partir de 1). */
+const OnboardingSteps = ({ current, steps = SIGNUP_STEPS, className }: { current: number; steps?: string[]; className?: string }) => (
+  <ol className={cn("mb-8 flex items-center gap-3", className)} aria-label="Étapes de l'inscription">
+    {steps.map((label, i) => {
       const n = i + 1;
       const done = n < current;
       return (
@@ -20,7 +23,7 @@ const OnboardingSteps = ({ current }: { current: 1 | 2 }) => (
             {done ? <Check className="h-4 w-4" /> : n}
           </span>
           <span className={cn("text-sm", n === current ? "font-semibold" : "text-muted-foreground")}>{label}</span>
-          {n < STEPS.length && <span className="h-px flex-1 bg-border" aria-hidden="true" />}
+          {n < steps.length && <span className="h-px flex-1 bg-border" aria-hidden="true" />}
         </li>
       );
     })}

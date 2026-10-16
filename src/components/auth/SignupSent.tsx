@@ -9,10 +9,12 @@ type Props = {
   /** Page où le lien de confirmation ramène (elle attribue le rôle puis redirige vers l'espace). */
   redirectTo: string;
   onBack: () => void;
+  /** Un besoin attend l'inscription (parcours « Accéder aux profils ») : on rassure sur sa conservation. */
+  pendingNeed?: boolean;
 };
 
 /** Remplace le formulaire d'inscription une fois le compte créé : l'utilisateur n'a plus rien à remplir. */
-export default function SignupSent({ email, redirectTo, onBack }: Props) {
+export default function SignupSent({ email, redirectTo, onBack, pendingNeed }: Props) {
   const { toast } = useToast();
   const [sending, setSending] = useState(false);
 
@@ -39,6 +41,11 @@ export default function SignupSent({ email, redirectTo, onBack }: Props) {
         Nous avons envoyé un lien de confirmation à <span className="font-medium text-foreground">{email}</span>. Cliquez dessus pour
         activer votre compte : vous arriverez directement dans votre espace.
       </p>
+      {pendingNeed && (
+        <p className="mt-4 rounded-2xl bg-muted px-4 py-3 text-sm">
+          Votre besoin est bien gardé : après la confirmation, il ne restera que vos coordonnées, puis il partira à l'équipe Kistone.
+        </p>
+      )}
       <p className="mt-4 text-sm text-muted-foreground">Rien reçu ? Pensez à regarder dans vos spams.</p>
       <div className="mt-8 flex w-full flex-col gap-2.5">
         <Button variant="outline" size="lg" className="w-full" onClick={resend} disabled={sending}>
