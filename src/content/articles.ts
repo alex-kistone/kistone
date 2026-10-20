@@ -34,7 +34,8 @@ export const STATIC_POSTS: BlogPost[] = [
     slug: COMPARISON.slug,
     title: COMPARISON.title,
     excerpt: COMPARISON.lead,
-    tags: ["Comparatif"],
+    // Catégorie centrée sur la couverture, puis pastille verte en haut à gauche
+    tags: ["Comparatif", "Étude"],
     content: comparisonText(),
     published_at: `${COMPARISON.date}T11:00:00.000Z`,
   }),
