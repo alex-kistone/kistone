@@ -37,6 +37,8 @@ import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
+import ProfileImport from "@/components/platform/ProfileImport";
+import { mergeImportedProfile, type ImportedProfile } from "@/lib/profileImport";
 import { METIERS, SECTEURS, normalizeMetiers } from "@/lib/taxonomy";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
@@ -107,6 +109,25 @@ const Profile = () => {
   useEffect(() => {
     loadProfile();
   }, []);
+
+  /** Pré-remplissage depuis le CV : complète sans écraser, le freelance relit puis enregistre. */
+  const applyImport = (imported: ImportedProfile) => {
+    const { draft, added } = mergeImportedProfile(
+      { jobTitle, introText, clients, missions, languages, skills, specialties },
+      imported,
+      { maxSkills: MAX_CHOICES, maxSpecialties: MAX_SPECIALTIES, allowedSpecialties: verticalOf(vertical).specialties },
+    );
+    setJobTitle(draft.jobTitle);
+    setIntroText(draft.introText);
+    setClients(draft.clients);
+    setMissions(draft.missions);
+    setLanguages(draft.languages);
+    if (vertical === "rpo") setSkills(draft.skills);
+    else setSpecialties(draft.specialties);
+    toast(added
+      ? { title: "Profil pré-rempli", description: "Relisez les informations ajoutées, complétez-les si besoin, puis enregistrez." }
+      : { title: "Rien à ajouter", description: "Les informations du document figurent déjà dans votre profil." });
+  };
 
   const loadProfile = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -453,6 +474,9 @@ const Profile = () => {
             </div>
             <span className="text-sm text-muted-foreground">Cliquez pour ajouter une photo</span>
           </div>
+
+          {/* Import facultatif du CV ou du PDF LinkedIn */}
+          <ProfileImport vertical={vertical} onImported={applyImport} />
 
           {/* Identity */}
           <div className="grid gap-4 sm:grid-cols-2">
