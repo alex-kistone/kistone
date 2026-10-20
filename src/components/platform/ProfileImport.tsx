@@ -39,7 +39,11 @@ export default function ProfileImport({ vertical, onImported }: { vertical: stri
       if (data?.error) throw new Error(data.error);
       onImported(data as ImportedProfile);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Le document n'a pas pu être lu.");
+      const message = e instanceof Error ? e.message : "";
+      // Fonction injoignable (non déployée, réseau coupé) : message lisible plutôt que l'erreur technique
+      setError(!message || /failed to send a request|failed to fetch/i.test(message)
+        ? "L'import est momentanément indisponible. Réessayez dans quelques instants, ou remplissez votre profil à la main."
+        : message);
     } finally {
       setLoading(false);
       if (input.current) input.current.value = "";
