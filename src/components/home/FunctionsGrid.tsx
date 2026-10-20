@@ -5,8 +5,10 @@ import { ROUTES } from "@/content/site";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
 import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 import { palettes } from "@/lib/palettes";
-import { METIERS } from "@/lib/taxonomy";
 import { VERTICALS, type VerticalConfig } from "@/lib/verticals";
+
+/** Métiers mis en avant sur la tuile RPO de l'accueil (choix d'Alex, 2026-10-20). */
+const RPO_TALENTS = ["Data/IA", "Engineering", "Product", "Infra/Cloud", "Cyber", "GTM"];
 
 const pageOf = (v: VerticalConfig) => ROLE_PAGES.find((r) => r.vertical === v.id);
 
@@ -44,7 +46,6 @@ function FamilyCard({ v }: { v: VerticalConfig }) {
 function RpoTile() {
   const rpo = VERTICALS.find((v) => v.id === "rpo")!;
   const page = pageOf(rpo);
-  const p = palettes[rpo.palette];
   const [min, max] = INDICATIVE_BUDGET.rpo;
   return (
     <article className="ks-reveal relative mt-4 grid gap-8 overflow-hidden rounded-[28px] bg-ks-dark p-7 text-ks-dark-fg shadow-[0_24px_50px_-28px_rgba(20,19,18,0.5)] md:mt-5 md:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12 lg:p-12">
@@ -62,14 +63,13 @@ function RpoTile() {
         </div>
       </div>
 
-      {/* Illustration : les talents recrutés en CDI, dans le style des cartes des familles */}
-      <div className="ks-ui relative overflow-hidden rounded-[20px] p-5" style={{ background: p.tint }} aria-hidden="true">
-        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-[0.14]" style={{ background: p.accent }} />
-        <p className="relative font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: p.ink }}>Talents recrutés en CDI</p>
-        <ul className="relative mt-4 grid gap-2 text-[14px] sm:grid-cols-2">
-          {METIERS.filter((m) => m !== "Autre").map((m) => (
-            <li key={m} className="flex items-center gap-2.5 rounded-xl bg-white/70 px-3 py-2 text-ks-ink-2">
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: p.accent }} />
+      {/* Illustration : les métiers recrutés en CDI, en verre sombre sur la tuile */}
+      <div className="ks-ui relative overflow-hidden rounded-[20px] border border-[rgba(245,241,234,0.1)] bg-[rgba(245,241,234,0.05)] p-5 md:p-6" aria-hidden="true">
+        <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Talents recrutés en CDI</p>
+        <ul className="mt-4 grid grid-cols-2 gap-2 text-[14px] sm:grid-cols-3">
+          {RPO_TALENTS.map((m) => (
+            <li key={m} className="flex items-center gap-2.5 rounded-xl border border-[rgba(245,241,234,0.08)] bg-[rgba(245,241,234,0.06)] px-3 py-2.5 font-medium">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full ks-grad-bg" />
               {m}
             </li>
           ))}
