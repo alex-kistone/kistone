@@ -1,29 +1,7 @@
 import { ADMIN_CHECKLIST, ASSETS } from "@/content/home";
 import { cn } from "@/lib/utils";
 import { BoltWatermark } from "@/components/brand/Bolt";
-
-const ICONS: Record<(typeof ASSETS)[number]["icon"], JSX.Element> = {
-  shield: (
-    <>
-      <path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6l8-3z" />
-      <path d="M9 12l2 2 4-4" />
-    </>
-  ),
-  clock: (
-    <>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </>
-  ),
-  team: (
-    <>
-      <circle cx="9" cy="8" r="3.5" />
-      <path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5" />
-      <path d="M16 4.5a3.5 3.5 0 010 7M18 14.8c1.9.7 3.1 2.5 3.5 5.2" />
-    </>
-  ),
-  pulse: <path d="M3 12h4l3-8 4 16 3-8h4" />,
-};
+import AssetVisual from "./AssetVisuals";
 
 export default function WhyMarketplace() {
   return (
@@ -71,21 +49,12 @@ export default function WhyMarketplace() {
         <article
           key={a.title}
           className={cn(
-            "ks-lift ks-reveal flex flex-col justify-between gap-8 rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-8 shadow-ks-card",
+            "ks-lift ks-reveal flex flex-col gap-6 rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-3 shadow-ks-card",
             "featured" in a && a.featured ? "min-h-[280px]" : "min-h-[240px]",
           )}
         >
-          <span
-            className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-[14px]",
-              "featured" in a && a.featured ? "bg-[#F1E7FE]" : "bg-ks-muted",
-            )}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#141312" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              {ICONS[a.icon]}
-            </svg>
-          </span>
-          <div>
+          <AssetVisual icon={a.icon} />
+          <div className="px-5 pb-5">
             <h3 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">{a.title}</h3>
             <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft">{a.desc}</p>
           </div>
