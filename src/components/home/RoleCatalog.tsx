@@ -38,7 +38,7 @@ export default function RoleCatalog() {
               >
                 <span className="min-w-0">
                   <span className="block font-ks-display text-[18px] font-semibold tracking-[-0.02em]">{r.role}</span>
-                  <span className="mt-0.5 block text-[13px] font-medium" style={{ color: p.ink }}>{v.id === "rpo" ? "RPO · Tech recruiter" : v.short}</span>
+                  <span className="mt-0.5 block text-[13px] font-medium" style={{ color: p.ink }}>{v.short}</span>
                   <span className="mt-2 block text-[13px] text-ks-soft">
                     <span className="font-semibold text-ks-ink">{fmt(INDICATIVE_BUDGET[r.vertical][0])} – {fmt(INDICATIVE_BUDGET[r.vertical][1])} €</span> HT / jour
                   </span>
