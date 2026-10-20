@@ -72,7 +72,7 @@ const PrivacyPolicy = () => {
               <li>Nos équipes internes (recrutement, administration)</li>
               <li>Les clients de la Plateforme (dans le cadre du matching, sous forme anonymisée puis nominative après accord)</li>
               <li>Les visiteurs du site, pour les seuls profils freelances qualifiés (voir ci-dessous)</li>
-              <li>Nos sous-traitants techniques (hébergement, envoi d'emails)</li>
+              <li>Nos sous-traitants techniques (hébergement, envoi d'emails, messagerie instantanée Crisp pour répondre à vos questions sur le site)</li>
             </ul>
             <p>Nous ne vendons jamais vos données à des tiers.</p>
             <p>
@@ -117,6 +117,7 @@ const PrivacyPolicy = () => {
             <ul className="list-disc pl-6 space-y-1">
               <li><strong>Cookies essentiels</strong> : authentification, sécurité, préférences de session</li>
               <li><strong>Cookies analytiques</strong> : mesure d'audience anonymisée (soumis à votre consentement)</li>
+              <li><strong>Cookies du chat Crisp</strong> : conserver votre conversation avec l'équipe Kistone (soumis à votre consentement ; le chat ne se charge pas si vous refusez)</li>
             </ul>
             <p>Vous pouvez gérer vos préférences de cookies à tout moment via le bandeau de consentement.</p>
           </section>

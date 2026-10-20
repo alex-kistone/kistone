@@ -1,23 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getConsent, setConsent } from "@/lib/consent";
 
-const COOKIE_KEY = "kistone_cookie_consent";
 
 const CookieConsent = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem(COOKIE_KEY);
-    if (!consent) setVisible(true);
+    if (!getConsent()) setVisible(true);
   }, []);
 
   const accept = () => {
-    localStorage.setItem(COOKIE_KEY, "accepted");
+    setConsent("accepted");
     setVisible(false);
   };
 
   const refuse = () => {
-    localStorage.setItem(COOKIE_KEY, "refused");
+    setConsent("refused");
     setVisible(false);
   };
 
@@ -32,7 +31,7 @@ const CookieConsent = () => {
     >
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
         <p className="text-center text-sm leading-[1.5] text-ks-soft sm:text-left">
-          Nous utilisons des cookies essentiels pour le fonctionnement du site.{" "}
+          Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre accord, ceux du chat Crisp pour vous répondre.{" "}
           <Link to="/privacy" className="font-medium text-ks-ink underline underline-offset-2 hover:text-black">
             En savoir plus
           </Link>

@@ -19,6 +19,7 @@ import SessionGuard from "./components/SessionGuard";
 import { LEGACY_COMPARISON_SLUG } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
+import CrispChat from "./components/CrispChat";
 
 // Espaces connectés (freelance, client, admin) : chargés à la demande, pour que les pages
 // publiques ne téléchargent pas tout le code de l'application.
@@ -89,6 +90,7 @@ const App = () => (
       <SessionGuard />
       <AppRoutes />
       <CookieConsent />
+      <CrispChat />
     </BrowserRouter>
   </AppProviders>
 );
