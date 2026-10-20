@@ -13,6 +13,21 @@ import { palettes, type PaletteName } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
 
 const JOIN = "/register?mode=signup";
+
+/** Ce qui change pour un Tech recruiter (RPO) sur Kistone. */
+const RPO_POINTS = [
+  "Des missions pour recruter en CDI des profils Data/IA, Engineering, Product, Infra/Cloud, Cyber ou GTM.",
+  "Payé au jour, chaque fin de mois : plus de placement à courir ni d'honoraires à relancer.",
+  "Intégré aux équipes du client, seul ou aux côtés des experts IA que Kistone y place.",
+];
+
+/** Exemple de suivi de recrutements (illustration). */
+const RPO_PIPELINE = [
+  { role: "AI Engineer", client: "Scale-up SaaS", status: "Entretien client", bg: palettes.blue.soft, fg: palettes.blue.ink },
+  { role: "Data engineer", client: "Fintech", status: "Offre acceptée", bg: "#E8F5EE", fg: "#17663F" },
+  { role: "Ingénieur cybersécurité", client: "ETI industrielle", status: "Sourcing", bg: palettes.sand.soft, fg: palettes.sand.ink },
+  { role: "Account executive", client: "Scale-up IA", status: "Short-list envoyée", bg: "#FFE3EC", fg: "#8F1747" },
+];
 const LOGIN = "/register";
 
 /** Contenu de l'espace freelance : ce que fait réellement la plateforme, sans promesse chiffrée inventée. */
@@ -27,7 +42,7 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
         {[
           { t: "AI Engineer · Scale-up SaaS", m: "Temps plein · Paris hybride" },
           { t: "Head of AI · ETI industrielle", m: "2 j / sem · Lyon" },
-          { t: "RPO Tech · 5 développeurs", m: "Temps plein · Remote" },
+          { t: "Tech recruiter · Fintech", m: "3 j / sem · Recrutements Data/IA" },
         ].map((o) => (
           <li key={o.t} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
             <span className="min-w-0">
@@ -142,7 +157,7 @@ export default function FreelancesPage() {
   return (
     <SiteLayout>
       <SEO
-        title="Experts IA freelance : rejoignez la plateforme"
+        title="Freelances de l'IA et Tech recruiters : rejoignez Kistone"
         description="AI Engineers, AI Product, AI Leaders et Tech recruiters : missions qualifiées, paiement chaque mois, rythme au choix, facturation gérée. Inscription gratuite."
         path="/freelances"
         image="/og/freelances.png"
@@ -154,10 +169,10 @@ export default function FreelancesPage() {
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[640px] w-auto rotate-[14deg] md:h-[760px]" />
         <div>
           <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
-            Rejoignez la plateforme des <Highlight>experts IA</Highlight>
+            Rejoignez la plateforme des <Highlight>freelances de l'IA</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
-            Des missions IA qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
+            AI Engineers, AI Product, AI Leaders ou Tech recruiters : des missions qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Cta href={JOIN} variant="studio" size="lg" arrow>Rejoindre Kistone</Cta>
@@ -166,6 +181,40 @@ export default function FreelancesPage() {
         </div>
         <div className="rounded-[28px] p-5" style={{ background: palettes.blue.tint }} aria-hidden="true">
           {BENEFITS[3].visual()}
+        </div>
+      </section>
+
+      {/* Tech recruiters : ce qui change pour eux */}
+      <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
+        <div className="grid items-center gap-8 rounded-[32px] p-6 md:p-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14" style={{ background: palettes.sage.tint }}>
+          <div>
+            <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: palettes.sage.ink }}>Tech recruiters · RPO</span>
+            <h2 className="mt-3 font-ks-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[40px]">
+              Tech recruiter ? Recrutez les talents IA que tout le monde cherche.
+            </h2>
+            <ul className="mt-6 flex flex-col gap-3 text-[16px] leading-[1.5] text-ks-ink-2">
+              {RPO_POINTS.map((pt) => (
+                <li key={pt} className="flex gap-3">
+                  <span className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={palettes.sage.accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                  </span>
+                  {pt}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8"><Cta href={`${JOIN}&fonction=rpo`} variant="studio" size="lg" arrow>Rejoindre en tant que Tech recruiter</Cta></div>
+          </div>
+          <ul className="flex flex-col gap-2" aria-hidden="true">
+            {RPO_PIPELINE.map((r) => (
+              <li key={r.role} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
+                <span className="min-w-0">
+                  <span className="block truncate text-[14px] font-semibold">{r.role}</span>
+                  <span className="block truncate text-[12px] text-ks-subtle">CDI · {r.client}</span>
+                </span>
+                <span className="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: r.bg, color: r.fg }}>{r.status}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

@@ -131,7 +131,7 @@ export const FREELANCE_SPACE = [
   { label: "Mission AI Engineer · Scale-up SaaS", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
   { label: "CRA d'octobre · 18 jours", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
   { label: "Facture d'octobre", status: "Envoyée", bg: palettes.blue.soft, fg: palettes.blue.ink },
-  { label: "Nouvelle mission proposée", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
+  { label: "Mission RPO · 4 recrutements Data/IA", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
 ];
 
 export const STUDIO_TILES: { title: string; desc: string; palette: PaletteName; pct: string }[] = [
