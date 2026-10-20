@@ -59,6 +59,11 @@
       "source": "/ressources/freelancing-en-france-2016-2026",
       "destination": "/ressources",
       "permanent": true
+    },
+    {
+      "source": "/ressources/fractional-leaders-10-ans-freelancing-france",
+      "destination": "/ressources",
+      "permanent": true
     }
   ],
   "rewrites": [
