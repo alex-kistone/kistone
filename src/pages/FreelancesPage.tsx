@@ -157,7 +157,7 @@ export default function FreelancesPage() {
   return (
     <SiteLayout>
       <SEO
-        title="Freelances de l'IA et Tech recruiters : rejoignez Kistone"
+        title="Freelances Tech & IA : rejoignez la plateforme Kistone"
         description="AI Engineers, AI Product, AI Leaders et Tech recruiters : missions qualifiées, paiement chaque mois, rythme au choix, facturation gérée. Inscription gratuite."
         path="/freelances"
         image="/og/freelances.png"
@@ -169,7 +169,7 @@ export default function FreelancesPage() {
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[640px] w-auto rotate-[14deg] md:h-[760px]" />
         <div>
           <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
-            Rejoignez la plateforme des <Highlight>freelances de l'IA</Highlight>
+            Rejoignez la plateforme des <Highlight>freelances Tech & IA</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
             AI Engineers, AI Product, AI Leaders ou Tech recruiters : des missions qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
