@@ -7,7 +7,7 @@ type Size = "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
   primary: "ks-btn bg-ks-pink font-semibold text-white shadow-ks-pink-sm",
-  secondary: "ks-ghost border border-ks-line-strong bg-white font-medium text-ks-ink",
+  secondary: "ks-ghost border border-ks-line-strong bg-white font-medium text-ks-ink hover:text-white focus-visible:text-white",
   dark: "ks-btn bg-ks-dark font-semibold text-ks-dark-fg",
   "ghost-dark": "ks-ghost-dark border border-[rgba(245,241,234,0.22)] font-medium text-ks-dark-fg",
   // Studio : noir à contour dégradé (fonds clairs) ou aplat dégradé (fonds sombres)
@@ -27,7 +27,7 @@ const SIZES: Record<Size, string> = {
  */
 const WIPE: Partial<Record<Variant, string>> = {
   primary: "bg-ks-dark",
-  secondary: "bg-ks-secondary",
+  secondary: "bg-ks-pink",
   dark: "bg-ks-pink",
   "ghost-dark": "bg-[rgba(245,241,234,0.14)]",
 };

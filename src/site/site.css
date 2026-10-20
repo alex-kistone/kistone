@@ -25,7 +25,8 @@
 .ks-wipe-host .ks-wipe { transform: translateX(calc(-100% - 60px)); transition: transform .55s cubic-bezier(.7,0,.2,1); }
 .ks-wipe-host:hover .ks-wipe, .ks-wipe-host:focus-visible .ks-wipe { transform: translateX(0); }
 .ks-wipe-host.ks-btn:hover { transform: none; filter: none; }
-.ks-wipe-host.ks-ghost:hover { background-color: #fff !important; }
+.ks-wipe-host.ks-ghost { transition: color .25s ease .12s, border-color .25s ease; }
+.ks-wipe-host.ks-ghost:hover { background-color: #fff !important; border-color: #FF2E6E !important; }
 .ks-wipe-host .ks-arrow-out, .ks-wipe-host .ks-arrow-in { transition: transform .45s cubic-bezier(.7,0,.2,1) .05s; }
 .ks-wipe-host .ks-arrow-in { transform: translateX(-120%); }
 .ks-wipe-host:hover .ks-arrow-out { transform: translateX(120%); }
