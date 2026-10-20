@@ -91,7 +91,7 @@ export const ROLE_CATALOG: { role: string; vertical: Vertical }[] = [
   { role: "Head of AI", vertical: "leader" },
   { role: "Chief AI Officer", vertical: "leader" },
   { role: "Tech recruiter IA & data", vertical: "rpo" },
-  { role: "Tech recruiter", vertical: "rpo" },
+  { role: "Recruiter GTM", vertical: "rpo" },
 ];
 
 /** La squad IA : plusieurs familles sur un même projet, coordonnées par Kistone. */
