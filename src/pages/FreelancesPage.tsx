@@ -16,7 +16,7 @@ const JOIN = "/register?mode=signup";
 
 /** Ce qui change pour un Tech recruiter (RPO) sur Kistone. */
 const RPO_POINTS = [
-  "Des missions pour recruter en CDI des profils Data/IA, Engineering, Product, Infra/Cloud, Cyber ou GTM.",
+  "Des missions pour recruter en CDI des profils Tech, Data/AI, Product, GTM ou Sales.",
   "Payé au jour, chaque fin de mois : plus de placement à courir ni d'honoraires à relancer.",
   "Intégré aux équipes du client, seul ou aux côtés des experts IA que Kistone y place.",
 ];
@@ -42,7 +42,7 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
         {[
           { t: "AI Engineer · Scale-up SaaS", m: "Temps plein · Paris hybride" },
           { t: "Head of AI · ETI industrielle", m: "2 j / sem · Lyon" },
-          { t: "Tech recruiter · Fintech", m: "3 j / sem · Recrutements Data/IA" },
+          { t: "Tech recruiter · Fintech", m: "3 j / sem · Recrutements Data/AI" },
         ].map((o) => (
           <li key={o.t} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
             <span className="min-w-0">

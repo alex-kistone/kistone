@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { type FullProfile } from "@/components/platform/ProfileDetailModal";
 import { METIERS } from "@/lib/taxonomy";
+import { JARVI_TECH_SPECIALTIES } from "@/lib/jarvi";
 import { VERTICALS } from "@/lib/verticals";
 import { REMOTE_LABEL } from "@/components/platform/admin/needs/needsModel";
 
@@ -68,11 +69,14 @@ const DashboardFilters = ({
     [verticalFilter],
   );
   const specialtyLabel = verticalFilter === "rpo" ? "Métiers RPO" : `Spécialités ${VERTICALS.find((v) => v.id === verticalFilter)?.short ?? ""}`;
+  // RPO : second filtre sur les spécialités tech saisies par l'admin (champ Jarvi « Spécialités RPO Tech »)
+  const [techFilter, setTechFilter] = useState<string[]>([]);
   const [remoteFilter, setRemoteFilter] = useState("all");
   // Changer de fonction efface les spécialités choisies (elles n'ont pas de sens ailleurs)
   const changeVertical = (v: string) => {
     setVerticalFilter(v);
     setSkillsFilter([]);
+    setTechFilter([]);
   };
   const [sectorsFilter, setSectorsFilter] = useState<string[]>([]);
   const [languageFilter, setLanguageFilter] = useState("");
@@ -102,6 +106,7 @@ const DashboardFilters = ({
     remoteFilter !== "all",
     tjmActive,
     skillsFilter.length > 0,
+    techFilter.length > 0,
     sectorsFilter.length > 0,
     languageFilter !== "",
     ratingFilter > 0,
@@ -114,6 +119,7 @@ const DashboardFilters = ({
     setTjmRange([0, 1500]);
     setTjmActive(false);
     setSkillsFilter([]);
+    setTechFilter([]);
     setSectorsFilter([]);
     setLanguageFilter("");
     setRatingFilter(0);
@@ -169,6 +175,10 @@ const DashboardFilters = ({
       );
     }
 
+    if (techFilter.length > 0) {
+      result = result.filter((p) => techFilter.some((t) => (p.tech_specialties ?? []).includes(t)));
+    }
+
     if (sectorsFilter.length > 0) {
       result = result.filter((p) =>
         sectorsFilter.some((sector) => (p as any).sectors?.includes(sector))
@@ -203,7 +213,7 @@ const DashboardFilters = ({
     onFiltered(result);
   }, [
     profiles, search, verticalFilter, remoteFilter, modelFilter, mobilityFilter,
-    tjmRange, tjmActive, skillsFilter, sectorsFilter,
+    tjmRange, tjmActive, skillsFilter, techFilter, sectorsFilter,
     languageFilter, ratingFilter, sortBy,
   ]);
 
@@ -355,6 +365,31 @@ const DashboardFilters = ({
                     </label>
                   ))}
                 </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+        )}
+
+        {/* RPO : spécialités tech (complément de l'admin) */}
+        {verticalFilter === "rpo" && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className={`h-8 text-xs ${techFilter.length > 0 ? "border-primary text-primary" : ""}`}>
+              Spécialités Tech {techFilter.length > 0 && `(${techFilter.length})`}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 space-y-2" align="start">
+            <Label className="text-sm font-medium">Spécialités Tech</Label>
+            <div className="space-y-1.5">
+              {JARVI_TECH_SPECIALTIES.map((t) => (
+                <label key={t} className="flex cursor-pointer items-center gap-2">
+                  <Checkbox
+                    checked={techFilter.includes(t)}
+                    onCheckedChange={(checked) => setTechFilter(checked ? [...techFilter, t] : techFilter.filter((x) => x !== t))}
+                  />
+                  <span className="text-xs">{t}</span>
+                </label>
               ))}
             </div>
           </PopoverContent>

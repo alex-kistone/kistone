@@ -5,8 +5,10 @@ import { ROUTES } from "@/content/site";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
 import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 import { palettes } from "@/lib/palettes";
-import { METIERS } from "@/lib/taxonomy";
 import { VERTICALS, type VerticalConfig } from "@/lib/verticals";
+
+/** Talents recrutés affichés sur la tuile RPO de l'accueil (liste validée par Alex le 2026-10-20). */
+const RPO_TALENTS = ["Data/IA", "Engineering", "Product", "Infra/Cloud", "Cyber", "GTM"];
 
 const pageOf = (v: VerticalConfig) => ROLE_PAGES.find((r) => r.vertical === v.id);
 
@@ -65,7 +67,7 @@ function RpoTile() {
       <div className="ks-ui relative overflow-hidden rounded-[20px] border border-[rgba(245,241,234,0.1)] bg-[rgba(245,241,234,0.05)] p-5 md:p-6" aria-hidden="true">
         <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Talents recrutés en CDI</p>
         <ul className="mt-4 grid grid-cols-2 gap-2 text-[14px] sm:grid-cols-3">
-          {METIERS.filter((m) => m !== "Autre").map((m) => (
+          {RPO_TALENTS.map((m) => (
             <li key={m} className="flex items-center gap-2.5 rounded-xl border border-[rgba(245,241,234,0.08)] bg-[rgba(245,241,234,0.06)] px-3 py-2.5 font-medium">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full ks-grad-bg" />
               {m}

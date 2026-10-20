@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
 
     const v = verticalOf(verticalId);
     const isRpo = v.id === "rpo";
-    const metiers = METIERS.filter((m) => m !== "Autre");
+    const metiers = METIERS.filter((m) => m !== "Autres");
 
     const system = `Tu aides un freelance à remplir son profil sur Kistone, la plateforme freelance des experts IA. Le document joint est son CV ou l'export PDF de son profil LinkedIn. Sa famille : ${isRpo ? "Tech recruiter (RPO) : il recrute des talents tech, data et IA en CDI pour ses clients" : `${v.short} (${v.roles})`}.
 

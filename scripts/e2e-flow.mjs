@@ -129,7 +129,7 @@ async function run() {
   const { data: rp, error: rpErr } = await free.from("recruiter_profiles").insert({
     user_id: users.freelance.id, email: users.freelance.email, first_name: "Camille", last_name: `E2E-${STAMP}`,
     linkedin_url: `https://www.linkedin.com/in/e2e-${STAMP}`, job_title: "Recruteuse Tech & Data",
-    skills: ["Engineering", "Data/IA"], sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid",
+    skills: ["Tech", "Data/AI"], sectors: ["Startup/scaleup"], mobility: ["Paris"], remote_preference: "hybrid",
     tjm: 550, available: true, model: "RPO",
   }).select("id, onboarding_completed").single();
   must("Freelance · crée son profil (complet)", !rpErr && rp.onboarding_completed, rpErr?.message);
@@ -138,7 +138,7 @@ async function run() {
   must("Client · crée son profil", !cp.error, cp.error?.message);
   const { data: need, error: nErr } = await client.from("client_needs").insert({
     user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
-    job_title: `${TAG} Tech recruiter Engineering`, mission_location: "Paris", remote_policy: "hybrid", profile_types: ["Engineering"],
+    job_title: `${TAG} Tech recruiter Tech`, mission_location: "Paris", remote_policy: "hybrid", profile_types: ["Tech"],
     sectors: ["Startup/scaleup"], budget_tjm_min: 600, budget_tjm_max: 800, description: "Recrutement de 5 développeurs backend.",
   }).select("id").single();
   must("Client · dépose un besoin", !nErr, nErr?.message);

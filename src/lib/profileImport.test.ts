@@ -19,18 +19,18 @@ describe("mergeImportedProfile", () => {
   });
 
   it("n'écrase jamais une saisie du freelance", () => {
-    const mine: ProfileDraft = { ...empty, jobTitle: "Lead AI Engineer", introText: "Mon texte", clients: ["doctolib"], skills: ["Engineering"], specialties: ["MLOps"],
+    const mine: ProfileDraft = { ...empty, jobTitle: "Lead AI Engineer", introText: "Mon texte", clients: ["doctolib"], skills: ["Tech"], specialties: ["MLOps"],
       missions: [{ client_name: "Doctolib", profile_types: "Assistant RAG", kpis: "", duration: "" }], languages: [{ language: "Anglais", level: "natif" }] };
     const { draft, added } = mergeImportedProfile(mine, {
       job_title: "AI Engineer", intro_text: "Autre", clients: ["Doctolib"], missions: [{ client_name: "doctolib", profile_types: "assistant rag" }],
-      languages: [{ language: "anglais", level: "courant" }], metiers: ["Data/IA"], specialties: ["RAG"],
+      languages: [{ language: "anglais", level: "courant" }], metiers: ["Data/AI"], specialties: ["RAG"],
     }, limits);
     expect(draft).toEqual(mine);
     expect(added).toBe(0);
   });
 
   it("convertit les métiers RPO et respecte la limite", () => {
-    const { draft } = mergeImportedProfile(empty, { metiers: ["Data/AI", "Dev", "Infra", "GTM"] }, limits);
-    expect(draft.skills).toEqual(["Data/IA", "Engineering", "Infra/Cloud"]);
+    const { draft } = mergeImportedProfile(empty, { metiers: ["Data/IA", "Dev", "Infra", "Sales", "GTM"] }, limits);
+    expect(draft.skills).toEqual(["Data/AI", "Tech", "Sales"]);
   });
 });

@@ -8,44 +8,47 @@
 export { VERTICALS, DEFAULT_VERTICAL, type Vertical } from "./verticals.ts";
 
 /**
- * Métiers recrutés (verticale RPO, recentrée Tech / Data / IA le 2026-10-16, liste revue par
- * Alex le 2026-10-20) : cochés par le freelance (skills) et par le client (profile_types). Synchronisés avec le champ Jarvi
- * « Spécialités RPO » (adc61fa4-ad68-4f12-983b-69afe9c03d4c), les valeurs manquantes y sont créées.
+ * Métiers recrutés par un Tech recruiter (verticale RPO) : grandes familles cochées par le
+ * freelance (skills, 3 au maximum) et par le client (profile_types). Synchronisés avec le champ
+ * Jarvi « Spécialités RPO » (adc61fa4-ad68-4f12-983b-69afe9c03d4c). Ordre et libellés fixés par
+ * Alex le 2026-10-20 ; le détail tech (Cyber, Infra/Cloud, SAP…) est saisi par l'admin dans les
+ * spécialités tech (JARVI_TECH_SPECIALTIES, champ « Spécialités RPO Tech »).
  */
 export const METIERS = [
-  "Data/IA",
-  "Engineering",
+  "Tech",
+  "Data/AI",
   "Product",
-  "Infra/Cloud",
-  "Cyber",
   "GTM",
-  "Autre", // un métier hors de cette liste (le freelance le précise dans sa présentation)
+  "Sales",
+  "Autres", // un métier hors de cette liste (le freelance le précise dans sa présentation)
 ] as const;
 
 /** Secteurs d'activité / environnements. */
 export const SECTEURS = ["Startup/scaleup", "Banque/assurance", "Retail", "ESN", "Industrie", "Autre"] as const;
 
 /**
- * Familles de métiers proches : un recruteur Engineering sait souvent recruter en Data/IA ou en
- * Infra/Cloud. Le matching leur accorde un crédit partiel.
+ * Familles de métiers proches : un recruteur Tech sait souvent recruter en Data/AI ou en Product,
+ * un recruteur GTM en Sales. Le matching leur accorde un crédit partiel.
  */
 export const METIER_FAMILIES: readonly (readonly string[])[] = [
-  ["Data/IA", "Engineering", "Infra/Cloud", "Cyber", "Product"],
-  ["GTM"],
+  ["Tech", "Data/AI", "Product"],
+  ["GTM", "Sales"],
 ];
 
 /** Anciennes valeurs encore possibles dans des profils ou besoins existants. */
 export const METIER_ALIASES: Record<string, string> = {
-  "Data/AI": "Data/IA",
-  Dev: "Engineering",
-  Infra: "Infra/Cloud",
-  Tech: "Engineering",
-  Data: "Data/IA",
-  IA: "Data/IA",
-  Cloud: "Infra/Cloud",
-  Cybersécurité: "Cyber",
-  Sales: "GTM",
+  "Data/IA": "Data/AI",
+  Data: "Data/AI",
+  IA: "Data/AI",
+  Engineering: "Tech",
+  Dev: "Tech",
+  "Infra/Cloud": "Tech",
+  Infra: "Tech",
+  Cloud: "Tech",
+  Cyber: "Tech",
+  Cybersécurité: "Tech",
   "Digital & Marketing": "GTM",
+  Autre: "Autres",
 };
 
 /**

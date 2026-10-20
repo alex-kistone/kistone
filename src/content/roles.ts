@@ -223,7 +223,7 @@ export const ROLE_PAGES: RolePage[] = [
       "Suivre les indicateurs : délais, taux de conversion, sources",
     ],
     skills: [
-      "Spécialisation Data/IA, Engineering, Product, Infra/Cloud, Cyber ou GTM",
+      "Spécialisation Tech, Data/AI, Product, GTM ou Sales",
       "Chasse et approche directe des profils tech",
       "Maîtrise des ATS et de LinkedIn Recruiter",
       "Compréhension des métiers de l'IA et de la data",
@@ -238,8 +238,8 @@ export const ROLE_PAGES: RolePage[] = [
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
     ],
     samples: [
-      { name: "Julie", job: "Tech recruiter · IA & data", xp: 9, specialties: ["Data/IA", "Product"], days: null, available: true },
-      { name: "Thomas", job: "Tech recruiter", xp: 6, specialties: ["Engineering", "Infra/Cloud"], days: 3, available: true },
+      { name: "Julie", job: "Tech recruiter · IA & data", xp: 9, specialties: ["Data/AI", "Product"], days: null, available: true },
+      { name: "Thomas", job: "Tech recruiter", xp: 6, specialties: ["Tech"], days: 3, available: true },
       { name: "Inès", job: "Recruteuse GTM", xp: 8, specialties: ["GTM"], days: 4, available: false },
     ],
   },

@@ -73,7 +73,7 @@ export function mergeImportedProfile(
     }
   }
 
-  const skills = current.skills.length ? current.skills : normalizeMetiers(imported.metiers).filter((m) => m !== "Autre").slice(0, limits.maxSkills);
+  const skills = current.skills.length ? current.skills : normalizeMetiers(imported.metiers).filter((m) => m !== "Autres").slice(0, limits.maxSkills);
   if (!current.skills.length) added += skills.length ? 1 : 0;
   const specialties = current.specialties.length
     ? current.specialties
