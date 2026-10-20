@@ -25,9 +25,9 @@ export default function Home() {
       />
       <div className="overflow-x-clip">
         <Hero />
+        <FunctionsGrid />
         <PainSituations />
         <BriefDemo />
-        <FunctionsGrid />
         <RoleCatalog />
         <HowItWorks />
         <WhyMarketplace />
