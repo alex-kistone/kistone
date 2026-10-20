@@ -34,7 +34,7 @@ import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
 import OnboardingSteps, { NEED_FIRST_STEPS } from "@/components/platform/OnboardingSteps";
 import TagInput from "@/components/platform/TagInput";
-import { METIERS, SECTEURS } from "@/lib/taxonomy";
+import { METIERS, SECTEURS, normalizeMetiers } from "@/lib/taxonomy";
 
 
 const SECTORS = SECTEURS;
@@ -124,7 +124,7 @@ const ClientNewNeed = () => {
     const draft = loadPendingNeed();
     if (!draft) return;
     if (isVertical(draft.vertical)) setVertical(draft.vertical);
-    setProfileTypes(draft.profile_types ?? []);
+    setProfileTypes(normalizeMetiers(draft.profile_types));
     setSpecialties(draft.specialties ?? []);
     setDays(draft.days_per_week ? String(draft.days_per_week) : "5");
     setBudgetMin(draft.budget_tjm_min ? String(draft.budget_tjm_min) : "");
@@ -171,7 +171,7 @@ const ClientNewNeed = () => {
       setVertical(detected);
       setSpecialties((data.specialties ?? []).filter((t: string) => verticalOf(detected).specialties.includes(t)));
       if (typeof data.days_per_week === "number" && data.days_per_week >= 1 && data.days_per_week <= 5) setDays(String(data.days_per_week));
-      const metiers = (data.profile_types ?? []).filter((t: string) => (METIERS as readonly string[]).includes(t));
+      const metiers = normalizeMetiers(data.profile_types);
       if (metiers.length) setProfileTypes(metiers);
       const secteurs = (data.sectors ?? []).filter((t: string) => (SECTEURS as readonly string[]).includes(t));
       if (secteurs.length) setSectors(secteurs);

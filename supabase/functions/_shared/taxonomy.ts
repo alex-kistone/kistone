@@ -47,3 +47,18 @@ export const METIER_ALIASES: Record<string, string> = {
   Sales: "GTM",
   "Digital & Marketing": "GTM",
 };
+
+/**
+ * Métiers d'un profil ou d'un besoin ramenés à la liste actuelle : anciennes valeurs renommées,
+ * valeurs inconnues et doublons retirés (sinon elles comptent dans la limite de choix sans
+ * apparaître dans le formulaire).
+ */
+export function normalizeMetiers(values: readonly string[] | null | undefined): string[] {
+  const known = new Set<string>(METIERS);
+  const out: string[] = [];
+  for (const v of values ?? []) {
+    const m = METIER_ALIASES[v] ?? v;
+    if (known.has(m) && !out.includes(m)) out.push(m);
+  }
+  return out;
+}

@@ -37,7 +37,7 @@ import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
-import { METIERS, SECTEURS } from "@/lib/taxonomy";
+import { METIERS, SECTEURS, normalizeMetiers } from "@/lib/taxonomy";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
 import { FULL_TIME_DAYS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
@@ -143,7 +143,7 @@ const Profile = () => {
       setLinkedin(p.linkedin_url || "");
       if (!normalizeLinkedinUrl(p.linkedin_url)) setLinkedinGate(true);
       setJobTitle(p.job_title || "");
-      setSkills(p.skills || []);
+      setSkills(isVertical(p.vertical) && p.vertical !== "rpo" ? p.skills || [] : normalizeMetiers(p.skills));
       setClients(p.clients || []);
       setMobility(p.mobility || []);
       setTjm(p.tjm?.toString() || "");

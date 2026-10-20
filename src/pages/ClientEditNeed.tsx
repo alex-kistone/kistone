@@ -23,7 +23,7 @@ import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
 import EnglishLevelField from "@/components/platform/EnglishLevelField";
 import AppShell from "@/components/platform/AppShell";
-import { METIERS, SECTEURS } from "@/lib/taxonomy";
+import { METIERS, SECTEURS, normalizeMetiers } from "@/lib/taxonomy";
 
 
 const REMOTE_OPTIONS = [
@@ -83,7 +83,7 @@ const ClientEditNeed = () => {
       setContactName(need.contact_name);
       setContactEmail(need.contact_email);
       setJobTitle(need.job_title);
-      setProfileTypes(need.profile_types || []);
+      setProfileTypes(normalizeMetiers(need.profile_types));
       setVertical(isVertical(need.vertical) ? need.vertical : "rpo");
       setSpecialties(need.specialties || []);
       setDays(String(need.days_per_week ?? 5));
