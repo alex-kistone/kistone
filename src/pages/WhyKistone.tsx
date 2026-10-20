@@ -135,18 +135,6 @@ export default function WhyKistone() {
         </ul>
       </PageSection>
 
-      <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
-        <div className="relative isolate overflow-hidden rounded-[32px] bg-ks-dark px-7 py-12 text-ks-dark-fg md:px-14 md:py-16">
-          <BoltWatermark tone="light" className="-bottom-24 -right-10 h-[420px] w-auto rotate-[14deg]" />
-          <h2 className="max-w-[760px] font-ks-display text-[32px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[48px]">
-            Votre prochain <span className="ks-grad-text whitespace-nowrap">expert IA</span>, en freelance.
-          </h2>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Cta href={CALENDLY_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
-            <Cta href={ROUTES.freelance} size="lg" variant="ghost-dark">Je suis freelance</Cta>
-          </div>
-        </div>
-      </section>
     </SiteLayout>
   );
 }
