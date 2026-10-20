@@ -165,7 +165,7 @@ export const BRIEFS: Brief[] = [
     vertical: "product",
     domain: "AI Product",
     text: "Nous lançons un copilote pour nos clients : besoin d'un Product Manager IA pour prioriser les cas d'usage et piloter la roadmap.",
-    criteria: ["AI Product", "Discovery & cas d'usage IA", "Roadmap & priorisation", "Temps plein"],
+    criteria: ["AI Product", "Discovery & cas d'usage IA", "Roadmap & priorisation"],
     matches: [{ name: "Claire", score: 93 }, { name: "Yanis", score: 86 }],
   },
   {
