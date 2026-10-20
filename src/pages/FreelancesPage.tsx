@@ -190,7 +190,7 @@ export default function FreelancesPage() {
           <div>
             <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: palettes.sage.ink }}>Tech recruiters · RPO</span>
             <h2 className="mt-3 font-ks-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[40px]">
-              Tech recruiter ? Recrutez les talents IA que tout le monde cherche.
+              Tech recruiter ? Recrutez les talents que tout le monde cherche.
             </h2>
             <ul className="mt-6 flex flex-col gap-3 text-[16px] leading-[1.5] text-ks-ink-2">
               {RPO_POINTS.map((pt) => (
