@@ -286,6 +286,21 @@ const Profile = () => {
       toast({ title: "Téléphone requis", description: "Indiquez un numéro de téléphone valide.", variant: "destructive" });
       return;
     }
+    // Champs obligatoires de la fiche : on amène le freelance au premier champ manquant
+    const realSectors = sectors.filter((x) => x !== "Autre" || sectorOther.trim());
+    const missing: [string, string, string][] = [
+      ...(Number(tjm) > 0 ? [] : [["tjm", "TJM requis", "Indiquez votre tarif journalier."] as [string, string, string]]),
+      ...((isRpo ? skills : specialties).length ? [] : [["skills", isRpo ? "Métiers requis" : "Spécialités requises", isRpo ? "Cochez au moins un métier sur lequel vous recrutez." : "Cochez au moins une spécialité."] as [string, string, string]]),
+      ...(mobility.length ? [] : [["mobility", "Mobilité requise", "Indiquez au moins une ville ou zone où vous pouvez intervenir."] as [string, string, string]]),
+      ...(realSectors.length ? [] : [["sectors", "Secteur requis", sectors.includes("Autre") ? "Précisez le secteur « Autre »." : "Cochez au moins un secteur."] as [string, string, string]]),
+      ...(languages.some((l) => l.language.trim()) ? [] : [["languages", "Langue requise", "Ajoutez au moins une langue et votre niveau."] as [string, string, string]]),
+    ];
+    if (missing.length) {
+      const [key, title, description] = missing[0];
+      scrollToSection(key);
+      toast({ title, description: missing.length > 1 ? `${description} (${missing.length} champs à compléter)` : description, variant: "destructive" });
+      return;
+    }
     if (!isRpo && specialties.length > MAX_SPECIALTIES) {
       toast({ title: "Trop de choix", description: `${MAX_SPECIALTIES} spécialités maximum.`, variant: "destructive" });
       return;
@@ -537,7 +552,7 @@ const Profile = () => {
           {/* TJM + Model */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="tjm">TJM (€/jour)</Label>
+              <Label htmlFor="tjm">TJM (€/jour) *</Label>
               <Input id="tjm" type="number" value={tjm} onChange={(e) => setTjm(e.target.value)} placeholder="450" required />
             </div>
             {isRpo && (
@@ -623,7 +638,7 @@ const Profile = () => {
 
           {/* Mobilité */}
           <div id="section-mobility" className="space-y-2 rounded-xl transition-shadow">
-            <Label>Mobilité</Label>
+            <Label>Mobilité *</Label>
             <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville" />
           </div>
 
@@ -679,7 +694,7 @@ const Profile = () => {
 
           {/* Secteurs / Environnements */}
           <div id="section-sectors" className="space-y-3 rounded-xl transition-shadow">
-            <Label>Secteurs / Environnements</Label>
+            <Label>Secteurs / Environnements *</Label>
             <p className="text-xs text-muted-foreground">{MAX_CHOICES} choix maximum ({sectors.length}/{MAX_CHOICES})</p>
             <div className="flex flex-col gap-2">
               {SECTEURS.map((sector) => (
@@ -870,7 +885,7 @@ const Profile = () => {
           {/* Languages */}
           <div id="section-languages" className="space-y-3 rounded-xl transition-shadow">
             <div className="flex items-center justify-between">
-              <Label className="flex items-center gap-2"><Globe className="h-4 w-4" />Langues</Label>
+              <Label className="flex items-center gap-2"><Globe className="h-4 w-4" />Langues *</Label>
               <Button
                 type="button"
                 variant="outline"
