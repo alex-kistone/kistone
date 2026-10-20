@@ -59,7 +59,7 @@ function glow(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, co
 export async function renderBlogCover(category: string): Promise<Blob> {
   const W = COVER_WIDTH;
   const H = COVER_HEIGHT;
-  await Promise.all([document.fonts.load("700 120px Outfit"), document.fonts.load("500 44px 'Geist Mono'")]);
+  await Promise.all([document.fonts.load("700 120px Outfit"), document.fonts.load("500 33px 'Geist Mono'")]);
   const logo = await loadImage(LOGO_SRC);
 
   const canvas = document.createElement("canvas");
@@ -111,19 +111,19 @@ export async function renderBlogCover(category: string): Promise<Blob> {
 
   // En bas à gauche : logo Kistone et « AI expert platform »
   const margin = 72;
-  const logoH = 116;
+  const logoH = 87;
   const logoW = (logo.width / logo.height) * logoH;
   const logoY = H - margin - logoH;
   ctx.drawImage(logo, margin, logoY, logoW, logoH);
-  const ruleX = margin + logoW + 44;
+  const ruleX = margin + logoW + 33;
   ctx.fillStyle = "rgba(20,19,18,0.18)";
-  ctx.fillRect(ruleX, logoY + 16, 4, logoH - 32);
-  ctx.font = "500 44px 'Geist Mono', monospace";
-  if ("letterSpacing" in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "6px";
+  ctx.fillRect(ruleX, logoY + 12, 3, logoH - 24);
+  ctx.font = "500 33px 'Geist Mono', monospace";
+  if ("letterSpacing" in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "4.5px";
   ctx.fillStyle = MUTED;
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
-  ctx.fillText(TAGLINE.toUpperCase(), ruleX + 44, logoY + logoH / 2 + 2);
+  ctx.fillText(TAGLINE.toUpperCase(), ruleX + 33, logoY + logoH / 2 + 2);
 
   return new Promise((resolve, reject) =>
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Export de l'image impossible."))), "image/jpeg", 0.95),
