@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import type { ImportedProfile } from "@/lib/profileImport";
+import LinkedinPdfHowTo from "./LinkedinPdfHowTo";
 
 const MAX_BYTES = 8 * 1024 * 1024;
 
@@ -24,6 +25,7 @@ export default function ProfileImport({ vertical, onImported }: { vertical: stri
   const input = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -58,9 +60,17 @@ export default function ProfileImport({ vertical, onImported }: { vertical: stri
           <div>
             <p className="font-medium">Gagnez du temps : importez votre CV <span className="font-normal text-muted-foreground">(facultatif)</span></p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Votre CV ou votre profil LinkedIn en PDF (sur LinkedIn : Plus › Enregistrer au format PDF). Nous pré-remplissons
-              votre présentation, vos clients, vos missions et vos langues : vous relisez avant d'enregistrer. Le document n'est pas conservé.
+              Votre CV ou votre profil LinkedIn en PDF. Nous pré-remplissons votre présentation, vos clients, vos missions et vos
+              langues : vous relisez avant d'enregistrer. Le document n'est pas conservé.
             </p>
+            <button
+              type="button"
+              onClick={() => setShowHelp(!showHelp)}
+              aria-expanded={showHelp}
+              className="mt-2 text-sm font-medium underline underline-offset-4 hover:text-foreground"
+            >
+              Comment exporter mon profil LinkedIn en PDF ?
+            </button>
           </div>
         </div>
         <Button type="button" variant="outline" className="shrink-0 gap-2" disabled={loading} onClick={() => input.current?.click()}>
@@ -69,6 +79,7 @@ export default function ProfileImport({ vertical, onImported }: { vertical: stri
         </Button>
         <input ref={input} type="file" accept="application/pdf" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
       </div>
+      {showHelp ? <div className="mt-4 max-w-[420px] sm:ml-8"><LinkedinPdfHowTo /></div> : null}
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
     </div>
   );

@@ -1,0 +1,53 @@
+/* Mini-animation « exporter son profil LinkedIn en PDF » (boucle de 6 s). */
+.li-pdf-cursor1 { animation: li-pdf-cursor1 6s ease-in-out infinite; }
+.li-pdf-button  { animation: li-pdf-button 6s ease-in-out infinite; }
+.li-pdf-menu    { animation: li-pdf-menu 6s ease-in-out infinite; }
+.li-pdf-cursor2 { animation: li-pdf-cursor2 6s ease-in-out infinite; }
+.li-pdf-item    { animation: li-pdf-item 6s ease-in-out infinite; }
+.li-pdf-done    { animation: li-pdf-done 6s ease-in-out infinite; }
+
+/* 1. Le curseur arrive sur « Ressources » et clique */
+@keyframes li-pdf-cursor1 {
+  0%, 10%  { opacity: 0; transform: translate(14px, 14px); }
+  20%      { opacity: 1; transform: translate(0, 0) scale(1); }
+  26%      { transform: translate(0, 0) scale(0.85); }
+  30%      { opacity: 1; transform: translate(0, 0) scale(1); }
+  36%, 100% { opacity: 0; }
+}
+@keyframes li-pdf-button {
+  0%, 25%  { background-color: transparent; }
+  28%, 88% { background-color: rgba(10, 102, 194, 0.12); }
+  94%, 100% { background-color: transparent; }
+}
+/* 2. Le menu s'ouvre */
+@keyframes li-pdf-menu {
+  0%, 28%  { opacity: 0; transform: translateY(-4px); }
+  33%, 88% { opacity: 1; transform: none; }
+  94%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+/* 3. Clic sur « Enregistrer au format PDF » */
+@keyframes li-pdf-cursor2 {
+  0%, 38%  { opacity: 0; transform: translate(12px, 10px); }
+  48%      { opacity: 1; transform: translate(0, 0) scale(1); }
+  54%      { transform: translate(0, 0) scale(0.85); }
+  58%, 84% { opacity: 1; transform: translate(0, 0) scale(1); }
+  90%, 100% { opacity: 0; }
+}
+@keyframes li-pdf-item {
+  0%, 52%  { background-color: transparent; }
+  55%, 88% { background-color: #F3EEE6; }
+  94%, 100% { background-color: transparent; }
+}
+/* 4. Le PDF est téléchargé */
+@keyframes li-pdf-done {
+  0%, 60%  { opacity: 0; transform: translateY(4px); }
+  66%, 88% { opacity: 1; transform: none; }
+  94%, 100% { opacity: 0; transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .li-pdf-cursor1, .li-pdf-button, .li-pdf-menu, .li-pdf-cursor2, .li-pdf-item, .li-pdf-done { animation: none; }
+  .li-pdf-cursor1 { opacity: 0; }
+  .li-pdf-menu, .li-pdf-cursor2, .li-pdf-done { opacity: 1; }
+  .li-pdf-item { background-color: #F3EEE6; }
+}
