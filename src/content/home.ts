@@ -158,7 +158,7 @@ export const BRIEFS: Brief[] = [
     vertical: "engineer",
     domain: "AI Engineer",
     text: "Notre POC d'assistant interne marche en démo : on cherche un AI Engineer pour industrialiser le RAG et le passer en production.",
-    criteria: ["AI Engineer", "RAG & recherche sémantique", "MLOps / LLMOps", "Mission 6 mois"],
+    criteria: ["RAG & recherche sémantique", "MLOps / LLMOps", "Mission 6 mois"],
     matches: [{ name: "Lina", score: 95 }, { name: "Hugo", score: 88 }],
   },
   {
