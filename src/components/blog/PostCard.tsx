@@ -54,7 +54,7 @@ function CoverTemplate({ category, badge }: { category: string; badge?: string }
         <rect x="702" y={barY} width="132" height="10" rx="5" fill="url(#cv-bar)" />
         <image href="/logos/logo-full-black.png" x="72" y="865" width="394.5" height="87" />
         <rect x="499.5" y="877" width="3" height="63" fill="#141312" fillOpacity="0.18" />
-        <text x="532.5" y="910.5" dominantBaseline="middle" fill="#5E5A54" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="33" letterSpacing="4.5">AI EXPERT PLATFORM</text>
+        <text x="532.5" y="910.5" dominantBaseline="middle" fill="#5E5A54" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="33" letterSpacing="4.5">AI EXPERTS PLATFORM</text>
       </svg>
       {badge ? (
         <span className="absolute left-[18px] top-[18px] flex h-7 items-center gap-[7px] rounded-full bg-white/85 px-3 text-xs font-medium text-[#1B6541]">

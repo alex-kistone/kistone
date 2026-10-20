@@ -2,7 +2,7 @@
  * Couverture d'article générée à partir d'un gabarit à la charte Kistone, dessinée dans le
  * navigateur (aucune IA, aucun personnage) : fond crème, halos du dégradé IA (rose, violet,
  * bleu), grand éclair en filigrane, catégorie centrée, et en bas à gauche le logo Kistone avec
- * « AI expert platform ». Format 3:2 (1536 × 1024), comme les couvertures existantes.
+ * « AI experts platform ». Format 3:2 (1536 × 1024), comme les couvertures existantes.
  */
 
 export const COVER_WIDTH = 1536;
@@ -12,7 +12,7 @@ const INK = "#141312";
 const MUTED = "#5E5A54";
 const CREAM = "#F5F1EA";
 const GRADIENT = ["#FF2E6E", "#B14DF5", "#4C7DFF"];
-const TAGLINE = "AI expert platform";
+const TAGLINE = "AI experts platform";
 const LOGO_SRC = "/logos/logo-full-black.png";
 
 // Éclair du logo (viewBox 624 × 1024), le même tracé que BoltMark
@@ -109,7 +109,7 @@ export async function renderBlogCover(category: string): Promise<Blob> {
   ctx.roundRect(W / 2 - barW / 2, barY, barW, 10, 5);
   ctx.fill();
 
-  // En bas à gauche : logo Kistone et « AI expert platform »
+  // En bas à gauche : logo Kistone et « AI experts platform »
   const margin = 72;
   const logoH = 87;
   const logoW = (logo.width / logo.height) * logoH;
