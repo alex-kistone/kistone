@@ -37,6 +37,14 @@ export default function CrispChat() {
     document.head.appendChild(s);
   }, [allowed]);
 
+  // Retrait du consentement : conversation effacée, bulle masquée (le script ne se recharge plus)
+  useEffect(() => {
+    const w = window as CrispWindow;
+    if (allowed || !w.$crisp) return;
+    w.$crisp.push(["do", "session:reset"]);
+    w.$crisp.push(["do", "chat:hide"]);
+  }, [allowed]);
+
   // Bulle visible sur le site public, masquée dans les espaces connectés
   useEffect(() => {
     const w = window as CrispWindow;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getConsent, setConsent } from "@/lib/consent";
+import { CONSENT_OPEN_EVENT, getConsent, setConsent } from "@/lib/consent";
 
 
 const CookieConsent = () => {
@@ -8,6 +8,10 @@ const CookieConsent = () => {
 
   useEffect(() => {
     if (!getConsent()) setVisible(true);
+    // « Gérer les cookies » : le visiteur peut revenir sur son choix à tout moment
+    const open = () => setVisible(true);
+    window.addEventListener(CONSENT_OPEN_EVENT, open);
+    return () => window.removeEventListener(CONSENT_OPEN_EVENT, open);
   }, []);
 
   const accept = () => {

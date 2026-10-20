@@ -20,3 +20,7 @@ export function setConsent(value: Consent) {
   try { localStorage.setItem(CONSENT_KEY, value); } catch { /* stockage indisponible */ }
   window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: value }));
 }
+
+/** Rouvre le bandeau de consentement (lien « Gérer les cookies » du pied de page). */
+export const CONSENT_OPEN_EVENT = "kistone:consent-open";
+export const openConsentBanner = () => window.dispatchEvent(new Event(CONSENT_OPEN_EVENT));

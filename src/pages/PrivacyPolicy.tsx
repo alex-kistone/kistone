@@ -119,7 +119,7 @@ const PrivacyPolicy = () => {
               <li><strong>Cookies analytiques</strong> : mesure d'audience anonymisée (soumis à votre consentement)</li>
               <li><strong>Cookies du chat Crisp</strong> : conserver votre conversation avec l'équipe Kistone (soumis à votre consentement ; le chat ne se charge pas si vous refusez)</li>
             </ul>
-            <p>Vous pouvez gérer vos préférences de cookies à tout moment via le bandeau de consentement.</p>
+            <p>Vous pouvez modifier votre choix à tout moment avec le lien « Gérer les cookies » en bas de chaque page du site.</p>
           </section>
 
           <section>

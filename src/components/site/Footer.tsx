@@ -3,6 +3,7 @@ import Cta from "./Cta";
 import Logo from "./Logo";
 import SmartLink from "./SmartLink";
 import { BoltWatermark } from "@/components/brand/Bolt";
+import { openConsentBanner } from "@/lib/consent";
 
 export default function Footer() {
   return (
@@ -37,6 +38,7 @@ export default function Footer() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <SmartLink href={ROUTES.login} className="hover:text-ks-dark-fg">Se connecter</SmartLink>
             <SmartLink href="/privacy" className="hover:text-ks-dark-fg">Confidentialité</SmartLink>
+            <button type="button" onClick={openConsentBanner} className="hover:text-ks-dark-fg">Gérer les cookies</button>
             <span>© 2026 Kistone. Tous droits réservés.</span>
           </div>
         </div>
