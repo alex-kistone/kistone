@@ -87,8 +87,8 @@ export default function FunctionsGrid() {
   return (
     <Section id="fonctions">
       <SectionHeader
-        title={<TwoPartTitle a="Des experts IA pour vos projets." b="Un Tech Recruiter pour bâtir votre équipe." />}
-        subtitle="En mission pour avancer vite, ou en CDI pour durer : le bon profil à chaque étape de votre projet IA."
+        title={<TwoPartTitle a="Une expertise IA." b="Une équipe à bâtir." />}
+        subtitle="En mission pour avancer vite, en CDI pour durer."
       />
       <div className="mt-8 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-5">
         {ai.map((v) => <FamilyCard key={v.id} v={v} />)}
