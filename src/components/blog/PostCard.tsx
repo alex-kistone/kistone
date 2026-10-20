@@ -52,9 +52,9 @@ function CoverTemplate({ category, badge }: { category: string; badge?: string }
           {lines.map((l, i) => <tspan key={l} x="768" y={top + i * lineHeight}>{l}</tspan>)}
         </text>
         <rect x="702" y={barY} width="132" height="10" rx="5" fill="url(#cv-bar)" />
-        <image href="/logos/logo-full-black.png" x="72" y="894" width="263" height="58" />
-        <rect x="361" y="902" width="2" height="42" fill="#141312" fillOpacity="0.18" />
-        <text x="389" y="924" dominantBaseline="middle" fill="#5E5A54" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="22" letterSpacing="3">AI EXPERT PLATFORM</text>
+        <image href="/logos/logo-full-black.png" x="72" y="836" width="526" height="116" />
+        <rect x="642" y="852" width="4" height="84" fill="#141312" fillOpacity="0.18" />
+        <text x="690" y="896" dominantBaseline="middle" fill="#5E5A54" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="44" letterSpacing="6">AI EXPERT PLATFORM</text>
       </svg>
       {badge ? (
         <span className="absolute left-[18px] top-[18px] flex h-7 items-center gap-[7px] rounded-full bg-white/85 px-3 text-xs font-medium text-[#1B6541]">
