@@ -17,11 +17,11 @@ const base = {
 
 describe("toJarviFields", () => {
   it("envoie les champs admin et fait primer la note d'anglais de l'admin", () => {
-    const { fields } = toJarviFields({ ...base, admin_rating: 5, admin_english_rating: 2, admin_comments: "  Très bon sourcing  ", tech_specialties: ["Dev", "Java"] }, JARVI_SPECIALITES);
+    const { fields } = toJarviFields({ ...base, admin_rating: 5, admin_english_rating: 2, admin_comments: "  Très bon sourcing  ", tech_specialties: ["Engineering", "Java"] }, JARVI_SPECIALITES);
     expect(fields[JARVI_FIELDS.rate]).toBe(5);
     expect(fields[JARVI_FIELDS.english]).toBe(2);
     expect(fields[JARVI_FIELDS.notes]).toBe("Très bon sourcing");
-    expect(fields[JARVI_FIELDS.specialitesTech]).toEqual(["Dev"]);
+    expect(fields[JARVI_FIELDS.specialitesTech]).toEqual(["Engineering"]);
     expect(fields[JARVI_FIELDS.autresLangues]).toEqual(["Anglais (intermédiaire)", "Français (natif)"]);
   });
 

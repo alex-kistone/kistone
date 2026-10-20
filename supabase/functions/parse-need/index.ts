@@ -67,7 +67,7 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
               properties: {
                 job_title: {
                   type: "string",
-                  description: "Intitulé court du poste recherché : « Tech recruiter <métier> » pour un recruteur (Tech recruiter Data/AI, Tech recruiter Dev), sinon le rôle précis cité ou déduit (AI Engineer RAG, LLM Engineer, Product Manager IA, Head of AI, Fractional CTO 2 j/sem si un nombre de jours est donné)",
+                  description: "Intitulé court du poste recherché : « Tech recruiter <métier> » pour un recruteur (Tech recruiter Data/IA, Tech recruiter Engineering, Tech recruiter Cyber), sinon le rôle précis cité ou déduit (AI Engineer RAG, LLM Engineer, Product Manager IA, Head of AI, Fractional CTO 2 j/sem si un nombre de jours est donné)",
                 },
                 vertical: {
                   type: "string",

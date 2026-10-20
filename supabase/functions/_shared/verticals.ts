@@ -113,7 +113,7 @@ export const FULL_TIME_DAYS = 5;
 export const rhythmLabel = (days: number | null | undefined) =>
   !days || days >= FULL_TIME_DAYS ? "Temps plein" : `${days} j / sem`;
 
-/** « RPO · Dev, Data/AI » ou « AI Engineer · RAG, Agents IA » : la famille et ce qui est attendu. */
+/** « RPO · Engineering, Data/IA » ou « AI Engineer · RAG, Agents IA » : la famille et ce qui est attendu. */
 export function needSummary(n: { vertical?: string | null; profile_types?: string[] | null; specialties?: string[] | null }): string {
   const v = verticalOf(n.vertical);
   const items = v.id === "rpo" ? n.profile_types ?? [] : n.specialties ?? [];

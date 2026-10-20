@@ -91,7 +91,7 @@ export const ROLE_CATALOG: { role: string; vertical: Vertical }[] = [
   { role: "Head of AI", vertical: "leader" },
   { role: "Chief AI Officer", vertical: "leader" },
   { role: "Tech recruiter IA & data", vertical: "rpo" },
-  { role: "Tech recruiter Dev & Infra", vertical: "rpo" },
+  { role: "Tech recruiter Engineering & Cloud", vertical: "rpo" },
 ];
 
 /** La squad IA : plusieurs familles sur un même projet, coordonnées par Kistone. */
@@ -179,7 +179,7 @@ export const BRIEFS: Brief[] = [
     vertical: "rpo",
     domain: "Tech recruiter",
     text: "On veut internaliser notre équipe IA : un recruteur pour 4 AI Engineers en CDI, à Paris en hybride, dès que possible.",
-    criteria: ["Tech recruiter", "Data/AI", "Paris · hybride", "4 postes"],
+    criteria: ["Tech recruiter", "Data/IA", "Paris · hybride", "4 postes"],
     matches: [{ name: "Julie", score: 94 }, { name: "Thomas", score: 88 }],
   },
 ];

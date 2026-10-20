@@ -50,7 +50,7 @@ const MODEL_TO_JARVI: Record<string, string> = { RPO: "RPO", "Succès": "Success
 // une spécialité retirés sur la plateforme restent donc dans Jarvi, à nettoyer à la main.
 
 /** Spécialités tech (fiche admin) : valeurs du champ Jarvi « Spécialités RPO Tech ». */
-export const JARVI_TECH_SPECIALTIES = ["Cyber", "Data/AI", "Dev", "Infra", "SAP"];
+export const JARVI_TECH_SPECIALTIES = ["Cyber", "Data/IA", "Engineering", "Infra/Cloud", "SAP"];
 
 /** Secteurs de la plateforme → valeurs Jarvi (« Autre » n'a pas d'équivalent). */
 const SECTOR_TO_JARVI: Record<string, string> = {
