@@ -82,9 +82,6 @@ export default function HowItWorks() {
         <br />
         La flexibilité du freelance.
       </h2>
-      <p className="ks-reveal mt-[18px] text-[17px] leading-[1.5] text-ks-soft md:text-[19px]">
-        Il rejoint vos équipes, utilise vos outils et avance à votre rythme.
-      </p>
       <ol className="mt-14 grid w-full gap-5 text-left md:grid-cols-3">
         {STEPS.map((s, i) => {
           const Visual = VISUALS[i];
