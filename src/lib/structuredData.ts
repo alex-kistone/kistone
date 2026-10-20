@@ -6,11 +6,11 @@
 import { BASE_URL } from "@/components/SEO";
 
 /**
- * Profils officiels (page LinkedIn de Kistone, profil LinkedIn d'Alexandre…). À compléter avec
- * les vraies adresses : vide, la propriété n'est pas publiée.
+ * Profils officiels : page LinkedIn de Kistone et profil LinkedIn d'Alexandre (fournis par Alex le
+ * 2026-10-20). Liste vide : la propriété sameAs n'est pas publiée.
  */
-export const KISTONE_PROFILES: string[] = [];
-export const FOUNDER_PROFILES: string[] = [];
+export const KISTONE_PROFILES: string[] = ["https://www.linkedin.com/company/kistone-ai/"];
+export const FOUNDER_PROFILES: string[] = ["https://www.linkedin.com/in/alexguego/"];
 
 const ORG_ID = `${BASE_URL}/#organization`;
 const FOUNDER_ID = `${BASE_URL}/#founder`;
