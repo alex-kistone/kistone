@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { VERTICALS } from "@/lib/verticals";
+import { VERTICALS, verticalOf } from "@/lib/verticals";
+import { renderBlogCover } from "@/lib/blogCover";
 import { formatDate, postPath, slugify, type BlogPost } from "@/lib/blog";
 import ArticleBody from "@/components/blog/ArticleBody";
 
@@ -32,12 +33,14 @@ const LENGTHS = [
 type Brief = { theme: string; tone: string; objective: string; audience: string; keywords: string; length: string; vertical: string };
 type Draft = Omit<BlogPost, "id" | "created_at" | "updated_at" | "published_at" | "status"> & {
   id?: string; status: BlogPost["status"]; published_at: string | null; image_prompt: string;
+  /** Texte centré sur la couverture (par défaut : première étiquette ou famille). */
+  cover_category: string;
 };
 
 const EMPTY_BRIEF: Brief = { theme: "", tone: TONES[0], objective: OBJECTIVES[0], audience: AUDIENCES[0], keywords: "", length: "moyen", vertical: "none" };
 const emptyDraft = (): Draft => ({
   slug: "", title: "", excerpt: "", content: "", seo_title: "", seo_description: "", tags: [], faq: [],
-  vertical: null, cover_url: null, cover_alt: "", brief: {}, status: "draft", published_at: null, image_prompt: "",
+  vertical: null, cover_url: null, cover_alt: "", brief: {}, status: "draft", published_at: null, image_prompt: "", cover_category: "",
 });
 
 /** Message d'erreur d'une fonction Supabase (le corps JSON est dans le contexte de l'erreur). */
@@ -62,7 +65,7 @@ export default function AdminBlogPanel() {
   useEffect(() => { load(); }, [load]);
 
   const open = (p?: BlogPost) => {
-    setEditing(p ? { ...p, image_prompt: p.brief?.image_prompt ?? "" } : emptyDraft());
+    setEditing(p ? { ...p, image_prompt: p.brief?.image_prompt ?? "", cover_category: p.brief?.cover_category ?? "" } : emptyDraft());
     setBrief(p?.brief?.theme ? { ...EMPTY_BRIEF, ...(p.brief as Partial<Brief>) } : EMPTY_BRIEF);
   };
 
@@ -156,15 +159,27 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
     toast({ title: "Article rédigé", description: "Relisez-le, ajustez-le puis générez l'illustration." });
   };
 
+  /** Catégorie affichée sur la couverture : saisie, sinon première étiquette, sinon famille. */
+  const coverCategory = draft.cover_category.trim() || draft.tags[0] || (draft.vertical ? verticalOf(draft.vertical).short : "Ressources");
+
+  // Couverture au gabarit Kistone, dessinée dans le navigateur puis déposée dans « blog-images »
   const generateImage = async () => {
     setImaging(true);
-    const { data, error } = await supabase.functions.invoke("blog-image", { body: { prompt: draft.image_prompt || draft.title } });
-    setImaging(false);
-    if (error || data?.error) {
-      toast({ title: "Image impossible", description: error ? await invokeError(error) : data.error, variant: "destructive" });
-      return;
+    try {
+      const blob = await renderBlogCover(coverCategory);
+      const path = `covers/${crypto.randomUUID()}.jpg`;
+      const { error } = await supabase.storage.from("blog-images").upload(path, blob, { contentType: "image/jpeg" });
+      if (error) throw error;
+      setDraft({
+        ...draft,
+        cover_url: supabase.storage.from("blog-images").getPublicUrl(path).data.publicUrl,
+        cover_alt: draft.cover_alt || `Kistone, ${coverCategory}`,
+      });
+    } catch (e) {
+      toast({ title: "Couverture impossible", description: e instanceof Error ? e.message : String(e), variant: "destructive" });
+    } finally {
+      setImaging(false);
     }
-    set("cover_url", data.url);
   };
 
   const upload = async (file: File) => {
@@ -194,7 +209,7 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
       slug, title: draft.title.trim(), excerpt: draft.excerpt, content: draft.content,
       seo_title: draft.seo_title || draft.title, seo_description: draft.seo_description || draft.excerpt,
       tags: draft.tags, faq: draft.faq, vertical: draft.vertical, cover_url: draft.cover_url, cover_alt: draft.cover_alt,
-      brief: { ...brief, image_prompt: draft.image_prompt }, status,
+      brief: { ...brief, image_prompt: draft.image_prompt, cover_category: draft.cover_category }, status,
       published_at: status === "published" ? draft.published_at ?? new Date().toISOString() : null,
       ...(draft.id ? {} : { author_id: user?.id }),
     };
@@ -209,7 +224,7 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
       return;
     }
     const saved = data as BlogPost;
-    setDraft({ ...draft, ...saved, image_prompt: draft.image_prompt });
+    setDraft({ ...draft, ...saved, image_prompt: draft.image_prompt, cover_category: draft.cover_category });
     toast({ title: status === "published" ? "Article publié" : "Brouillon enregistré" });
   };
 
@@ -355,11 +370,14 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
               ) : (
                 <div className="flex aspect-[3/2] w-full items-center justify-center rounded-md bg-muted text-sm text-muted-foreground">Pas encore d'image</div>
               )}
-              <Textarea rows={3} value={draft.image_prompt} onChange={(e) => set("image_prompt", e.target.value)} placeholder="Description de l'image (proposée par l'IA avec l'article)" />
+              <div className="space-y-1.5">
+                <Label htmlFor="blog-cover-category" className="text-xs">Catégorie affichée sur la couverture</Label>
+                <Input id="blog-cover-category" value={draft.cover_category} onChange={(e) => set("cover_category", e.target.value)} placeholder={coverCategory} />
+              </div>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" onClick={generateImage} disabled={imaging} className="gap-2">
                   {imaging ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-                  {imaging ? "Photo en cours (environ 30 s)…" : draft.cover_url ? "Régénérer" : "Générer l'image"}
+                  {imaging ? "Création…" : draft.cover_url ? "Régénérer la couverture" : "Générer la couverture"}
                 </Button>
                 <Button size="sm" variant="outline" asChild className="gap-2">
                   <label className="cursor-pointer">
