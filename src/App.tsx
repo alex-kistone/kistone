@@ -2,23 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Studio from "./pages/Studio";
-import FreelancerAuth from "./pages/FreelancerAuth";
-import Profile from "./pages/Profile";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import ClientAuth from "./pages/ClientAuth";
-import ClientDashboard from "./pages/ClientDashboard";
-import ClientOnboarding from "./pages/ClientOnboarding";
 import ClientNewNeed from "./pages/ClientNewNeed";
-import ClientEditNeed from "./pages/ClientEditNeed";
-import ClientProfile from "./pages/ClientProfile";
-import OpenNeeds from "./pages/OpenNeeds";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RolePage from "./pages/RolePage";
@@ -32,10 +20,26 @@ import { LEGACY_COMPARISON_SLUG } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 
+// Espaces connectés (freelance, client, admin) : chargés à la demande, pour que les pages
+// publiques ne téléchargent pas tout le code de l'application.
+const FreelancerAuth = lazy(() => import("./pages/FreelancerAuth"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Login = lazy(() => import("./pages/Login"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const ClientAuth = lazy(() => import("./pages/ClientAuth"));
+const ClientDashboard = lazy(() => import("./pages/ClientDashboard"));
+const ClientOnboarding = lazy(() => import("./pages/ClientOnboarding"));
+const ClientEditNeed = lazy(() => import("./pages/ClientEditNeed"));
+const ClientProfile = lazy(() => import("./pages/ClientProfile"));
+const OpenNeeds = lazy(() => import("./pages/OpenNeeds"));
+
 const queryClient = new QueryClient();
 
 /** Les routes du site, partagées par le navigateur et le pré-rendu (scripts/prerender.mjs). */
 export const AppRoutes = () => (
+  <Suspense fallback={<div className="min-h-screen bg-background" aria-busy="true" />}>
   <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/studio" element={<Studio />} />
@@ -65,6 +69,7 @@ export const AppRoutes = () => (
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>
+  </Suspense>
 );
 
 /** Fournisseurs communs ; le routeur est passé en enfant (navigateur ou pré-rendu). */

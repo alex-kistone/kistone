@@ -194,3 +194,38 @@ export const FINAL_CTA = {
   primary: "Accéder aux profils",
   secondary: "Je suis freelance",
 };
+
+/**
+ * Questions fréquentes de l'accueil : réponses courtes et factuelles (reprises par les moteurs
+ * IA), uniquement des engagements déjà validés. Budgets : src/lib/indicativeBudget.ts.
+ */
+export const HOME_FAQ: { q: string; a: string }[] = [
+  {
+    q: "Qu'est-ce que Kistone ?",
+    a: "Kistone est la plateforme freelance des experts IA. Elle met en relation les entreprises avec des AI Engineers, des AI Product et des AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et avec des Tech recruiters (RPO) pour recruter leurs talents IA en CDI.",
+  },
+  {
+    q: "Quels experts IA trouve-t-on sur Kistone ?",
+    a: "Trois familles : les AI Engineers (LLM, RAG, agents IA, MLOps et infrastructure IA), les AI Product (Product Managers IA, Product Owners de produits LLM, AI Designers) et les AI Leaders (CTO, Head of AI, Chief AI Officer). S'y ajoutent les Tech recruiters, intégrés à vos équipes pour recruter en CDI.",
+  },
+  {
+    q: "En combien de temps recevez-vous un premier profil ?",
+    a: "Un premier profil qualifié vous est présenté sous 48 h après le partage de votre besoin.",
+  },
+  {
+    q: "Combien coûte un expert IA freelance ?",
+    a: "Les experts sont facturés au jour, sans frais de recrutement. Budgets indicatifs HT par jour : AI Engineer 600 à 1 000 €, AI Product 500 à 800 €, AI Leader 1 000 à 1 600 €, Tech recruiter 500 à 600 €, selon l'expérience et le périmètre.",
+  },
+  {
+    q: "Mission, fractional ou contract-to-hire : quelle différence ?",
+    a: "En mission freelance, l'expert travaille à temps plein sur votre projet pour une durée définie. En fractional, un leader senior intervient quelques jours par semaine. En contract-to-hire, l'expert démarre en freelance avec la possibilité de le recruter ensuite.",
+  },
+  {
+    q: "Comment les experts sont-ils sélectionnés ?",
+    a: "Chaque freelance est qualifié en entretien par l'équipe Kistone (parcours, projets IA réalisés, références) puis noté. Seuls les profils qui correspondent à votre besoin vous sont présentés.",
+  },
+  {
+    q: "Qui gère le contrat et la facturation ?",
+    a: "Kistone gère le contrat, la conformité, le suivi des jours (CRA) et la facturation. Le freelance est payé chaque fin de mois.",
+  },
+];

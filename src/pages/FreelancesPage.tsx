@@ -142,9 +142,10 @@ export default function FreelancesPage() {
   return (
     <SiteLayout>
       <SEO
-        title="Espace freelance : rejoignez la plateforme des experts IA"
-        description="AI Engineers, AI Product, AI Leaders et Tech recruiters freelance : missions qualifiées, rémunération transparente payée chaque mois, rythme au choix, administratif et facturation gérés. Inscription gratuite."
+        title="Experts IA freelance : rejoignez la plateforme"
+        description="AI Engineers, AI Product, AI Leaders et Tech recruiters : missions qualifiées, paiement chaque mois, rythme au choix, facturation gérée. Inscription gratuite."
         path="/freelances"
+        image="/og/freelances.png"
         jsonLd={jsonLd}
       />
 

@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
+import { ARTICLE_AUTHOR, ARTICLE_PUBLISHER } from "@/lib/structuredData";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
@@ -53,8 +54,8 @@ export default function BlogPost() {
       mainEntityOfPage: url,
       inLanguage: "fr-FR",
       keywords: post.tags.join(", "),
-      author: { "@type": "Organization", name: "Kistone", url: BASE_URL },
-      publisher: { "@type": "Organization", name: "Kistone", url: BASE_URL },
+      author: ARTICLE_AUTHOR,
+      publisher: ARTICLE_PUBLISHER,
     },
     ...(post.faq.length
       ? [{

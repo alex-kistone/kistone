@@ -4,13 +4,81 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/recruter/fractional-rpo",
+      "destination": "/recruter/tech-recruiter",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-cto",
+      "destination": "/recruter/ai-leader",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-cdo",
+      "destination": "/recruter/ai-leader",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-cpo",
+      "destination": "/recruter/ai-product-manager",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-drh",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-cfo",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-coo",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/fractional-cro",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/modeles/interim-transition",
+      "destination": "/modeles/mission-freelance",
+      "permanent": true
+    },
+    {
+      "source": "/ressources/comparatif-acteurs-fractional",
+      "destination": "/ressources/comparatif-plateformes-freelance-ia",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/app.html" }
+    {
+      "source": "/(register|profile|dashboard|login|forgot-password|reset-password|open-needs|client)",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/client/:path*",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/ressources/:slug",
+      "destination": "/app.html"
+    }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

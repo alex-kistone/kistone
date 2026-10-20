@@ -48,7 +48,7 @@ function ModelContent({ model }: { model: Model }) {
 
   return (
     <SiteLayout>
-      <SEO title={model.seoTitle} description={model.seoDescription} path={modelPath(model)} jsonLd={jsonLd} />
+      <SEO title={model.seoTitle} description={model.seoDescription} path={modelPath(model)} image="/og/modeles.png" jsonLd={jsonLd} />
 
       {/* Promesse */}
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">

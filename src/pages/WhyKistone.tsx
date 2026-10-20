@@ -1,4 +1,5 @@
 import SEO from "@/components/SEO";
+import { FOUNDER_REF, ORG_REF, withIdentity } from "@/lib/structuredData";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import Highlight from "@/components/site/Highlight";
@@ -19,25 +20,22 @@ const COMMITMENTS = [
 
 /** /pourquoi-kistone : qui est Alex et la conviction qui fonde Kistone. */
 export default function WhyKistone() {
-  const jsonLd = {
-    "@context": "https://schema.org",
+  const jsonLd = withIdentity({
     "@type": "AboutPage",
     name: "Pourquoi Kistone",
     url: "https://kistone.fr/pourquoi-kistone",
-    mainEntity: {
-      "@type": "Organization",
-      name: "Kistone",
-      url: "https://kistone.fr",
-      founder: { "@type": "Person", name: "Alexandre Guégo", image: "https://kistone.fr/team/alexandre-guego.jpg" },
-    },
-  };
+    inLanguage: "fr-FR",
+    mainEntity: ORG_REF,
+    author: FOUNDER_REF,
+  });
 
   return (
     <SiteLayout>
       <SEO
         title="Pourquoi Kistone : notre conviction"
-        description="L'IA a totalement transformé la façon de travailler, et le freelance est le modèle pour accéder aux experts qui la maîtrisent. La conviction d'Alexandre Guégo, fondateur de Kistone, la plateforme freelance des experts IA."
+        description="L'IA a transformé la façon de travailler, et le freelance est le modèle pour accéder aux experts qui la maîtrisent. La conviction d'Alexandre Guégo, fondateur."
         path="/pourquoi-kistone"
+        image="/og/pourquoi-kistone.png"
         jsonLd={jsonLd}
       />
 

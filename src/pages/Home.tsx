@@ -1,4 +1,7 @@
 import SEO from "@/components/SEO";
+import HomeFaq from "@/components/home/HomeFaq";
+import { HOME_FAQ } from "@/content/home";
+import { withIdentity } from "@/lib/structuredData";
 import SiteLayout from "@/components/site/SiteLayout";
 import Hero from "@/components/home/Hero";
 import BriefDemo from "@/components/home/BriefDemo";
@@ -20,8 +23,12 @@ export default function Home() {
     <SiteLayout>
       <SEO
         title="Kistone · Plateforme freelance des experts IA"
-        description="AI Engineers, AI Product Managers et AI Leaders freelance, sélectionnés et qualifiés : un premier profil en 48 h, en mission, en fractional ou en contract-to-hire. Et des Tech recruiters pour internaliser vos talents IA."
+        description="AI Engineers, AI Product et AI Leaders freelance qualifiés : un premier profil en 48 h. Et des Tech recruiters pour recruter vos talents IA en CDI."
         path="/"
+        jsonLd={withIdentity({
+          "@type": "FAQPage",
+          mainEntity: HOME_FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+        })}
       />
       <div className="overflow-x-clip">
         <Hero />
@@ -35,6 +42,7 @@ export default function Home() {
         <ModelsTeaser />
         <FreelanceCTA />
         <ResourcesTeaser />
+        <HomeFaq />
         <FinalCTA />
       </div>
     </SiteLayout>

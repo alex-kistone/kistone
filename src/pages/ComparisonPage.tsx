@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import SEO from "@/components/SEO";
+import { ARTICLE_AUTHOR, ARTICLE_PUBLISHER } from "@/lib/structuredData";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import PageSection from "@/components/site/PageSection";
@@ -44,8 +45,8 @@ export default function ComparisonPage() {
       dateModified: COMPARISON.date,
       inLanguage: "fr-FR",
       mainEntityOfPage: url,
-      author: { "@type": "Organization", name: "Kistone", url: BASE_URL },
-      publisher: { "@type": "Organization", name: "Kistone", url: BASE_URL },
+      author: ARTICLE_AUTHOR,
+      publisher: ARTICLE_PUBLISHER,
     },
     {
       "@context": "https://schema.org",
@@ -62,7 +63,7 @@ export default function ComparisonPage() {
 
   return (
     <SiteLayout>
-      <SEO title={COMPARISON.seoTitle} description={COMPARISON.seoDescription} path={COMPARISON_PATH} type="article" jsonLd={jsonLd} />
+      <SEO title={COMPARISON.seoTitle} description={COMPARISON.seoDescription} path={COMPARISON_PATH} type="article" image="/og/comparatif.png" jsonLd={jsonLd} />
 
       <article>
         {/* En-tête */}

@@ -7,7 +7,8 @@ import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { LEGACY_ROLE_SLUGS, ROLE_PAGES, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
+import { LEGACY_ROLE_SLUGS, ROLE_PAGES, ROLES_UPDATED, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
+import { formatDate } from "@/lib/blog";
 import { ROUTES } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { palettes } from "@/lib/palettes";
@@ -94,6 +95,14 @@ function ProfileCard({ p, palette }: { p: Shown; palette: string }) {
 
 const Section = PageSection;
 
+/** Formats d'intervention proposés par famille (bloc « En bref »). */
+const FORMATS: Record<Role["vertical"], string> = {
+  engineer: "Mission ou contract-to-hire",
+  product: "Mission ou contract-to-hire",
+  leader: "Fractional ou mission",
+  rpo: "Au jour, intégré à vos équipes",
+};
+
 export default function RolePage() {
   const { slug } = useParams();
   const role = roleBySlug(slug);
@@ -137,6 +146,15 @@ function RoleContent({ role }: { role: Role }) {
     },
     {
       "@context": "https://schema.org",
+      "@type": "WebPage",
+      url,
+      name: role.seoTitle,
+      inLanguage: "fr-FR",
+      dateModified: ROLES_UPDATED,
+      publisher: { "@type": "Organization", name: "Kistone", url: BASE_URL },
+    },
+    {
+      "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Kistone", item: BASE_URL },
@@ -147,7 +165,7 @@ function RoleContent({ role }: { role: Role }) {
 
   return (
     <SiteLayout>
-      <SEO title={role.seoTitle} description={role.seoDescription} path={rolePath(role)} jsonLd={jsonLd} />
+      <SEO title={role.seoTitle} description={role.seoDescription} path={rolePath(role)} image={`/og/${role.slug}.png`} jsonLd={jsonLd} />
 
       {/* Promesse */}
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
@@ -161,6 +179,20 @@ function RoleContent({ role }: { role: Role }) {
           <Cta href={needHref} variant="studio" size="lg" arrow>Partager mon besoin {v.short}</Cta>
           <Cta href="#profils" size="lg" variant="secondary">Voir les profils</Cta>
         </div>
+
+        {/* En bref : définition et repères, en tête de page pour être cités tels quels */}
+        <aside aria-label="En bref" className="mt-12 grid gap-6 rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card md:grid-cols-[1.4fr_1fr] md:gap-10 md:p-8">
+          <div>
+            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">En bref</p>
+            <p className="mt-3 text-[16px] leading-[1.6] text-ks-ink-2">{role.definition[0]}</p>
+          </div>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-4 text-[14px] md:grid-cols-1 lg:grid-cols-2">
+            <div><dt className="text-ks-subtle">Budget indicatif</dt><dd className="mt-0.5 font-semibold">{role.rate[0]} – {role.rate[1]} € HT / jour</dd></div>
+            <div><dt className="text-ks-subtle">Premier profil</dt><dd className="mt-0.5 font-semibold">Sous 48 h</dd></div>
+            <div><dt className="text-ks-subtle">Formats</dt><dd className="mt-0.5 font-semibold">{FORMATS[role.vertical]}</dd></div>
+            <div><dt className="text-ks-subtle">Mis à jour le</dt><dd className="mt-0.5 font-semibold"><time dateTime={ROLES_UPDATED}>{formatDate(ROLES_UPDATED)}</time></dd></div>
+          </dl>
+        </aside>
       </section>
 
       {/* Profils récents */}

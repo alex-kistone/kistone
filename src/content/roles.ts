@@ -35,6 +35,9 @@ export type RolePage = {
   samples: SampleProfile[];
 };
 
+/** Date de dernière révision des fiches métier (affichée « Mis à jour le » et dans les données structurées). */
+export const ROLES_UPDATED = "2026-10-20";
+
 export const ROLE_PAGES: RolePage[] = [
   {
     vertical: "engineer",
@@ -45,7 +48,7 @@ export const ROLE_PAGES: RolePage[] = [
     highlight: "AI Engineer",
     lead: "Des AI Engineers et LLM Engineers sélectionnés et qualifiés, présentés en 48 h. RAG, agents, MLOps et infrastructure : pour passer vos projets d'IA du prototype à la production.",
     seoTitle: "AI Engineer freelance : LLM, RAG, agents et MLOps",
-    seoDescription: "AI Engineer ou LLM Engineer freelance : RAG, agents IA, MLOps / LLMOps et infrastructure IA. Profils qualifiés présentés en 48 h, en mission ou en contract-to-hire, facturés au jour.",
+    seoDescription: "AI Engineer ou LLM Engineer freelance : RAG, agents IA, MLOps et infrastructure IA. Profils qualifiés présentés en 48 h, en mission ou en contract-to-hire.",
     rate: INDICATIVE_BUDGET.engineer,
     when: [
       { title: "Un prototype à industrialiser", desc: "Votre POC d'IA générative impressionne en démo, mais il faut le fiabiliser, le sécuriser et le mettre en production." },
@@ -96,7 +99,7 @@ export const ROLE_PAGES: RolePage[] = [
     highlight: "AI Product",
     lead: "Des Product Managers, Product Owners et designers spécialisés IA, présentés en 48 h. Pour trouver les bons cas d'usage, concevoir des produits LLM utiles et les faire adopter.",
     seoTitle: "AI Product Manager freelance : produits IA et LLM",
-    seoDescription: "Product Manager IA, Product Owner sur des produits LLM ou AI Designer en freelance : discovery, cas d'usage, roadmap et évaluation. Profils qualifiés présentés en 48 h.",
+    seoDescription: "Product Manager IA, Product Owner LLM ou AI Designer freelance : discovery, cas d'usage, roadmap et évaluation. Profils qualifiés présentés en 48 h.",
     rate: INDICATIVE_BUDGET.product,
     when: [
       { title: "Trop d'idées d'IA, pas de priorités", desc: "Chaque équipe veut son assistant : il faut identifier les cas d'usage qui créent vraiment de la valeur." },
@@ -146,8 +149,8 @@ export const ROLE_PAGES: RolePage[] = [
     h1: "Recrutez un AI Leader freelance",
     highlight: "AI Leader",
     lead: "CTO, Head of AI ou Chief AI Officer, en fractional ou en mission, présentés en 48 h. Pour définir votre stratégie IA, structurer l'équipe et faire passer les projets à l'échelle.",
-    seoTitle: "AI Leader freelance : CTO, Head of AI, Chief AI Officer",
-    seoDescription: "CTO, Head of AI ou Chief AI Officer en fractional ou en mission : stratégie IA, gouvernance et AI Act, équipes et plateformes. Profils seniors qualifiés présentés en 48 h.",
+    seoTitle: "AI Leader freelance : CTO, Head of AI, CAIO",
+    seoDescription: "CTO, Head of AI ou Chief AI Officer en fractional ou en mission : stratégie IA, AI Act, équipes et plateformes. Profils seniors qualifiés présentés en 48 h.",
     rate: INDICATIVE_BUDGET.leader,
     when: [
       { title: "Une stratégie IA à définir", desc: "Le comité de direction veut de l'IA partout : il faut une feuille de route réaliste, chiffrée et priorisée." },
@@ -197,8 +200,8 @@ export const ROLE_PAGES: RolePage[] = [
     h1: "Recrutez un Tech recruiter freelance",
     highlight: "Tech recruiter",
     lead: "Des recruteurs tech et IA intégrés à vos équipes en 48 h pour internaliser vos talents en CDI : AI Engineers, data, développeurs, product. Facturés au jour, sans honoraires au placement.",
-    seoTitle: "Tech recruiter freelance : recrutez vos talents IA en CDI",
-    seoDescription: "Tech recruiter freelance (RPO) intégré à vos équipes en 48 h pour recruter en CDI vos AI Engineers, data, développeurs et product. Facturé au jour, sans honoraires au placement.",
+    seoTitle: "Tech recruiter freelance (RPO) : talents IA en CDI",
+    seoDescription: "Tech recruiter freelance (RPO) intégré à vos équipes pour recruter en CDI vos talents IA, data et tech. Facturé au jour, sans honoraires au placement.",
     rate: INDICATIVE_BUDGET.rpo,
     when: [
       { title: "Des talents IA à internaliser", desc: "Vos experts IA sont en freelance et vous voulez construire une équipe interne durable." },

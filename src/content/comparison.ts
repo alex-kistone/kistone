@@ -205,8 +205,8 @@ export const PLAYERS: Player[] = [
 export const COMPARISON = {
   slug: "comparatif-plateformes-freelance-ia",
   title: "Trouver un expert IA freelance : comparatif des plateformes en France",
-  seoTitle: "Expert IA freelance : comparatif des plateformes 2026",
-  seoDescription: "Kistone, Koïno, Crème de la Crème, Comet, LeHibou, Toptal, Malt, Free-Work, et les spécialistes Mateerz, Le Club des RH, CO-CTO, MyCFO : qui propose quels profils, pour quels besoins, et comment choisir.",
+  seoTitle: "Expert IA freelance : comparatif des plateformes",
+  seoDescription: "Kistone, Koïno, Crème de la Crème, Malt, Toptal, Comet, LeHibou… Le comparatif 2026 des plateformes pour trouver un expert IA freelance, et comment choisir.",
   date: "2026-10-16",
   lead: "Spécialistes de l'IA, plateformes sélectives tech et data, réseaux internationaux, spécialistes d'autres fonctions, places de marché ouvertes : pour recruter un AI Engineer, un AI Product Manager ou un leader IA en freelance, l'offre s'est structurée. Voici une grille de lecture objective des principaux acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
   answer: "Pour trouver un expert IA freelance, il existe quatre familles d'acteurs : les spécialistes des métiers de l'IA (comme Kistone), les plateformes sélectives tech et data, les réseaux internationaux sélectifs et les places de marché ou job boards ouverts. Pour les autres fonctions de direction (RH, marketing et revenu, finance), des spécialistes dédiés existent aussi. Le bon choix dépend du profil recherché (ingénierie, produit ou leadership), du niveau de sélection attendu, de l'urgence, de la langue de travail et de l'envie d'internaliser ensuite le talent.",

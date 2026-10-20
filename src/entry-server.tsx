@@ -2,7 +2,7 @@ import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
 import { HelmetProvider, type HelmetServerState } from "react-helmet-async";
 import { AppProviders, AppRoutes } from "./App";
-import { ROLE_PAGES, rolePath } from "./content/roles";
+import { ROLE_PAGES, ROLES_UPDATED, rolePath } from "./content/roles";
 import { MODEL_PAGES, modelPath } from "./content/models";
 import { COMPARISON_PATH } from "./pages/ComparisonPage";
 import { COMPARISON } from "./content/comparison";
@@ -10,6 +10,15 @@ import { BlogDataContext, type BlogPost } from "./lib/blog";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
 export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/freelances", "/pourquoi-kistone", "/ressources", COMPARISON_PATH];
+
+/**
+ * Date de dernière modification réelle des pages qui en ont une (sitemap.xml). Les autres pages
+ * n'en déclarent pas : une date qui change à chaque déploiement n'apprend rien à Google.
+ */
+export const LASTMOD: Record<string, string> = {
+  ...Object.fromEntries(ROLE_PAGES.map((r) => [rolePath(r), ROLES_UPDATED])),
+  [COMPARISON_PATH]: COMPARISON.date,
+};
 
 /** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
 export const LLMS_PAGES = [

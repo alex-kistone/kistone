@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
@@ -283,6 +284,13 @@ const ClientNewNeed = () => {
           <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
           <BoltWatermark className="-left-16 bottom-24 hidden h-[260px] w-auto rotate-[-18deg] md:block" />
         </>
+      )}
+      {isPublic && (
+        <SEO
+          title="Partager un besoin : un expert IA sous 48 h"
+          description="Décrivez votre besoin (AI Engineer, AI Product, AI Leader ou Tech recruiter, rythme, budget) et recevez un premier profil qualifié sous 48 h. Gratuit."
+          path="/besoin"
+        />
       )}
       {onboarding || isPublic ? <Header /> : <AppShell role="client" />}
       {isPublic && !picked ? (

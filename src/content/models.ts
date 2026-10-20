@@ -36,7 +36,7 @@ export const MODEL_PAGES: ModelPage[] = [
     highlight: "Mission freelance",
     lead: "Un expert IA rejoint votre équipe à temps plein pour une durée définie : construire un RAG, industrialiser un prototype, lancer un produit IA. Il est opérationnel en quelques jours et repart quand l'objectif est atteint.",
     seoTitle: "Mission freelance : un expert IA à temps plein",
-    seoDescription: "Le modèle Mission freelance : un AI Engineer, un AI Product Manager ou un AI Leader à temps plein pour la durée de votre projet. Définition, fonctionnement, situations et tarifs.",
+    seoDescription: "Mission freelance : un AI Engineer, AI Product Manager ou AI Leader à temps plein pour la durée de votre projet. Fonctionnement, situations et tarifs.",
     definition: [
       "Une mission freelance confie un projet ou une phase de construction à un expert indépendant, à temps plein, pour une durée définie, souvent de 3 à 12 mois. Il travaille dans votre équipe, avec vos outils et vos rituels, sur des objectifs fixés au départ.",
       "C'est le format le plus courant pour les AI Engineers et les AI Product Managers : l'expertise IA est rare, les projets ont un début et une fin, et la mission permet de démarrer en quelques jours au lieu d'attendre des mois un recrutement.",
@@ -87,7 +87,7 @@ export const MODEL_PAGES: ModelPage[] = [
     highlight: "Fractional",
     lead: "Un CTO, Head of AI ou Chief AI Officer rejoint votre équipe un à quatre jours par semaine, dans la durée. Vous accédez à un niveau de séniorité que vous n'auriez pas à temps plein, au rythme dont votre entreprise a besoin.",
     seoTitle: "Fractional : un AI Leader à temps partagé",
-    seoDescription: "Le modèle Fractional : un CTO, Head of AI ou Chief AI Officer senior quelques jours par semaine pour piloter votre stratégie IA. Définition, fonctionnement, situations et tarifs.",
+    seoDescription: "Fractional : un CTO, Head of AI ou Chief AI Officer senior quelques jours par semaine pour piloter votre stratégie IA. Fonctionnement, situations et tarifs.",
     definition: [
       "Un leader fractional (ou à temps partagé) exerce un rôle de direction, CTO, Head of AI ou Chief AI Officer, pour plusieurs entreprises à la fois, chacune quelques jours par semaine. Il porte les mêmes responsabilités qu'un dirigeant à temps plein sur le périmètre convenu : stratégie, arbitrages, management et pilotage.",
       "Le modèle répond à un constat simple : beaucoup d'entreprises ont besoin d'un leader IA expérimenté pour fixer le cap, mais pas de cinq jours par semaine. Le fractional ajuste le temps à l'enjeu, et le rythme évolue avec vous.",
@@ -137,8 +137,8 @@ export const MODEL_PAGES: ModelPage[] = [
     h1: "Le modèle Contract-to-hire",
     highlight: "Contract-to-hire",
     lead: "L'expert IA démarre en mission freelance, et vous avez la possibilité de le recruter dans vos équipes à l'issue de la période. Vous jugez sur des résultats réels avant de vous engager.",
-    seoTitle: "Contract-to-hire : tester un expert IA avant de recruter",
-    seoDescription: "Contract-to-hire : un AI Engineer, AI Product Manager ou AI Leader démarre en mission freelance, avec la possibilité de le recruter ensuite. Fonctionnement, situations et FAQ.",
+    seoTitle: "Contract-to-hire : tester avant de recruter",
+    seoDescription: "Contract-to-hire : un expert IA démarre en mission freelance, avec la possibilité de le recruter ensuite. Fonctionnement, situations et questions fréquentes.",
     definition: [
       "Le contract-to-hire combine une mission freelance et une option de recrutement. L'expert travaille d'abord comme freelance, le temps de prouver sa valeur ; à l'issue, si les deux parties le souhaitent, il rejoint vos équipes.",
       "Le modèle réduit le risque d'une erreur de recrutement sur des profils IA rares et chers : vous jugez sur des résultats et une collaboration réelle, et l'expert découvre votre entreprise avant de s'engager.",

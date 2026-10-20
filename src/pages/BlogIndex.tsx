@@ -14,8 +14,8 @@ export default function BlogIndex() {
   return (
     <SiteLayout>
       <SEO
-        title="Ressources : experts IA, projets IA et recrutement des talents IA"
-        description="Analyses et guides Kistone pour les entreprises et les experts IA : passer un projet IA en production, choisir entre mission freelance, fractional et contract-to-hire, recruter et internaliser les talents IA."
+        title="Ressources : projets IA et talents IA"
+        description="Guides Kistone pour réussir vos projets IA : passer en production, choisir entre mission, fractional et contract-to-hire, recruter vos talents IA."
         path={BLOG_PATH}
       />
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">

@@ -11,7 +11,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
-const { render, PRERENDER_ROUTES, LLMS_PAGES } = await import(pathToFileURL(join(root, "dist-ssr/entry-server.js")).href);
+const { render, PRERENDER_ROUTES, LLMS_PAGES, LASTMOD } = await import(pathToFileURL(join(root, "dist-ssr/entry-server.js")).href);
 
 // Articles publiés du blog (lecture publique) : pré-rendus avec leur contenu complet
 function env(name) {
@@ -49,10 +49,18 @@ for (const route of ROUTES) {
   writeFileSync(file, page);
   console.log(`pré-rendu ${route} (${Math.round(page.length / 1024)} ko)`);
 }
+// Page introuvable : servie par Vercel avec le statut 404 pour toute adresse inconnue
+{
+  const { html, head } = render("/404");
+  const page = template.replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, head).replace('<div id="root"></div>', `<div id="root">${html}</div>`);
+  writeFileSync(join(dist, "404.html"), page);
+  console.log("404.html");
+}
+
 // Plan du site pour les moteurs de recherche (hors pages d'application)
 const SITE = "https://kistone.fr";
-const today = new Date().toISOString().slice(0, 10);
-const urls = ROUTES.map((r) => `  <url><loc>${SITE}${r === "/" ? "/" : r}</loc><lastmod>${today}</lastmod></url>`).join("\n");
+const lastmod = { ...LASTMOD, ...Object.fromEntries(posts.map((p) => [`/ressources/${p.slug}`, (p.updated_at || p.published_at || "").slice(0, 10)])) };
+const urls = ROUTES.map((r) => `  <url><loc>${SITE}${r}</loc>${lastmod[r] ? `<lastmod>${lastmod[r]}</lastmod>` : ""}</url>`).join("\n");
 writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
 console.log(`sitemap.xml (${ROUTES.length} pages)`);
 
