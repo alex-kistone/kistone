@@ -1,8 +1,8 @@
 import Cta from "@/components/site/Cta";
 import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
+import { PinkGlow } from "@/components/studio/WhyBento";
 import { ROUTES } from "@/content/site";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
-import { PinkGlow } from "@/components/studio/WhyBento";
 import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
 import { palettes } from "@/lib/palettes";
 import { METIERS } from "@/lib/taxonomy";
@@ -10,79 +10,92 @@ import { VERTICALS, type VerticalConfig } from "@/lib/verticals";
 
 const pageOf = (v: VerticalConfig) => ROLE_PAGES.find((r) => r.vertical === v.id);
 
-const euros = ([min, max]: [number, number]) => `${min.toLocaleString("fr-FR")} – ${max.toLocaleString("fr-FR")} € HT / jour`;
-
-/** Ligne d'une famille d'experts IA : pastille teintée, nom, description, budget, liens. */
-function FamilyRow({ v }: { v: VerticalConfig }) {
+/** Carte d'une famille : visuel teinté (rôles et spécialités), titre, description, deux liens. */
+function FamilyCard({ v }: { v: VerticalConfig }) {
   const p = palettes[v.palette];
   const page = pageOf(v);
   return (
-    <article className="ks-lift ks-reveal group relative flex items-start gap-4 rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-5 shadow-ks-card sm:items-center md:p-6">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12 sm:rounded-2xl" style={{ background: p.tint }} aria-hidden="true">
-        <span className="h-2.5 w-2.5 rounded-full" style={{ background: p.accent }} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <h3 className="font-ks-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
-          <a href={`${ROUTES.recruit}?fonction=${v.id}`} className="after:absolute after:inset-0 after:rounded-[24px] after:content-['']">{v.short}</a>
-        </h3>
-        <p className="mt-1 text-[15px] leading-[1.5] text-ks-soft">{v.description}</p>
-        <p className="mt-2 text-[13px] font-medium" style={{ color: p.ink }}>{euros(INDICATIVE_BUDGET[v.id])}</p>
-        {page && <a href={rolePath(page)} className="relative z-10 mt-2 inline-block text-[13px] font-medium text-ks-soft underline underline-offset-4 hover:text-ks-ink sm:hidden">Fiche de poste</a>}
+    <article className="ks-uc ks-lift ks-reveal flex flex-col gap-5 rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white p-3 shadow-ks-card">
+      <div className="ks-ui relative overflow-hidden rounded-[20px] p-5" style={{ background: p.tint }}>
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-[0.14]" style={{ background: p.accent }} aria-hidden="true" />
+        <p className="relative font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: p.ink }}>{v.roles}</p>
+        <ul className="relative mt-4 flex flex-col gap-2 text-[14px]">
+          {v.specialties.slice(0, 4).map((s) => (
+            <li key={s} className="flex items-center gap-2.5 rounded-xl bg-white/70 px-3 py-2 text-ks-ink-2">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: p.accent }} aria-hidden="true" />
+              {s}
+            </li>
+          ))}
+        </ul>
       </div>
-      <div className="relative z-10 hidden shrink-0 flex-col items-end gap-2 sm:flex">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ks-line-strong transition-colors group-hover:bg-ks-dark group-hover:text-ks-dark-fg" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-        </span>
-        {page && <a href={rolePath(page)} className="text-[13px] font-medium text-ks-soft underline underline-offset-4 hover:text-ks-ink">Fiche de poste</a>}
+      <div className="flex flex-1 flex-col gap-2 px-3 pb-3">
+        <h3 className="font-ks-display text-[24px] font-semibold tracking-[-0.02em]">{v.short}</h3>
+        <p className="text-[15px] leading-[1.55] text-ks-soft">{v.description}</p>
+        <div className="mt-auto flex flex-wrap items-center gap-2 pt-4">
+          <Cta href={`${ROUTES.recruit}?fonction=${v.id}`} variant="studio" arrow>Je recherche {v.seeking}</Cta>
+          {page && <Cta href={rolePath(page)} variant="secondary">Fiche de poste</Cta>}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/** Le RPO : un Tech Recruiter intégré aux équipes du client pour recruter ses talents IA en CDI. */
+function RpoTile() {
+  const rpo = VERTICALS.find((v) => v.id === "rpo")!;
+  const page = pageOf(rpo);
+  const p = palettes[rpo.palette];
+  const [min, max] = INDICATIVE_BUDGET.rpo;
+  return (
+    <article className="ks-reveal relative mt-4 grid gap-8 overflow-hidden rounded-[28px] bg-ks-dark p-7 text-ks-dark-fg shadow-[0_24px_50px_-28px_rgba(20,19,18,0.5)] md:mt-5 md:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12 lg:p-12">
+      <PinkGlow className="-left-24 -top-24 h-[340px] w-[340px]" strength={0.35} />
+      <div className="relative">
+        <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">Recruter en CDI</p>
+        <h3 className="mt-4 font-ks-display text-[56px] font-bold leading-[0.95] tracking-[-0.05em] md:text-[80px]">RPO</h3>
+        <p className="mt-2 font-ks-display text-[20px] font-semibold tracking-[-0.02em] md:text-[24px]">Un Tech Recruiter intégré à vos équipes.</p>
+        <p className="mt-4 max-w-[520px] text-[16px] leading-[1.55] text-ks-dark-muted">
+          Le Recruitment Process Outsourcing confie vos recrutements à un recruteur tech et IA qui travaille au sein de votre équipe, avec vos outils et votre marque employeur. Facturé au jour, sans honoraires au placement : {min} – {max} € HT / jour.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center gap-2">
+          <Cta href={`${ROUTES.recruit}?fonction=rpo`} variant="studio-fill" arrow>Je recherche un Tech Recruiter</Cta>
+          {page && <Cta href={rolePath(page)} variant="ghost-dark">Fiche de poste</Cta>}
+        </div>
+      </div>
+
+      {/* Illustration : les talents recrutés en CDI, dans le style des cartes des familles */}
+      <div className="ks-ui relative overflow-hidden rounded-[20px] p-5" style={{ background: p.tint }} aria-hidden="true">
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-[0.14]" style={{ background: p.accent }} />
+        <p className="relative font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: p.ink }}>Talents recrutés en CDI</p>
+        <ul className="relative mt-4 grid gap-2 text-[14px] sm:grid-cols-2">
+          {METIERS.filter((m) => m !== "Autre").map((m) => (
+            <li key={m} className="flex items-center gap-2.5 rounded-xl bg-white/70 px-3 py-2 text-ks-ink-2">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: p.accent }} />
+              {m}
+            </li>
+          ))}
+        </ul>
       </div>
     </article>
   );
 }
 
 /**
- * Les familles de la plateforme : à gauche les trois familles d'experts IA en mission, à droite
- * le Tech Recruiter (RPO) en tuile sombre pour recruter en CDI. Chaque entrée ouvre le dépôt de
- * besoin avec la famille choisie.
+ * Les familles de la plateforme : trois familles d'experts IA en mission, puis le RPO (un Tech
+ * Recruiter pour recruter en CDI) en tuile sombre. Chaque carte ouvre le dépôt de besoin avec la
+ * famille choisie.
  */
 export default function FunctionsGrid() {
   const ai = VERTICALS.filter((v) => v.group === "AI");
-  const rpo = VERTICALS.find((v) => v.id === "rpo")!;
-  const rpoPage = pageOf(rpo);
-  const metiers = METIERS.filter((m) => m !== "Autre");
   return (
     <Section id="fonctions">
       <SectionHeader
         title={<TwoPartTitle a="Des experts IA pour vos projets." b="Un Tech Recruiter pour bâtir votre équipe." />}
         subtitle="En mission pour avancer vite, ou en CDI pour durer : le bon profil à chaque étape de votre projet IA."
       />
-      <div className="mt-8 grid gap-4 md:mt-14 lg:grid-cols-[1.25fr_1fr] lg:gap-5">
-        <div className="flex flex-col gap-4">
-          <p className="px-1 font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">En mission freelance</p>
-          {ai.map((v) => <FamilyRow key={v.id} v={v} />)}
-        </div>
-
-        {/* Le RPO : recruter ses talents IA en CDI */}
-        <article className="ks-reveal relative flex flex-col overflow-hidden rounded-[28px] bg-ks-dark p-7 text-ks-dark-fg shadow-[0_24px_50px_-28px_rgba(20,19,18,0.5)] md:p-9 lg:mt-[31px]">
-          <PinkGlow className="-right-24 -top-24 h-[300px] w-[300px]" strength={0.35} />
-          <div className="relative flex flex-1 flex-col">
-            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">Recruter en CDI · RPO</p>
-            <h3 className="mt-4 font-ks-display text-[34px] font-bold leading-[1.02] tracking-[-0.04em] md:text-[42px]">Tech Recruiter</h3>
-            <p className="mt-4 text-[16px] leading-[1.55] text-ks-dark-muted">
-              Intégré à vos équipes pour internaliser vos talents IA. Facturé au jour, sans honoraires au placement.
-            </p>
-            <div className="mt-6 border-t border-[rgba(245,241,234,0.12)] pt-5">
-              <p className="text-[13px] text-ks-dark-muted">Les profils recrutés</p>
-              <p className="mt-1.5 text-[15px] font-medium">{metiers.join(" · ")}</p>
-              <p className="mt-4 text-[13px] text-ks-dark-muted">Budget indicatif</p>
-              <p className="mt-1.5 text-[15px] font-medium">{euros(INDICATIVE_BUDGET.rpo)}</p>
-            </div>
-            <div className="mt-auto flex flex-wrap items-center gap-2 pt-8">
-              <Cta href={`${ROUTES.recruit}?fonction=rpo`} variant="studio-fill" arrow>Je recherche un Tech Recruiter</Cta>
-              {rpoPage && <Cta href={rolePath(rpoPage)} variant="ghost-dark">Fiche de poste</Cta>}
-            </div>
-          </div>
-        </article>
+      <div className="mt-8 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-5">
+        {ai.map((v) => <FamilyCard key={v.id} v={v} />)}
       </div>
+      <RpoTile />
     </Section>
   );
 }
