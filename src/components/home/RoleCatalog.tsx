@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
+import SectionHeader, { Section } from "@/components/studio/SectionHeader";
 import { ROUTES } from "@/content/site";
 import { ROLE_CATALOG } from "@/content/home";
 import { saveHomeBrief } from "@/lib/homeBrief";
@@ -22,7 +22,7 @@ export default function RoleCatalog() {
   return (
     <Section id="besoins">
       <SectionHeader
-        title={<TwoPartTitle a="Les besoins les plus fréquents." b="Choisissez, on cadre le reste." />}
+        title="Les besoins les plus fréquents."
         subtitle="Un rôle précis en un clic : le formulaire se pré-remplit, budget indicatif compris, vous ajustez en quelques secondes."
       />
       <ul className="mt-8 grid gap-3 sm:grid-cols-2 md:mt-14 lg:grid-cols-3 lg:gap-4">
