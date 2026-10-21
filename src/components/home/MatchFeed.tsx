@@ -27,20 +27,16 @@ export default function MatchFeed() {
     const n = tick - i + RECRUITERS.length * 100;
     return { key: tick - i, idx: n % RECRUITERS.length, fresh: i === 0 };
   });
-  const analysed = 1240 + tick * 7;
 
   return (
     <div className="flex min-w-0 flex-col rounded-[24px] bg-ks-muted p-3 sm:p-4" aria-hidden="true">
-      <div className="flex items-center justify-between px-2 pb-3 pt-1">
+      <div className="flex items-center px-2 pb-3 pt-1">
         <span className="flex items-center gap-2 whitespace-nowrap font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ks-success opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-ks-success" />
           </span>
           Matching en direct
-        </span>
-        <span className="whitespace-nowrap text-xs tabular-nums text-ks-subtle">
-          {analysed.toLocaleString("fr-FR")}<span className="hidden sm:inline"> profils analysés</span>
         </span>
       </div>
 
