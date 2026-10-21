@@ -1,7 +1,8 @@
 /**
  * invite-freelances — l'admin invite des freelances pas encore inscrits à rejoindre Kistone.
  *
- * Corps : { invitations: [{ email, first_name? }], mode: "individual" | "bcc", message?, subject? }
+ * Corps : { invitations: [{ email, first_name? }], audience: "ai" | "rpo", mode: "individual" | "bcc", message?, subject? }
+ * - audience : modèle experts IA (AI Engineer, AI Product, AI Leader) ou Tech recruiters (RPO) ;
  * - individual : un email par personne, personnalisé avec le prénom ;
  * - bcc : un seul envoi par groupe de 49 adresses en copie cachée (« Bonjour, »).
  * Les adresses déjà inscrites (freelance ou client) sont écartées. Les réponses arrivent chez
@@ -10,7 +11,7 @@
  */
 import { requireAdmin } from "../_shared/adminAuth.ts";
 import { APP_URL, emailConfigured, sendEmail } from "../_shared/email.ts";
-import { INVITATION_SUBJECT, invitationEmail } from "../_shared/invitationEmail.ts";
+import { INVITATION_TEMPLATES, invitationEmail } from "../_shared/invitationEmail.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,8 +33,9 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => ({}));
   const mode = body.mode === "bcc" ? "bcc" : "individual";
+  const audience = body.audience === "rpo" ? "rpo" : "ai";
   const message = typeof body.message === "string" ? body.message.slice(0, 2000) : "";
-  const subject = typeof body.subject === "string" && body.subject.trim() ? body.subject.trim().slice(0, 200) : INVITATION_SUBJECT;
+  const subject = typeof body.subject === "string" && body.subject.trim() ? body.subject.trim().slice(0, 200) : INVITATION_TEMPLATES[audience].subject;
 
   // Adresses valides, dédoublonnées
   const seen = new Set<string>();
@@ -65,24 +67,24 @@ Deno.serve(async (req) => {
   const { data: { user } } = await admin.db.auth.admin.getUserById(admin.userId);
   const replyTo = user?.email ?? undefined;
   const failed: { email: string; error: string }[] = [];
-  const log: { email: string; first_name: string | null; mode: string; invited_by: string; error: string | null }[] = [];
+  const log: { email: string; first_name: string | null; mode: string; audience: string; invited_by: string; error: string | null }[] = [];
 
   if (mode === "individual") {
     for (const t of targets) {
-      const r = await sendEmail({ to: [t.email], replyTo, subject, html: invitationEmail({ firstName: t.first_name, message, appUrl: APP_URL }) });
+      const r = await sendEmail({ to: [t.email], replyTo, subject, html: invitationEmail({ audience, firstName: t.first_name, message, appUrl: APP_URL }) });
       if (!r.sent) failed.push({ email: t.email, error: r.error ?? "non envoyé" });
-      log.push({ email: t.email, first_name: t.first_name, mode, invited_by: admin.userId, error: r.sent ? null : r.error ?? "non envoyé" });
+      log.push({ email: t.email, first_name: t.first_name, mode, audience, invited_by: admin.userId, error: r.sent ? null : r.error ?? "non envoyé" });
       await sleep(550); // limite de débit Resend (2 envois par seconde)
     }
   } else {
-    const html = invitationEmail({ message, appUrl: APP_URL });
+    const html = invitationEmail({ audience, message, appUrl: APP_URL });
     const visible = replyTo ?? "notifications@kistone.fr";
     for (let i = 0; i < targets.length; i += BCC_CHUNK) {
       const chunk = targets.slice(i, i + BCC_CHUNK);
       const r = await sendEmail({ to: [visible], bcc: chunk.map((c) => c.email), replyTo, subject, html });
       for (const c of chunk) {
         if (!r.sent) failed.push({ email: c.email, error: r.error ?? "non envoyé" });
-        log.push({ email: c.email, first_name: c.first_name, mode, invited_by: admin.userId, error: r.sent ? null : r.error ?? "non envoyé" });
+        log.push({ email: c.email, first_name: c.first_name, mode, audience, invited_by: admin.userId, error: r.sent ? null : r.error ?? "non envoyé" });
       }
       await sleep(550);
     }

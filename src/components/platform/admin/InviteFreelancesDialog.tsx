@@ -11,10 +11,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { formatDate } from "@/lib/blog";
 import { parseInvitees } from "@/lib/invitees";
-import { INVITATION_SUBJECT, invitationEmail } from "../../../../supabase/functions/_shared/invitationEmail";
+import { INVITATION_TEMPLATES, invitationEmail, type InvitationAudience } from "../../../../supabase/functions/_shared/invitationEmail";
 
 type Mode = "individual" | "bcc";
-type Invitation = { id: string; email: string; first_name: string | null; mode: Mode; sent_at: string; error: string | null };
+type Invitation = { id: string; email: string; first_name: string | null; mode: Mode; audience: InvitationAudience; sent_at: string; error: string | null };
 type Result = { sent: number; skipped: { email: string; reason: string }[]; failed: { email: string; error: string }[] };
 
 /**
@@ -27,7 +27,13 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
   const [open, setOpen] = useState(false);
   const [raw, setRaw] = useState("");
   const [mode, setMode] = useState<Mode>("individual");
-  const [subject, setSubject] = useState(INVITATION_SUBJECT);
+  const [audience, setAudience] = useState<InvitationAudience>("ai");
+  const [subject, setSubject] = useState(INVITATION_TEMPLATES.ai.subject);
+  // Changer de modèle reprend son objet, sauf si l'admin l'a personnalisé
+  const changeAudience = (a: InvitationAudience) => {
+    if (subject === INVITATION_TEMPLATES[audience].subject) setSubject(INVITATION_TEMPLATES[a].subject);
+    setAudience(a);
+  };
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
@@ -36,14 +42,14 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
   const { invitees, invalid } = useMemo(() => parseInvitees(raw), [raw]);
   const registered = useMemo(() => new Set(registeredEmails.map((e) => e.toLowerCase())), [registeredEmails]);
   const preview = useMemo(
-    () => invitationEmail({ firstName: mode === "individual" ? invitees[0]?.first_name ?? "Prénom" : null, message }),
-    [mode, invitees, message],
+    () => invitationEmail({ audience, firstName: mode === "individual" ? invitees[0]?.first_name ?? "Prénom" : null, message }),
+    [audience, mode, invitees, message],
   );
 
   const loadHistory = async () => {
     const { data } = await supabase
       .from("freelance_invitations" as never)
-      .select("id, email, first_name, mode, sent_at, error")
+      .select("id, email, first_name, mode, audience, sent_at, error")
       .order("sent_at", { ascending: false })
       .limit(30);
     setHistory((data as Invitation[] | null) ?? []);
@@ -55,7 +61,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
     setSending(true);
     setResult(null);
     const { data, error } = await supabase.functions.invoke("invite-freelances", {
-      body: { invitations: invitees, mode, message, subject },
+      body: { invitations: invitees, audience, mode, message, subject },
     });
     setSending(false);
     if (error || data?.error) {
@@ -95,6 +101,24 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
                 {invitees.filter((i) => registered.has(i.email)).length ? ` · ${invitees.filter((i) => registered.has(i.email)).length} déjà inscrite(s), ignorée(s)` : ""}
                 {invalid.length ? ` · ${invalid.length} invalide(s) : ${invalid.slice(0, 3).join(", ")}` : ""}
               </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Modèle</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {([["ai", "Experts IA", "AI Engineer, AI Product, AI Leader"], ["rpo", "Tech recruiters", "Freelances RPO"]] as const).map(([value, title, hint]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => changeAudience(value)}
+                    aria-pressed={audience === value}
+                    className={`rounded-lg border p-3 text-left transition-colors ${audience === value ? "border-primary bg-primary/5" : "border-border hover:bg-muted"}`}
+                  >
+                    <span className="block text-sm font-medium">{title}</span>
+                    <span className="block text-xs text-muted-foreground">{hint}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -149,7 +173,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
                 <li key={h.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                   <span className="min-w-0 truncate">{h.first_name ? `${h.first_name} · ` : ""}{h.email}</span>
                   <span className="flex items-center gap-3 text-xs text-muted-foreground">
-                    {h.mode === "bcc" ? "Cci" : "Individuelle"} · {formatDate(h.sent_at)}
+                    {h.audience === "rpo" ? "RPO" : "IA"} · {h.mode === "bcc" ? "Cci" : "Individuelle"} · {formatDate(h.sent_at)}
                     {h.error ? <span className="text-destructive">Échec</span> : registered.has(h.email.toLowerCase()) ? <span className="font-medium text-[#17663F]">Inscrit</span> : <span>En attente</span>}
                   </span>
                 </li>
