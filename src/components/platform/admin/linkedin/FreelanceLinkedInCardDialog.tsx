@@ -1,40 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Linkedin } from "lucide-react";
+import { Download, FileText, Linkedin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { clientPrice } from "@/lib/pricing";
-import { rhythmLabel, verticalOf } from "@/lib/verticals";
-import { remoteLabel } from "../needs/needsModel";
-import { drawCard, findLeaks, priceTile, slugify, wordRe, type CardSpec } from "./linkedinCard";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { verticalOf } from "@/lib/verticals";
+import { findLeaks, slugify } from "./linkedinCard";
+import { canvasToPdf, drawProfileSheet } from "./profileSheet";
+import { initialSheetFields, sheetSpec, type SheetFields, type SheetFreelance } from "./profileSheetData";
 import LinkedInPublishActions from "./LinkedInPublishActions";
 
-/** Profil freelance tel que lu dans l'admin (seuls les champs utiles à la carte). */
-export type CardFreelance = {
-  first_name: string;
-  last_name: string;
-  email?: string | null;
-  photo_url?: string | null;
-  job_title?: string | null;
-  vertical?: string | null;
-  specialties?: string[] | null;
-  skills?: string[] | null;
-  intro_text?: string | null;
-  years_experience?: number | null;
-  weekly_capacity?: number | null;
-  mobility?: string[] | null;
-  remote_preference?: string | null;
-  available?: boolean | null;
-  availability_date?: string | null;
-  tjm?: number | null;
-  clients?: string[] | null;
-  previous_companies?: string[] | null;
-  missions?: { client_name?: string }[] | null;
-};
+/** Profil freelance tel que lu dans l'admin (seuls les champs utiles aux fiches). */
+export type CardFreelance = SheetFreelance;
 
-type Fields = { title: string; meta: string; pitch: string; location: string; remote: string; availability: string; tjm: string; cta: string };
+type Mode = "client" | "linkedin";
 
 /** Noms qui identifieraient le freelance : son nom, son e-mail, ses clients et anciens employeurs. */
 function identifyingTerms(p: CardFreelance): string[] {
@@ -48,89 +30,62 @@ function identifyingTerms(p: CardFreelance): string[] {
   ].filter((t): t is string => !!t && t.trim().length > 2);
 }
 
-/** Les deux premières phrases de la présentation qui ne citent ni nom ni entreprise. */
-function profilePitch(p: CardFreelance, terms: string[]): string {
-  const text = (p.intro_text ?? "").replace(/\s+/g, " ").trim();
-  const sentences = (text.match(/[^.!?]+[.!?]?/g) ?? []).map((s) => s.trim()).filter((s) => s && !terms.some((t) => wordRe(t).test(s)));
-  const pitch = sentences.slice(0, 2).join(" ").slice(0, 180);
-  if (pitch) return pitch;
-  const items = (verticalOf(p.vertical).id === "rpo" ? p.skills : p.specialties) ?? [];
-  return items.length ? `Expertise : ${items.slice(0, 4).join(", ")}.` : "";
-}
-
-function availabilityLabel(p: CardFreelance): string {
-  if (p.available !== false) return "Immédiate";
-  if (!p.availability_date) return "À confirmer";
-  const d = new Date(p.availability_date);
-  return d <= new Date() ? "Immédiate" : `Dès le ${d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}`;
-}
+const download = (blob: Blob, name: string) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
 
 /**
- * Carte LinkedIn d'un profil freelance : anonyme (ni nom, ni contact, ni client, ni employeur),
- * photo facultative, modifiable champ par champ, publiable comme la carte d'un besoin.
+ * Fiche profil d'un freelance au modèle « Fiche Leïla », en deux versions :
+ *  - fiche client : prénom, clients nommés et chiffres, à envoyer en PDF ou en image ;
+ *  - carte LinkedIn : anonyme (métier à la place du prénom, missions sans nom de client),
+ *    publiable comme la carte d'un besoin, avec un garde-fou d'anonymat.
  */
 export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChange }: { profile: CardFreelance; open: boolean; onOpenChange: (o: boolean) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const v = verticalOf(profile.vertical);
   const terms = useMemo(() => identifyingTerms(profile), [profile]);
-  const initial = useMemo<Fields>(() => {
-    let title = (profile.job_title ?? "").trim();
-    for (const t of terms) title = title.replace(wordRe(t, "giu"), "").replace(/\s{2,}/g, " ").replace(/^[\s,·@-]+|[\s,·@-]+$/g, "");
-    return {
-      title: title || (v.id === "rpo" ? "Tech recruiter freelance" : `${v.short} freelance`),
-      meta: [profile.years_experience ? `${profile.years_experience} ans d'expérience` : "", rhythmLabel(profile.weekly_capacity)].filter(Boolean).join(" · "),
-      pitch: profilePitch(profile, terms),
-      // Une seule ville : la tuile tient sur une ligne
-      location: (profile.mobility ?? [])[0]?.split(",")[0].trim() ?? "",
-      remote: profile.remote_preference ? remoteLabel(profile.remote_preference) : "",
-      availability: availabilityLabel(profile),
-      tjm: profile.tjm ? `${clientPrice(profile.tjm)} €` : "Sur demande",
-      cta: "Ce profil vous intéresse ? Écrivez-moi",
-    };
-  }, [profile, terms, v]);
-  const [f, setF] = useState<Fields>(initial);
+  const [mode, setMode] = useState<Mode>("client");
+  const initial = useMemo(() => ({ client: initialSheetFields(profile, false), linkedin: initialSheetFields(profile, true) }), [profile]);
+  const [fields, setFields] = useState(initial);
   const [withPhoto, setWithPhoto] = useState(true);
-  useEffect(() => { if (open) setF(initial); }, [open, initial]);
+  useEffect(() => { if (open) setFields(initial); }, [open, initial]);
 
-  const spec = useMemo<CardSpec>(() => ({
-    chip: "Profil disponible",
-    vertical: profile.vertical,
-    title: f.title,
-    titleFallback: "Intitulé du profil",
-    meta: f.meta,
-    pitch: f.pitch,
-    tiles: [
-      { label: "LOCALISATION", value: f.location },
-      { label: "TÉLÉTRAVAIL", value: f.remote },
-      { label: "DISPONIBILITÉ", value: f.availability },
-      priceTile("TJM", f.tjm),
-    ],
-    cta: f.cta || "Ce profil vous intéresse ? Écrivez-moi",
-    photo: withPhoto ? profile.photo_url : null,
-  }), [f, withPhoto, profile.vertical, profile.photo_url]);
+  const anonymous = mode === "linkedin";
+  const f = fields[mode];
+  const spec = useMemo(() => sheetSpec(profile, f, anonymous, withPhoto), [profile, f, anonymous, withPhoto]);
 
   useEffect(() => {
     if (!open) return;
-    const t = window.setTimeout(() => { if (canvasRef.current) drawCard(canvasRef.current, spec); }, 60);
+    const t = window.setTimeout(() => { if (canvasRef.current) drawProfileSheet(canvasRef.current, spec, anonymous ? 1.2 : 2.4); }, 80);
     return () => window.clearTimeout(t);
-  }, [open, spec]);
+  }, [open, spec, anonymous]);
 
-  // Garde-fou d'anonymat : aucun nom, client ni employeur dans la carte
-  const leaks = findLeaks(terms, Object.values(f));
+  // Garde-fou d'anonymat de la carte LinkedIn : aucun nom, client ni employeur
+  const leaks = anonymous ? findLeaks(terms, Object.values(f).map(String)) : [];
 
-  const set = (k: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const set = (k: keyof SheetFields) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setFields({ ...fields, [mode]: { ...f, [k]: k === "englishLevel" ? Math.max(0, Math.min(5, Number(e.target.value) || 0)) : e.target.value } });
+
+  const fileName = `kistone-${anonymous ? "profil" : "fiche"}-${slugify(anonymous ? f.headline || "profil" : `${f.name}-${f.headline}`)}`;
+  const savePng = () => canvasRef.current?.toBlob((b) => b && download(b, `${fileName}.png`), "image/png");
+  const savePdf = async () => { if (canvasRef.current) download(await canvasToPdf(canvasRef.current), `${fileName}.pdf`); };
 
   const postText = [
-    `Profil disponible : ${f.title}`,
+    `Profil disponible : ${f.headline}`,
     f.meta,
     "",
-    f.pitch,
-    "",
-    f.location && `Localisation : ${f.location}${f.remote ? ` (${f.remote.toLowerCase()})` : ""}`,
-    f.availability && `Disponibilité : ${f.availability}`,
+    f.specialties && `Spécialités : ${f.specialties}`,
+    f.sectors && `Secteurs : ${f.sectors}`,
+    f.english && `Anglais : ${f.english.toLowerCase()}`,
+    `Disponibilité : ${f.availability}${f.availabilityNote ? ` · ${f.availabilityNote}` : ""}`,
     f.tjm && `TJM : ${f.tjm}${/€/.test(f.tjm) ? " HT/jour" : ""}`,
     "",
-    f.cta,
+    "Ce profil vous intéresse ? Écrivez-moi.",
     "",
     `#freelance #IA #${v.short.replace(/\s+/g, "")} #kistone`,
   ].filter((l): l is string => typeof l === "string").join("\n").replace(/\n{3,}/g, "\n\n");
@@ -139,24 +94,52 @@ export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChang
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Linkedin className="h-5 w-5" />Carte LinkedIn du profil</DialogTitle>
-          <DialogDescription>Carte anonyme du profil {v.short} : modifiez les champs, l'aperçu se met à jour. Ni nom, ni coordonnées, ni clients, ni anciens employeurs.</DialogDescription>
+          <DialogTitle className="flex items-center gap-2"><FileText className="h-5 w-5" />Fiche profil</DialogTitle>
+          <DialogDescription>
+            {anonymous
+              ? "Carte LinkedIn anonyme : ni nom, ni coordonnées, ni client. Les missions sont décrites sans nom d'entreprise."
+              : "Fiche nominative à envoyer à un client : prénom, clients et chiffres. Ne la publiez pas : utilisez la carte LinkedIn."}
+          </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+
+        <Tabs value={mode} onValueChange={(m) => setMode(m as Mode)}>
+          <TabsList>
+            <TabsTrigger value="client" className="gap-1.5"><FileText className="h-4 w-4" />Fiche client</TabsTrigger>
+            <TabsTrigger value="linkedin" className="gap-1.5"><Linkedin className="h-4 w-4" />Carte LinkedIn</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-3">
-            <div className="space-y-1.5"><Label htmlFor="lif-title">Intitulé</Label><Input id="lif-title" value={f.title} onChange={set("title")} /></div>
-            <div className="space-y-1.5"><Label htmlFor="lif-meta">Expérience et rythme</Label><Input id="lif-meta" value={f.meta} onChange={set("meta")} placeholder="Ex : 15 ans d'expérience · 3 j / sem" /></div>
-            <div className="space-y-1.5">
-              <Label htmlFor="lif-pitch">Le profil (2 lignes)</Label>
-              <Textarea id="lif-pitch" rows={3} value={f.pitch} onChange={set("pitch")} placeholder="Ex : A structuré la fonction finance de trois scale-ups SaaS, de la levée de fonds au reporting investisseurs." />
-            </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5"><Label htmlFor="lif-loc">Localisation</Label><Input id="lif-loc" value={f.location} onChange={set("location")} /></div>
-              <div className="space-y-1.5"><Label htmlFor="lif-remote">Télétravail</Label><Input id="lif-remote" value={f.remote} onChange={set("remote")} /></div>
-              <div className="space-y-1.5"><Label htmlFor="lif-dispo">Disponibilité</Label><Input id="lif-dispo" value={f.availability} onChange={set("availability")} /></div>
-              <div className="space-y-1.5"><Label htmlFor="lif-tjm">TJM</Label><Input id="lif-tjm" value={f.tjm} onChange={set("tjm")} /></div>
+              <div className="space-y-1.5"><Label htmlFor="ps-name">{anonymous ? "Grand titre" : "Prénom"}</Label><Input id="ps-name" value={f.name} onChange={set("name")} /></div>
+              <div className="space-y-1.5"><Label htmlFor="ps-head">Intitulé</Label><Input id="ps-head" value={f.headline} onChange={set("headline")} /></div>
             </div>
-            <div className="space-y-1.5"><Label htmlFor="lif-cta">Appel à l'action</Label><Input id="lif-cta" value={f.cta} onChange={set("cta")} /></div>
+            <div className="space-y-1.5"><Label htmlFor="ps-meta">Ligne d'information</Label><Input id="ps-meta" value={f.meta} onChange={set("meta")} placeholder="Ex : 11 ans d'expérience · RPO freelance · ex-Head of TA" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5"><Label htmlFor="ps-spec">Spécialités (virgules)</Label><Input id="ps-spec" value={f.specialties} onChange={set("specialties")} /></div>
+              <div className="space-y-1.5"><Label htmlFor="ps-sect">Secteurs (virgules)</Label><Input id="ps-sect" value={f.sectors} onChange={set("sectors")} /></div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ps-clients">{anonymous ? "Missions mises en avant (3 au plus)" : "Clients mis en avant (3 au plus)"}</Label>
+              <Textarea id="ps-clients" rows={4} value={f.clients} onChange={set("clients")} className="font-mono text-xs" />
+              <p className="text-xs text-muted-foreground">
+                Une ligne par {anonymous ? "mission" : "client"} : {anonymous ? "Type de mission" : "Nom"} | sous-titre | chiffres séparés par « ; ». Ex : {anonymous ? "Recrutement Data & IA | Scale-up e-commerce" : "Veepee | Tech, IA & corporate"} | 29 postes · FR, DE ; 19 jours de time to fill
+              </p>
+            </div>
+            {!anonymous && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ps-others">Autres clients (3 au plus)</Label>
+                <Textarea id="ps-others" rows={3} value={f.others} onChange={set("others")} className="font-mono text-xs" placeholder="Sopra Steria | Recrutement IT" />
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5"><Label htmlFor="ps-en">Anglais</Label><Input id="ps-en" value={f.english} onChange={set("english")} placeholder="Bilingue" /></div>
+              <div className="space-y-1.5"><Label htmlFor="ps-enl">Niveau (0 à 5)</Label><Input id="ps-enl" type="number" min={0} max={5} value={f.englishLevel} onChange={set("englishLevel")} /></div>
+              <div className="space-y-1.5"><Label htmlFor="ps-tjm">TJM client</Label><Input id="ps-tjm" value={f.tjm} onChange={set("tjm")} /></div>
+              <div className="space-y-1.5"><Label htmlFor="ps-dispo">Disponibilité</Label><Input id="ps-dispo" value={f.availability} onChange={set("availability")} /></div>
+            </div>
+            <div className="space-y-1.5"><Label htmlFor="ps-note">Lieu et télétravail</Label><Input id="ps-note" value={f.availabilityNote} onChange={set("availabilityNote")} placeholder="Île-de-France · remote flexible" /></div>
             {profile.photo_url && (
               <label className="flex items-center gap-2 text-sm">
                 <Checkbox checked={withPhoto} onCheckedChange={(c) => setWithPhoto(c === true)} />
@@ -170,16 +153,24 @@ export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChang
               </p>
             )}
           </div>
+
           <div className="space-y-3">
-            <canvas ref={canvasRef} className="aspect-[4/5] w-full rounded-xl border shadow-sm" aria-label="Aperçu de la carte LinkedIn" />
-            <LinkedInPublishActions
-              canvasRef={canvasRef}
-              open={open}
-              postText={postText}
-              altText={`Profil freelance disponible : ${f.title}`}
-              fileName={`kistone-profil-${slugify(f.title || "profil")}`}
-              blocked={leaks.length > 0}
-            />
+            <canvas ref={canvasRef} className="aspect-[4/5] w-full rounded-xl border shadow-sm" aria-label="Aperçu de la fiche profil" />
+            {anonymous ? (
+              <LinkedInPublishActions
+                canvasRef={canvasRef}
+                open={open}
+                postText={postText}
+                altText={`Profil freelance disponible : ${f.headline}`}
+                fileName={fileName}
+                blocked={leaks.length > 0}
+              />
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Button onClick={savePdf} className="gap-2"><FileText className="h-4 w-4" />Télécharger la fiche (PDF)</Button>
+                <Button variant="outline" onClick={savePng} className="gap-2"><Download className="h-4 w-4" />Télécharger l'image (PNG)</Button>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

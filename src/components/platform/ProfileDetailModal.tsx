@@ -86,7 +86,7 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
             </button>
           )}
           {onOpenAdmin && (
-            <button onClick={() => setCardOpen(true)} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" title="Carte LinkedIn anonyme">
+            <button onClick={() => setCardOpen(true)} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-primary" title="Fiche profil et carte LinkedIn">
               <Share2 className="h-5 w-5" />
             </button>
           )}
