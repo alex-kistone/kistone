@@ -98,6 +98,7 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
       // Répercute les notes et commentaires dans Jarvi (en arrière-plan, non bloquant).
       supabase.functions.invoke("jarvi-sync", { body: { profile_id: profileId } }).catch(() => undefined);
       onSaved?.();
+      onClose();
     }
     setSaving(false);
   };
