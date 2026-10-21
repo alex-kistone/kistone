@@ -419,6 +419,9 @@ const Dashboard = () => {
                               {profile.first_name} {profile.last_name}
                             </h3>
                             <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
+                            {profile.onboarding_completed === false && (
+                              <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800 sm:text-xs">Inscription non terminée</span>
+                            )}
                             {renderKycPill(profile)}
                             <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground sm:gap-2 sm:text-sm">
                               {profile.model && (

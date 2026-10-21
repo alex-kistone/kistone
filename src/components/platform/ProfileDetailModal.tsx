@@ -36,6 +36,8 @@ export interface FullProfile {
   tjm: number | null;
   model: string | null;
   available: boolean | null;
+  /** Fiche complète enregistrée ; faux tant que le freelance n'a fait que l'étape LinkedIn. */
+  onboarding_completed?: boolean | null;
   availability_date: string | null;
   created_at: string;
   admin_rating: number | null;
@@ -119,6 +121,11 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
               <div className="flex items-center gap-2">
                 <h2 className="truncate text-lg font-bold sm:text-xl">{profile.first_name} {profile.last_name}</h2>
               </div>
+              {profile.onboarding_completed === false && (
+                <p className="mt-1 inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
+                  Inscription non terminée : fiche (TJM, métiers, mobilité…) pas encore remplie
+                </p>
+              )}
               {profile.job_title && (
                 <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">{profile.job_title}</p>
               )}
