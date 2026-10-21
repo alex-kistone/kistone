@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Send, UserPlus } from "lucide-react";
+import { FileUp, Loader2, Send, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { formatDate } from "@/lib/blog";
-import { parseInvitees } from "@/lib/invitees";
+import { csvToInviteeLines, parseInvitees } from "@/lib/invitees";
 import { INVITATION_TEMPLATES, invitationEmail, type InvitationAudience } from "../../../../supabase/functions/_shared/invitationEmail";
 
 type Mode = "individual" | "bcc";
@@ -45,6 +45,18 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
     () => invitationEmail({ audience, firstName: mode === "individual" ? invitees[0]?.first_name ?? "Prénom" : null, message }),
     [audience, mode, invitees, message],
   );
+
+  // Import d'un CSV : les adresses trouvées s'ajoutent à celles déjà saisies
+  const importCsv = async (file: File | undefined) => {
+    if (!file) return;
+    const lines = csvToInviteeLines(await file.text());
+    if (!lines.length) {
+      toast({ title: "Aucune adresse trouvée", description: "Le fichier doit contenir une colonne d'emails.", variant: "destructive" });
+      return;
+    }
+    setRaw((r) => [r.trim(), ...lines].filter(Boolean).join("\n"));
+    toast({ title: `${lines.length} adresse${lines.length > 1 ? "s" : ""} importée${lines.length > 1 ? "s" : ""}`, description: file.name });
+  };
 
   const loadHistory = async () => {
     const { data } = await supabase
@@ -88,7 +100,20 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
         <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="inv-emails">Adresses</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="inv-emails">Adresses</Label>
+                <Button variant="outline" size="sm" asChild className="h-8 gap-1.5 text-xs">
+                  <label className="cursor-pointer">
+                    <FileUp className="h-3.5 w-3.5" />Importer un CSV
+                    <input
+                      type="file"
+                      accept=".csv,text/csv,.txt"
+                      className="hidden"
+                      onChange={(e) => { importCsv(e.target.files?.[0]); e.target.value = ""; }}
+                    />
+                  </label>
+                </Button>
+              </div>
               <Textarea
                 id="inv-emails"
                 rows={7}
@@ -97,6 +122,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
                 placeholder={"Une par ligne, ou séparées par des virgules :\nmarie.dupont@exemple.fr\nMarie Dupont <marie.dupont@exemple.fr>\nMarie ; marie.dupont@exemple.fr"}
               />
               <p className="text-xs text-muted-foreground">
+                CSV : une colonne email, et si possible une colonne prénom (export de tableur, LinkedIn ou CRM).{" "}
                 {invitees.length} adresse{invitees.length > 1 ? "s" : ""} valide{invitees.length > 1 ? "s" : ""}
                 {invitees.filter((i) => registered.has(i.email)).length ? ` · ${invitees.filter((i) => registered.has(i.email)).length} déjà inscrite(s), ignorée(s)` : ""}
                 {invalid.length ? ` · ${invalid.length} invalide(s) : ${invalid.slice(0, 3).join(", ")}` : ""}

@@ -43,3 +43,49 @@ export function parseInvitees(raw: string): { invitees: Invitee[]; invalid: stri
   }
   return { invitees, invalid };
 }
+
+/** Découpe une ligne CSV (séparateur « , », « ; » ou tabulation, champs entre guillemets). */
+function splitCsvLine(line: string, sep: string): string[] {
+  const out: string[] = [];
+  let cur = "";
+  let quoted = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (quoted && line[i + 1] === '"') { cur += '"'; i++; }
+      else quoted = !quoted;
+    } else if (c === sep && !quoted) { out.push(cur.trim()); cur = ""; }
+    else cur += c;
+  }
+  out.push(cur.trim());
+  return out;
+}
+
+const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z]/g, "");
+
+/**
+ * Fichier CSV d'adresses (export de tableur, de LinkedIn ou d'un CRM) converti en lignes
+ * « Prénom ; email » pour le champ des invitations. Avec une ligne d'en-tête, les colonnes email,
+ * prénom (ou nom complet) sont reconnues ; sans en-tête, la cellule qui contient « @ » est l'email
+ * et la première autre cellule le prénom.
+ */
+export function csvToInviteeLines(csv: string): string[] {
+  const rows = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter((l) => l.trim());
+  if (!rows.length) return [];
+  const sep = [";", "\t", ","].map((s) => [s, rows[0].split(s).length] as const).sort((a, b) => b[1] - a[1])[0][0];
+  const cells = rows.map((r) => splitCsvLine(r, sep));
+  const header = cells[0].map(norm);
+  const hasHeader = !cells[0].some((c) => c.includes("@"));
+  const find = (...names: string[]) => header.findIndex((h) => names.some((n) => h === n || h.startsWith(n)));
+  const emailCol = hasHeader ? find("email", "mail", "courriel", "emailaddress", "adresse") : -1;
+  const firstCol = hasHeader ? find("prenom", "firstname", "first", "givenname") : -1;
+  const nameCol = hasHeader ? find("nom", "name", "fullname", "nomcomplet", "contact") : -1;
+  const lines: string[] = [];
+  for (const row of hasHeader ? cells.slice(1) : cells) {
+    const email = emailCol >= 0 ? row[emailCol] : row.find((c) => c.includes("@"));
+    if (!email?.includes("@")) continue;
+    const name = firstCol >= 0 ? row[firstCol] : nameCol >= 0 && nameCol !== emailCol ? row[nameCol] : !hasHeader ? row.find((c) => c && !c.includes("@")) : "";
+    lines.push(name?.trim() ? `${name.trim()} ; ${email.trim()}` : email.trim());
+  }
+  return lines;
+}
