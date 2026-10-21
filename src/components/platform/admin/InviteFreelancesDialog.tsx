@@ -102,7 +102,14 @@ export default function InviteFreelancesDialog({ registeredEmails, target = "fre
     });
     setSending(false);
     if (error || data?.error) {
-      toast({ title: "Envoi impossible", description: error ? await functionErrorMessage(error) : data.error, variant: "destructive" });
+      const msg = error ? await functionErrorMessage(error) : data.error;
+      // Fonction injoignable (pas encore déployée, réseau coupé) : message explicite
+      const unreachable = /failed to send a request|failed to fetch/i.test(msg ?? "");
+      toast({
+        title: "Envoi impossible",
+        description: unreachable ? "Le service d'envoi est injoignable : la fonction invite-freelances n'est peut-être pas déployée." : msg,
+        variant: "destructive",
+      });
       return;
     }
     setResult(data as Result);
