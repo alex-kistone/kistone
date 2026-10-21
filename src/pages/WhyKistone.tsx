@@ -93,7 +93,7 @@ export default function WhyKistone() {
           </div>
           <blockquote className="rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg">
             <p className="font-ks-display text-[24px] font-semibold leading-[1.3] tracking-[-0.02em]">
-              « Qualifier chaque besoin, connaître chaque profil, tenir chaque promesse : c'est tout ce qui compte. »
+              « L'IA a totalement transformé la façon de travailler. Pour en tirer parti, il faut des experts qui la maîtrisent. »
             </p>
             <footer className="mt-5 text-[14px] text-ks-dark-muted">Alexandre Guégo, fondateur de Kistone</footer>
           </blockquote>
