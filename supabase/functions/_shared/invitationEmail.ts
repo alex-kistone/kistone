@@ -93,13 +93,12 @@ const MONO = "'Geist Mono', 'SFMono-Regular', Menlo, Consolas, monospace";
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
-export function invitationEmail({ audience = "ai", firstName, message, appUrl = SITE }: {
-  audience?: InvitationAudience; firstName?: string | null; message?: string | null; appUrl?: string;
+export function invitationEmail({ audience = "ai", message, appUrl = SITE }: {
+  audience?: InvitationAudience; message?: string | null; appUrl?: string;
 }) {
   const tpl = INVITATION_TEMPLATES[audience];
   const join = `${appUrl}${tpl.signup}`;
   const secondary = tpl.secondary.href.startsWith("http") ? tpl.secondary.href : `${appUrl}${tpl.secondary.href}`;
-  const hello = firstName?.trim() ? `Bonjour ${esc(firstName.trim())},` : "Bonjour,";
   const personal = message?.trim()
     ? `<tr><td style="padding:0 0 20px"><div style="background:#F5F1EA;border-radius:16px;padding:16px 18px;font-family:${TEXT};font-size:15px;line-height:1.6;color:#3D3A36">${esc(message.trim()).replace(/\n/g, "<br>")}</div></td></tr>`
     : "";
@@ -119,7 +118,7 @@ export function invitationEmail({ audience = "ai", firstName, message, appUrl = 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           <tr><td style="padding:0 0 14px;font-family:${MONO};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8F1747">${esc(tpl.label)}</td></tr>
           <tr><td style="padding:0 0 20px;font-family:${DISPLAY};font-size:30px;line-height:1.08;font-weight:700;letter-spacing:-0.8px;color:#141312">${esc(tpl.title)}</td></tr>
-          <tr><td style="padding:0 0 14px;font-family:${TEXT};font-size:15px;line-height:1.6;color:#3D3A36">${hello}</td></tr>
+          <tr><td style="padding:0 0 14px;font-family:${TEXT};font-size:15px;line-height:1.6;color:#3D3A36">Bonjour,</td></tr>
           <tr><td style="padding:0 0 20px;font-family:${TEXT};font-size:15px;line-height:1.6;color:#3D3A36">${tpl.intro}</td></tr>
           ${personal}
           <tr><td style="padding:0 0 18px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${benefits}</table></td></tr>

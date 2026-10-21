@@ -5,8 +5,8 @@
  * - audience : freelances experts IA (« ai ») ou RPO (« rpo »), entreprises intéressées par des experts IA
  *   (« client_ai ») ou par du RPO (« client_rpo ») ;
  *   pour les entreprises, les domaines sous clause de non-concurrence d'Alex sont écartés ;
- * - individual : un email par personne, personnalisé avec le prénom ;
- * - bcc : un seul envoi par groupe de 49 adresses en copie cachée (« Bonjour, »).
+ * - individual : un email par personne (« Bonjour, », choix d'Alex : jamais le prénom) ;
+ * - bcc : un seul envoi par groupe de 49 adresses en copie cachée.
  * Les adresses déjà inscrites (freelance ou client) sont écartées. Les réponses arrivent chez
  * l'admin qui envoie (reply-to). Chaque invitation est journalisée dans freelance_invitations.
  * Réponse : { sent, skipped: [{ email, reason }], failed: [{ email, error }] }
@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
 
   if (mode === "individual") {
     for (const t of targets) {
-      const r = await sendEmail({ to: [t.email], replyTo, subject, html: invitationEmail({ audience, firstName: t.first_name, message, appUrl: APP_URL }) });
+      const r = await sendEmail({ to: [t.email], replyTo, subject, html: invitationEmail({ audience, message, appUrl: APP_URL }) });
       if (!r.sent) failed.push({ email: t.email, error: r.error ?? "non envoyé" });
       log.push({ email: t.email, first_name: t.first_name, mode, audience, invited_by: admin.userId, error: r.sent ? null : r.error ?? "non envoyé" });
       await sleep(550); // limite de débit Resend (2 envois par seconde)

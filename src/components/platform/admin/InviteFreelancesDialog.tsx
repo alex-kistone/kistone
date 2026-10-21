@@ -74,8 +74,8 @@ export default function InviteFreelancesDialog({ registeredEmails, target = "fre
     [target, invitees],
   );
   const preview = useMemo(
-    () => invitationEmail({ audience, firstName: mode === "individual" ? invitees[0]?.first_name ?? "Prénom" : null, message }),
-    [audience, mode, invitees, message],
+    () => invitationEmail({ audience, message }),
+    [audience, message],
   );
 
   // Import d'un CSV : les adresses trouvées s'ajoutent à celles déjà saisies
@@ -199,11 +199,11 @@ export default function InviteFreelancesDialog({ registeredEmails, target = "fre
               <RadioGroup value={mode} onValueChange={(v) => setMode(v as Mode)} className="gap-2">
                 <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-border p-3">
                   <RadioGroupItem value="individual" className="mt-0.5" />
-                  <span><span className="text-sm font-medium">Un par un</span><span className="block text-xs text-muted-foreground">Un email par personne, avec son prénom s'il est indiqué.</span></span>
+                  <span><span className="text-sm font-medium">Un par un</span><span className="block text-xs text-muted-foreground">Un email par personne : chacun ne voit que son adresse.</span></span>
                 </label>
                 <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-border p-3">
                   <RadioGroupItem value="bcc" className="mt-0.5" />
-                  <span><span className="text-sm font-medium">En une fois, en copie cachée (Cci)</span><span className="block text-xs text-muted-foreground">Un seul email « Bonjour, » ; les destinataires ne se voient pas entre eux.</span></span>
+                  <span><span className="text-sm font-medium">En une fois, en copie cachée (Cci)</span><span className="block text-xs text-muted-foreground">Un seul envoi groupé ; les destinataires ne se voient pas entre eux.</span></span>
                 </label>
               </RadioGroup>
             </div>
