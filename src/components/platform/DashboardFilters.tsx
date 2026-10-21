@@ -206,8 +206,11 @@ const DashboardFilters = ({
           new Date(a.availability_date || "9999").getTime() -
           new Date(b.availability_date || "9999").getTime()
       );
-    } else {
+    } else if (sortBy === "name") {
       result.sort((a, b) => a.last_name.localeCompare(b.last_name));
+    } else {
+      // Derniers inscrits en haut
+      result.sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
     }
 
     onFiltered(result);
@@ -235,6 +238,7 @@ const DashboardFilters = ({
             <SelectValue placeholder="Trier par" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="recent">Derniers inscrits</SelectItem>
             <SelectItem value="name">Nom</SelectItem>
             <SelectItem value="tjm">TJM</SelectItem>
             <SelectItem value="availability">Disponibilité</SelectItem>

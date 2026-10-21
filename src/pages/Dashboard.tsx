@@ -72,7 +72,8 @@ const Dashboard = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("name");
+  // Par défaut, les derniers inscrits en haut
+  const [sortBy, setSortBy] = useState("recent");
   const [adminId, setAdminId] = useState<string | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatTarget, setChatTarget] = useState<Profile | null>(null);
