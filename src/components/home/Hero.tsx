@@ -105,7 +105,11 @@ export default function Hero() {
           <br className="hidden sm:block" /> des <span className="ks-grad-text">{HERO.titleHighlight}</span> & <span className="ks-grad-text">{HERO.titleHighlight2}</span>
         </h1>
 
-        <p className="ks-reveal mt-5 max-w-[720px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">{HERO.subtitle}</p>
+        <p className="ks-reveal mt-5 max-w-[720px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">
+          {HERO.subtitle.split(new RegExp(`(${HERO.subtitleBold.join("|")})`)).map((part, i) =>
+            HERO.subtitleBold.includes(part) ? <strong key={i} className="font-semibold text-ks-ink">{part}</strong> : part,
+          )}
+        </p>
 
         <div className="ks-reveal mt-7 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:gap-3 md:mt-10">
           <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow className="h-[54px] sm:h-14">

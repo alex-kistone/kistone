@@ -10,6 +10,8 @@ export const HERO = {
   titleHighlight2: "RPO",
   subtitle:
     "AI Engineers, AI Product, AI Leaders et Tech recruiters (RPO) sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l’administratif géré pour vous.",
+  // Mots du sous-titre mis en gras (les métiers)
+  subtitleBold: ["AI Engineers", "AI Product", "AI Leaders", "Tech recruiters"],
   primary: "Accéder aux profils",
   secondary: "Je suis freelance",
   note: "Profils qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
