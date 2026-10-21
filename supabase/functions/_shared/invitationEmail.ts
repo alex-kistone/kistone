@@ -24,16 +24,16 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     signup: "/register?mode=signup&utm_source=invitation",
   },
   rpo: {
-    subject: "Invitation à rejoindre Kistone en tant que Tech recruiter freelance",
+    subject: "Invitation à rejoindre Kistone, la plateforme des freelances RPO",
     label: "Invitation · Tech recruiters",
-    title: "Recrutez les talents que tout le monde cherche.",
+    title: "Rejoignez la plateforme des freelances RPO.",
     intro: "Je vous invite à rejoindre <strong style=\"color:#141312\">Kistone</strong> en tant que Tech recruiter freelance. Les entreprises nous confient le recrutement de leurs talents tech et IA en CDI : nous leur présentons des recruteurs qualifiés, intégrés à leurs équipes, comme vous.",
     benefits: [
-      "Des missions de recrutement en CDI : Tech, Data/AI, Product, GTM et Sales",
-      "Payé au jour, chaque fin de mois : plus de placement à courir ni d'honoraires à relancer",
-      "Le rythme que vous choisissez, contrat, CRA et facturation gérés pour vous",
+      "Des missions RPO Freelance Tech, Data/AI, Product, GTM et Sales au sein de startups/scaleups, ETI et grands groupes",
+      "Payé chaque fin de mois : espace admin automatisé (contrat, CRA, facturation)",
+      "Le rythme que vous choisissez, le budget que vous fixez",
     ],
-    cta: "Rejoindre en tant que Tech recruiter",
+    cta: "Rejoindre Kistone",
     signup: "/register?mode=signup&fonction=rpo&utm_source=invitation",
   },
 };
