@@ -1,60 +1,49 @@
 import SmartLink from "@/components/site/SmartLink";
+import { BOLT_FILLED_PATH, coverLayout, estimateOutfitWidth } from "@/lib/blogCoverLayout";
 import { formatDate, postPath, readingMinutes, type BlogPost } from "@/lib/blog";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
 
-/** Découpe la catégorie en une ou deux lignes et choisit une taille proche de l'image générée. */
-function coverLines(text: string): { size: number; lines: string[] } {
-  const maxWidth = 1536 * 0.78;
-  const widthOf = (t: string, size: number) => t.length * size * 0.56; // Outfit 700, approximation
-  const fit = (lines: string[]) => Math.min(168, Math.floor(maxWidth / (Math.max(...lines.map((l) => l.length)) * 0.56)));
-  const one = [text];
-  if (widthOf(text, 120) <= maxWidth || !text.includes(" ")) return { size: fit(one), lines: one };
-  const words = text.split(" ");
-  let best = one;
-  let bestLen = Infinity;
-  for (let i = 1; i < words.length; i++) {
-    const pair = [words.slice(0, i).join(" "), words.slice(i).join(" ")];
-    const len = Math.max(...pair.map((l) => l.length));
-    if (len < bestLen) { best = pair; bestLen = len; }
-  }
-  return { size: fit(best), lines: best };
-}
-
 /**
- * Couverture des articles sans image : le gabarit des couvertures générées (src/lib/blogCover.ts)
- * en SVG aux mêmes dimensions (1536 × 1024), pour un rendu identique à toutes les tailles.
+ * Couverture des articles sans image : la carte « Design Card Blog » v3 (src/lib/blogCover.ts) en
+ * SVG aux mêmes cotes (1200 × 800), pour un rendu identique à l'image à toutes les tailles.
  */
 function CoverTemplate({ category, badge }: { category: string; badge?: string }) {
-  const { size, lines } = coverLines(category);
-  const lineHeight = size * 1.02;
-  const top = 1024 * 0.46 - ((lines.length - 1) * lineHeight) / 2;
-  const barY = top + (lines.length - 1) * lineHeight + size * 0.62 + 28;
+  const layout = coverLayout(category, estimateOutfitWidth);
+  const boltH = 800 * 1.4;
   return (
     <div className="relative aspect-[3/2] overflow-hidden rounded-[20px]">
-      <svg viewBox="0 0 1536 1024" className="absolute inset-0 h-full w-full" aria-hidden="true">
+      <svg viewBox="0 0 1200 800" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
-          <radialGradient id="cv-pink"><stop offset="0" stopColor="#FF2E6E" stopOpacity="0.2" /><stop offset="1" stopColor="#FF2E6E" stopOpacity="0" /></radialGradient>
-          <radialGradient id="cv-violet"><stop offset="0" stopColor="#B14DF5" stopOpacity="0.14" /><stop offset="1" stopColor="#B14DF5" stopOpacity="0" /></radialGradient>
-          <radialGradient id="cv-blue"><stop offset="0" stopColor="#4C7DFF" stopOpacity="0.16" /><stop offset="1" stopColor="#4C7DFF" stopOpacity="0" /></radialGradient>
-          <linearGradient id="cv-bar"><stop offset="0" stopColor="#FF2E6E" /><stop offset="0.5" stopColor="#B14DF5" /><stop offset="1" stopColor="#4C7DFF" /></linearGradient>
+          <radialGradient id="cv-pink" cx="0.88" cy="0.08" r="1" gradientTransform="translate(0.88 0.08) scale(0.6 0.7) translate(-0.88 -0.08)">
+            <stop offset="0" stopColor="#FF2E6E" stopOpacity="0.3" /><stop offset="0.7" stopColor="#FF2E6E" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="cv-violet" cx="0.04" cy="1" r="1" gradientTransform="translate(0.04 1) scale(0.5 0.55) translate(-0.04 -1)">
+            <stop offset="0" stopColor="#B14DF5" stopOpacity="0.2" /><stop offset="0.7" stopColor="#B14DF5" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="cv-blue" cx="1" cy="1" r="1" gradientTransform="translate(1 1) scale(0.5 0.55) translate(-1 -1)">
+            <stop offset="0" stopColor="#4C7DFF" stopOpacity="0.26" /><stop offset="0.7" stopColor="#4C7DFF" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="cv-bar"><stop offset="0" stopColor="#FF2E6E" /><stop offset="0.55" stopColor="#B14DF5" /><stop offset="1" stopColor="#4C7DFF" /></linearGradient>
         </defs>
-        <rect width="1536" height="1024" fill="#F5F1EA" />
-        <circle cx="1321" cy="123" r="620" fill="url(#cv-pink)" />
-        <circle cx="154" cy="973" r="560" fill="url(#cv-violet)" />
-        <circle cx="1505" cy="1004" r="520" fill="url(#cv-blue)" />
-        <g transform="translate(1137 -123) rotate(14) scale(1.25)" fill="none" stroke="#141312" strokeOpacity="0.06" strokeWidth="16">
-          <path d="M38 560 L488 18 L318 398" />
-          <path d="M22 588 L346 416 L602 416 L280 588 Z" />
-          <path d="M300 606 L132 1006 L590 444" />
-        </g>
-        <text x="768" textAnchor="middle" dominantBaseline="middle" fill="#141312" fontFamily="Outfit, sans-serif" fontWeight="700" fontSize={size} letterSpacing={-0.04 * size}>
-          {lines.map((l, i) => <tspan key={l} x="768" y={top + i * lineHeight}>{l}</tspan>)}
+        <rect width="1200" height="800" fill="#F5F1EA" />
+        <rect width="1200" height="800" fill="url(#cv-pink)" />
+        <rect width="1200" height="800" fill="url(#cv-violet)" />
+        <rect width="1200" height="800" fill="url(#cv-blue)" />
+        <path
+          d={BOLT_FILLED_PATH}
+          fill="#141312"
+          fillOpacity="0.1"
+          fillRule="evenodd"
+          transform={`translate(${layout.boltLeft} ${-0.22 * 800}) scale(${boltH / 1024})`}
+        />
+        <text x="600" textAnchor="middle" dominantBaseline="middle" fill="#141312" fontFamily="Outfit, sans-serif" fontWeight="700" fontSize={layout.size} letterSpacing={-0.045 * layout.size}>
+          {layout.lines.map((l, i) => <tspan key={l} x="600" y={layout.top + i * layout.size}>{l}</tspan>)}
         </text>
-        <rect x="702" y={barY} width="132" height="10" rx="5" fill="url(#cv-bar)" />
-        <image href="/logos/logo-full-black.png" x="72" y="865" width="394.5" height="87" />
-        <rect x="499.5" y="877" width="3" height="63" fill="#141312" fillOpacity="0.18" />
-        <text x="532.5" y="910.5" dominantBaseline="middle" fill="#5E5A54" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="33" letterSpacing="4.5">AI EXPERTS PLATFORM</text>
+        <rect x="552" y={layout.barY} width="96" height="6" rx="3" fill="url(#cv-bar)" />
+        <image href="/logos/logo-full-black.png" x="60" y="678" width="299" height="66" />
+        <rect x="385" y="690" width="1.5" height="42" fill="#141312" fillOpacity="0.25" />
+        <text x="413" y="712" dominantBaseline="middle" fill="#4A4640" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="22" letterSpacing="3.1">AI EXPERTS PLATFORM</text>
       </svg>
       {badge ? (
         <span className="absolute left-[18px] top-[18px] flex h-7 items-center gap-[7px] rounded-full bg-white/85 px-3 text-xs font-medium text-[#1B6541]">
