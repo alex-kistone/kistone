@@ -38,6 +38,8 @@ export interface FullProfile {
   available: boolean | null;
   /** Fiche complète enregistrée ; faux tant que le freelance n'a fait que l'étape LinkedIn. */
   onboarding_completed?: boolean | null;
+  /** Rappels automatiques envoyés pour finir l'inscription (fonction remind-signup). */
+  signup_reminders?: number | null;
   availability_date: string | null;
   created_at: string;
   admin_rating: number | null;
@@ -123,7 +125,7 @@ const ProfileDetailModal = ({ profile, open, onClose, onOpenChat, onOpenAdmin }:
               </div>
               {profile.onboarding_completed === false && (
                 <p className="mt-1 inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
-                  Inscription non terminée : fiche (TJM, métiers, mobilité…) pas encore remplie
+                  Inscription non terminée : fiche (TJM, métiers, mobilité…) pas encore remplie{profile.signup_reminders ? ` · ${profile.signup_reminders} rappel${profile.signup_reminders > 1 ? "s" : ""} envoyé${profile.signup_reminders > 1 ? "s" : ""}` : ""}
                 </p>
               )}
               {profile.job_title && (
