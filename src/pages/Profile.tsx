@@ -256,6 +256,7 @@ const Profile = () => {
       photo: "section-photo", identity: phone ? "firstName" : "phone", linkedin: "linkedin", jobTitle: "jobTitle",
       tjm: "tjm", skills: "section-skills", sectors: "section-sectors", intro: "introText",
       missions: "section-missions", languages: "section-languages", mobility: "section-mobility",
+      availability: "section-availability",
     };
     const el = document.getElementById(targets[key] ?? "");
     if (!el) return;
@@ -288,7 +289,11 @@ const Profile = () => {
     }
     // Champs obligatoires de la fiche : on amène le freelance au premier champ manquant
     const realSectors = sectors.filter((x) => x !== "Autre" || sectorOther.trim());
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const missing: [string, string, string][] = [
+      // Indisponible : la date de retour est obligatoire (et pas dans le passé)
+      ...(available || (availability && availability >= today) ? [] : [["availability", "Date de disponibilité requise", availability ? "Choisissez une date à venir." : "Indiquez à partir de quand vous serez disponible."] as [string, string, string]]),
       ...(Number(tjm) > 0 ? [] : [["tjm", "TJM requis", "Indiquez votre tarif journalier."] as [string, string, string]]),
       ...((isRpo ? skills : specialties).length ? [] : [["skills", isRpo ? "Métiers requis" : "Spécialités requises", isRpo ? "Cochez au moins un métier sur lequel vous recrutez." : "Cochez au moins une spécialité."] as [string, string, string]]),
       ...(mobility.length ? [] : [["mobility", "Mobilité requise", "Indiquez au moins une ville ou zone où vous pouvez intervenir."] as [string, string, string]]),
@@ -619,8 +624,8 @@ const Profile = () => {
               </span>
             </div>
             {!available && (
-              <div className="space-y-2">
-                <Label>Date de prochaine disponibilité</Label>
+              <div id="section-availability" className="space-y-2 rounded-xl transition-shadow">
+                <Label>Date de prochaine disponibilité *</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !availability && "text-muted-foreground")}>
@@ -629,7 +634,14 @@ const Profile = () => {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={availability} onSelect={setAvailability} initialFocus className="pointer-events-auto" />
+                    <Calendar
+                      mode="single"
+                      selected={availability}
+                      onSelect={setAvailability}
+                      disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
                   </PopoverContent>
                 </Popover>
               </div>
