@@ -83,12 +83,21 @@ const loadImage = (src: string) =>
     i.src = src;
   });
 
-/** Dessine la carte (format portrait LinkedIn 1080 × 1350), dans la charte Kistone. */
+const BOLT = "M38 560 L488 18 L318 398 M22 588 L346 416 L602 416 L280 588 Z M300 606 L132 1006 L590 444";
+const TILE_LINE = "#E3DED5";
+const DARK = { bg: "#141312", fg: "#F5F1EA", muted: "#B9B3AA" };
+
+/**
+ * Dessine la carte (format portrait LinkedIn 1080 × 1350) dans le style éditorial « bento » de
+ * la charte Kistone : en-tête éditorial, tuiles plates de tailles différentes (aucune ombre),
+ * grande tuile teintée de la fonction avec le titre surdimensionné, une seule tuile sombre pour
+ * l'appel à l'action.
+ */
 export async function drawCard(canvas: HTMLCanvasElement, spec: CardSpec) {
   await Promise.all([
-    document.fonts.load("700 96px Outfit"),
+    document.fonts.load("700 88px Outfit"),
     document.fonts.load("600 44px Outfit"),
-    document.fonts.load("400 34px Geist"),
+    document.fonts.load("400 30px Geist"),
     document.fonts.load("500 22px 'Geist Mono'"),
   ]).catch(() => undefined);
   const ctx = canvas.getContext("2d")!;
@@ -96,165 +105,176 @@ export async function drawCard(canvas: HTMLCanvasElement, spec: CardSpec) {
   canvas.height = H;
   const v = verticalOf(spec.vertical);
   const tint = palettes[v.palette];
+  const X = 64;
+  const innerW = W - X * 2;
+  const GAP = 20;
 
-  // Fond crème
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
-
-  // Éclair au trait en filigrane, ton sur ton, qui déborde à droite
-  ctx.save();
-  ctx.translate(690, 150);
-  ctx.rotate((14 * Math.PI) / 180);
-  ctx.scale(1.15, 1.15);
-  ctx.strokeStyle = C.watermark;
-  ctx.lineWidth = 20;
-  ctx.lineJoin = "miter";
-  ctx.stroke(new Path2D("M38 560 L488 18 L318 398 M22 588 L346 416 L602 416 L280 588 Z M300 606 L132 1006 L590 444"));
-  ctx.restore();
-
-  const X = 88;
-  const innerW = W - X * 2;
-
-  // Logo et pastille sombre (« Mission freelance », « Profil disponible »)
-  try {
-    const logo = await loadImage("/logos/logo-full-black.png");
-    const lh = 54;
-    ctx.drawImage(logo, X, 88, (logo.width * lh) / logo.height, lh);
-  } catch { /* logo indisponible : la carte reste lisible */ }
-  ctx.font = "500 20px 'Geist Mono'";
-  ctx.letterSpacing = "3px";
-  const chip = spec.chip.toUpperCase();
-  const chipW = ctx.measureText(chip).width + 74;
-  roundRect(ctx, W - X - chipW, 92, chipW, 48, 24);
-  ctx.fillStyle = C.ink;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(W - X - chipW + 28, 116, 6, 0, Math.PI * 2);
-  ctx.fillStyle = C.pink;
-  ctx.fill();
-  ctx.fillStyle = C.bg;
-  ctx.textBaseline = "middle";
-  ctx.fillText(chip, W - X - chipW + 46, 117);
-
-  // Photo ronde (facultative), puis la fonction (teinte de la fonction, jamais rose)
-  let y = 270;
-  let fnX = X;
-  let photo: HTMLImageElement | null = null;
-  if (spec.photo) photo = await loadImage(spec.photo).catch(() => null);
-  if (photo) {
-    const d = 136;
-    const py = 214;
-    const side = Math.min(photo.width, photo.height);
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(X + d / 2, py + d / 2, d / 2, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.drawImage(photo, (photo.width - side) / 2, (photo.height - side) / 3, side, side, X, py, d, d);
-    ctx.restore();
-    ctx.beginPath();
-    ctx.arc(X + d / 2, py + d / 2, d / 2 + 3, 0, Math.PI * 2);
-    ctx.strokeStyle = "#FFFFFF";
-    ctx.lineWidth = 6;
-    ctx.stroke();
-    fnX = X + d + 28;
-    y = py + d / 2;
-  }
-  ctx.font = "600 26px Geist";
-  ctx.letterSpacing = "0px";
-  const fn = `${v.short} · ${v.label}`;
-  const fnW = ctx.measureText(fn).width + 44;
-  roundRect(ctx, fnX, y - 26, fnW, 52, 26);
-  ctx.fillStyle = tint.tint;
-  ctx.fill();
-  ctx.fillStyle = tint.ink;
-  ctx.fillText(fn, fnX + 22, y + 1);
-  if (photo) y = 330;
-
-  // Titre : Outfit serré, dernière ligne surlignée
-  y += 64;
-  ctx.font = "700 104px Outfit";
-  ctx.letterSpacing = "-4px";
   ctx.textBaseline = "alphabetic";
-  const titleLines = wrap(ctx, spec.title || spec.titleFallback, innerW, photo ? 2 : 3);
-  const lineH = 100;
-  titleLines.forEach((line, i) => {
-    const baseline = y + 88 + i * lineH;
-    if (i === titleLines.length - 1) {
-      const w = ctx.measureText(line).width;
-      ctx.fillStyle = C.highlight;
-      ctx.fillRect(X - 6, baseline - 26, w + 12, 26);
-    }
-    ctx.fillStyle = C.ink;
-    ctx.fillText(line, X, baseline);
-  });
-  y += 88 + (titleLines.length - 1) * lineH;
 
-  // Ligne d'information (secteur, expérience…)
-  ctx.letterSpacing = "0px";
-  if (spec.meta) {
-    y += 64;
-    ctx.font = "500 32px Geist";
-    ctx.fillStyle = C.subtle;
-    ctx.fillText(wrap(ctx, spec.meta, innerW, 1)[0], X, y);
-  }
-
-  // Accroche : deux lignes
-  if (spec.pitch) {
-    y += 70;
-    ctx.font = "400 33px Geist";
-    ctx.fillStyle = C.muted;
-    wrap(ctx, spec.pitch, innerW, 2).forEach((line, i) => ctx.fillText(line, X, y + i * 48));
-    y += 52;
-  }
-
-  // Quatre tuiles d'informations
-  const gap = 24;
-  const tileW = (innerW - gap) / 2;
-  const tileH = 168;
-  // Les tuiles s'ancrent au-dessus de l'appel à l'action (64 px de bouton + 56 px d'air)
-  const gridY = H - 88 - 64 - 56 - (tileH * 2 + gap);
-  spec.tiles.slice(0, 4).forEach((t, i) => {
-    const tx = X + (i % 2) * (tileW + gap);
-    const ty = gridY + Math.floor(i / 2) * (tileH + gap);
-    roundRect(ctx, tx, ty, tileW, tileH, 28);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fill();
-    ctx.strokeStyle = C.border;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.font = "500 20px 'Geist Mono'";
-    ctx.letterSpacing = "3px";
-    ctx.fillStyle = C.subtle;
-    ctx.fillText(t.label, tx + 32, ty + 54);
-    ctx.letterSpacing = "-1px";
-    ctx.font = "600 44px Outfit";
-    ctx.fillStyle = C.ink;
-    const value = wrap(ctx, t.value || "À définir", tileW - 64, 1)[0];
-    ctx.fillText(value, tx + 32, ty + 120);
-    if (t.unit) {
-      const vw = ctx.measureText(value).width;
-      ctx.font = "600 26px Outfit";
-      ctx.fillStyle = C.pink;
-      ctx.letterSpacing = "0px";
-      ctx.fillText(` ${t.unit}`, tx + 32 + vw, ty + 120);
-    }
-  });
-
-  // Appel à l'action et site
-  const ctaY = H - 88 - 64;
-  ctx.font = "600 28px Geist";
-  ctx.letterSpacing = "0px";
-  const ctaW = Math.min(ctx.measureText(spec.cta).width + 72, innerW - 220);
-  roundRect(ctx, X, ctaY, ctaW, 64, 32);
+  // En-tête éditorial : puce rose et étiquette à gauche, KISTONE et l'éclair à droite
+  ctx.beginPath();
+  ctx.arc(X + 6, 78, 6, 0, Math.PI * 2);
   ctx.fillStyle = C.pink;
   ctx.fill();
-  ctx.fillStyle = "#FFFFFF";
-  ctx.textBaseline = "middle";
-  ctx.fillText(wrap(ctx, spec.cta, ctaW - 72, 1)[0] ?? "", X + 36, ctaY + 33);
   ctx.font = "500 22px 'Geist Mono'";
   ctx.letterSpacing = "3px";
   ctx.fillStyle = C.ink;
+  ctx.fillText(spec.chip.toUpperCase(), X + 26, 86);
+  const brand = "KISTONE";
+  const bw = ctx.measureText(brand).width;
+  try {
+    const bolt = await loadImage("/logos/bolt-black.png");
+    const bh = 30;
+    const bwImg = (bolt.width * bh) / bolt.height;
+    ctx.drawImage(bolt, W - X - bwImg, 60, bwImg, bh);
+    ctx.fillText(brand, W - X - bwImg - 14 - bw, 86);
+  } catch {
+    ctx.fillText(brand, W - X - bw, 86);
+  }
+
+  // Grande tuile teintée : photo, fonction, titre, informations, accroche
+  const heroY = 128;
+  const heroH = 640;
+  roundRect(ctx, X, heroY, innerW, heroH, 40);
+  ctx.fillStyle = tint.tint;
+  ctx.fill();
+  ctx.save();
+  roundRect(ctx, X, heroY, innerW, heroH, 40);
+  ctx.clip();
+  // Éclair en filigrane, ton sur ton dans la tuile
+  ctx.translate(X + innerW - 330, heroY - 90);
+  ctx.rotate((14 * Math.PI) / 180);
+  ctx.scale(0.95, 0.95);
+  ctx.strokeStyle = tint.soft;
+  ctx.lineWidth = 26;
+  ctx.lineJoin = "miter";
+  ctx.stroke(new Path2D(BOLT));
+  ctx.restore();
+
+  const P = 52;
+  let y = heroY + P;
+  let photo: HTMLImageElement | null = null;
+  if (spec.photo) photo = await loadImage(spec.photo).catch(() => null);
+  const fn = `${v.short} · ${v.label}`.toUpperCase();
+  ctx.font = "500 22px 'Geist Mono'";
+  ctx.letterSpacing = "3px";
+  if (photo) {
+    const d = 110;
+    const side = Math.min(photo.width, photo.height);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(X + P + d / 2, y + d / 2, d / 2, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(photo, (photo.width - side) / 2, (photo.height - side) / 3, side, side, X + P, y, d, d);
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(X + P + d / 2, y + d / 2, d / 2 + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    ctx.fillStyle = tint.ink;
+    ctx.fillText(fn, X + P + d + 30, y + d / 2 + 8);
+    y += d + 40;
+  } else {
+    ctx.fillStyle = tint.ink;
+    ctx.fillText(fn, X + P, y + 24);
+    y += 90;
+  }
+
+  // Titre surdimensionné, dernière ligne surlignée
+  ctx.font = "700 84px Outfit";
+  ctx.letterSpacing = "-3px";
+  const titleLines = wrap(ctx, spec.title || spec.titleFallback, innerW - P * 2, 3);
+  const lineH = 82;
+  titleLines.forEach((line, i) => {
+    const baseline = y + 60 + i * lineH;
+    if (i === titleLines.length - 1) {
+      ctx.fillStyle = C.highlight;
+      ctx.fillRect(X + P - 6, baseline - 24, ctx.measureText(line).width + 12, 24);
+    }
+    ctx.fillStyle = C.ink;
+    ctx.fillText(line, X + P, baseline);
+  });
+  y += 60 + (titleLines.length - 1) * lineH;
+
+  ctx.letterSpacing = "0px";
+  if (spec.meta) {
+    y += 52;
+    ctx.font = "500 30px Geist";
+    ctx.fillStyle = tint.ink;
+    ctx.fillText(wrap(ctx, spec.meta, innerW - P * 2, 1)[0], X + P, y);
+  }
+  if (spec.pitch) {
+    y += 52;
+    ctx.font = "400 30px Geist";
+    ctx.fillStyle = C.muted;
+    const room = heroY + heroH - P - y + 30;
+    const maxLines = Math.max(1, Math.min(3, Math.floor(room / 44)));
+    wrap(ctx, spec.pitch, innerW - P * 2, maxLines).forEach((line, i) => ctx.fillText(line, X + P, y + i * 44));
+  }
+
+  // Tuiles d'informations : plates, filet fin, tailles alternées (bento)
+  const rowH = 150;
+  const gridY = heroY + heroH + GAP;
+  const wide = Math.round((innerW - GAP) * 0.58);
+  const narrow = innerW - GAP - wide;
+  const slots = [
+    { x: X, w: wide, y: gridY },
+    { x: X + wide + GAP, w: narrow, y: gridY },
+    { x: X, w: narrow, y: gridY + rowH + GAP },
+    { x: X + narrow + GAP, w: wide, y: gridY + rowH + GAP },
+  ];
+  spec.tiles.slice(0, 4).forEach((t, i) => {
+    const { x: tx, w: tw, y: ty } = slots[i];
+    roundRect(ctx, tx, ty, tw, rowH, 30);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fill();
+    ctx.strokeStyle = TILE_LINE;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.font = "500 19px 'Geist Mono'";
+    ctx.letterSpacing = "3px";
+    ctx.fillStyle = C.subtle;
+    ctx.fillText(t.label.toUpperCase(), tx + 30, ty + 50);
+    ctx.letterSpacing = "-1.5px";
+    ctx.font = "700 46px Outfit";
+    ctx.fillStyle = C.ink;
+    const value = wrap(ctx, t.value || "À définir", tw - 60 - (t.unit ? 110 : 0), 1)[0];
+    ctx.fillText(value, tx + 30, ty + 112);
+    if (t.unit) {
+      const vw = ctx.measureText(value).width;
+      ctx.font = "600 24px Outfit";
+      ctx.fillStyle = C.pink;
+      ctx.letterSpacing = "0px";
+      ctx.fillText(` ${t.unit}`, tx + 30 + vw, ty + 112);
+    }
+  });
+
+  // Tuile sombre : l'appel à l'action, le logo blanc et le site
+  const ctaY = gridY + rowH * 2 + GAP * 2;
+  const ctaH = H - 64 - ctaY;
+  roundRect(ctx, X, ctaY, innerW, ctaH, 40);
+  ctx.fillStyle = DARK.bg;
+  ctx.fill();
+  let logoW = 0;
+  try {
+    const logo = await loadImage("/logos/logo-full-white.png");
+    const lh = 44;
+    logoW = (logo.width * lh) / logo.height;
+    ctx.drawImage(logo, X + innerW - 48 - logoW, ctaY + ctaH / 2 - lh / 2 - 12, logoW, lh);
+  } catch { /* logo indisponible : la carte reste lisible */ }
+  ctx.font = "500 18px 'Geist Mono'";
+  ctx.letterSpacing = "3px";
+  ctx.fillStyle = DARK.muted;
   const site = "KISTONE.FR";
-  ctx.fillText(site, W - X - ctx.measureText(site).width, ctaY + 33);
-  ctx.textBaseline = "alphabetic";
+  ctx.fillText(site, X + innerW - 48 - ctx.measureText(site).width, ctaY + ctaH / 2 + 38);
+  ctx.font = "600 40px Outfit";
+  ctx.letterSpacing = "-1px";
+  ctx.fillStyle = DARK.fg;
+  const ctaLines = wrap(ctx, spec.cta, innerW - 96 - logoW - 40, 2);
+  const ctaTop = ctaY + ctaH / 2 - ((ctaLines.length - 1) * 48) / 2 + 14;
+  ctaLines.forEach((l, i) => ctx.fillText(l, X + 48, ctaTop + i * 48));
+  ctx.letterSpacing = "0px";
 }
