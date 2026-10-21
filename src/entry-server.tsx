@@ -9,7 +9,7 @@ import { COMPARISON } from "./content/comparison";
 import { BlogDataContext, type BlogPost } from "./lib/blog";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
-export const PRERENDER_ROUTES = ["/", "/studio", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/freelances", "/pourquoi-kistone", "/ressources", COMPARISON_PATH];
+export const PRERENDER_ROUTES = ["/", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath), "/freelances", "/pourquoi-kistone", "/ressources", COMPARISON_PATH];
 
 /**
  * Date de dernière modification réelle des pages qui en ont une (sitemap.xml). Les autres pages
@@ -30,7 +30,6 @@ export const LLMS_PAGES = [
   { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la plateforme des freelances IA & RPO : missions qualifiées pour AI Engineers, AI Product, AI Leaders et Tech recruiters, rémunération transparente payée chaque fin de mois, rythme au choix, contrat, CRA et facturation gérés. Inscription gratuite." },
   { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur les projets IA, les formats d'intervention (mission freelance, fractional, contract-to-hire) et le recrutement des talents IA." },
   { path: COMPARISON_PATH, title: COMPARISON.seoTitle, desc: COMPARISON.seoDescription },
-  { path: "/studio", title: "Studio IA", desc: "Outils RH sur mesure (onboarding, assistant RH, tri de candidatures) conçus et livrés par Kistone." },
 ];
 
 /**

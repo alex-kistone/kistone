@@ -1,6 +1,6 @@
 import Cta from "@/components/site/Cta";
-import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
-import { PinkGlow } from "@/components/studio/WhyBento";
+import SectionHeader, { Section, TwoPartTitle } from "@/components/site/SectionHeader";
+import { PinkGlow } from "@/components/site/PinkGlow";
 import { ROUTES } from "@/content/site";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
 import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";

@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Studio from "./pages/Studio";
 import ClientNewNeed from "./pages/ClientNewNeed";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -43,7 +42,6 @@ export const AppRoutes = () => (
   <Suspense fallback={<div className="min-h-screen bg-background" aria-busy="true" />}>
   <Routes>
     <Route path="/" element={<Home />} />
-    <Route path="/studio" element={<Studio />} />
     <Route path="/register" element={<FreelancerAuth />} />
     <Route path="/profile" element={<Profile />} />
     <Route path="/dashboard" element={<Dashboard />} />

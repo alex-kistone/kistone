@@ -1,4 +1,4 @@
-import SectionHeader, { Section } from "@/components/studio/SectionHeader";
+import SectionHeader, { Section } from "@/components/site/SectionHeader";
 import { HOME_FAQ } from "@/content/home";
 
 /**

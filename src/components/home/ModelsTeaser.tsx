@@ -1,5 +1,5 @@
 import SmartLink from "@/components/site/SmartLink";
-import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
+import SectionHeader, { Section, TwoPartTitle } from "@/components/site/SectionHeader";
 import { MODEL_PAGES, modelPath } from "@/content/models";
 import { palettes } from "@/lib/palettes";
 

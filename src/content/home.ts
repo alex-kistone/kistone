@@ -134,17 +134,10 @@ export const FREELANCE_SPACE = [
   { label: "Mission RPO · 4 recrutements Data/AI", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
 ];
 
-export const STUDIO_TILES: { title: string; desc: string; palette: PaletteName; pct: string }[] = [
-  { title: "Onboarding", desc: "Parcours des recrues", palette: "apricot", pct: "80%" },
-  { title: "Assistant RH", desc: "Questions salariés", palette: "blue", pct: "64%" },
-  { title: "Budget RH", desc: "Budget vs réel", palette: "lilac", pct: "68%" },
-  { title: "Engagement", desc: "Pulses et plans d’action", palette: "teal", pct: "72%" },
-];
-
 export const RESOURCES: { kind: string; title: string; meta: string; palette: PaletteName }[] = [
   { kind: "Article", title: "[Titre d’article : RPO freelance vs cabinet]", meta: "Blog · [x] min de lecture", palette: "apricot" },
   { kind: "Comparatif", title: "Trouver un expert IA freelance : les plateformes en France", meta: "Guide · 12 acteurs", palette: "lilac" },
-  { kind: "Guide", title: "[Titre de guide : outiller ses RH avec l’IA]", meta: "Guide · PDF", palette: "teal" },
+  { kind: "Guide", title: "[Titre de guide : staffer un projet IA]", meta: "Guide · PDF", palette: "teal" },
 ];
 
 /**

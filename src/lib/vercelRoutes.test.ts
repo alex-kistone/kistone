@@ -21,7 +21,7 @@ const rewritten = (path: string) => vercel.rewrites.some((r) => r.destination ==
 describe("vercel.json", () => {
   it("sert app.html pour toutes les routes de l'application non pré-rendues", () => {
     const routes = [...app.matchAll(/<Route path="([^"*]+)"/g)].map((m) => m[1]);
-    const prerendered = new Set(["/", "/studio", "/besoin", "/privacy", "/freelances", "/pourquoi-kistone", "/ressources", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath)]);
+    const prerendered = new Set(["/", "/besoin", "/privacy", "/freelances", "/pourquoi-kistone", "/ressources", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath)]);
     expect(entry).toContain('"/besoin"');
     const dynamicPublic = ["/recruter/:slug", "/modeles/:slug"]; // slugs connus pré-rendus, anciens slugs redirigés
     const missing = routes

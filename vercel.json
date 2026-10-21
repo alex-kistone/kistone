@@ -6,6 +6,11 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/studio",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/recruter/fractional-rpo",
       "destination": "/recruter/tech-recruiter",
       "permanent": true

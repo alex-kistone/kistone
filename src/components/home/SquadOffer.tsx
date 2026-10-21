@@ -1,6 +1,6 @@
 import Cta from "@/components/site/Cta";
-import { Section } from "@/components/studio/SectionHeader";
-import { PinkGlow } from "@/components/studio/WhyBento";
+import { Section } from "@/components/site/SectionHeader";
+import { PinkGlow } from "@/components/site/PinkGlow";
 import { CALENDLY_URL } from "@/content/site";
 import { SQUAD } from "@/content/home";
 import { palettes } from "@/lib/palettes";

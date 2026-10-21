@@ -1,5 +1,5 @@
 import Cta from "@/components/site/Cta";
-import SectionHeader, { Section, TwoPartTitle } from "@/components/studio/SectionHeader";
+import SectionHeader, { Section, TwoPartTitle } from "@/components/site/SectionHeader";
 import { CALENDLY_URL, ROUTES } from "@/content/site";
 import { PAIN } from "@/content/home";
 import { palettes } from "@/lib/palettes";

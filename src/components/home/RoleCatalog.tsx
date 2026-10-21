@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import SectionHeader, { Section } from "@/components/studio/SectionHeader";
+import SectionHeader, { Section } from "@/components/site/SectionHeader";
 import { ROUTES } from "@/content/site";
 import { ROLE_CATALOG } from "@/content/home";
 import { saveHomeBrief } from "@/lib/homeBrief";
