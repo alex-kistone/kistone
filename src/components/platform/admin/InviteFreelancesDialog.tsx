@@ -18,6 +18,14 @@ type Mode = "individual" | "bcc";
 type Invitation = { id: string; email: string; first_name: string | null; mode: Mode; audience: InvitationAudience; sent_at: string; error: string | null };
 type Result = { sent: number; skipped: { email: string; reason: string }[]; failed: { email: string; error: string }[] };
 
+/** Libellés des modèles dans le sélecteur. */
+const AUDIENCE_LABELS: Record<InvitationAudience, [string, string]> = {
+  ai: ["Experts IA", "AI Engineer, AI Product, AI Leader"],
+  rpo: ["Tech recruiters", "Freelances RPO"],
+  client_ai: ["Experts IA freelance", "Besoin en AI Engineer, Product ou Leader"],
+  client_rpo: ["RPO freelance", "Besoin de recruter en CDI"],
+};
+
 /** Textes de la fenêtre selon la cible : freelances (deux modèles) ou entreprises clientes. */
 const TARGETS = {
   freelance: {
@@ -30,7 +38,7 @@ const TARGETS = {
     button: "Inviter des clients",
     title: "Inviter des entreprises à découvrir Kistone",
     placeholder: "Ex : Suite à notre échange sur votre projet d'assistant interne, voici la plateforme dont je vous parlais.",
-    audiences: ["client"] as InvitationAudience[],
+    audiences: ["client_ai", "client_rpo"] as InvitationAudience[],
   },
 };
 
@@ -170,7 +178,7 @@ export default function InviteFreelancesDialog({ registeredEmails, target = "fre
             <div className="space-y-2">
               <Label>Modèle</Label>
               <div className="grid grid-cols-2 gap-2">
-                {([["ai", "Experts IA", "AI Engineer, AI Product, AI Leader"], ["rpo", "Tech recruiters", "Freelances RPO"]] as const).map(([value, title, hint]) => (
+                {t.audiences.map((value) => [value, ...AUDIENCE_LABELS[value]] as const).map(([value, title, hint]) => (
                   <button
                     key={value}
                     type="button"
@@ -238,7 +246,7 @@ export default function InviteFreelancesDialog({ registeredEmails, target = "fre
                 <li key={h.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                   <span className="min-w-0 truncate">{h.first_name ? `${h.first_name} · ` : ""}{h.email}</span>
                   <span className="flex items-center gap-3 text-xs text-muted-foreground">
-                    {target === "freelance" ? (h.audience === "rpo" ? "RPO · " : "IA · ") : ""}{h.mode === "bcc" ? "Cci" : "Individuelle"} · {formatDate(h.sent_at)}
+                    {h.audience.endsWith("rpo") ? "RPO · " : "IA · "}{h.mode === "bcc" ? "Cci" : "Individuelle"} · {formatDate(h.sent_at)}
                     {h.error ? <span className="text-destructive">Échec</span> : registered.has(h.email.toLowerCase()) ? <span className="font-medium text-[#17663F]">Inscrit</span> : <span>En attente</span>}
                   </span>
                 </li>

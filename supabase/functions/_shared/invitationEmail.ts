@@ -6,9 +6,9 @@
 
 /**
  * Modèles : freelances experts IA (AI Engineer, AI Product, AI Leader), freelances Tech
- * recruiters (RPO), et entreprises clientes.
+ * recruiters (RPO), et entreprises clientes intéressées par des experts IA ou par du RPO.
  */
-export type InvitationAudience = "ai" | "rpo" | "client";
+export type InvitationAudience = "ai" | "rpo" | "client_ai" | "client_rpo";
 
 type Template = {
   subject: string; label: string; title: string; intro: string; benefits: string[]; cta: string; signup: string;
@@ -51,18 +51,33 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     note: FREELANCE_NOTE,
     secondary: FREELANCE_SECONDARY,
   },
-  client: {
+  client_ai: {
     subject: "Invitation à découvrir Kistone, la plateforme des experts IA freelance",
-    label: "Invitation · Entreprises",
+    label: "Invitation · Experts IA",
     title: "Votre prochain expert IA est déjà disponible.",
     intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, la plateforme freelance des experts IA. Vous décrivez votre besoin en quelques lignes : nous vous présentons un premier profil qualifié sous 48 h.",
     benefits: [
-      "Des AI Engineers, AI Product et AI Leaders qualifiés, en mission, en fractional ou en contract-to-hire",
-      "Des Tech recruiters intégrés à vos équipes pour recruter vos talents en CDI",
+      "Des AI Engineers, AI Product et AI Leaders qualifiés, pour passer vos projets IA du prototype à la production",
+      "En mission, en fractional ou en contract-to-hire : le format qui correspond à votre besoin",
       "Facturé au jour, sans frais de recrutement : contrat, CRA et facturation gérés pour vous",
     ],
     cta: "Décrire mon besoin",
     signup: "/besoin?utm_source=invitation",
+    note: "Gratuit et sans engagement : vous ne payez que les jours réalisés.",
+    secondary: { label: "Échanger 30 minutes avec moi", href: CALENDLY },
+  },
+  client_rpo: {
+    subject: "Invitation à découvrir Kistone, la plateforme des freelances RPO",
+    label: "Invitation · RPO",
+    title: "Recrutez les talents que tout le monde cherche.",
+    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, la plateforme des freelances RPO. Un Tech recruiter freelance rejoint vos équipes pour recruter vos talents en CDI : nous vous présentons un premier profil qualifié sous 48 h.",
+    benefits: [
+      "Des Tech recruiters freelance spécialisés Tech, Data/AI, Product, GTM et Sales",
+      "Intégrés à vos équipes, avec vos outils et votre marque employeur",
+      "Facturé au jour, sans honoraires au placement : contrat, CRA et facturation gérés pour vous",
+    ],
+    cta: "Décrire mon besoin",
+    signup: "/besoin?fonction=rpo&utm_source=invitation",
     note: "Gratuit et sans engagement : vous ne payez que les jours réalisés.",
     secondary: { label: "Échanger 30 minutes avec moi", href: CALENDLY },
   },

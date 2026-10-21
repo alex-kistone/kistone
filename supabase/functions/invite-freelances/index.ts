@@ -2,7 +2,8 @@
  * invite-freelances — l'admin invite des freelances ou des entreprises pas encore inscrits.
  *
  * Corps : { invitations: [{ email, first_name? }], audience: "ai" | "rpo", mode: "individual" | "bcc", message?, subject? }
- * - audience : freelances experts IA (« ai »), freelances Tech recruiters (« rpo ») ou entreprises (« client ») ;
+ * - audience : freelances experts IA (« ai ») ou RPO (« rpo »), entreprises intéressées par des experts IA
+ *   (« client_ai ») ou par du RPO (« client_rpo ») ;
  *   pour les entreprises, les domaines sous clause de non-concurrence d'Alex sont écartés ;
  * - individual : un email par personne, personnalisé avec le prénom ;
  * - bcc : un seul envoi par groupe de 49 adresses en copie cachée (« Bonjour, »).
@@ -35,7 +36,7 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => ({}));
   const mode = body.mode === "bcc" ? "bcc" : "individual";
-  const audience = body.audience === "rpo" || body.audience === "client" ? body.audience : "ai";
+  const audience = ["rpo", "client_ai", "client_rpo"].includes(body.audience) ? body.audience : "ai";
   const message = typeof body.message === "string" ? body.message.slice(0, 2000) : "";
   const subject = typeof body.subject === "string" && body.subject.trim() ? body.subject.trim().slice(0, 200) : INVITATION_TEMPLATES[audience].subject;
 
@@ -63,7 +64,7 @@ Deno.serve(async (req) => {
   const targets = list.filter((l) => {
     if (registered.has(l.email)) { skipped.push({ email: l.email, reason: "déjà inscrit" }); return false; }
     // Prospection d'entreprises : jamais vers une entreprise sous clause de non-concurrence
-    const clause = audience === "client" ? nonCompeteMatch(l.email) : null;
+    const clause = audience.startsWith("client") ? nonCompeteMatch(l.email) : null;
     if (clause) {
       skipped.push({ email: l.email, reason: clause.certain ? `clause de non-concurrence (${clause.company})` : `à vérifier : homonyme possible de ${clause.company}, sous clause` });
       return false;
