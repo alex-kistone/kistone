@@ -10,10 +10,13 @@ export const emailConfigured = () => !!Deno.env.get("RESEND_API_KEY");
 export interface EmailAttachment { filename: string; content: Uint8Array }
 
 export async function sendEmail(
-  { to, subject, html, attachments }: { to: string[]; subject: string; html: string; attachments?: EmailAttachment[] },
+  { to, bcc, replyTo, subject, html, attachments }: {
+    to: string[]; bcc?: string[]; replyTo?: string; subject: string; html: string; attachments?: EmailAttachment[];
+  },
 ): Promise<{ sent: boolean; error?: string }> {
   const key = Deno.env.get("RESEND_API_KEY");
   const recipients = to.filter((e) => e && !e.endsWith(".invalid"));
+  const hidden = (bcc ?? []).filter((e) => e && !e.endsWith(".invalid"));
   if (!key || recipients.length === 0) {
     console.log(`[email non envoyé] ${subject} → ${to.length} destinataire(s)`);
     return { sent: false };
@@ -24,6 +27,8 @@ export async function sendEmail(
     body: JSON.stringify({
       from: EMAIL_FROM,
       to: recipients,
+      ...(hidden.length ? { bcc: hidden } : {}),
+      ...(replyTo ? { reply_to: replyTo } : {}),
       subject,
       html,
       attachments: attachments?.map((a) => ({ filename: a.filename, content: toBase64(a.content) })),

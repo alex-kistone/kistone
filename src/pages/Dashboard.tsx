@@ -35,6 +35,7 @@ import AdminInvoicesPanel from "@/components/platform/AdminInvoicesPanel";
 import AdminTreasuryPanel from "@/components/platform/AdminTreasuryPanel";
 import AdminMissionsPanel from "@/components/platform/AdminMissionsPanel";
 import DashboardFilters from "@/components/platform/DashboardFilters";
+import InviteFreelancesDialog from "@/components/platform/admin/InviteFreelancesDialog";
 import AdminKPIPanel from "@/components/platform/AdminKPIPanel";
 import AdminMessagesPanel from "@/components/platform/AdminMessagesPanel";
 import AdminSupportPanel from "@/components/platform/AdminSupportPanel";
@@ -309,6 +310,9 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="recruiters">
+            <div className="mb-3 flex justify-end">
+              <InviteFreelancesDialog registeredEmails={profiles.map((p) => p.email ?? "").filter(Boolean)} />
+            </div>
             <DashboardFilters
               profiles={profiles}
               onFiltered={setFilteredProfiles}
