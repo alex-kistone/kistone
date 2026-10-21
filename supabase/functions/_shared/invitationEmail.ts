@@ -4,10 +4,21 @@
  * page en tableaux, polices du site avec repli système. Partagé avec l'admin pour l'aperçu.
  */
 
-/** Deux modèles : experts IA (AI Engineer, AI Product, AI Leader) et Tech recruiters (RPO). */
-export type InvitationAudience = "ai" | "rpo";
+/**
+ * Modèles : freelances experts IA (AI Engineer, AI Product, AI Leader), freelances Tech
+ * recruiters (RPO), et entreprises clientes.
+ */
+export type InvitationAudience = "ai" | "rpo" | "client";
 
-type Template = { subject: string; label: string; title: string; intro: string; benefits: string[]; cta: string; signup: string };
+type Template = {
+  subject: string; label: string; title: string; intro: string; benefits: string[]; cta: string; signup: string;
+  /** Ligne sous le bouton : précision et lien secondaire. */
+  note: string; secondary: { label: string; href: string };
+};
+
+const FREELANCE_NOTE = "Inscription gratuite, une dizaine de minutes.";
+const FREELANCE_SECONDARY = { label: "Découvrir l'espace freelance", href: "/freelances?utm_source=invitation" };
+const CALENDLY = "https://calendly.com/alexandre-kistone/30mins-meetup";
 
 export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
   ai: {
@@ -22,6 +33,8 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     ],
     cta: "Rejoindre Kistone",
     signup: "/register?mode=signup&utm_source=invitation",
+    note: FREELANCE_NOTE,
+    secondary: FREELANCE_SECONDARY,
   },
   rpo: {
     subject: "Invitation à rejoindre Kistone, la plateforme des freelances RPO",
@@ -35,6 +48,23 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     ],
     cta: "Rejoindre Kistone",
     signup: "/register?mode=signup&fonction=rpo&utm_source=invitation",
+    note: FREELANCE_NOTE,
+    secondary: FREELANCE_SECONDARY,
+  },
+  client: {
+    subject: "Invitation à découvrir Kistone, la plateforme des experts IA freelance",
+    label: "Invitation · Entreprises",
+    title: "Votre prochain expert IA est déjà disponible.",
+    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, la plateforme freelance des experts IA. Vous décrivez votre besoin en quelques lignes : nous vous présentons un premier profil qualifié sous 48 h.",
+    benefits: [
+      "Des AI Engineers, AI Product et AI Leaders qualifiés, en mission, en fractional ou en contract-to-hire",
+      "Des Tech recruiters intégrés à vos équipes pour recruter vos talents en CDI",
+      "Facturé au jour, sans frais de recrutement : contrat, CRA et facturation gérés pour vous",
+    ],
+    cta: "Décrire mon besoin",
+    signup: "/besoin?utm_source=invitation",
+    note: "Gratuit et sans engagement : vous ne payez que les jours réalisés.",
+    secondary: { label: "Échanger 30 minutes avec moi", href: CALENDLY },
   },
 };
 
@@ -53,7 +83,7 @@ export function invitationEmail({ audience = "ai", firstName, message, appUrl = 
 }) {
   const tpl = INVITATION_TEMPLATES[audience];
   const join = `${appUrl}${tpl.signup}`;
-  const discover = `${appUrl}/freelances?utm_source=invitation`;
+  const secondary = tpl.secondary.href.startsWith("http") ? tpl.secondary.href : `${appUrl}${tpl.secondary.href}`;
   const hello = firstName?.trim() ? `Bonjour ${esc(firstName.trim())},` : "Bonjour,";
   const personal = message?.trim()
     ? `<tr><td style="padding:0 0 20px"><div style="background:#F5F1EA;border-radius:16px;padding:16px 18px;font-family:${TEXT};font-size:15px;line-height:1.6;color:#3D3A36">${esc(message.trim()).replace(/\n/g, "<br>")}</div></td></tr>`
@@ -81,7 +111,7 @@ export function invitationEmail({ audience = "ai", firstName, message, appUrl = 
           <tr><td style="padding:6px 0 16px">
             <a href="${join}" style="display:inline-block;background:#FF2E6E;color:#FFFFFF;font-family:${TEXT};font-size:15px;font-weight:600;text-decoration:none;padding:14px 26px;border-radius:999px">${esc(tpl.cta)} &rarr;</a>
           </td></tr>
-          <tr><td style="padding:0 0 26px;font-family:${TEXT};font-size:14px;line-height:1.5;color:#5E5A54">Inscription gratuite, une dizaine de minutes. <a href="${discover}" style="color:#141312;text-decoration:underline">Découvrir l'espace freelance</a></td></tr>
+          <tr><td style="padding:0 0 26px;font-family:${TEXT};font-size:14px;line-height:1.5;color:#5E5A54">${esc(tpl.note)} <a href="${secondary}" style="color:#141312;text-decoration:underline">${esc(tpl.secondary.label)}</a></td></tr>
           <tr><td style="border-top:1px solid rgba(20,19,18,0.08);padding:20px 0 0">
             <table role="presentation" cellpadding="0" cellspacing="0"><tr>
               <td width="52" valign="middle"><img src="${SITE}/team/alexandre-guego.jpg" alt="" width="42" height="42" style="display:block;border-radius:21px;object-fit:cover;border:0"></td>

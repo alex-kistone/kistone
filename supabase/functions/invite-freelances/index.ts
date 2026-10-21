@@ -1,8 +1,9 @@
 /**
- * invite-freelances — l'admin invite des freelances pas encore inscrits à rejoindre Kistone.
+ * invite-freelances — l'admin invite des freelances ou des entreprises pas encore inscrits.
  *
  * Corps : { invitations: [{ email, first_name? }], audience: "ai" | "rpo", mode: "individual" | "bcc", message?, subject? }
- * - audience : modèle experts IA (AI Engineer, AI Product, AI Leader) ou Tech recruiters (RPO) ;
+ * - audience : freelances experts IA (« ai »), freelances Tech recruiters (« rpo ») ou entreprises (« client ») ;
+ *   pour les entreprises, les domaines sous clause de non-concurrence d'Alex sont écartés ;
  * - individual : un email par personne, personnalisé avec le prénom ;
  * - bcc : un seul envoi par groupe de 49 adresses en copie cachée (« Bonjour, »).
  * Les adresses déjà inscrites (freelance ou client) sont écartées. Les réponses arrivent chez
@@ -12,6 +13,7 @@
 import { requireAdmin } from "../_shared/adminAuth.ts";
 import { APP_URL, emailConfigured, sendEmail } from "../_shared/email.ts";
 import { INVITATION_TEMPLATES, invitationEmail } from "../_shared/invitationEmail.ts";
+import { nonCompeteMatch } from "../_shared/nonCompete.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,7 +35,7 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => ({}));
   const mode = body.mode === "bcc" ? "bcc" : "individual";
-  const audience = body.audience === "rpo" ? "rpo" : "ai";
+  const audience = body.audience === "rpo" || body.audience === "client" ? body.audience : "ai";
   const message = typeof body.message === "string" ? body.message.slice(0, 2000) : "";
   const subject = typeof body.subject === "string" && body.subject.trim() ? body.subject.trim().slice(0, 200) : INVITATION_TEMPLATES[audience].subject;
 
@@ -60,6 +62,12 @@ Deno.serve(async (req) => {
   const registered = new Set([...(freelances ?? []), ...(clients ?? [])].map((r: { email: string | null }) => (r.email ?? "").toLowerCase()));
   const targets = list.filter((l) => {
     if (registered.has(l.email)) { skipped.push({ email: l.email, reason: "déjà inscrit" }); return false; }
+    // Prospection d'entreprises : jamais vers une entreprise sous clause de non-concurrence
+    const clause = audience === "client" ? nonCompeteMatch(l.email) : null;
+    if (clause) {
+      skipped.push({ email: l.email, reason: clause.certain ? `clause de non-concurrence (${clause.company})` : `à vérifier : homonyme possible de ${clause.company}, sous clause` });
+      return false;
+    }
     return true;
   });
   if (!targets.length) return json({ sent: 0, skipped, failed: [] });

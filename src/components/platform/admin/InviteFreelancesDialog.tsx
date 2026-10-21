@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileUp, Loader2, Send, UserPlus } from "lucide-react";
+import { Building2, FileUp, Loader2, Send, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,24 +11,43 @@ import { supabase } from "@/integrations/supabase/client";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { formatDate } from "@/lib/blog";
 import { csvToInviteeLines, parseInvitees } from "@/lib/invitees";
+import { nonCompeteMatch } from "../../../../supabase/functions/_shared/nonCompete";
 import { INVITATION_TEMPLATES, invitationEmail, type InvitationAudience } from "../../../../supabase/functions/_shared/invitationEmail";
 
 type Mode = "individual" | "bcc";
 type Invitation = { id: string; email: string; first_name: string | null; mode: Mode; audience: InvitationAudience; sent_at: string; error: string | null };
 type Result = { sent: number; skipped: { email: string; reason: string }[]; failed: { email: string; error: string }[] };
 
+/** Textes de la fenêtre selon la cible : freelances (deux modèles) ou entreprises clientes. */
+const TARGETS = {
+  freelance: {
+    button: "Inviter des freelances",
+    title: "Inviter des freelances à rejoindre Kistone",
+    placeholder: "Ex : Nous avons échangé au meetup IA de jeudi, je pense que nos missions RAG vous plairont.",
+    audiences: ["ai", "rpo"] as InvitationAudience[],
+  },
+  client: {
+    button: "Inviter des clients",
+    title: "Inviter des entreprises à découvrir Kistone",
+    placeholder: "Ex : Suite à notre échange sur votre projet d'assistant interne, voici la plateforme dont je vous parlais.",
+    audiences: ["client"] as InvitationAudience[],
+  },
+};
+
 /**
- * Invitation par email de freelances pas encore inscrits (fonction invite-freelances, Resend) :
- * un email personnalisé par personne, ou un envoi groupé en copie cachée. Aperçu exact de
- * l'email et historique des dernières invitations.
+ * Invitation par email de freelances ou d'entreprises pas encore inscrits (fonction
+ * invite-freelances, Resend) : un email personnalisé par personne, ou un envoi groupé en copie
+ * cachée. Aperçu exact de l'email et historique des dernières invitations de la cible. Côté
+ * entreprises, les adresses sous clause de non-concurrence sont signalées et écartées.
  */
-export default function InviteFreelancesDialog({ registeredEmails }: { registeredEmails: string[] }) {
+export default function InviteFreelancesDialog({ registeredEmails, target = "freelance" }: { registeredEmails: string[]; target?: keyof typeof TARGETS }) {
+  const t = TARGETS[target];
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [raw, setRaw] = useState("");
   const [mode, setMode] = useState<Mode>("individual");
-  const [audience, setAudience] = useState<InvitationAudience>("ai");
-  const [subject, setSubject] = useState(INVITATION_TEMPLATES.ai.subject);
+  const [audience, setAudience] = useState<InvitationAudience>(t.audiences[0]);
+  const [subject, setSubject] = useState(INVITATION_TEMPLATES[t.audiences[0]].subject);
   // Changer de modèle reprend son objet, sauf si l'admin l'a personnalisé
   const changeAudience = (a: InvitationAudience) => {
     if (subject === INVITATION_TEMPLATES[audience].subject) setSubject(INVITATION_TEMPLATES[a].subject);
@@ -41,6 +60,11 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
 
   const { invitees, invalid } = useMemo(() => parseInvitees(raw), [raw]);
   const registered = useMemo(() => new Set(registeredEmails.map((e) => e.toLowerCase())), [registeredEmails]);
+  // Entreprises : adresses dont le domaine relève de la clause de non-concurrence d'Alex
+  const clauseHits = useMemo(
+    () => (target === "client" ? invitees.flatMap((i) => { const m = nonCompeteMatch(i.email); return m ? [{ email: i.email, ...m }] : []; }) : []),
+    [target, invitees],
+  );
   const preview = useMemo(
     () => invitationEmail({ audience, firstName: mode === "individual" ? invitees[0]?.first_name ?? "Prénom" : null, message }),
     [audience, mode, invitees, message],
@@ -62,6 +86,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
     const { data } = await supabase
       .from("freelance_invitations" as never)
       .select("id, email, first_name, mode, audience, sent_at, error")
+      .in("audience", t.audiences)
       .order("sent_at", { ascending: false })
       .limit(30);
     setHistory((data as Invitation[] | null) ?? []);
@@ -89,11 +114,11 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setResult(null); }}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2"><UserPlus className="h-4 w-4" />Inviter des freelances</Button>
+        <Button variant="outline" size="sm" className="gap-2">{target === "client" ? <Building2 className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}{t.button}</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[92vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Inviter des freelances à rejoindre Kistone</DialogTitle>
+          <DialogTitle>{t.title}</DialogTitle>
           <DialogDescription>Un email à la charte Kistone, envoyé depuis notifications@kistone.fr ; les réponses arrivent dans votre boîte.</DialogDescription>
         </DialogHeader>
 
@@ -127,8 +152,14 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
                 {invitees.filter((i) => registered.has(i.email)).length ? ` · ${invitees.filter((i) => registered.has(i.email)).length} déjà inscrite(s), ignorée(s)` : ""}
                 {invalid.length ? ` · ${invalid.length} invalide(s) : ${invalid.slice(0, 3).join(", ")}` : ""}
               </p>
+              {clauseHits.length > 0 && (
+                <p className="rounded-md bg-destructive/10 px-2.5 py-2 text-xs text-destructive">
+                  Clause de non-concurrence : {clauseHits.map((c) => `${c.email} (${c.certain ? c.company : `à vérifier, ${c.company} ?`})`).join(", ")}. Ces adresses ne recevront pas d'invitation.
+                </p>
+              )}
             </div>
 
+            {t.audiences.length > 1 && (
             <div className="space-y-2">
               <Label>Modèle</Label>
               <div className="grid grid-cols-2 gap-2">
@@ -146,6 +177,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
                 ))}
               </div>
             </div>
+            )}
 
             <div className="space-y-2">
               <Label>Mode d'envoi</Label>
@@ -167,7 +199,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="inv-message">Mot personnel (facultatif)</Label>
-              <Textarea id="inv-message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Ex : Nous avons échangé au meetup IA de jeudi, je pense que nos missions RAG vous plairont." />
+              <Textarea id="inv-message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder={t.placeholder} />
             </div>
 
             <Button onClick={send} disabled={sending || !invitees.length} className="w-full gap-2">
@@ -199,7 +231,7 @@ export default function InviteFreelancesDialog({ registeredEmails }: { registere
                 <li key={h.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                   <span className="min-w-0 truncate">{h.first_name ? `${h.first_name} · ` : ""}{h.email}</span>
                   <span className="flex items-center gap-3 text-xs text-muted-foreground">
-                    {h.audience === "rpo" ? "RPO" : "IA"} · {h.mode === "bcc" ? "Cci" : "Individuelle"} · {formatDate(h.sent_at)}
+                    {target === "freelance" ? (h.audience === "rpo" ? "RPO · " : "IA · ") : ""}{h.mode === "bcc" ? "Cci" : "Individuelle"} · {formatDate(h.sent_at)}
                     {h.error ? <span className="text-destructive">Échec</span> : registered.has(h.email.toLowerCase()) ? <span className="font-medium text-[#17663F]">Inscrit</span> : <span>En attente</span>}
                   </span>
                 </li>

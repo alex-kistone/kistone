@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import KycStatusPill from "./admin/KycStatusPill";
 import { useKycStatuses } from "./admin/kycDossiers";
 import ClientDetail from "./admin/ClientDetail";
+import InviteFreelancesDialog from "./admin/InviteFreelancesDialog";
 
 /** Paramètre d'URL de l'onglet Clients qui ouvre la fiche d'un client (identifiant du compte). */
 export const CLIENT_PARAM = "client";
@@ -120,6 +121,9 @@ const AdminClientsPanel = ({ onOpenChat }: AdminClientsPanelProps) => {
           <ShieldCheck className="h-3.5 w-3.5" />
           Dossier à vérifier ({kycToReviewCount})
         </Button>
+        <div className="sm:ml-auto">
+          <InviteFreelancesDialog target="client" registeredEmails={clients.map((c) => c.email)} />
+        </div>
       </div>
 
       {filtered.length === 0 ? (
