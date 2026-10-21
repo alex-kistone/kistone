@@ -6,8 +6,8 @@ import type { Vertical } from "@/lib/verticals";
 export const HERO = {
   // Plateforme freelance IA et RPO (jamais « management de transition »)
   titleLead: "La plateforme freelance",
-  titleHighlight: "experts IA & RPO",
-  titleEnd: ".",
+  titleHighlight: "experts IA",
+  titleHighlight2: "RPO",
   subtitle:
     "AI Engineers, AI Product, AI Leaders et Tech recruiters (RPO) sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l’administratif géré pour vous.",
   primary: "Accéder aux profils",
