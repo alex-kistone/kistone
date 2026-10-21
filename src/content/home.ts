@@ -7,7 +7,7 @@ export const HERO = {
   // Plateforme freelance IA et RPO (jamais « management de transition »)
   eyebrow: "Plateforme freelance IA & RPO",
   titleLead: "Votre prochain",
-  titleHighlight: "expert Freelance",
+  titleHighlight: "expert",
   titleEnd: "est déjà disponible.",
   subtitle:
     "AI Engineers, AI Product, AI Leaders et Tech recruiters (RPO) sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l’administratif géré pour vous.",

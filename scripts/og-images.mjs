@@ -27,7 +27,7 @@ const T = {
 
 /** a = début du titre, b = fin en dégradé, items = vignette de droite (null = pas de vignette). */
 const IMAGES = [
-  { file: "default", a: "Votre prochain", b: "expert Freelance", c: "est déjà disponible.", label: "Plateforme freelance IA & RPO", items: [["AI Engineer", T.blue], ["AI Product", T.lilac], ["AI Leader", T.teal], ["Tech Recruiter · RPO", T.sage]] },
+  { file: "default", a: "Votre prochain", b: "expert", c: "est déjà disponible.", label: "Plateforme freelance IA & RPO", items: [["AI Engineer", T.blue], ["AI Product", T.lilac], ["AI Leader", T.teal], ["Tech Recruiter · RPO", T.sage]] },
   { file: "ai-engineer", a: "Recrutez un", b: "AI Engineer", c: "freelance.", label: "LLM · RAG · Agents · MLOps", tone: T.blue, items: ["LLM & IA générative", "RAG & recherche sémantique", "Agents IA", "MLOps / LLMOps"] },
   { file: "ai-product-manager", a: "Recrutez un", b: "AI Product Manager", c: "freelance.", label: "Product Manager IA · AI Designer", tone: T.lilac, items: ["Product Manager IA", "Product Owner produits LLM", "AI Designer / UX IA", "Discovery & cas d'usage IA"] },
   { file: "ai-leader", a: "Recrutez un", b: "AI Leader", c: "freelance.", label: "CTO · Head of AI · Chief AI Officer", tone: T.teal, items: ["CTO", "Head of AI", "Chief AI Officer", "Stratégie IA & GenAI"] },
