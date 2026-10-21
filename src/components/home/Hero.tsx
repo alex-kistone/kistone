@@ -100,13 +100,13 @@ export default function Hero() {
         {/* Éclair géant en filigrane, qui déborde sur la droite */}
         <BoltWatermark strokeWidth={14} className="-right-40 -top-24 h-[620px] w-auto rotate-[14deg] md:-right-48 md:h-[880px]" />
         <HeroDecor />
-        <p className="ks-reveal font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle md:text-xs">{HERO.eyebrow}</p>
+        <p className="ks-reveal font-ks-mono text-[13px] font-medium uppercase tracking-[0.16em] md:text-[15px]"><span className="ks-grad-text">{HERO.eyebrow}</span></p>
         <h1 className="ks-reveal mt-5 max-w-[1100px] font-ks-display text-[46px] font-bold leading-none tracking-[-0.05em] text-ks-ink md:mt-6 md:text-[64px] md:leading-[0.98] md:tracking-[-0.048em] lg:text-[84px] xl:text-[96px]">
           {HERO.titleLead} <span className="ks-grad-text">{HERO.titleHighlight}</span>
           <br className="hidden sm:block" /> {HERO.titleEnd}
         </h1>
 
-        <p className="ks-reveal mt-5 max-w-[820px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">{HERO.subtitle}</p>
+        <p className="ks-reveal mt-5 max-w-[720px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">{HERO.subtitle}</p>
 
         <div className="ks-reveal mt-7 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:gap-3 md:mt-10">
           <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow className="h-[54px] sm:h-14">

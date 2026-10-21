@@ -4,13 +4,13 @@ import type { Vertical } from "@/lib/verticals";
 // Contenus de l'accueil. Les [placeholders] restent tels quels en attendant le vrai contenu.
 
 export const HERO = {
-  // Plateforme freelance des experts IA (jamais « management de transition »)
-  eyebrow: "Plateforme freelance des experts IA",
+  // Plateforme freelance IA et RPO (jamais « management de transition »)
+  eyebrow: "Plateforme freelance IA & RPO",
   titleLead: "Votre prochain",
-  titleHighlight: "expert IA",
+  titleHighlight: "expert Freelance",
   titleEnd: "est déjà disponible.",
   subtitle:
-    "AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l'administratif géré pour vous.",
+    "AI Engineers, AI Product, AI Leaders et Tech recruiters (RPO) sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l’administratif géré pour vous.",
   primary: "Accéder aux profils",
   secondary: "Je suis freelance",
   note: "Profils qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
