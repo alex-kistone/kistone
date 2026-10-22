@@ -23,7 +23,7 @@ export default function PainSituations() {
               <h3 className="font-ks-display text-[22px] font-semibold leading-[1.15] tracking-[-0.02em]">{c.title}</h3>
               <p className="text-[15px] leading-[1.55] text-ks-soft">{c.desc}</p>
               <Cta href={`${ROUTES.recruit}?fonction=${v.id}`} variant="secondary" arrow className="mt-auto self-start">
-                {v.id === "rpo" ? "Expert + Tech recruiter" : v.short}
+                {v.id === "rpo" ? "Tech Recruiter" : v.short}
               </Cta>
             </li>
           );

@@ -72,7 +72,7 @@ export const PAIN = {
     { tag: "POC bloqué", title: "Un prototype qui ne passe pas en production", desc: "La démo convainc, mais il faut fiabiliser, évaluer, sécuriser et déployer.", vertical: "engineer" as Vertical },
     { tag: "Expertise absente", title: "Personne dans l'équipe ne maîtrise l'IA", desc: "LLM, RAG, agents, évaluation : une compétence pointue dont vous avez besoin maintenant.", vertical: "product" as Vertical },
     { tag: "Pas de cap", title: "Beaucoup d'idées d'IA, pas de feuille de route", desc: "Il faut prioriser les cas d'usage, choisir les plateformes et poser la gouvernance.", vertical: "leader" as Vertical },
-    { tag: "Recrutement long", title: "Un recrutement IA qui prend du temps", desc: "Un expert démarre en mission dès maintenant, et notre Tech recruiter accélère l'embauche en CDI.", vertical: "rpo" as Vertical },
+    { tag: "Recrutements en CDI", title: "Plan de recrutement important", desc: "Un Tech Recruiter démarre en mission RPO dès maintenant et accélère vos embauches en CDI.", vertical: "rpo" as Vertical },
   ],
 };
 
