@@ -64,15 +64,21 @@ export const STEPS: { num: string; title: string; desc: string; link?: { label: 
  * la famille qui y répond. Le recrutement en CDI n'est jamais présenté comme un problème :
  * l'expert démarre et le Tech recruiter accélère l'embauche, les deux ensemble.
  */
-export const PAIN = {
-  titleA: "Une démo d'IA, c'est facile.",
-  titleB: "La mettre en production, c'est un métier.",
-  subtitle: "Les compétences IA sont rares, et les projets n'attendent pas. Par où commencez-vous ?",
+/**
+ * Les situations qui amènent un client : urgence, expertise pointue, stratégie, recrutements.
+ * Chaque carte mène au dépôt de besoin, pré-rempli sur la famille qui y répond (sauf l'urgence).
+ */
+export type PainCard = { tag: string; title: string; desc: string; cta: string; vertical?: Vertical; palette: PaletteName };
+
+export const PAIN: { titleA: string; titleB: string; subtitle: string; cards: PainCard[] } = {
+  titleA: "Urgent, pointu ou stratégique ?",
+  titleB: "Votre besoin a son expert.",
+  subtitle: "Les compétences IA sont rares, et les projets n'attendent pas.",
   cards: [
-    { tag: "POC bloqué", title: "Un prototype qui ne passe pas en production", desc: "La démo convainc, mais il faut fiabiliser, évaluer, sécuriser et déployer.", vertical: "engineer" as Vertical },
-    { tag: "Expertise absente", title: "Personne dans l'équipe ne maîtrise l'IA", desc: "LLM, RAG, agents, évaluation : une compétence pointue dont vous avez besoin maintenant.", vertical: "product" as Vertical },
-    { tag: "Pas de cap", title: "Beaucoup d'idées d'IA, pas de feuille de route", desc: "Il faut prioriser les cas d'usage, choisir les plateformes et poser la gouvernance.", vertical: "leader" as Vertical },
-    { tag: "Recrutements en CDI", title: "Plan de recrutement important", desc: "Un Tech Recruiter démarre en mission RPO dès maintenant et accélère vos embauches en CDI.", vertical: "rpo" as Vertical },
+    { tag: "Urgence projet", title: "Un projet IA qui ne peut pas attendre", desc: "Un premier profil qualifié sous 48 h, un démarrage en une semaine, le contrat et l'administratif gérés.", cta: "Partager mon besoin", palette: "sage" },
+    { tag: "Expertise pointue", title: "Une compétence IA introuvable en interne", desc: "LLM, RAG, agents, évaluation, MLOps : un AI Engineer qui maîtrise déjà le sujet et livre dès les premiers jours.", cta: "AI Engineer", vertical: "engineer", palette: "blue" },
+    { tag: "Stratégie & gouvernance", title: "Une IA sans cap ni pilote", desc: "Prioriser les cas d'usage, choisir les plateformes, poser la gouvernance : un AI Leader en fractional fixe le cap.", cta: "AI Leader", vertical: "leader", palette: "teal" },
+    { tag: "Recrutements en CDI", title: "Plan de recrutement important", desc: "Un Tech Recruiter démarre en mission RPO dès maintenant et accélère vos embauches en CDI.", cta: "Tech Recruiter", vertical: "rpo", palette: "apricot" },
   ],
 };
 
