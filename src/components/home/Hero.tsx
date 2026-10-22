@@ -33,61 +33,12 @@ function ProfileCard({ r, hidden }: { r: Recruiter; hidden?: boolean }) {
   );
 }
 
-/** Habillage du hero : cartes de la plateforme qui flottent de part et d'autre du titre (grands écrans). */
+/** Habillage du hero : halo du dégradé derrière le titre (grands écrans). */
 function HeroDecor() {
-  const card = "rounded-[20px] border border-[rgba(20,19,18,0.06)] bg-white p-4 text-left shadow-[0_2px_4px_rgba(20,19,18,0.04),0_24px_48px_-24px_rgba(60,40,20,0.3)]";
   return (
     <div className="pointer-events-none absolute inset-0 -z-10 hidden xl:block" aria-hidden="true">
       {/* Halo du dégradé derrière le titre */}
       <div className="absolute left-1/2 top-[120px] h-[420px] w-[880px] -translate-x-1/2 rounded-full opacity-[0.16] blur-[90px]" style={{ background: "linear-gradient(100deg, #FF2E6E, #B14DF5 55%, #4C7DFF)" }} />
-
-      {/* Le besoin du client */}
-      <div className="absolute left-[2.5%] top-[36px] w-[230px] -rotate-[5deg]">
-        <div className={`ks-float ${card}`}>
-          <p className="font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-subtle">Votre besoin</p>
-          <p className="mt-1.5 text-[14px] font-semibold leading-snug">AI Engineer pour industrialiser notre RAG</p>
-          <p className="mt-2 text-[12px] text-ks-subtle">6 mois · Paris hybride</p>
-        </div>
-      </div>
-
-      {/* Le profil trouvé */}
-      <div className="absolute right-[2.5%] top-[52px] w-[240px] rotate-[4deg]">
-        <div className={`ks-float ${card}`} style={{ animationDelay: "-2s" }}>
-          <div className="flex items-center gap-3">
-            <img src="/people/lina.jpg" alt="" className="h-10 w-10 shrink-0 rounded-full object-cover object-top" style={{ background: "#DDE8F5" }} />
-            <div className="min-w-0">
-              <p className="text-[14px] font-semibold">Lina</p>
-              <p className="text-[12px] text-ks-subtle">AI Engineer · RAG</p>
-            </div>
-            <span className="ml-auto font-ks-display text-[20px] font-bold tracking-[-0.03em] ks-grad-text">95%</span>
-          </div>
-          <div className="mt-3 h-[5px] rounded-full bg-ks-secondary">
-            <div className="h-[5px] w-[95%] rounded-full ks-grad-bg" />
-          </div>
-        </div>
-      </div>
-
-      {/* L'administratif géré */}
-      <div className="absolute left-[4%] top-[400px] w-[210px] rotate-[3deg]">
-        <div className={`ks-float ${card}`} style={{ animationDelay: "-4s" }}>
-          {["Contrat signé", "KYC vérifié", "CRA validé"].map((t) => (
-            <p key={t} className="flex items-center gap-2.5 py-1 text-[13px]">
-              <span className="flex h-[18px] w-[18px] items-center justify-center rounded-md ks-grad-bg">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-              </span>
-              {t}
-            </p>
-          ))}
-        </div>
-      </div>
-
-      {/* Le délai */}
-      <div className="absolute right-[4.5%] top-[420px] w-[190px] -rotate-[4deg]">
-        <div className={`ks-float ${card}`} style={{ animationDelay: "-3s" }}>
-          <p className="font-ks-display text-[34px] font-bold leading-none tracking-[-0.05em]">48<span className="text-[18px] ks-grad-text"> h</span></p>
-          <p className="mt-1.5 text-[12px] leading-snug text-ks-subtle">pour un premier profil qualifié</p>
-        </div>
-      </div>
     </div>
   );
 }
