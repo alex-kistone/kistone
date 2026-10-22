@@ -67,8 +67,9 @@ Réponds UNIQUEMENT avec le texte de la présentation, sans guillemets ni préfi
     });
 
     if (!response.ok) {
-      console.error("Anthropic error:", response.status, await response.text());
-      return upstreamErrorResponse(response.status, corsHeaders);
+      const detail = await response.text();
+      console.error("Anthropic error:", response.status, detail);
+      return upstreamErrorResponse(response.status, corsHeaders, detail);
     }
 
     const data = await response.json();

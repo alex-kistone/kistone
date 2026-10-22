@@ -113,8 +113,9 @@ ${isRpo ? `- metiers : 3 au maximum parmi ${metiers.join(", ")}, selon les profi
     });
 
     if (!response.ok) {
-      console.error("Anthropic error:", response.status, await response.text());
-      return upstreamErrorResponse(response.status, corsHeaders);
+      const detail = await response.text();
+      console.error("Anthropic error:", response.status, detail);
+      return upstreamErrorResponse(response.status, corsHeaders, detail);
     }
     const data = await response.json();
     const block = data.content?.find((c: { type: string }) => c.type === "tool_use");
