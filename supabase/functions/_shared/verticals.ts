@@ -93,7 +93,7 @@ export const VERTICALS: readonly VerticalConfig[] = [
     roles: "Tech recruiter freelance",
     description: "Des recruteurs tech et IA intégrés à vos équipes pour internaliser vos talents en CDI.",
     palette: "sage", specialties: [], // métiers recrutés : METIERS (taxonomy.ts)
-    jarvi: { metier: "RPO", projectId: "a28725c1-24c0-46b4-bb63-afd1854df1d9", specialtiesFieldId: "adc61fa4-ad68-4f12-983b-69afe9c03d4c" },
+    jarvi: { metier: "Recruiter", projectId: "a28725c1-24c0-46b4-bb63-afd1854df1d9", specialtiesFieldId: "adc61fa4-ad68-4f12-983b-69afe9c03d4c" },
   },
 ];
 

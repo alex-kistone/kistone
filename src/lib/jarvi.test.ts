@@ -81,7 +81,7 @@ describe("toJarviFields · familles IA", () => {
     expect(toJarviFields(leader, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("AI Leader");
     expect(toJarviFields({ ...leader, vertical: "engineer" as const }, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("AI Engineer");
     expect(toJarviFields({ ...leader, vertical: "product" as const }, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("AI Product");
-    expect(toJarviFields(base, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("RPO");
+    expect(toJarviFields(base, JARVI_SPECIALITES).fields[JARVI_FIELDS.metier]).toBe("Recruiter");
   });
 
   it("ajoute « AI Leader Part-time » quand le leader n'est pas à temps plein", () => {
