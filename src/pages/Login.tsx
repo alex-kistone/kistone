@@ -35,7 +35,8 @@ const Login = () => {
   const getDefaultRedirectPath = () => (userType === "client" ? "/client/dashboard" : "/profile");
 
   const getRedirectPath = async (userId: string): Promise<string> => {
-    if (redirectParam?.startsWith("/")) {
+    // Chemin interne uniquement : « //site » ou « /\site » mèneraient vers un autre domaine
+    if (redirectParam && /^\/(?![/\\])/.test(redirectParam) && !redirectParam.includes("\\")) {
       return redirectParam;
     }
 

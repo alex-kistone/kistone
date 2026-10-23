@@ -26,19 +26,27 @@ export const BLOG_PATH = "/ressources";
 export const postPath = (p: Pick<BlogPost, "slug">) => `${BLOG_PATH}/${p.slug}`;
 
 /**
- * Articles publiés connus au rendu : fournis par le pré-rendu (contexte côté serveur,
- * window.__KS_BLOG__ dans la page), sinon chargés depuis Supabase.
+ * Articles publiés connus au rendu : fournis par le pré-rendu (contexte côté serveur, bloc
+ * JSON #ks-blog dans la page, non exécutable pour respecter la CSP), sinon chargés depuis Supabase.
  */
 export const BlogDataContext = createContext<BlogPost[] | null>(null);
 
-declare global {
-  interface Window { __KS_BLOG__?: BlogPost[] }
+let embedded: BlogPost[] | null | undefined;
+function embeddedPosts(): BlogPost[] | null {
+  if (embedded !== undefined) return embedded;
+  try {
+    const parsed = JSON.parse(document.getElementById("ks-blog")?.textContent ?? "null");
+    embedded = Array.isArray(parsed) ? parsed : null;
+  } catch {
+    embedded = null;
+  }
+  return embedded;
 }
 
 export function useInitialPosts(): BlogPost[] | null {
   const fromServer = useContext(BlogDataContext);
   if (fromServer) return fromServer;
-  return typeof window !== "undefined" && Array.isArray(window.__KS_BLOG__) ? window.__KS_BLOG__ : null;
+  return typeof document !== "undefined" ? embeddedPosts() : null;
 }
 
 export async function fetchPublishedPosts(): Promise<BlogPost[]> {

@@ -33,7 +33,7 @@ try {
 const ROUTES = [...PRERENDER_ROUTES, ...posts.map((p) => `/ressources/${p.slug}`)];
 // Données injectées dans la page pour l'accueil et le blog (évite un écran de chargement)
 const withData = (route) => route === "/" || route.startsWith("/ressources");
-const dataScript = `<script>window.__KS_BLOG__=${JSON.stringify(posts).replace(/</g, "\\u003c")}</script>`;
+const dataScript = `<script type="application/json" id="ks-blog">${JSON.stringify(posts).replace(/</g, "\\u003c")}</script>`;
 
 const template = readFileSync(join(dist, "index.html"), "utf8");
 // Gabarit vierge pour les espaces connectés : servi tel quel pour toute route non pré-rendue.

@@ -21,3 +21,6 @@ verify_jwt = false
 
 [functions.linkedin-auth]
 verify_jwt = false
+
+[functions.security-watch]
+verify_jwt = false
