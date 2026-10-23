@@ -49,8 +49,13 @@ const MODEL_TO_JARVI: Record<string, string> = { RPO: "RPO", "Succès": "Success
 // nouveaux choix sans perdre les anciens, et une valeur vide est ignorée. Une ville, un secteur ou
 // une spécialité retirés sur la plateforme restent donc dans Jarvi, à nettoyer à la main.
 
-/** Spécialités tech (fiche admin) : valeurs du champ Jarvi « Spécialités RPO Tech ». */
-export const JARVI_TECH_SPECIALTIES = ["Cyber", "Data/IA", "Engineering", "Infra/Cloud", "SAP"];
+/**
+ * Spécialités tech (fiche admin) : choix du champ Jarvi « Spécialités RPO Tech » (relevés le
+ * 2026-10-23). « Data/IA » n'existe pas dans Jarvi mais reste coché sur des fiches : conservé.
+ */
+export const JARVI_TECH_SPECIALTIES = [
+  "Architectes", "Chef de projet", "Cyber", "Data/IA", "Engineering", "Infra/Cloud", "Java", "Microsoft", "Python", "SAP", "SI",
+];
 
 /** Secteurs de la plateforme → valeurs Jarvi (« Autre » n'a pas d'équivalent). */
 const SECTOR_TO_JARVI: Record<string, string> = {
