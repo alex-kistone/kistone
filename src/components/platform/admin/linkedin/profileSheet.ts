@@ -422,5 +422,9 @@ export async function canvasToPdf(canvas: HTMLCanvasElement): Promise<Blob> {
   const xref = length;
   push(`xref\n0 6\n0000000000 65535 f \n${[1, 2, 3, 4, 5].map((n) => `${String(offsets[n]).padStart(10, "0")} 00000 n \n`).join("")}`);
   push(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
-  return new Blob(parts, { type: "application/pdf" });
+  // Un seul tampon contigu : accepté par Blob quelle que soit la version de TypeScript
+  const out = new Uint8Array(length);
+  let at = 0;
+  for (const p of parts) { out.set(p, at); at += p.length; }
+  return new Blob([out], { type: "application/pdf" });
 }
