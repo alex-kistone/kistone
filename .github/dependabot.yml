@@ -11,6 +11,11 @@ updates:
       time: "07:00"
       timezone: Europe/Paris
     open-pull-requests-limit: 5
+    # Pas de version majeure automatique (Vite, React Router, Tailwind…) : elles demandent une
+    # migration et cassent le build. Les correctifs de sécurité continuent d'arriver.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       mineures:
         update-types: [minor, patch]
