@@ -1,6 +1,6 @@
 /**
  * Les familles (verticales) de la plateforme : trois familles d'experts IA (Engineer, Product,
- * Leader) et le RPO « Tech recruiter », qui aide le client à internaliser ses talents IA en CDI.
+ * Leader) et le RPO « Tech Recruiter », qui aide le client à internaliser ses talents IA en CDI.
  * Chaque verticale a ses spécialités, son projet et son champ Jarvi ; le socle (comptes,
  * dossiers, contrats, CRA, facturation) est commun.
  *
@@ -21,7 +21,7 @@ export interface VerticalConfig {
   label: string;
   /** Famille du choix client : « AI » pour les experts IA, « RPO » pour le recrutement. */
   group: "AI" | "RPO";
-  /** Profil recherché, après « Je recherche » (« un Tech recruiter », « un AI Engineer »). */
+  /** Profil recherché, après « Je recherche » (« un Tech Recruiter », « un AI Engineer »). */
   seeking: string;
   /** Fiche de poste publique : /recruter/<pageSlug>. */
   pageSlug: string;
@@ -89,8 +89,8 @@ export const VERTICALS: readonly VerticalConfig[] = [
     jarvi: { metier: "AI Leader", projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c5f1c316-4911-478b-bded-220bebe7c639" },
   },
   {
-    id: "rpo", short: "RPO", label: "Tech recruiter", group: "RPO", seeking: "un Tech recruiter", pageSlug: "tech-recruiter",
-    roles: "Tech recruiter freelance",
+    id: "rpo", short: "RPO", label: "Tech Recruiter", group: "RPO", seeking: "un Tech Recruiter", pageSlug: "tech-recruiter",
+    roles: "Tech Recruiter freelance",
     description: "Des recruteurs tech et IA intégrés à vos équipes pour internaliser vos talents en CDI.",
     palette: "sage", specialties: [], // métiers recrutés : METIERS (taxonomy.ts)
     jarvi: { metier: "Recruiter", projectId: "a28725c1-24c0-46b4-bb63-afd1854df1d9", specialtiesFieldId: "adc61fa4-ad68-4f12-983b-69afe9c03d4c" },

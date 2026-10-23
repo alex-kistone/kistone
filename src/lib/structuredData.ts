@@ -39,7 +39,7 @@ export const organization = {
   url: BASE_URL,
   logo: `${BASE_URL}/logos/logo-full-black.png`,
   description:
-    "Plateforme freelance des experts IA : AI Engineers, AI Product et AI Leaders en mission, en fractional ou en contract-to-hire, et des Tech recruiters (RPO) pour recruter les talents IA en CDI.",
+    "Plateforme freelance des experts IA : AI Engineers, AI Product et AI Leaders en mission, en fractional ou en contract-to-hire, et des Tech Recruiters (RPO) pour recruter les talents IA en CDI.",
   areaServed: { "@type": "Country", name: "France" },
   knowsAbout: ["Intelligence artificielle", "AI Engineer", "AI Product Manager", "Head of AI", "Chief AI Officer", "Fractional CTO", "Freelance", "RPO", "Recrutement tech"],
   founder: FOUNDER_REF,

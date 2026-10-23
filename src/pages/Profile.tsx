@@ -547,7 +547,7 @@ const Profile = () => {
               id="jobTitle"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              placeholder={isRpo ? "Ex : Tech recruiter IA & data" : `Ex : ${vConf.short} senior`}
+              placeholder={isRpo ? "Ex : Tech Recruiter IA & data" : `Ex : ${vConf.short} senior`}
             />
           </div>
 

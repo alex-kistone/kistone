@@ -23,7 +23,7 @@ export default function Home() {
     <SiteLayout>
       <SEO
         title="Kistone · Plateforme freelance des experts IA"
-        description="AI Engineers, AI Product et AI Leaders freelance qualifiés : un premier profil en 48 h. Et des Tech recruiters pour recruter vos talents IA en CDI."
+        description="AI Engineers, AI Product et AI Leaders freelance qualifiés : un premier profil en 48 h. Et des Tech Recruiters pour recruter vos talents IA en CDI."
         path="/"
         jsonLd={withIdentity({
           "@type": "FAQPage",

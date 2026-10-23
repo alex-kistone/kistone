@@ -37,13 +37,13 @@ export const RECRUITERS: Recruiter[] = [
   { initials: "CD", name: "Claire", role: "Product Manager IA", vertical: "product", rhythm: "Temps plein", xp: "9 ans", palette: "lilac", photo: "/people/camille.jpg" },
   { initials: "MG", name: "Marc", role: "Head of AI", vertical: "leader", rhythm: "2 j / sem", xp: "14 ans", palette: "teal", photo: "/people/marc.jpg" },
   { initials: "SK", name: "Sami", role: "MLOps Engineer", vertical: "engineer", rhythm: "4 j / sem", xp: "9 ans", palette: "blue", photo: "/people/sami.jpg" },
-  { initials: "JM", name: "Julie", role: "Tech recruiter · IA & data", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage", photo: "/people/sarah.jpg" },
+  { initials: "JM", name: "Julie", role: "Tech Recruiter · IA & data", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage", photo: "/people/sarah.jpg" },
   { initials: "YB", name: "Yanis", role: "Product Owner · produits LLM", vertical: "product", rhythm: "4 j / sem", xp: "7 ans", palette: "lilac", photo: "/people/yanis.jpg" },
   { initials: "NR", name: "Nadia", role: "CTO · IA", vertical: "leader", rhythm: "3 j / sem", xp: "16 ans", palette: "teal", photo: "/people/nadia.jpg" },
   { initials: "EL", name: "Emma", role: "AI Designer", vertical: "product", rhythm: "Temps plein", xp: "8 ans", palette: "lilac", photo: "/people/emma.jpg" },
   { initials: "AT", name: "Adam", role: "Data engineer · IA", vertical: "engineer", rhythm: "Temps plein", xp: "7 ans", palette: "blue", photo: "/people/adam.jpg" },
   { initials: "PV", name: "Paul", role: "Chief AI Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal", photo: "/people/thomas.jpg" },
-  { initials: "TR", name: "Thomas", role: "Tech recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage", photo: "/people/thomas-r.jpg" },
+  { initials: "TR", name: "Thomas", role: "Tech Recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage", photo: "/people/thomas-r.jpg" },
 ];
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
@@ -62,7 +62,7 @@ export const STEPS: { num: string; title: string; desc: string; link?: { label: 
 /**
  * « Passer en production » : les situations qui amènent un client vers Kistone, chacune vers
  * la famille qui y répond. Le recrutement en CDI n'est jamais présenté comme un problème :
- * l'expert démarre et le Tech recruiter accélère l'embauche, les deux ensemble.
+ * l'expert démarre et le Tech Recruiter accélère l'embauche, les deux ensemble.
  */
 /**
  * Les situations qui amènent un client : urgence, expertise pointue, stratégie, recrutements.
@@ -97,7 +97,7 @@ export const ROLE_CATALOG: { role: string; vertical: Vertical }[] = [
   { role: "Fractional CTO", vertical: "leader" },
   { role: "Head of AI", vertical: "leader" },
   { role: "Chief AI Officer", vertical: "leader" },
-  { role: "Tech recruiter IA & data", vertical: "rpo" },
+  { role: "Tech Recruiter IA & data", vertical: "rpo" },
   { role: "Recruiter GTM", vertical: "rpo" },
 ];
 
@@ -177,9 +177,9 @@ export const BRIEFS: Brief[] = [
   },
   {
     vertical: "rpo",
-    domain: "Tech recruiter",
+    domain: "Tech Recruiter",
     text: "On veut internaliser notre équipe IA : un recruteur pour 4 AI Engineers en CDI, à Paris en hybride, dès que possible.",
-    criteria: ["Tech recruiter", "Data/AI", "Paris · hybride", "4 postes"],
+    criteria: ["Tech Recruiter", "Data/AI", "Paris · hybride", "4 postes"],
     matches: [{ name: "Julie", score: 94 }, { name: "Thomas", score: 88 }],
   },
 ];
@@ -202,11 +202,11 @@ export const FINAL_CTA = {
 export const HOME_FAQ: { q: string; a: string }[] = [
   {
     q: "Qu'est-ce que Kistone ?",
-    a: "Kistone est la plateforme freelance des experts IA. Elle met en relation les entreprises avec des AI Engineers, des AI Product et des AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et avec des Tech recruiters (RPO) pour recruter leurs talents IA en CDI.",
+    a: "Kistone est la plateforme freelance des experts IA. Elle met en relation les entreprises avec des AI Engineers, des AI Product et des AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et avec des Tech Recruiters (RPO) pour recruter leurs talents IA en CDI.",
   },
   {
     q: "Quels experts IA trouve-t-on sur Kistone ?",
-    a: "Trois familles : les AI Engineers (LLM, RAG, agents IA, MLOps et infrastructure IA), les AI Product (Product Managers IA, Product Owners de produits LLM, AI Designers) et les AI Leaders (CTO, Head of AI, Chief AI Officer). S'y ajoutent les Tech recruiters, intégrés à vos équipes pour recruter en CDI.",
+    a: "Trois familles : les AI Engineers (LLM, RAG, agents IA, MLOps et infrastructure IA), les AI Product (Product Managers IA, Product Owners de produits LLM, AI Designers) et les AI Leaders (CTO, Head of AI, Chief AI Officer). S'y ajoutent les Tech Recruiters, intégrés à vos équipes pour recruter en CDI.",
   },
   {
     q: "En combien de temps recevez-vous un premier profil ?",
@@ -214,7 +214,7 @@ export const HOME_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Combien coûte un expert IA freelance ?",
-    a: "Les experts sont facturés au jour, sans frais de recrutement. Budgets indicatifs HT par jour : AI Engineer 600 à 1 000 €, AI Product 500 à 800 €, AI Leader 1 000 à 1 600 €, Tech recruiter 500 à 600 €, selon l'expérience et le périmètre.",
+    a: "Les experts sont facturés au jour, sans frais de recrutement. Budgets indicatifs HT par jour : AI Engineer 600 à 1 000 €, AI Product 500 à 800 €, AI Leader 1 000 à 1 600 €, Tech Recruiter 500 à 600 €, selon l'expérience et le périmètre.",
   },
   {
     q: "Mission, fractional ou contract-to-hire : quelle différence ?",

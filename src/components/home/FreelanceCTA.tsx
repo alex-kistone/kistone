@@ -18,7 +18,7 @@ export default function FreelanceCTA() {
             Des missions IA qualifiées. Zéro administratif.
           </h2>
           <p className="mt-[18px] max-w-[480px] text-[17px] leading-[1.55] text-ks-soft md:text-lg">
-            AI Engineer, AI Product, AI Leader ou Tech recruiter : rejoignez la plateforme. Contrat, KYC, CRA et facturation gérés pour vous, et un paiement intégral chaque fin de mois.
+            AI Engineer, AI Product, AI Leader ou Tech Recruiter : rejoignez la plateforme. Contrat, KYC, CRA et facturation gérés pour vous, et un paiement intégral chaque fin de mois.
           </p>
           <Cta href={ROUTES.freelance} variant="dark" size="lg" arrow className="mt-7">
             Rejoindre la plateforme

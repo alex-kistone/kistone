@@ -176,7 +176,7 @@ export const MODEL_PAGES: ModelPage[] = [
       { q: "Qu'est-ce que le contract-to-hire ?", a: "Une mission freelance avec option d'embauche : l'expert démarre en mission, et vous pouvez le recruter en interne à l'issue de la période, aux conditions prévues au contrat." },
       { q: "Combien de temps dure la période de mission ?", a: "Le plus souvent 3 à 6 mois, le temps de juger la collaboration sur des résultats concrets." },
       { q: "Le freelance est-il obligé d'accepter le recrutement ?", a: "Non. L'option est choisie des deux côtés : seuls des profils ouverts à un recrutement vous sont proposés dans ce modèle." },
-      { q: "Et pour recruter d'autres profils en CDI ?", a: "Un Tech recruiter freelance peut vous aider à construire toute l'équipe : il chasse et recrute vos talents IA en CDI, à vos côtés." },
+      { q: "Et pour recruter d'autres profils en CDI ?", a: "Un Tech Recruiter freelance peut vous aider à construire toute l'équipe : il chasse et recrute vos talents IA en CDI, à vos côtés." },
     ],
   },
 ];

@@ -21,7 +21,7 @@ type Result = { sent: number; skipped: { email: string; reason: string }[]; fail
 /** Libellés des modèles dans le sélecteur. */
 const AUDIENCE_LABELS: Record<InvitationAudience, [string, string]> = {
   ai: ["Experts IA", "AI Engineer, AI Product, AI Leader"],
-  rpo: ["Tech recruiters", "Freelances RPO"],
+  rpo: ["Tech Recruiters", "Freelances RPO"],
   client_ai: ["Experts IA freelance", "Besoin en AI Engineer, Product ou Leader"],
   client_rpo: ["RPO freelance", "Besoin de recruter en CDI"],
 };

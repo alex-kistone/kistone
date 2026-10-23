@@ -8,7 +8,7 @@
 export { VERTICALS, DEFAULT_VERTICAL, type Vertical } from "./verticals.ts";
 
 /**
- * Métiers recrutés par un Tech recruiter (verticale RPO) : grandes familles cochées par le
+ * Métiers recrutés par un Tech Recruiter (verticale RPO) : grandes familles cochées par le
  * freelance (skills, 3 au maximum) et par le client (profile_types). Synchronisés avec le champ
  * Jarvi « Spécialités RPO » (adc61fa4-ad68-4f12-983b-69afe9c03d4c). Ordre et libellés fixés par
  * Alex le 2026-10-20 ; le détail tech (Cyber, Infra/Cloud, SAP…) est saisi par l'admin dans les

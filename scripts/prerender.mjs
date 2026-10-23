@@ -67,7 +67,7 @@ console.log(`sitemap.xml (${ROUTES.length} pages)`);
 // Résumé du site pour les moteurs IA (https://llmstxt.org)
 const llms = `# Kistone
 
-> Plateforme freelance des experts IA. Kistone met en relation les entreprises avec des experts IA freelance sélectionnés et qualifiés, en mission, en fractional (quelques jours par semaine) ou en contract-to-hire : AI Engineers (LLM, RAG, agents, MLOps), AI Product (Product Managers IA, AI Designers) et AI Leaders (CTO, Head of AI, Chief AI Officer). Des Tech recruiters freelance aident aussi les clients à internaliser leurs talents IA en CDI.
+> Plateforme freelance des experts IA. Kistone met en relation les entreprises avec des experts IA freelance sélectionnés et qualifiés, en mission, en fractional (quelques jours par semaine) ou en contract-to-hire : AI Engineers (LLM, RAG, agents, MLOps), AI Product (Product Managers IA, AI Designers) et AI Leaders (CTO, Head of AI, Chief AI Officer). Des Tech Recruiters freelance aident aussi les clients à internaliser leurs talents IA en CDI.
 
 - Un premier profil présélectionné sous 48 h, un démarrage en une semaine en général.
 - Facturation au jour (TJM), sans frais de recrutement ; contrat, conformité, CRA et facturation gérés par la plateforme.

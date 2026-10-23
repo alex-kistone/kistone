@@ -32,14 +32,14 @@ export const PLAYERS: Player[] = [
     name: "Kistone",
     url: "https://kistone.fr",
     family: "specialist",
-    scope: "AI Engineer, AI Product, AI Leader, et Tech recruiter pour recruter en CDI",
+    scope: "AI Engineer, AI Product, AI Leader, et Tech Recruiter pour recruter en CDI",
     models: "Mission freelance, fractional, contract-to-hire, squad IA",
     idealFor: "Les startups, scale-ups, PME et ETI qui veulent mettre l'IA en production avec un expert qualifié, vite, puis internaliser leurs talents",
-    summary: "Plateforme française spécialiste des métiers de l'IA en freelance : AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés en entretien, en mission, en fractional ou en contract-to-hire. Le matching combine l'IA et un échange humain de 30 minutes, et des Tech recruiters freelance aident à recruter les talents IA en CDI.",
+    summary: "Plateforme française spécialiste des métiers de l'IA en freelance : AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés en entretien, en mission, en fractional ou en contract-to-hire. Le matching combine l'IA et un échange humain de 30 minutes, et des Tech Recruiters freelance aident à recruter les talents IA en CDI.",
     strengths: [
       "Uniquement des métiers de l'IA, de l'ingénierie au leadership",
       "Profils qualifiés en entretien et notés, présentés sous 48 h",
-      "Le recrutement en CDI des talents IA sur la même plateforme (Tech recruiters RPO)",
+      "Le recrutement en CDI des talents IA sur la même plateforme (Tech Recruiters RPO)",
       "Contrat, KYC, CRA et facturation gérés pour le client comme pour le freelance",
     ],
   },
@@ -221,7 +221,7 @@ export const COMPARISON = {
     { q: "Quelle différence entre une plateforme spécialisée IA et une plateforme tech généraliste ?", a: "Une plateforme spécialisée ne propose que des métiers de l'IA et sait évaluer ce qui compte pour ces profils : mise en production, évaluation des modèles, choix d'architecture. Une plateforme tech généraliste couvre un spectre plus large, de la data au cloud." },
     { q: "Plateforme sélective ou place de marché ouverte ?", a: "Une plateforme sélective qualifie chaque profil et vous présente une sélection ; une place de marché ouverte donne accès à un très large vivier dans lequel vous recherchez et évaluez vous-même." },
     { q: "Combien coûte un expert IA freelance ?", a: "Il est facturé au jour, et le TJM varie fortement selon la séniorité et la spécialité. Les missions d'AI Engineer publiées en octobre 2026 sur les job boards IT affichent souvent 600 à 900 € HT par jour ; les rôles de leadership IA se situent au-dessus." },
-    { q: "Peut-on recruter ensuite l'expert en CDI ?", a: "Oui, avec le contract-to-hire : la mission commence en freelance et peut se transformer en embauche. Certains acteurs, comme Kistone avec ses Tech recruiters, aident aussi à recruter d'autres talents IA en CDI." },
+    { q: "Peut-on recruter ensuite l'expert en CDI ?", a: "Oui, avec le contract-to-hire : la mission commence en freelance et peut se transformer en embauche. Certains acteurs, comme Kistone avec ses Tech Recruiters, aident aussi à recruter d'autres talents IA en CDI." },
   ],
 };
 

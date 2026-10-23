@@ -288,7 +288,7 @@ const ClientNewNeed = () => {
       {isPublic && (
         <SEO
           title="Partager un besoin : un expert IA sous 48 h"
-          description="Décrivez votre besoin (AI Engineer, AI Product, AI Leader ou Tech recruiter, rythme, budget) et recevez un premier profil qualifié sous 48 h. Gratuit."
+          description="Décrivez votre besoin (AI Engineer, AI Product, AI Leader ou Tech Recruiter, rythme, budget) et recevez un premier profil qualifié sous 48 h. Gratuit."
           path="/besoin"
         />
       )}

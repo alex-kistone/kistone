@@ -197,7 +197,7 @@ async function rankWithClaude(
   const isRpo = (need.vertical ?? "rpo") === "rpo";
   const v = verticalOf(need.vertical);
   const intro = isRpo
-    ? "Tu es un expert du recrutement tech et IA (RPO) chez Kistone. Tu classes des Tech recruiters freelances face à un besoin client."
+    ? "Tu es un expert du recrutement tech et IA (RPO) chez Kistone. Tu classes des Tech Recruiters freelances face à un besoin client."
     : `Tu es un expert des métiers de l'IA chez Kistone. Tu classes des freelances ${v.roles} (famille ${v.label}) face à un besoin client.`;
   const analysis = isRpo
     ? `Analyse des compétences :

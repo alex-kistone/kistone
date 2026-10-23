@@ -13,10 +13,10 @@ export type NeedTitleInput = {
   description: string | null;
 };
 
-/** Intitulé de secours, sans IA : « Tech recruiter Data/AI », « Fractional AI Leader », « AI Engineer ». */
+/** Intitulé de secours, sans IA : « Tech Recruiter Data/AI », « Fractional AI Leader », « AI Engineer ». */
 export function fallbackNeedTitle(n: Pick<NeedTitleInput, "vertical" | "profileTypes" | "days">): string {
   const v = verticalOf(n.vertical);
-  if (v.id === "rpo") return n.profileTypes.length ? `Tech recruiter ${n.profileTypes.slice(0, 2).join(" & ")}` : "Tech recruiter";
+  if (v.id === "rpo") return n.profileTypes.length ? `Tech Recruiter ${n.profileTypes.slice(0, 2).join(" & ")}` : "Tech Recruiter";
   return n.days && n.days < 5 ? `Fractional ${v.short}` : v.short;
 }
 

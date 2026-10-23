@@ -138,7 +138,7 @@ async function run() {
   must("Client · crée son profil", !cp.error, cp.error?.message);
   const { data: need, error: nErr } = await client.from("client_needs").insert({
     user_id: users.client.id, company_name: `${TAG} Scale-up`, contact_name: "Claire E2E", contact_email: users.client.email,
-    job_title: `${TAG} Tech recruiter Tech`, mission_location: "Paris", remote_policy: "hybrid", profile_types: ["Tech"],
+    job_title: `${TAG} Tech Recruiter Tech`, mission_location: "Paris", remote_policy: "hybrid", profile_types: ["Tech"],
     sectors: ["Startup/scaleup"], budget_tjm_min: 600, budget_tjm_max: 800, description: "Recrutement de 5 développeurs backend.",
   }).select("id").single();
   must("Client · dépose un besoin", !nErr, nErr?.message);
@@ -357,7 +357,7 @@ async function run() {
   check("AI Leader · voit le besoin AI Leader", !!leadOpp.data?.some((n) => n.id === leadNeed.id), leadOpp.error?.message);
   check("AI Leader · ne voit que les besoins de sa famille", !leadOpp.data?.some((n) => n.vertical !== "leader"));
   const rpoOpp = await free.from("client_needs_open").select("id");
-  check("Tech recruiter · ne voit pas les besoins IA", !rpoOpp.data?.some((n) => n.id === engNeed.id || n.id === leadNeed.id));
+  check("Tech Recruiter · ne voit pas les besoins IA", !rpoOpp.data?.some((n) => n.id === engNeed.id || n.id === leadNeed.id));
 
   const engMatch = await invoke(admin, "match-profiles", { need_id: engNeed.id });
   must("Admin · lance le matching AI Engineer", !engMatch.error, engMatch.error);

@@ -41,7 +41,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
         max_tokens: 16000,
-        system: `Tu es un assistant RH expert. Kistone place des experts IA freelance (AI Engineers, AI Product, AI Leaders), en mission, en fractional (quelques jours par semaine) ou en contract-to-hire, et des Tech recruiters freelance (RPO) qui recrutent des talents en CDI pour le client. À partir d'une description libre d'un besoin, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
+        system: `Tu es un assistant RH expert. Kistone place des experts IA freelance (AI Engineers, AI Product, AI Leaders), en mission, en fractional (quelques jours par semaine) ou en contract-to-hire, et des Tech Recruiters freelance (RPO) qui recrutent des talents en CDI pour le client. À partir d'une description libre d'un besoin, extrais les informations structurées suivantes. Réponds UNIQUEMENT en appelant l'outil extract_need.
 
 Famille recherchée (vertical) :
 - rpo : le client cherche un recruteur pour recruter des profils en CDI (ex. « un recruteur pour 3 AI Engineers »).
@@ -67,7 +67,7 @@ Si une information n'est pas mentionnée, omets-la (ou retourne un tableau vide 
               properties: {
                 job_title: {
                   type: "string",
-                  description: "Intitulé court du poste recherché : « Tech recruiter <métier> » pour un recruteur (Tech recruiter Tech, Tech recruiter Data/AI, Tech recruiter Sales), sinon le rôle précis cité ou déduit (AI Engineer RAG, LLM Engineer, Product Manager IA, Head of AI, Fractional CTO 2 j/sem si un nombre de jours est donné)",
+                  description: "Intitulé court du poste recherché : « Tech Recruiter <métier> » pour un recruteur (Tech Recruiter Tech, Tech Recruiter Data/AI, Tech Recruiter Sales), sinon le rôle précis cité ou déduit (AI Engineer RAG, LLM Engineer, Product Manager IA, Head of AI, Fractional CTO 2 j/sem si un nombre de jours est donné)",
                 },
                 vertical: {
                   type: "string",

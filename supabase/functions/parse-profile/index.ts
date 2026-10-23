@@ -44,11 +44,11 @@ Deno.serve(async (req) => {
     const isRpo = v.id === "rpo";
     const metiers = METIERS.filter((m) => m !== "Autres");
 
-    const system = `Tu aides un freelance à remplir son profil sur Kistone, la plateforme freelance des experts IA. Le document joint est son CV ou l'export PDF de son profil LinkedIn. Sa famille : ${isRpo ? "Tech recruiter (RPO) : il recrute des talents tech, data et IA en CDI pour ses clients" : `${v.short} (${v.roles})`}.
+    const system = `Tu aides un freelance à remplir son profil sur Kistone, la plateforme freelance des experts IA. Le document joint est son CV ou l'export PDF de son profil LinkedIn. Sa famille : ${isRpo ? "Tech Recruiter (RPO) : il recrute des talents tech, data et IA en CDI pour ses clients" : `${v.short} (${v.roles})`}.
 
 Extrais uniquement ce qui figure dans le document, en français. N'invente rien : si une information manque, omets-la ou laisse le tableau vide. Réponds UNIQUEMENT en appelant l'outil extract_profile.
 
-- job_title : intitulé actuel ou principal, court (ex. « ${isRpo ? "Tech recruiter IA & data" : `${v.short} senior`} »).
+- job_title : intitulé actuel ou principal, court (ex. « ${isRpo ? "Tech Recruiter IA & data" : `${v.short} senior`} »).
 - intro_text : présentation de 3 à 5 phrases à la première personne, factuelle (expérience, spécialités, types de projets), sans superlatifs.
 - clients : entreprises clientes ou employeurs marquants cités, 8 au maximum, noms seuls.
 - missions : les expériences les plus récentes et pertinentes, 6 au maximum. client_name = entreprise ; ${isRpo ? "profile_types = types de profils recrutés ; kpis = nombre de recrutements réalisés, en chiffres, seulement s'il est écrit" : "profile_types = rôle et périmètre en une ligne ; kpis = résultat clé, seulement s'il est écrit"} ; duration = durée (« 6 mois », « 2 ans ») déduite des dates ; tools = outils et technologies cités pour cette expérience (6 au maximum).

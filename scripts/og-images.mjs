@@ -33,7 +33,7 @@ const IMAGES = [
   { file: "ai-leader", a: "Recrutez un", b: "AI Leader", c: "freelance.", label: "CTO · Head of AI · Chief AI Officer", tone: T.teal, items: ["CTO", "Head of AI", "Chief AI Officer", "Stratégie IA & GenAI"] },
   { file: "tech-recruiter", a: "Un", b: "Tech Recruiter", c: "intégré à vos équipes.", label: "RPO · Recruter vos talents IA en CDI", tone: T.sage, items: ["Data/IA", "Engineering", "Product", "Infra/Cloud", "Cyber", "GTM"] },
   { file: "modeles", a: "Mission, fractional ou", b: "contract-to-hire", c: ".", label: "Les modèles d'intervention", items: [["Mission freelance", T.blue], ["Fractional", T.teal], ["Contract-to-hire", T.lilac]] },
-  { file: "freelances", a: "Rejoignez la plateforme des", b: "freelances IA & RPO", c: ".", label: "Experts IA et Tech recruiters", tone: T.sand, items: ["Missions qualifiées", "Rythme au choix", "Facturation gérée", "Paiement chaque fin de mois"] },
+  { file: "freelances", a: "Rejoignez la plateforme des", b: "freelances IA & RPO", c: ".", label: "Experts IA et Tech Recruiters", tone: T.sand, items: ["Missions qualifiées", "Rythme au choix", "Facturation gérée", "Paiement chaque fin de mois"] },
   { file: "comparatif", a: "Expert IA freelance :", b: "le comparatif", c: "des plateformes.", label: "Ressources · Comparatif 2026", items: null },
   { file: "pourquoi-kistone", a: "L'IA a changé le travail.", b: "Le freelance", c: "aussi.", label: "Pourquoi Kistone", items: null },
 ];

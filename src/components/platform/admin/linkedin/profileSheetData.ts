@@ -136,7 +136,7 @@ export function sheetSpec(p: SheetFreelance, f: SheetFields, anonymous: boolean,
   const dispo = availabilityOf(p);
   return {
     vertical: p.vertical,
-    header: `Profil expert · ${v.id === "rpo" ? "Tech recruiter" : v.short}`,
+    header: `Profil expert · ${v.id === "rpo" ? "Tech Recruiter" : v.short}`,
     badge: { text: dispo.badge, available: dispo.available },
     photo: withPhoto ? p.photo_url : null,
     name: f.name,
