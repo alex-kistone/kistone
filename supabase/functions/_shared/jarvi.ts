@@ -51,10 +51,10 @@ const MODEL_TO_JARVI: Record<string, string> = { RPO: "RPO", "Succès": "Success
 
 /**
  * Spécialités tech (fiche admin) : choix du champ Jarvi « Spécialités RPO Tech » (relevés le
- * 2026-10-23). « Data/IA » n'existe pas dans Jarvi mais reste coché sur des fiches : conservé.
+ * 2026-10-23). Data/AI n'y figure pas : c'est un métier RPO, choisi par le freelance.
  */
 export const JARVI_TECH_SPECIALTIES = [
-  "Architectes", "Chef de projet", "Cyber", "Data/IA", "Engineering", "Infra/Cloud", "Java", "Microsoft", "Python", "SAP", "SI",
+  "Architectes", "Chef de projet", "Cyber", "Engineering", "Infra/Cloud", "Java", "Microsoft", "Python", "SAP", "SI",
 ];
 
 /** Secteurs de la plateforme → valeurs Jarvi (« Autre » n'a pas d'équivalent). */
