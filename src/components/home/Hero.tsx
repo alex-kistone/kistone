@@ -53,7 +53,7 @@ export default function Hero() {
         <HeroDecor />
         <h1 className="ks-reveal max-w-[1100px] font-ks-display text-[46px] font-bold leading-none tracking-[-0.05em] text-ks-ink md:mt-6 md:text-[64px] md:leading-[0.98] md:tracking-[-0.048em] lg:text-[84px] xl:text-[96px]">
           {HERO.titleLead}
-          <br className="hidden sm:block" /> {HERO.titleMiddle} <span className="ks-grad-text">{HERO.titleHighlight}</span> & <span className="ks-grad-text">{HERO.titleHighlight2}</span>
+          <br className="hidden sm:block" /> {HERO.titleBefore}<span className="ks-grad-text">{HERO.titleHighlight}</span>
         </h1>
 
         <p className="ks-reveal mt-5 max-w-[720px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">
