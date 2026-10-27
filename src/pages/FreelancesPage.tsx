@@ -169,7 +169,7 @@ export default function FreelancesPage() {
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[640px] w-auto rotate-[14deg] md:h-[760px]" />
         <div>
           <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
-            Rejoignez la plateforme des <Highlight>freelances IA & RPO</Highlight>
+            Rejoignez la communauté des <Highlight>freelances IA & RPO</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
             AI Engineers, AI Product, AI Leaders ou Tech Recruiters : des missions qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
