@@ -234,7 +234,7 @@ export const ROLE_PAGES: RolePage[] = [
     faq: [
       { q: "Combien coûte un Tech Recruiter freelance ?", a: "Il est facturé au jour, en général entre 500 et 600 € HT selon la spécialité et l'expérience. Pour plusieurs recrutements en parallèle, c'est le plus souvent bien moins cher que des honoraires de cabinet à 20 % du salaire." },
       { q: "Quelle différence avec un cabinet de recrutement ?", a: "Le cabinet est payé au succès, poste par poste. Le Tech Recruiter freelance travaille au sein de votre équipe, sur l'ensemble de vos postes, et vous gardez le vivier et le process construits." },
-      { q: "Pourquoi un recruteur sur une plateforme d'experts IA ?", a: "Beaucoup de clients commencent avec des experts IA freelance, puis veulent internaliser ces compétences. Le Tech Recruiter les aide à construire leur équipe en CDI." },
+      { q: "Pourquoi un recruteur dans un réseau d'experts IA ?", a: "Beaucoup de clients commencent avec des experts IA freelance, puis veulent internaliser ces compétences. Le Tech Recruiter les aide à construire leur équipe en CDI." },
       { q: "En combien de temps démarre-t-il ?", a: "Kistone vous présente un premier profil sous 48 h ; le démarrage a lieu en général dans la semaine qui suit." },
     ],
     samples: [

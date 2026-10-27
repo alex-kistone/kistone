@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     const isRpo = v.id === "rpo";
     const metiers = METIERS.filter((m) => m !== "Autres");
 
-    const system = `Tu aides un freelance à remplir son profil sur Kistone, la plateforme freelance des experts IA. Le document joint est son CV ou l'export PDF de son profil LinkedIn. Sa famille : ${isRpo ? "Tech Recruiter (RPO) : il recrute des talents tech, data et IA en CDI pour ses clients" : `${v.short} (${v.roles})`}.
+    const system = `Tu aides un freelance à remplir son profil sur Kistone, le réseau freelance d'experts IA. Le document joint est son CV ou l'export PDF de son profil LinkedIn. Sa famille : ${isRpo ? "Tech Recruiter (RPO) : il recrute des talents tech, data et IA en CDI pour ses clients" : `${v.short} (${v.roles})`}.
 
 Extrais uniquement ce qui figure dans le document, en français. N'invente rien : si une information manque, omets-la ou laisse le tableau vide. Réponds UNIQUEMENT en appelant l'outil extract_profile.
 

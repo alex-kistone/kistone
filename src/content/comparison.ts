@@ -35,11 +35,11 @@ export const PLAYERS: Player[] = [
     scope: "AI Engineer, AI Product, AI Leader, et Tech Recruiter pour recruter en CDI",
     models: "Mission freelance, fractional, contract-to-hire, squad IA",
     idealFor: "Les startups, scale-ups, PME et ETI qui veulent mettre l'IA en production avec un expert qualifié, vite, puis internaliser leurs talents",
-    summary: "Plateforme française spécialiste des métiers de l'IA en freelance : AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés en entretien, en mission, en fractional ou en contract-to-hire. Le matching combine l'IA et un échange humain de 30 minutes, et des Tech Recruiters freelance aident à recruter les talents IA en CDI.",
+    summary: "Réseau français d'experts IA freelance, spécialiste des métiers de l'IA : AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés en entretien, en mission, en fractional ou en contract-to-hire. Le matching combine l'IA et un échange humain de 30 minutes, et des Tech Recruiters freelance aident à recruter les talents IA en CDI.",
     strengths: [
       "Uniquement des métiers de l'IA, de l'ingénierie au leadership",
       "Profils qualifiés en entretien et notés, présentés sous 48 h",
-      "Le recrutement en CDI des talents IA sur la même plateforme (Tech Recruiters RPO)",
+      "Le recrutement en CDI des talents IA dans le même réseau (Tech Recruiters RPO)",
       "Contrat, KYC, CRA et facturation gérés pour le client comme pour le freelance",
     ],
   },

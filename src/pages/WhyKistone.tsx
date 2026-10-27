@@ -50,7 +50,7 @@ export default function WhyKistone() {
               L'<Highlight>IA</Highlight> a totalement transformé la façon de travailler. Pour en tirer parti, il faut des experts qui la maîtrisent, maintenant : le freelance est le modèle qui vous y donne accès.
             </p>
             <p>
-              C'est la raison d'être de Kistone, la plateforme freelance spécialiste des métiers de l'IA : des AI Engineers pour construire, des AI Product Managers pour faire adopter, des AI Leaders pour fixer le cap. Ils interviennent en mission freelance, en fractional ou en contract-to-hire ; et quand vient le moment d'internaliser, nos Tech Recruiters vous aident à recruter vos talents IA en CDI. Chaque besoin est cadré par un référent IA, chaque profil est évalué sur ce qu'il a réellement construit, et nous nous engageons à vous présenter un premier profil qualifié en 48 h.
+              C'est la raison d'être de Kistone, le réseau freelance spécialiste des métiers de l'IA : des AI Engineers pour construire, des AI Product Managers pour faire adopter, des AI Leaders pour fixer le cap. Ils interviennent en mission freelance, en fractional ou en contract-to-hire ; et quand vient le moment d'internaliser, nos Tech Recruiters vous aident à recruter vos talents IA en CDI. Chaque besoin est cadré par un référent IA, chaque profil est évalué sur ce qu'il a réellement construit, et nous nous engageons à vous présenter un premier profil qualifié en 48 h.
             </p>
             <p>Vous avez un projet IA à lancer ou à passer en production ? Échangeons 30 minutes.</p>
           </div>

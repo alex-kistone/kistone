@@ -111,7 +111,7 @@ export const SQUAD = {
     { vertical: "engineer" as Vertical, rhythm: "Temps plein", role: "Construit et met en production" },
     { vertical: "product" as Vertical, rhythm: "Temps plein", role: "Conçoit et fait adopter" },
   ],
-  points: ["Un seul interlocuteur Kistone", "Des profils choisis pour travailler ensemble", "Contrats, CRA et facturation sur la plateforme"],
+  points: ["Un seul interlocuteur Kistone", "Des profils choisis pour travailler ensemble", "Contrats, CRA et facturation gérés par Kistone"],
 };
 
 export const ASSETS = [
@@ -202,7 +202,7 @@ export const FINAL_CTA = {
 export const HOME_FAQ: { q: string; a: string }[] = [
   {
     q: "Qu'est-ce que Kistone ?",
-    a: "Kistone est la plateforme freelance des experts IA. Elle met en relation les entreprises avec des AI Engineers, des AI Product et des AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et avec des Tech Recruiters (RPO) pour recruter leurs talents IA en CDI.",
+    a: "Kistone est un réseau freelance d'experts IA. Il met en relation les entreprises avec des AI Engineers, des AI Product et des AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et avec des Tech Recruiters (RPO) pour recruter leurs talents IA en CDI.",
   },
   {
     q: "Quels experts IA trouve-t-on sur Kistone ?",

@@ -37,7 +37,7 @@ const TARGETS = {
   client: {
     button: "Inviter des clients",
     title: "Inviter des entreprises à découvrir Kistone",
-    placeholder: "Ex : Suite à notre échange sur votre projet d'assistant interne, voici la plateforme dont je vous parlais.",
+    placeholder: "Ex : Suite à notre échange sur votre projet d'assistant interne, voici le réseau dont je vous parlais.",
     audiences: ["client_ai", "client_rpo"] as InvitationAudience[],
   },
 };

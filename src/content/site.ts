@@ -65,9 +65,9 @@ export const FOOTER_COLUMNS = [
     links: MODEL_ITEMS.map((m) => ({ label: m.title, href: m.href })),
   },
   {
-    title: "La plateforme",
+    title: "Le réseau",
     links: [
-      { label: "Trouver un expert", href: "/#marketplace" },
+      { label: "Trouver un expert", href: "/#trouver-un-expert" },
       { label: "Pourquoi Kistone", href: "/pourquoi-kistone" },
       { label: "Comment ça marche", href: "/#comment" },
       { label: "Partager un besoin", href: "/besoin" },

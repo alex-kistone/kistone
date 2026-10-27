@@ -6,7 +6,7 @@ import AssetVisual from "./AssetVisuals";
 export default function WhyMarketplace() {
   return (
     <section
-      aria-label="Pourquoi la marketplace"
+      aria-label="Pourquoi Kistone"
       className="relative isolate mx-auto mt-24 grid max-w-ks gap-5 px-5 md:mt-[140px] md:grid-cols-2 md:px-8 lg:grid-cols-3 xl:px-0"
     >
       <BoltWatermark className="-bottom-28 right-[6%] h-[220px] w-auto rotate-[24deg]" />

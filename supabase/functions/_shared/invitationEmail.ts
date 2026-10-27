@@ -23,10 +23,10 @@ const CALENDLY = "https://calendly.com/alexandre-kistone/30mins-meetup";
 
 export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
   ai: {
-    subject: "Invitation à rejoindre Kistone, la plateforme des freelances IA",
+    subject: "Invitation à rejoindre Kistone, la communauté des freelances IA",
     label: "Invitation · Experts IA",
-    title: "Rejoignez la plateforme des freelances IA.",
-    intro: "Je vous invite à rejoindre <strong style=\"color:#141312\">Kistone</strong>, la plateforme freelance des experts IA. Les entreprises nous confient leurs projets IA, du prototype à la production : nous leur présentons des AI Engineers, AI Product et AI Leaders qualifiés, comme vous.",
+    title: "Rejoignez la communauté des freelances IA.",
+    intro: "Je vous invite à rejoindre <strong style=\"color:#141312\">Kistone</strong>, la communauté des freelances experts IA. Les entreprises nous confient leurs projets IA, du prototype à la production : nous leur présentons des AI Engineers, AI Product et AI Leaders qualifiés, comme vous.",
     benefits: [
       "Des missions IA qualifiées : LLM, RAG, agents, MLOps, produit IA ou stratégie IA",
       "Le rythme que vous choisissez : temps plein, fractional ou contract-to-hire",
@@ -38,9 +38,9 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     secondary: FREELANCE_SECONDARY,
   },
   rpo: {
-    subject: "Invitation à rejoindre Kistone, la plateforme des freelances RPO",
+    subject: "Invitation à rejoindre Kistone, la communauté des freelances RPO",
     label: "Invitation · Tech Recruiters",
-    title: "Rejoignez la plateforme des freelances RPO.",
+    title: "Rejoignez la communauté des freelances RPO.",
     intro: "Je vous invite à rejoindre <strong style=\"color:#141312\">Kistone</strong> en tant que Tech Recruiter freelance. Les entreprises nous confient le recrutement de leurs talents tech et IA en CDI : nous leur présentons des recruteurs qualifiés, intégrés à leurs équipes, comme vous.",
     benefits: [
       "Des missions RPO Freelance Tech, Data/AI, Product, GTM et Sales au sein de startups/scaleups, ETI et grands groupes",
@@ -53,10 +53,10 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     secondary: FREELANCE_SECONDARY,
   },
   client_ai: {
-    subject: "Invitation à découvrir Kistone, la plateforme des experts IA freelance",
+    subject: "Invitation à découvrir Kistone, le réseau des experts IA freelance",
     label: "Invitation · Experts IA",
     title: "Votre prochain expert IA est déjà disponible.",
-    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, la plateforme freelance des experts IA. Vous décrivez votre besoin en quelques lignes : nous vous présentons un premier profil qualifié sous 48 h.",
+    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, le réseau freelance d'experts IA. Vous décrivez votre besoin en quelques lignes : nous vous présentons un premier profil qualifié sous 48 h.",
     benefits: [
       "Des AI Engineers, AI Product et AI Leaders qualifiés, pour passer vos projets IA du prototype à la production",
       "En mission, en fractional ou en contract-to-hire : le format qui correspond à votre besoin",
@@ -68,10 +68,10 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     secondary: { label: "Échanger 30 minutes avec moi", href: CALENDLY },
   },
   client_rpo: {
-    subject: "Invitation à découvrir Kistone, la plateforme des freelances RPO",
+    subject: "Invitation à découvrir Kistone, le réseau des freelances RPO",
     label: "Invitation · RPO",
     title: "Recrutez les talents que tout le monde cherche.",
-    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, la plateforme des freelances RPO. Un Tech Recruiter freelance rejoint vos équipes pour recruter vos talents en CDI : nous vous présentons un premier profil qualifié sous 48 h.",
+    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, le réseau des freelances RPO. Un Tech Recruiter freelance rejoint vos équipes pour recruter vos talents en CDI : nous vous présentons un premier profil qualifié sous 48 h.",
     benefits: [
       "Des Tech Recruiters freelance spécialisés Tech, Data/AI, Product, GTM et Sales",
       "Intégrés à vos équipes, avec vos outils et votre marque employeur",

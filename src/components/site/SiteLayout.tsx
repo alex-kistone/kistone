@@ -4,7 +4,7 @@ import "@/site/site.css";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 
-/** Défile vers l'ancre (« /#marketplace », « /studio#tarifs ») ou en haut de page. */
+/** Défile vers l'ancre (« /#trouver-un-expert », « /studio#tarifs ») ou en haut de page. */
 function ScrollToHash() {
   const { pathname, hash, key } = useLocation();
   const lastPath = useRef<string | null>(null);

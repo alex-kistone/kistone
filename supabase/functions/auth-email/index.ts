@@ -61,7 +61,7 @@ function render(type: string, d: EmailData, link: string, code: string) {
         subject: "Vous êtes invité sur Kistone",
         html: layout({
           title: "Votre accès Kistone",
-          paragraphs: ["Un compte a été créé pour vous sur la plateforme Kistone. Acceptez l'invitation pour choisir votre mot de passe."],
+          paragraphs: ["Un compte a été créé pour vous sur Kistone. Acceptez l'invitation pour choisir votre mot de passe."],
           cta: { label: "Accepter l'invitation", href: link },
         }) + footer(),
       };

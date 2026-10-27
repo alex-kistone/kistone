@@ -112,7 +112,7 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
   },
   {
     tag: "Accompagnement",
-    title: "Une équipe, pas seulement une plateforme",
+    title: "Une équipe, pas seulement un réseau",
     text: "Un entretien de qualification à l'arrivée, une mise en relation préparée avec le client, un interlocuteur joignable pendant toute la mission. Vous vous concentrez sur votre expertise.",
     palette: "sand",
     visual: () => (
@@ -157,7 +157,7 @@ export default function FreelancesPage() {
   return (
     <SiteLayout>
       <SEO
-        title="Freelances IA & RPO : rejoignez la plateforme Kistone"
+        title="Freelances IA & RPO : rejoignez la communauté Kistone"
         description="AI Engineers, AI Product, AI Leaders et Tech Recruiters : missions qualifiées, paiement chaque mois, rythme au choix, facturation gérée. Inscription gratuite."
         path="/freelances"
         image="/og/freelances.png"
