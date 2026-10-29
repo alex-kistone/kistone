@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /** Inscription directe : coordonnées, puis premier besoin. */
 export const SIGNUP_STEPS = ["Vos coordonnées", "Votre premier besoin"];
-/** Parcours public « Trouver un profil » : le besoin d'abord, puis le compte et les coordonnées. */
+/** Parcours public « Déposer un besoin » : le besoin d'abord, puis le compte et les coordonnées. */
 export const NEED_FIRST_STEPS = ["Votre besoin", "Votre compte", "Vos coordonnées"];
 
 /** Fil d'étapes de l'onboarding client (étape courante numérotée à partir de 1). */

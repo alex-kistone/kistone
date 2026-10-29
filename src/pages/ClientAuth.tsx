@@ -188,7 +188,7 @@ const ClientAuth = () => {
       <Header />
       <BoltWatermark strokeWidth={14} className="-left-40 top-40 h-[760px] w-auto rotate-[-14deg]" />
       <BoltWatermark className="-right-10 top-24 hidden h-[300px] w-auto rotate-[16deg] md:block" />
-      {/* Parcours « Trouver un profil » : étape 2, avec le besoin et l'aperçu des profils à gauche */}
+      {/* Parcours « Déposer un besoin » : étape 2, avec le besoin et l'aperçu des profils à gauche */}
       {pendingNeed && (
         <div className="mx-auto max-w-[1080px] px-4 pt-8 sm:pt-12">
           <OnboardingSteps steps={NEED_FIRST_STEPS} current={2} className="mb-0" />

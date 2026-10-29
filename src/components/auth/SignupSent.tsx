@@ -9,7 +9,7 @@ type Props = {
   /** Page où le lien de confirmation ramène (elle attribue le rôle puis redirige vers l'espace). */
   redirectTo: string;
   onBack: () => void;
-  /** Un besoin attend l'inscription (parcours « Trouver un profil ») : on rassure sur sa conservation. */
+  /** Un besoin attend l'inscription (parcours « Déposer un besoin ») : on rassure sur sa conservation. */
   pendingNeed?: boolean;
 };
 
