@@ -12,7 +12,7 @@ export const HERO = {
     "AI Engineers, AI Product, AI Leaders et Tech Recruiters (RPO) sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l’administratif géré pour vous.",
   // Mots du sous-titre mis en gras (les métiers)
   subtitleBold: ["AI Engineers", "AI Product", "AI Leaders", "Tech Recruiters"],
-  primary: "Accéder aux profils",
+  primary: "Trouver un profil",
   secondary: "Je suis freelance",
   note: "Profils qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
 };
@@ -191,7 +191,7 @@ export const FINAL_CTA = {
   title: "Votre prochain expert IA",
   titleEnd: "est déjà disponible.",
   text: "Décrivez votre besoin en quelques lignes : vous recevez un premier profil qualifié sous 48 h.",
-  primary: "Accéder aux profils",
+  primary: "Trouver un profil",
   secondary: "Je suis freelance",
 };
 
