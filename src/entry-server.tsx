@@ -22,8 +22,8 @@ export const LASTMOD: Record<string, string> = {
 
 /** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
 export const LLMS_PAGES = [
-  { path: "/", title: "Accueil", desc: "Réseau freelance d'experts IA : AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et des Tech Recruiters pour internaliser vos talents IA." },
-  { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (famille d'expert IA ou Tech Recruiter, rythme, budget) pour recevoir un profil qualifié sous 48 h." },
+  { path: "/", title: "Accueil", desc: "Réseau d'experts Data & IA : Engineers, Product et Chief Data Officers sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et des Tech Recruiters pour internaliser vos talents Data & IA." },
+  { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (famille d'expert Data & IA ou Tech Recruiter, rythme, budget) pour recevoir un profil qualifié sous 48 h." },
   ...ROLE_PAGES.map((r) => ({ path: rolePath(r), title: r.seoTitle, desc: r.seoDescription })),
   ...MODEL_PAGES.map((m) => ({ path: modelPath(m), title: m.seoTitle, desc: m.seoDescription })),
   { path: "/pourquoi-kistone", title: "Pourquoi Kistone", desc: "La conviction d'Alexandre Guégo, fondateur : l'IA a totalement transformé la façon de travailler, et le freelance (mission, fractional, contract-to-hire) est le modèle pour accéder vite aux experts IA qualifiés." },

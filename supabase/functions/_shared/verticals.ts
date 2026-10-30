@@ -82,9 +82,9 @@ export const VERTICALS: readonly VerticalConfig[] = [
     jarvi: { metier: "AI Product", projectId: "627670cb-b090-4061-a534-fb5f195e4637", specialtiesFieldId: "26d7fa39-43fc-4c90-af0e-c790180bae2a" },
   },
   {
-    id: "leader", short: "AI Leader", label: "Leadership IA", group: "AI", seeking: "un AI Leader", pageSlug: "ai-leader",
-    roles: "CTO · Head of AI · Chief AI Officer",
-    description: "CTO, Head of AI ou Chief AI Officer, en fractional ou en mission, pour porter votre stratégie IA.",
+    id: "leader", short: "AI Leader", label: "Leadership IA", group: "AI", seeking: "un Chief Data Officer", pageSlug: "ai-leader",
+    roles: "CTO · Head of AI · Chief Data Officer",
+    description: "CTO, Head of AI ou Chief Data Officer, en fractional ou en mission, pour porter votre stratégie Data & IA.",
     palette: "teal", specialties: LEADER_SPECIALTIES, partTimeTag: "AI Leader Part-time",
     jarvi: { metier: "AI Leader", projectId: "a6d15b5e-1eaa-4153-a1f2-543af70c5aa8", specialtiesFieldId: "c5f1c316-4911-478b-bded-220bebe7c639" },
   },

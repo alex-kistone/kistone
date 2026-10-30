@@ -82,7 +82,7 @@ export function parseNeedRequest(body: Record<string, unknown>): NeedRequest | s
 /** Lignes du récapitulatif (questionnaire, admin, email). */
 export function needRequestLines(r: Pick<NeedRequest, "vertical" | "engagement" | "rhythm" | "duration" | "open_positions" | "start_window">): { label: string; value: string }[] {
   const lines = [
-    { label: "Profil", value: r.vertical === "rpo" ? "Tech Recruiter" : verticalOf(r.vertical).short },
+    { label: "Profil", value: verticalOf(r.vertical).seeking.replace(/^un /, "") },
     { label: "Modèle", value: labelOf(ENGAGEMENTS, r.engagement) ?? "" },
   ];
   if (r.engagement === "fractional") lines.push({ label: "Rythme", value: labelOf(RHYTHMS, r.rhythm) ?? "Pas encore sûr(e)" });

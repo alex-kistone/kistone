@@ -74,7 +74,7 @@ export default function Hero() {
       </section>
 
       {/* Profils d'illustration en boucle (60 s), pause au survol */}
-      <div className="ks-marquee mt-11 pb-6 pt-1 md:mt-[72px] md:pb-10 md:pt-2" aria-label="Exemples de profils d'experts IA">
+      <div className="ks-marquee mt-11 pb-6 pt-1 md:mt-[72px] md:pb-10 md:pt-2" aria-label="Exemples de profils d'experts Data & IA">
         <div className="ks-track ks-track-slow">
           {RECRUITERS.map((r) => <ProfileCard key={r.name} r={r} />)}
           {RECRUITERS.map((r) => <ProfileCard key={`${r.name}-dup`} r={r} hidden />)}

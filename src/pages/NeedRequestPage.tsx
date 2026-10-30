@@ -127,8 +127,8 @@ const NeedRequestPage = () => {
   return (
     <div className="ks-site relative isolate min-h-screen overflow-x-clip bg-background">
       <SEO
-        title="Déposer un besoin : un expert IA sous 48 h"
-        description="AI Engineer, AI Product, AI Leader ou Tech Recruiter : décrivez votre besoin en quatre questions et réservez 30 minutes pour le préciser. Gratuit et sans engagement."
+        title="Déposer un besoin : un expert Data & IA sous 48 h"
+        description="Engineer, Product, Chief Data Officer ou Tech Recruiter : décrivez votre besoin en quatre questions et réservez 30 minutes pour le préciser. Gratuit et sans engagement."
         path="/besoin"
       />
       <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
@@ -149,7 +149,7 @@ const NeedRequestPage = () => {
 
         {step === 1 && (
           <>
-            <StepTitle title="De quel profil avez-vous besoin ?" lead="Un expert IA en freelance, ou un recruteur pour internaliser vos talents." />
+            <StepTitle title="De quel profil avez-vous besoin ?" lead="Un expert Data & IA en freelance, ou un recruteur pour internaliser vos talents." />
             <ul className="mt-10 grid gap-4 sm:grid-cols-2">
               {VERTICALS.map((v) => {
                 const p = palettes[v.palette];

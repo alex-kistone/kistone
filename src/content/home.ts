@@ -42,7 +42,7 @@ export const RECRUITERS: Recruiter[] = [
   { initials: "NR", name: "Nadia", role: "CTO · IA", vertical: "leader", rhythm: "3 j / sem", xp: "16 ans", palette: "teal", photo: "/people/nadia.jpg" },
   { initials: "EL", name: "Emma", role: "AI Designer", vertical: "product", rhythm: "Temps plein", xp: "8 ans", palette: "lilac", photo: "/people/emma.jpg" },
   { initials: "AT", name: "Adam", role: "Data engineer · IA", vertical: "engineer", rhythm: "Temps plein", xp: "7 ans", palette: "blue", photo: "/people/adam.jpg" },
-  { initials: "PV", name: "Paul", role: "Chief AI Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal", photo: "/people/thomas.jpg" },
+  { initials: "PV", name: "Paul", role: "Chief Data Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal", photo: "/people/thomas.jpg" },
   { initials: "TR", name: "Thomas", role: "Tech Recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage", photo: "/people/thomas-r.jpg" },
 ];
 
