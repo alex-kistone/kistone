@@ -19,7 +19,7 @@ type Template = {
 
 const FREELANCE_NOTE = "Inscription gratuite, une dizaine de minutes.";
 const FREELANCE_SECONDARY = { label: "Découvrir l'espace freelance", href: "/freelances?utm_source=invitation" };
-const CALENDLY = "https://calendly.com/alexandre-kistone/30mins-meetup";
+const BOOKING_URL = "https://calendar.app.google/BnK5vVcAjum7r3VW9";
 
 export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
   ai: {
@@ -65,7 +65,7 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     cta: "Décrire mon besoin",
     signup: "/besoin?utm_source=invitation",
     note: "Gratuit et sans engagement : vous ne payez que les jours réalisés.",
-    secondary: { label: "Échanger 30 minutes avec moi", href: CALENDLY },
+    secondary: { label: "Échanger 30 minutes avec moi", href: BOOKING_URL },
   },
   client_rpo: {
     subject: "Invitation à découvrir Kistone, le réseau des freelances RPO",
@@ -80,7 +80,7 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     cta: "Décrire mon besoin",
     signup: "/besoin?fonction=rpo&utm_source=invitation",
     note: "Gratuit et sans engagement : vous ne payez que les jours réalisés.",
-    secondary: { label: "Échanger 30 minutes avec moi", href: CALENDLY },
+    secondary: { label: "Échanger 30 minutes avec moi", href: BOOKING_URL },
   },
 };
 

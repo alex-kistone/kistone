@@ -54,7 +54,7 @@ export const STEPS: { num: string; title: string; desc: string; link?: { label: 
     num: "Étape 02",
     title: "Un référent IA le cadre avec vous",
     desc: "30 minutes au téléphone pour préciser l'enjeu, le format et le budget. Puis un profil qualifié sous 48 h.",
-    link: { label: "Réserver 30 minutes", href: "https://calendly.com/alexandre-kistone/30mins-meetup" },
+    link: { label: "Réserver 30 minutes", href: "https://calendar.app.google/BnK5vVcAjum7r3VW9" },
   },
   { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, KYC et onboarding gérés : l'expert démarre, on suit la mission avec vous." },
 ];

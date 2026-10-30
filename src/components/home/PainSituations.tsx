@@ -1,6 +1,6 @@
 import Cta from "@/components/site/Cta";
 import SectionHeader, { Section, TwoPartTitle } from "@/components/site/SectionHeader";
-import { CALENDLY_URL, ROUTES } from "@/content/site";
+import { BOOKING_URL, ROUTES } from "@/content/site";
 import { PAIN } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 
@@ -29,7 +29,7 @@ export default function PainSituations() {
       </ul>
       <p className="ks-reveal mt-8 text-center text-[15px] text-ks-soft md:text-base">
         Vous ne savez pas encore quel profil chercher ?{" "}
-        <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-ks-ink underline decoration-[rgba(177,77,245,0.55)] decoration-2 underline-offset-4">
+        <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-ks-ink underline decoration-[rgba(177,77,245,0.55)] decoration-2 underline-offset-4">
           Évaluons votre situation en 30 minutes
         </a>
       </p>

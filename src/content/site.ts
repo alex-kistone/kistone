@@ -1,7 +1,9 @@
 // Navigation et liens communs à toutes les pages du site vitrine.
 
 /** Prise de rendez-vous avec Alex (bandeau du haut). */
-export const CALENDLY_URL = "https://calendly.com/alexandre-kistone/30mins-meetup";
+export const BOOKING_URL = "https://calendar.app.google/BnK5vVcAjum7r3VW9";
+/** La même page de réservation Google, dans sa version intégrable en iframe (le lien court refuse l'intégration). */
+export const BOOKING_EMBED_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ22qIL0gXou0jQYDLUFduApFY1VcDrbE-8pT1pn6Ctn-VW8dg1PNrL9qkICvWRJel6fpc5IS1lZ?gv=true";
 
 /** Liens simples de l'en-tête, après les menus déroulants. */
 export const NAV_LINKS = [{ label: "Pourquoi Kistone", href: "/pourquoi-kistone" }];

@@ -6,7 +6,7 @@ import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
 import { ArrowIcon } from "@/components/site/Cta";
-import { CALENDLY_URL } from "@/content/site";
+import { BOOKING_EMBED_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { takeHomeBrief } from "@/lib/homeBrief";
 import { palettes } from "@/lib/palettes";
@@ -293,10 +293,10 @@ const NeedRequestPage = () => {
                 lead="Choisissez un créneau avec Alexandre pour préciser le contexte et les compétences clés. Vous recevez ensuite un premier profil qualifié sous 48 h."
               />
             </div>
-            {/* Agenda Calendly intégré (iframe simple : pas de script tiers, autorisé par frame-src) */}
+            {/* Agenda Google intégré (iframe autorisée par frame-src) */}
             <div className="mt-10 overflow-hidden rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white">
               <iframe
-                src={`${CALENDLY_URL}?embed_type=Inline&embed_domain=kistone.fr&hide_gdpr_banner=1`}
+                src={BOOKING_EMBED_URL}
                 title="Réserver un appel de 30 minutes avec Alexandre"
                 className="block h-[1050px] w-full md:h-[720px]"
                 loading="lazy"

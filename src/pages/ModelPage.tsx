@@ -8,7 +8,7 @@ import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { LEGACY_MODEL_SLUGS, MODEL_PAGES, modelBySlug, modelPath, type ModelPage as Model } from "@/content/models";
 import { ROLE_PAGES, rolePath } from "@/content/roles";
-import { CALENDLY_URL, ROUTES } from "@/content/site";
+import { BOOKING_URL, ROUTES } from "@/content/site";
 import { palettes } from "@/lib/palettes";
 
 const BASE_URL = "https://kistone.fr";
@@ -60,7 +60,7 @@ function ModelContent({ model }: { model: Model }) {
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{model.lead}</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
           <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow>Partager un besoin</Cta>
-          <Cta href={CALENDLY_URL} size="lg" variant="secondary">En parler 30 min</Cta>
+          <Cta href={BOOKING_URL} size="lg" variant="secondary">En parler 30 min</Cta>
         </div>
         <dl className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {model.facts.map((f) => (

@@ -1,7 +1,7 @@
 import Cta from "@/components/site/Cta";
 import { Section } from "@/components/site/SectionHeader";
 import { PinkGlow } from "@/components/site/PinkGlow";
-import { CALENDLY_URL } from "@/content/site";
+import { BOOKING_URL } from "@/content/site";
 import { SQUAD } from "@/content/home";
 import { palettes } from "@/lib/palettes";
 import { verticalOf } from "@/lib/verticals";
@@ -26,7 +26,7 @@ export default function SquadOffer() {
               </li>
             ))}
           </ul>
-          <Cta href={CALENDLY_URL} variant="studio" size="lg" arrow className="mt-9">Composer ma squad en 30 minutes</Cta>
+          <Cta href={BOOKING_URL} variant="studio" size="lg" arrow className="mt-9">Composer ma squad en 30 minutes</Cta>
         </div>
 
         {/* La squad : trois membres, un projet */}

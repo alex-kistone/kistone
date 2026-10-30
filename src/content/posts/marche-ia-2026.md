@@ -110,7 +110,7 @@ Le marché paie cette rareté :
 
 Le marché de l'IA ne manque ni d'argent, ni de technologie, ni d'ambition. Il manque de gens capables de transformer tout ça en résultats concrets. Les entreprises qui gagneront ne seront pas celles qui auront le plus gros budget IA, mais celles qui auront accédé le plus vite aux bonnes compétences.
 
-Et vous, combien de temps votre dernier recrutement IA a-t-il pris ? Si le sujet vous parle, prenons 30 minutes pour en discuter : [réserver un créneau](https://calendly.com/alexandre-kistone/30mins-call).
+Et vous, combien de temps votre dernier recrutement IA a-t-il pris ? Si le sujet vous parle, prenons 30 minutes pour en discuter : [réserver un créneau](https://calendar.app.google/BnK5vVcAjum7r3VW9).
 
 ## Sources
 

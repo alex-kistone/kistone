@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { CALENDLY_URL } from "@/content/site";
+import { BOOKING_URL } from "@/content/site";
 
 const KEY = "kistone-promo-banner-closed";
 
-/** Bandeau bleu électrique au-dessus de l'en-tête : prise de rendez-vous avec Alex (Calendly). Refermable. */
+/** Bandeau bleu électrique au-dessus de l'en-tête : prise de rendez-vous avec Alex (Google Agenda). Refermable. */
 export default function PromoBanner() {
   // Affiché par défaut (pré-rendu compris) ; masqué si le visiteur l'a déjà fermé
   const [closed, setClosed] = useState(false);
@@ -20,7 +20,7 @@ export default function PromoBanner() {
   return (
     <div className="relative bg-[#1F4FFF] px-12 py-2.5 text-center text-[14px] text-white sm:text-[15px]">
       <span>Échangez gratuitement avec des experts IA <strong className="font-semibold">dès cette semaine</strong> !</span>{" "}
-      <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="ml-1 inline-flex items-center gap-1 font-semibold underline underline-offset-4 hover:no-underline sm:ml-3">
+      <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="ml-1 inline-flex items-center gap-1 font-semibold underline underline-offset-4 hover:no-underline sm:ml-3">
         Réserver un appel
         <span aria-hidden="true">→</span>
       </a>

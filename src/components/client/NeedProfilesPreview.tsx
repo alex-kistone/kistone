@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarDays, Languages } from "lucide-react";
-import { CALENDLY_URL } from "@/content/site";
+import { BOOKING_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLE_PAGES } from "@/content/roles";
 import { palettes } from "@/lib/palettes";
@@ -149,7 +149,7 @@ export default function NeedProfilesPreview({ need }: { need: PendingNeed }) {
           <p className="text-sm text-muted-foreground">On cadre votre besoin ensemble, en 30 minutes.</p>
         </div>
         <a
-          href={CALENDLY_URL}
+          href={BOOKING_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-border bg-background px-5 text-sm font-semibold transition-colors hover:bg-muted"

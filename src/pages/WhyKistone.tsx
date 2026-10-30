@@ -6,7 +6,7 @@ import Highlight from "@/components/site/Highlight";
 import SmartLink from "@/components/site/SmartLink";
 import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { CALENDLY_URL, ROUTES } from "@/content/site";
+import { BOOKING_URL, ROUTES } from "@/content/site";
 import { MODEL_PAGES, modelPath } from "@/content/models";
 import { palettes } from "@/lib/palettes";
 
@@ -55,7 +55,7 @@ export default function WhyKistone() {
             <p>Vous avez un projet IA à lancer ou à passer en production ? Échangeons 30 minutes.</p>
           </div>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Cta href={CALENDLY_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
+            <Cta href={BOOKING_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
             <Cta href={ROUTES.recruit} size="lg" variant="secondary">Partager un besoin</Cta>
           </div>
         </div>
