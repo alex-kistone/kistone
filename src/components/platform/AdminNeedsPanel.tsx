@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import NeedsList from "./admin/needs/NeedsList";
 import NeedDetail from "./admin/needs/NeedDetail";
+import NeedRequestsInbox from "./admin/needs/NeedRequestsInbox";
 import { useNeeds } from "./admin/needs/useNeeds";
 import {
   EMPTY_FILTERS, NEED_PARAM, NEED_STATUS, applyFiltersToParams, filterAndSortRows, filtersFromParams,
@@ -69,9 +70,12 @@ const AdminNeedsPanel = () => {
 
   if (rows.length === 0) {
     return (
+      <div className="space-y-4">
+      <NeedRequestsInbox />
       <div className="flex flex-col items-center py-12">
         <Building2 className="mb-3 h-10 w-10 text-muted-foreground" aria-hidden="true" />
         <p className="text-muted-foreground">{error ? `Chargement impossible : ${error}` : "Aucun besoin client déposé."}</p>
+      </div>
       </div>
     );
   }
@@ -80,6 +84,7 @@ const AdminNeedsPanel = () => {
 
   return (
     <div className="min-w-0 space-y-4">
+      <NeedRequestsInbox />
       {/* Recherche et filtres (conservés dans l'URL) */}
       <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
         <div className="relative lg:w-72">

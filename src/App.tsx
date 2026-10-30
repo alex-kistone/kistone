@@ -6,6 +6,7 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ClientNewNeed from "./pages/ClientNewNeed";
+import NeedRequestPage from "./pages/NeedRequestPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RolePage from "./pages/RolePage";
@@ -51,7 +52,7 @@ export const AppRoutes = () => (
     <Route path="/client" element={<ClientAuth />} />
     <Route path="/client/onboarding" element={<ClientOnboarding />} />
     <Route path="/client/dashboard" element={<ClientDashboard />} />
-    <Route path="/besoin" element={<ClientNewNeed />} />
+    <Route path="/besoin" element={<NeedRequestPage />} />
     <Route path="/client/new-need" element={<ClientNewNeed />} />
     <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
     <Route path="/client/profile" element={<ClientProfile />} />

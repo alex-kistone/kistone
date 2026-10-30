@@ -1,7 +1,6 @@
-import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Plus, X } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,22 +19,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
 import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
-import { VERTICALS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
-import { takeHomeBrief } from "@/lib/homeBrief";
-import { INDICATIVE_BUDGET } from "@/lib/indicativeBudget";
+import { isVertical, type Vertical } from "@/lib/verticals";
 import { generateNeedTitle } from "@/lib/needTitle";
-import { BoltWatermark } from "@/components/brand/Bolt";
-import Highlight from "@/components/site/Highlight";
-import { loadPendingNeed, savePendingNeed, type PendingNeed } from "@/lib/pendingNeed";
-import { palettes } from "@/lib/palettes";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
 import EnglishLevelField from "@/components/platform/EnglishLevelField";
 import AppShell from "@/components/platform/AppShell";
 import Header from "@/components/KistoneHeader";
-import OnboardingSteps, { NEED_FIRST_STEPS } from "@/components/platform/OnboardingSteps";
-import TagInput from "@/components/platform/TagInput";
-import { METIERS, SECTEURS, normalizeMetiers } from "@/lib/taxonomy";
+import OnboardingSteps from "@/components/platform/OnboardingSteps";
+import { SECTEURS } from "@/lib/taxonomy";
 
 
 const SECTORS = SECTEURS;
@@ -53,13 +45,9 @@ const ClientNewNeed = () => {
   // Étape 2 de l'onboarding client : même formulaire, sans la navigation de l'espace.
   const [searchParams] = useSearchParams();
   const onboarding = searchParams.get("onboarding") === "1";
-  // Parcours public « Partager un besoin » (/besoin) : on qualifie le besoin avant de créer le compte
-  const isPublic = useLocation().pathname === "/besoin";
-  const [picked, setPicked] = useState(() => !isPublic || isVertical(searchParams.get("fonction")));
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
 
 
   const [companyName, setCompanyName] = useState("");
@@ -91,7 +79,7 @@ const ClientNewNeed = () => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        if (!isPublic) navigate("/client");
+        navigate("/client");
         return;
       }
       setUserId(session.user.id);
@@ -112,93 +100,12 @@ const ClientNewNeed = () => {
       }
     };
     init();
-  }, [navigate, isPublic]);
+  }, [navigate]);
 
   // Arrivée depuis l'accueil (démo ou catalogue de rôles) : toujours en haut de la page
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // « Modifier » depuis l'écran de compte : le besoin déjà saisi revient dans le formulaire
-  useEffect(() => {
-    if (!isPublic || searchParams.get("edit") !== "1") return;
-    const draft = loadPendingNeed();
-    if (!draft) return;
-    if (isVertical(draft.vertical)) setVertical(draft.vertical);
-    setProfileTypes(normalizeMetiers(draft.profile_types));
-    setSpecialties(draft.specialties ?? []);
-    setDays(draft.days_per_week ? String(draft.days_per_week) : "5");
-    setBudgetMin(draft.budget_tjm_min ? String(draft.budget_tjm_min) : "");
-    setBudgetMax(draft.budget_tjm_max ? String(draft.budget_tjm_max) : "");
-    setMissionLocations(draft.mission_location ? draft.mission_location.split(",").map((x) => x.trim()).filter(Boolean) : []);
-    setRemotePolicy(draft.remote_policy || "on-site");
-    setStart(draft.desired_start ? { asap: false, date: draft.desired_start } : { asap: true, date: "" });
-    setDurationMonths(draft.duration_months ?? null);
-    setEnglishLevel(draft.english_level ?? null);
-    setDescription(draft.description ?? "");
-    setSectors(draft.sectors ?? []);
-    setPicked(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPublic]);
-
-  // Besoin tapé sur l'accueil : repris ici et analysé tout de suite par l'IA
-  useEffect(() => {
-    if (!isPublic) return;
-    const brief = takeHomeBrief();
-    if (!brief) return;
-    handleGenerate(brief);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPublic]);
-
-  const handleGenerate = async (text: string) => {
-    if (text.trim().length < 10) {
-      toast({ title: "Texte trop court", description: "Décrivez votre besoin en au moins quelques phrases.", variant: "destructive" });
-      return;
-    }
-    setGenerating(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const { data, error } = await supabase.functions.invoke("parse-need", {
-        body: { freeText: text.trim() },
-        headers: session ? { Authorization: `Bearer ${session.access_token}` } : {},
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      // L'IA ne peut proposer que des valeurs du référentiel : on écarte tout le reste.
-      // Fonction détectée par l'IA : spécialités de cette fonction uniquement
-      const detected: Vertical = isVertical(data.vertical) ? data.vertical : vertical;
-      setVertical(detected);
-      setSpecialties((data.specialties ?? []).filter((t: string) => verticalOf(detected).specialties.includes(t)));
-      if (typeof data.days_per_week === "number" && data.days_per_week >= 1 && data.days_per_week <= 5) setDays(String(data.days_per_week));
-      const metiers = normalizeMetiers(data.profile_types);
-      if (metiers.length) setProfileTypes(metiers);
-      const secteurs = (data.sectors ?? []).filter((t: string) => (SECTEURS as readonly string[]).includes(t));
-      if (secteurs.length) setSectors(secteurs);
-      if (data.budget_tjm_min || data.budget_tjm_max) {
-        if (data.budget_tjm_min) setBudgetMin(String(data.budget_tjm_min));
-        if (data.budget_tjm_max) setBudgetMax(String(data.budget_tjm_max));
-      } else {
-        // Aucun budget dans le texte : fourchette indicative de la famille, modifiable
-        const [lo, hi] = INDICATIVE_BUDGET[detected];
-        setBudgetMin(String(lo));
-        setBudgetMax(String(hi));
-      }
-      if (data.mission_location) setMissionLocations(data.mission_location.split(",").map((s: string) => s.trim()).filter(Boolean));
-      if (data.remote_policy) setRemotePolicy(data.remote_policy);
-      if (typeof data.desired_start === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data.desired_start)) setStart({ asap: false, date: data.desired_start });
-      if (data.description) setDescription(data.description);
-      if (typeof data.english_level === "number" && data.english_level >= 2 && data.english_level <= 5) setEnglishLevel(Math.round(data.english_level));
-      if (typeof data.duration_months === "number" && data.duration_months >= 1) setDurationMonths(Math.min(12, Math.round(data.duration_months)));
-
-      toast({ title: "Fiche générée !", description: "Vérifiez et complétez les champs ci-dessous." });
-    } catch (err: any) {
-      toast({ title: "Erreur IA", description: err.message || "Impossible de générer la fiche.", variant: "destructive" });
-    } finally {
-      setGenerating(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -219,29 +126,6 @@ const ClientNewNeed = () => {
       durationMonths,
       description: description || null,
     });
-    const need: PendingNeed = {
-      job_title: title,
-      vertical,
-      profile_types: vertical === "rpo" ? profileTypes : [],
-      specialties: vertical === "rpo" ? [] : specialties,
-      days_per_week: Number(days) < 5 ? Number(days) : null,
-      budget_tjm_min: budgetMin ? parseInt(budgetMin) : null,
-      budget_tjm_max: budgetMax ? parseInt(budgetMax) : null,
-      mission_location: missionLocations.join(", "),
-      remote_policy: remotePolicy,
-      desired_start: start.asap || !start.date ? null : start.date,
-      duration_months: durationMonths,
-      english_level: englishLevel,
-      description: description || null,
-      sectors,
-    };
-    // Visiteur sans compte : le besoin est gardé, puis enregistré après l'inscription
-    if (!userId) {
-      setSaving(false);
-      savePendingNeed(need);
-      navigate("/client?mode=signup&besoin=1");
-      return;
-    }
     try {
       const { error } = await supabase
         .from("client_needs" as any)
@@ -278,59 +162,10 @@ const ClientNewNeed = () => {
   };
 
   return (
-    <div className={onboarding || isPublic ? "relative isolate min-h-screen overflow-x-clip bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
-      {isPublic && (
-        <>
-          <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
-          <BoltWatermark className="-left-16 bottom-24 hidden h-[260px] w-auto rotate-[-18deg] md:block" />
-        </>
-      )}
-      {isPublic && (
-        <SEO
-          title="Partager un besoin : un expert IA sous 48 h"
-          description="Décrivez votre besoin (AI Engineer, AI Product, AI Leader ou Tech Recruiter, rythme, budget) et recevez un premier profil qualifié sous 48 h. Gratuit."
-          path="/besoin"
-        />
-      )}
-      {onboarding || isPublic ? <Header /> : <AppShell role="client" />}
-      {isPublic && !picked ? (
-        <main className="container mx-auto max-w-4xl px-4 py-12 md:py-16">
-          <h1 className="mb-2 text-3xl font-bold md:text-4xl">De quel profil avez-vous besoin ?</h1>
-          <p className="mb-10 text-muted-foreground">Un expert IA en freelance, ou un recruteur pour internaliser vos talents : le formulaire s'adapte à votre besoin.</p>
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {VERTICALS.map((v) => {
-              const p = palettes[v.palette];
-              return (
-                <li key={v.id}>
-                  <button
-                    type="button"
-                    onClick={() => { setVertical(v.id); setPicked(true); window.scrollTo(0, 0); }}
-                    className="flex h-full w-full flex-col items-start gap-4 rounded-[28px] border border-border bg-card p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
-                  >
-                    <span className="text-xs font-semibold" style={{ color: p.ink }}>[{v.group}]</span>
-                    <span className="text-xl font-bold leading-tight">Je recherche {v.seeking.split(" ")[0]} <Highlight>{v.seeking.split(" ").slice(1).join(" ")}</Highlight></span>
-                    <span className="text-sm text-muted-foreground">{v.description}</span>
-                    <span className="h-1 w-12 rounded-full" style={{ background: p.accent }} aria-hidden="true" />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <p className="mt-10 text-sm text-muted-foreground">
-            Déjà client ? <Link to="/client" className="font-medium text-foreground underline underline-offset-2">Se connecter</Link>
-          </p>
-        </main>
-      ) : (
+    <div className={onboarding ? "relative isolate min-h-screen overflow-x-clip bg-background" : "min-h-screen bg-background lg:pl-[248px]"}>
+      {onboarding ? <Header /> : <AppShell role="client" />}
       <main className="container mx-auto max-w-2xl px-4 py-12">
-        {isPublic ? (
-          <>
-            <OnboardingSteps steps={NEED_FIRST_STEPS} current={1} />
-            <Button variant="ghost" size="sm" onClick={() => setPicked(false)} className="-mt-2 mb-6 gap-2 text-muted-foreground">
-              <ArrowLeft className="h-4 w-4" />
-              Changer de profil
-            </Button>
-          </>
-        ) : onboarding ? (
+        {onboarding ? (
           <OnboardingSteps current={2} />
         ) : (
           <Button
@@ -344,7 +179,7 @@ const ClientNewNeed = () => {
           </Button>
         )}
 
-        <h1 className="mb-2 text-3xl font-bold">{isPublic ? `Votre besoin ${verticalOf(vertical).short}` : onboarding ? "Déposez votre premier besoin" : "Déposer un besoin"}</h1>
+        <h1 className="mb-2 text-3xl font-bold">{onboarding ? "Déposez votre premier besoin" : "Déposer un besoin"}</h1>
         <p className="mb-8 text-muted-foreground">
           {vertical === "rpo"
             ? "Décrivez votre besoin en recrutement : nos recruteurs freelances prennent le relais."
@@ -359,14 +194,6 @@ const ClientNewNeed = () => {
           )}
         </p>
 
-        {/* Besoin tapé sur l'accueil : analysé par l'IA, qui pré-remplit le formulaire */}
-        {generating && (
-          <div className="mb-8 flex items-center gap-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-sm">
-            <Loader2 className="h-4 w-4 animate-spin text-accent" />
-            Analyse de votre besoin en cours : le formulaire se remplit tout seul.
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Profile types - mirrors recruiter skills */}
           <NeedFunctionFields
@@ -378,7 +205,6 @@ const ClientNewNeed = () => {
             onSpecialties={setSpecialties}
             days={days}
             onDays={setDays}
-            hideFunctionChoice={isPublic}
           />
 
           {/* Secteurs */}
@@ -497,16 +323,10 @@ const ClientNewNeed = () => {
           </div>
 
           <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={saving}>
-            {saving ? "Enregistrement..." : userId ? "Déposer mon besoin" : "Voir les profils correspondants"}
+            {saving ? "Enregistrement..." : "Déposer mon besoin"}
           </Button>
-          {!userId && (
-            <p className="text-center text-sm text-muted-foreground">
-              Étape suivante : un aperçu des profils qui correspondent, puis votre compte pour les recevoir. Gratuit et sans engagement.
-            </p>
-          )}
         </form>
       </main>
-      )}
     </div>
   );
 };
