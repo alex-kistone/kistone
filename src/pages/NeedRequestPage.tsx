@@ -5,7 +5,7 @@ import SEO from "@/components/SEO";
 import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
-import Cta, { ArrowIcon } from "@/components/site/Cta";
+import { ArrowIcon } from "@/components/site/Cta";
 import { CALENDLY_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { takeHomeBrief } from "@/lib/homeBrief";
@@ -290,14 +290,22 @@ const NeedRequestPage = () => {
             <div className="mt-4">
               <StepTitle
                 title={<>Merci, on s'en occupe. <Highlight>Parlons-en 30 minutes.</Highlight></>}
-                lead="Réservez un appel avec Alexandre pour préciser le contexte et les compétences clés. Vous recevez ensuite un premier profil qualifié sous 48 h."
+                lead="Choisissez un créneau avec Alexandre pour préciser le contexte et les compétences clés. Vous recevez ensuite un premier profil qualifié sous 48 h."
               />
             </div>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Cta href={CALENDLY_URL} variant="studio" size="lg" arrow>Réserver un appel</Cta>
-              <Cta href="/" variant="secondary" size="lg">Retour à l'accueil</Cta>
+            {/* Agenda Calendly intégré (iframe simple : pas de script tiers, autorisé par frame-src) */}
+            <div className="mt-10 overflow-hidden rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white">
+              <iframe
+                src={`${CALENDLY_URL}?embed_type=Inline&embed_domain=kistone.fr&hide_gdpr_banner=1`}
+                title="Réserver un appel de 30 minutes avec Alexandre"
+                className="block h-[1050px] w-full md:h-[720px]"
+                loading="lazy"
+              />
             </div>
-            <p className="mt-6 text-sm text-ks-soft">Pas le temps maintenant ? Nous vous écrivons à {email.trim()} pour convenir d'un moment.</p>
+            <p className="mt-6 text-sm text-ks-soft">
+              Pas le temps maintenant ? Nous vous écrivons à {email.trim()} pour convenir d'un moment.{" "}
+              <Link to="/" className="font-medium text-ks-ink underline underline-offset-2">Retour à l'accueil</Link>
+            </p>
           </div>
         )}
       </main>
