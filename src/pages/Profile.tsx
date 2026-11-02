@@ -29,6 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import AppShell from "@/components/platform/AppShell";
 import TagInput from "@/components/platform/TagInput";
+import LocationInput from "@/components/platform/LocationInput";
 import LinkedinRequiredDialog from "@/components/platform/LinkedinRequiredDialog";
 import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
 import ChatPanel from "@/components/platform/ChatPanel";
@@ -652,7 +653,7 @@ const Profile = () => {
           {/* Mobilité */}
           <div id="section-mobility" className="space-y-2 rounded-xl transition-shadow">
             <Label>Mobilité *</Label>
-            <TagInput tags={mobility} onTagsChange={setMobility} placeholder="Ajoutez une ville" />
+            <LocationInput tags={mobility} onTagsChange={setMobility} />
           </div>
 
 {isRpo ? (

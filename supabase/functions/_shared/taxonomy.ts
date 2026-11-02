@@ -11,7 +11,7 @@ export { VERTICALS, DEFAULT_VERTICAL, type Vertical } from "./verticals.ts";
  * Métiers recrutés par un Tech Recruiter (verticale RPO) : grandes familles cochées par le
  * freelance (skills, 3 au maximum) et par le client (profile_types). Synchronisés avec le champ
  * Jarvi « Spécialités RPO » (adc61fa4-ad68-4f12-983b-69afe9c03d4c). Ordre et libellés fixés par
- * Alex le 2026-10-20, Finance et Industrie ajoutés le 2026-10-31 ; le détail tech (Cyber, Infra/Cloud, SAP…) est saisi par l'admin dans les
+ * Alex le 2026-10-20, Finance et Industrie ajoutés le 2026-10-31, Head of TA le 2026-11-02 ; le détail tech (Cyber, Infra/Cloud, SAP…) est saisi par l'admin dans les
  * spécialités tech (JARVI_TECH_SPECIALTIES, champ « Spécialités RPO Tech »).
  */
 export const METIERS = [
@@ -22,6 +22,7 @@ export const METIERS = [
   "Sales",
   "Finance",
   "Industrie",
+  "Head of TA",
   "Autres", // un métier hors de cette liste (le freelance le précise dans sa présentation)
 ] as const;
 

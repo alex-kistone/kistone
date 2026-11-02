@@ -207,8 +207,7 @@ export const ROLE_PAGES: RolePage[] = [
     slug: "head-of-ta",
     role: "Head of TA",
     eyebrow: "Process · Structuration de la fonction recrutement",
-    // Pas de vrais profils repérés comme Head of TA pour l'instant : exemples seuls
-    metiers: [],
+    metiers: ["Head of TA"],
     longName: "Head of Talent Acquisition freelance",
     h1: "Un Head of TA freelance, pour structurer votre recrutement",
     highlight: "Head of TA",
