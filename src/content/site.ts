@@ -16,21 +16,15 @@ export const ROUTES = {
   login: "/login",
 };
 
-import { ROLE_PAGES, rolePath } from "./roles";
-import { MODEL_PAGES, modelPath } from "./models";
-import { palettes } from "@/lib/palettes";
-import { verticalOf } from "@/lib/verticals";
+import { RPO_ROLE_PAGES, rolePath } from "./roles";
 
 /** Les fiches de poste (/recruter/…), dans le menu et le pied de page. */
-const ROLE_ITEMS = ROLE_PAGES.map((r) => ({
+const ROLE_ITEMS = RPO_ROLE_PAGES.map((r, i) => ({
   title: r.role,
-  desc: verticalOf(r.vertical).description,
+  desc: r.eyebrow ?? "",
   href: rolePath(r),
-  dot: palettes[verticalOf(r.vertical).palette].accent,
+  dot: ["#3D7BD0", "#E07A3A", "#2F9A63", "#7357D6"][i],
 }));
-
-/** Les modèles d'intervention (/modeles/…). */
-const MODEL_ITEMS = MODEL_PAGES.map((m) => ({ title: m.name, desc: m.short, href: modelPath(m), dot: palettes[m.palette].accent }));
 
 export type MenuItem = { title: string; desc: string; href: string; dot: string };
 export type Menu = { id: string; label: string; items: MenuItem[] };
@@ -38,38 +32,29 @@ export type Menu = { id: string; label: string; items: MenuItem[] };
 export const MENUS: Menu[] = [
   {
     id: "mkt",
-    label: "Experts IA",
+    label: "Recruteurs",
     items: ROLE_ITEMS,
-  },
-  {
-    id: "modeles",
-    label: "Modèles",
-    items: MODEL_ITEMS,
   },
   {
     id: "res",
     label: "Ressources",
     items: [
-      { title: "Blog & articles", desc: "Projets IA, formats d’intervention, recrutement des talents IA.", href: "/ressources", dot: "#1F8F87" },
-      { title: "Comparatif des plateformes", desc: "Trouver un expert IA freelance : qui fait quoi en France.", href: "/ressources/comparatif-plateformes-freelance-ia", dot: "#1F2A44" },
-      { title: "Guides", desc: "Méthodes pour lancer, piloter et staffer vos projets IA.", href: "/#ressources", dot: "#E07A3A" },
+      { title: "Blog & articles", desc: "RPO freelance, recrutement, marché des talents.", href: "/ressources", dot: "#1F8F87" },
+      { title: "Comparatif du RPO", desc: "Recruteurs freelance ou cabinet : qui fait quoi en France.", href: "/ressources/comparatif-rpo-freelance", dot: "#1F2A44" },
+      { title: "Guides", desc: "Méthodes pour structurer et piloter vos recrutements.", href: "/#ressources", dot: "#E07A3A" },
     ],
   },
 ];
 
 export const FOOTER_COLUMNS = [
   {
-    title: "Experts IA",
+    title: "Recruteurs",
     links: ROLE_ITEMS.map((r) => ({ label: r.title, href: r.href })),
-  },
-  {
-    title: "Modèles",
-    links: MODEL_ITEMS.map((m) => ({ label: m.title, href: m.href })),
   },
   {
     title: "Le réseau",
     links: [
-      { label: "Trouver un expert", href: "/#trouver-un-expert" },
+      { label: "Trouver un recruteur", href: "/#trouver-un-recruteur" },
       { label: "Pourquoi Kistone", href: "/pourquoi-kistone" },
       { label: "Comment ça marche", href: "/#comment" },
       { label: "Partager un besoin", href: "/besoin" },

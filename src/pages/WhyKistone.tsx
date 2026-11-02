@@ -3,19 +3,23 @@ import { FOUNDER_REF, ORG_REF, withIdentity } from "@/lib/structuredData";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import Highlight from "@/components/site/Highlight";
-import SmartLink from "@/components/site/SmartLink";
 import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { BOOKING_URL, ROUTES } from "@/content/site";
-import { MODEL_PAGES, modelPath } from "@/content/models";
-import { palettes } from "@/lib/palettes";
 
 /** Engagements tirés de la conviction d'Alex (texte de la page). */
 const COMMITMENTS = [
-  { title: "Un référent IA", desc: "Chaque besoin est cadré par un référent qui connaît les métiers de l'IA." },
-  { title: "Des réalisations, pas un CV", desc: "Chaque profil est évalué sur ce qu'il a construit et mis en production." },
+  { title: "Un besoin bien cadré", desc: "Chaque besoin est cadré avec vous : les postes, le rythme, le budget." },
+  { title: "Des réalisations, pas un CV", desc: "Chaque recruteur est évalué sur les recrutements qu'il a réellement menés." },
   { title: "Un profil en 48 h", desc: "Un premier profil qualifié vous est présenté sous 48 h." },
-  { title: "Le bon format", desc: "Mission freelance, fractional ou contract-to-hire, selon votre projet." },
+  { title: "L'administratif géré", desc: "Contrat, conformité, CRA et facturation sont pris en charge par Kistone." },
+];
+
+/** Ce que le modèle freelance change pour vos recrutements. */
+const FREELANCE_MODEL = [
+  { title: "Facturé au jour", desc: "Sans honoraires au placement : vous payez les jours réalisés." },
+  { title: "À votre rythme", desc: "À temps plein ou quelques jours par semaine, selon vos postes ouverts." },
+  { title: "Intégré à votre équipe", desc: "Vos outils, vos managers, votre marque employeur." },
 ];
 
 /** /pourquoi-kistone : qui est Alex et la conviction qui fonde Kistone. */
@@ -33,7 +37,7 @@ export default function WhyKistone() {
     <SiteLayout>
       <SEO
         title="Pourquoi Kistone : notre conviction"
-        description="L'IA a transformé la façon de travailler, et le freelance est le modèle pour accéder aux experts qui la maîtrisent. La conviction d'Alexandre Guégo, fondateur."
+        description="L'IA transforme la fonction recrutement : le RPO complète votre équipe de manière ponctuelle, et de nombreux recruteurs ont choisi le Freelance. La conviction de Kistone."
         path="/pourquoi-kistone"
         image="/og/pourquoi-kistone.png"
         jsonLd={jsonLd}
@@ -47,12 +51,15 @@ export default function WhyKistone() {
           </h1>
           <div className="mt-8 space-y-5 text-[19px] leading-[1.6] text-ks-ink-2 md:text-[21px]">
             <p className="font-ks-display text-[24px] font-semibold leading-[1.3] tracking-[-0.02em] text-ks-ink md:text-[28px]">
-              L'<Highlight>IA</Highlight> a totalement transformé la façon de travailler. Pour en tirer parti, il faut des experts qui la maîtrisent, maintenant : le freelance est le modèle qui vous y donne accès.
+              L'IA est en train de transformer la <Highlight>fonction recrutement</Highlight>.
             </p>
             <p>
-              C'est la raison d'être de Kistone, le réseau freelance spécialiste des métiers de l'IA : des AI Engineers pour construire, des AI Product Managers pour faire adopter, des AI Leaders pour fixer le cap. Ils interviennent en mission freelance, en fractional ou en contract-to-hire ; et quand vient le moment d'internaliser, nos Tech Recruiters vous aident à recruter vos talents IA en CDI. Chaque besoin est cadré par un référent IA, chaque profil est évalué sur ce qu'il a réellement construit, et nous nous engageons à vous présenter un premier profil qualifié en 48 h.
+              Il n'est plus nécessaire d'avoir une armée de recruteurs en interne pour construire ses équipes. Le RPO permet de venir compléter l'équipe recrutement de manière ponctuelle et de nombreux recruteurs ont fait le choix du Freelance pour exercer leur métier.
             </p>
-            <p>Vous avez un projet IA à lancer ou à passer en production ? Échangeons 30 minutes.</p>
+            <p>
+              C'est la raison d'être de Kistone, le réseau de Freelance RPO : une communauté de 700+ recruteurs sélectionnés et qualifiés, spécialisés par métier, qui rejoignent vos équipes à temps plein ou quelques jours par semaine pour recruter en CDI. Chaque besoin est cadré avec vous, et un premier profil qualifié vous est présenté sous 48 h.
+            </p>
+            <p>Vous avez des recrutements à lancer ? Échangeons 30 minutes.</p>
           </div>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Cta href={BOOKING_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
@@ -81,19 +88,17 @@ export default function WhyKistone() {
               évaluer un parcours au-delà du CV, et ne présenter que le bon profil, au bon moment.
             </p>
             <p>
-              Au fil des missions, une même demande revenait. Après les recruteurs, il fallait un AI Engineer pour passer un
-              prototype en production, un AI Product Manager pour lancer un copilote, un AI Leader pour bâtir une feuille de route :
-              des compétences rares, que les équipes n'avaient pas encore en interne.
+              Au fil des missions, un constat s'est imposé : un recruteur intégré à l'équipe, qui connaît le métier et travaille
+              avec les managers, va plus loin qu'un prestataire extérieur, et laisse à l'entreprise le vivier et le process construits.
             </p>
             <p>
-              Kistone est né de ce constat : appliquer aux métiers de l'IA l'exigence de qualification forgée dans le recrutement.
-              Le RPO reste notre socle : nos Tech Recruiters vous aident à internaliser vos talents IA en CDI, et le contract-to-hire
-              permet à une mission de devenir un recrutement.
+              Kistone est né de ce constat : réunir les meilleurs recruteurs freelance, les qualifier avec exigence et prendre en
+              charge le contrat, la conformité et la facturation. Le RPO est notre métier, et nous nous y consacrons entièrement.
             </p>
           </div>
           <blockquote className="rounded-[28px] bg-ks-dark p-8 text-ks-dark-fg">
             <p className="font-ks-display text-[24px] font-semibold leading-[1.3] tracking-[-0.02em]">
-              « L'IA a totalement transformé la façon de travailler. Pour en tirer parti, il faut des experts qui la maîtrisent. »
+              « Bien comprendre un besoin, évaluer un parcours au-delà du CV, et ne présenter que le bon profil, au bon moment. »
             </p>
             <footer className="mt-5 text-[14px] text-ks-dark-muted">Alexandre Guégo, fondateur de Kistone</footer>
           </blockquote>
@@ -101,21 +106,17 @@ export default function WhyKistone() {
       </PageSection>
 
       {/* Le modèle freelance, mis en avant */}
-      <PageSection title="Le freelance, le bon modèle pour l'IA">
+      <PageSection title="Le freelance, le bon modèle pour recruter">
         <p className="mt-6 max-w-[760px] text-[18px] leading-[1.65] text-ks-ink-2">
-          Les modèles, les outils et les usages de l'IA évoluent en permanence. Les experts qui ont choisi le freelance enchaînent
-          les projets, restent à la pointe et transmettent ce qu'ils savent à vos équipes. Vous accédez à cette expertise en
-          quelques jours, au rythme dont votre projet a besoin.
+          Vos besoins de recrutement varient avec votre croissance. Les recruteurs qui ont choisi le freelance enchaînent les
+          missions, connaissent leur marché et s'adaptent vite à une nouvelle équipe. Vous accédez à cette expertise en quelques
+          jours, au rythme dont vous avez besoin.
         </p>
         <ul className="mt-10 grid gap-4 md:grid-cols-3">
-          {MODEL_PAGES.map((m) => (
-            <li key={m.slug}>
-              <SmartLink href={modelPath(m)} className="ks-lift flex h-full flex-col rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
-                <span className="h-2.5 w-2.5 rounded-full" style={{ background: palettes[m.palette].accent }} aria-hidden="true" />
-                <h3 className="mt-4 font-ks-display text-[22px] font-semibold tracking-[-0.02em]">{m.name}</h3>
-                <p className="mt-2 flex-1 text-[15px] leading-[1.55] text-ks-soft">{m.short}</p>
-                <span className="mt-5 text-[15px] font-medium text-ks-ink">Découvrir le modèle →</span>
-              </SmartLink>
+          {FREELANCE_MODEL.map((m) => (
+            <li key={m.title} className="flex h-full flex-col rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card">
+              <h3 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">{m.title}</h3>
+              <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft">{m.desc}</p>
             </li>
           ))}
         </ul>

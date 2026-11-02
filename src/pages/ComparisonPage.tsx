@@ -14,25 +14,21 @@ const BASE_URL = "https://kistone.fr";
 export const COMPARISON_PATH = `${BLOG_PATH}/${COMPARISON.slug}`;
 
 const FAMILY_TONE: Record<Family, string> = {
-  specialist: "bg-[#E8E2F6] text-[#4B35A0]",
-  selective: "bg-[#D5EDEA] text-[#16615C]",
-  global: "bg-[#FBE6D4] text-[#94471A]",
-  function: "bg-[#F5ECCB] text-[#6E5208]",
-  open: "bg-[#DDE8F5] text-[#1E4F8F]",
+  freelance: "bg-[#E8E2F6] text-[#4B35A0]",
+  cabinet: "bg-[#DDE8F5] text-[#1E4F8F]",
+  rh: "bg-[#F5ECCB] text-[#6E5208]",
 };
 
-/** Pastille de couleur de chaque famille (cartes « Cinq familles d'acteurs »). */
+/** Pastille de couleur de chaque famille (cartes « Trois familles d'acteurs »). */
 const FAMILY_DOT: Record<Family, string> = {
-  specialist: "bg-[#7357D6]",
-  selective: "bg-[#1F8F87]",
-  global: "bg-[#E07A3A]",
-  function: "bg-[#C99A12]",
-  open: "bg-[#3D7BD0]",
+  freelance: "bg-[#7357D6]",
+  cabinet: "bg-[#3D7BD0]",
+  rh: "bg-[#C99A12]",
 };
 
 const anchor = (name: string) => name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-");
 
-/** Comparatif des plateformes pour trouver un expert IA freelance (Ressources), pré-rendu. */
+/** Comparatif des acteurs du RPO en France (Ressources), pré-rendu. */
 export default function ComparisonPage() {
   const url = `${BASE_URL}${COMPARISON_PATH}`;
   const jsonLd = [
@@ -51,7 +47,7 @@ export default function ComparisonPage() {
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      name: "Plateformes pour trouver un expert IA freelance en France",
+      name: "Acteurs du RPO en France",
       itemListElement: PLAYERS.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.name, url: p.url })),
     },
     {
@@ -83,11 +79,11 @@ export default function ComparisonPage() {
           </div>
         </header>
 
-        {/* Les quatre familles */}
-        <PageSection title="Cinq familles d'acteurs">
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {/* Les trois familles */}
+        <PageSection title="Trois familles d'acteurs">
+          <ul className="mt-10 grid gap-4 md:grid-cols-3">
             {(Object.keys(FAMILIES) as Family[]).map((f) => (
-              <li key={f} className="flex flex-col rounded-[24px] bg-white p-6 shadow-ks-card sm:last:col-span-2 xl:last:col-span-1">
+              <li key={f} className="flex flex-col rounded-[24px] bg-white p-6 shadow-ks-card">
                 <span className={cn("h-2.5 w-2.5 rounded-full", FAMILY_DOT[f])} aria-hidden="true" />
                 <h3 className="mt-4 font-ks-display text-[19px] font-semibold leading-[1.25] tracking-[-0.02em] text-balance">{FAMILIES[f].label}</h3>
                 <p className="mt-2 text-[15px] leading-[1.55] text-ks-soft">{FAMILIES[f].desc}</p>
@@ -105,8 +101,9 @@ export default function ComparisonPage() {
                 <tr className="border-b border-[rgba(20,19,18,0.08)] text-ks-soft">
                   <th className="px-5 py-4 font-medium">Acteur</th>
                   <th className="px-5 py-4 font-medium">Type</th>
-                  <th className="px-5 py-4 font-medium">Fonctions couvertes</th>
-                  <th className="px-5 py-4 font-medium">Modèles</th>
+                  <th className="px-5 py-4 font-medium">Recruteurs</th>
+                  <th className="px-5 py-4 font-medium">Métiers couverts</th>
+                  <th className="px-5 py-4 font-medium">Intervention</th>
                   <th className="px-5 py-4 font-medium">Idéal pour</th>
                 </tr>
               </thead>
@@ -115,6 +112,7 @@ export default function ComparisonPage() {
                   <tr key={p.name} className={cn("border-b border-[rgba(20,19,18,0.06)] align-top last:border-0", p.name === "Kistone" && "bg-[#FFF5F8]")}>
                     <td className="px-5 py-4 font-ks-display text-[16px] font-semibold"><a href={`#${anchor(p.name)}`} className="hover:underline">{p.name}</a></td>
                     <td className="px-5 py-4"><span className={cn("whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-medium", FAMILY_TONE[p.family])}>{FAMILIES[p.family].label}</span></td>
+                    <td className="px-5 py-4 font-medium text-ks-ink">{p.recruiters}</td>
                     <td className="px-5 py-4 text-ks-ink-2">{p.scope}</td>
                     <td className="px-5 py-4 text-ks-ink-2">{p.models}</td>
                     <td className="px-5 py-4 text-ks-soft">{p.idealFor}</td>
@@ -142,8 +140,9 @@ export default function ComparisonPage() {
                     <li key={s} className="flex gap-2.5"><span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-ks-pink" aria-hidden="true" />{s}</li>
                   ))}
                 </ul>
-                <p className="mt-5 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Idéal pour :</strong> {p.idealFor}</p>
-                <p className="mt-2 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Modèles :</strong> {p.models}</p>
+                <p className="mt-5 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Recruteurs :</strong> {p.recruiters}</p>
+                <p className="mt-2 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Idéal pour :</strong> {p.idealFor}</p>
+                <p className="mt-2 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Intervention :</strong> {p.models}</p>
                 {p.name === "Kistone" ? (
                   <div className="mt-6 flex flex-wrap gap-3">
                     <Cta href={ROUTES.recruit} variant="studio" arrow>Déposer un besoin</Cta>
@@ -193,11 +192,12 @@ export default function ComparisonPage() {
             <p>
               Ce comparatif est rédigé par Kistone, qui figure parmi les acteurs présentés : nous l'indiquons en toute transparence.
               Les informations proviennent des sites publics de chaque acteur, consultés le {formatDate(COMPARISON.date)} ; les chiffres
-              mentionnés sont ceux que les acteurs annoncent eux-mêmes.
+              mentionnés sont ceux que les acteurs annoncent eux-mêmes. Le statut salarié des recruteurs de Solantis et de GetPro,
+              qui ne figure pas sur leurs sites, relève de notre connaissance du marché.
             </p>
             <p>
-              Les acteurs sont présentés selon quatre critères : la ou les fonctions couvertes, les modèles d'intervention, le niveau
-              de sélection des profils et le type de clients accompagnés. Vous représentez l'un de ces acteurs et une information a
+              Les acteurs sont présentés selon quatre critères : le statut des recruteurs, les métiers couverts, le mode d'intervention
+              et le type de clients accompagnés. Vous représentez l'un de ces acteurs et une information a
               changé ? Écrivez-nous, nous la mettrons à jour.
             </p>
           </div>

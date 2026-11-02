@@ -7,7 +7,7 @@ import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { LEGACY_ROLE_SLUGS, ROLE_PAGES, ROLES_UPDATED, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
+import { LEGACY_ROLE_SLUGS, ROLE_PAGES, RPO_ROLE_PAGES, ROLES_UPDATED, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
 import { formatDate } from "@/lib/blog";
 import { ROUTES } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,15 +25,16 @@ type Featured = {
   weekly_capacity: number | null; available: boolean | null; availability_date: string | null; rating: number;
 };
 
-/** Derniers profils 4-5 étoiles de la famille (anonymisés), complétés par des exemples. */
+/** Derniers profils 4-5 étoiles de la spécialité (anonymisés), complétés par des exemples. */
 function useProfiles(role: Role): Shown[] {
   const samples: Shown[] = role.samples.map((s) => ({ ...s, rating: null }));
   const [real, setReal] = useState<Shown[]>([]);
   useEffect(() => {
     let alive = true;
-    supabase.rpc("list_featured_freelances" as never, { _vertical: role.vertical, _limit: 4 } as never).then(({ data }) => {
+    supabase.rpc("list_featured_freelances" as never, { _vertical: role.vertical, _limit: 12 } as never).then(({ data }) => {
       if (!alive || !Array.isArray(data)) return;
-      setReal((data as Featured[]).map((f) => ({
+      const matching = (data as Featured[]).filter((f) => !role.metiers || (f.specialties ?? []).some((s) => role.metiers!.includes(s)));
+      setReal(matching.slice(0, 4).map((f) => ({
         name: f.display_name,
         job: f.job_title || role.role,
         xp: f.years_experience,
@@ -44,7 +45,7 @@ function useProfiles(role: Role): Shown[] {
       })));
     });
     return () => { alive = false; };
-  }, [role.vertical, role.role]);
+  }, [role.vertical, role.role, role.metiers]);
   return real.length >= MIN_SHOWN ? real : [...real, ...samples].slice(0, Math.max(MIN_SHOWN, real.length));
 }
 
@@ -170,7 +171,7 @@ function RoleContent({ role }: { role: Role }) {
       {/* Promesse */}
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg] md:h-[760px]" />
-        <p className="text-[15px] font-semibold" style={{ color: palettes[v.palette].ink }}>{v.roles}</p>
+        <p className="text-[15px] font-semibold" style={{ color: palettes[v.palette].ink }}>{role.eyebrow ?? v.roles}</p>
         <h1 className="mt-3 max-w-[900px] font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[64px] lg:text-[76px]">
           {role.h1.split(role.highlight).flatMap((part, i) => (i === 0 ? [part] : [<Highlight key={i}>{role.highlight}</Highlight>, part]))}
         </h1>
@@ -209,7 +210,7 @@ function RoleContent({ role }: { role: Role }) {
       </Section>
 
       {/* Chiffres clés */}
-      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" title="Un expert qualifié, avec la flexibilité du freelance">
+      <Section bolt="-left-24 -top-10 h-[300px] w-auto rotate-[-16deg]" title={`${v.id === "rpo" ? "Un recruteur" : "Un expert"} qualifié, avec la flexibilité du freelance`}>
         <dl className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {figures.map((f) => (
             <div key={f.label} className="rounded-[24px] bg-white p-6 shadow-ks-card">
@@ -289,7 +290,7 @@ function RoleContent({ role }: { role: Role }) {
           <nav aria-label="Autres métiers" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">
             <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Autres métiers</p>
             <ul className="mt-4 flex flex-wrap gap-2">
-              {ROLE_PAGES.filter((r) => r.slug !== role.slug).map((r) => (
+              {(role.vertical === "rpo" ? RPO_ROLE_PAGES : ROLE_PAGES).filter((r) => r.slug !== role.slug).map((r) => (
                 <li key={r.slug}>
                   <SmartLink href={rolePath(r)} className="inline-flex h-9 items-center rounded-full border border-[rgba(245,241,234,0.22)] px-4 text-sm hover:bg-[rgba(245,241,234,0.08)]">
                     {r.role}

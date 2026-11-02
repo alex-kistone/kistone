@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { ROLE_PAGES, rolePath } from "@/content/roles";
+import { RPO_ROLE_PAGES, rolePath } from "@/content/roles";
 import { ROUTES } from "@/content/site";
 
 /**
@@ -25,7 +25,7 @@ const NotFound = () => (
         <Cta href={ROUTES.recruit} size="lg" variant="secondary">Partager un besoin</Cta>
       </div>
       <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-2 text-[15px] font-medium">
-        {ROLE_PAGES.map((r) => (
+        {RPO_ROLE_PAGES.map((r) => (
           <li key={r.slug}><a href={rolePath(r)} className="underline underline-offset-4 hover:text-ks-pink">{r.role}</a></li>
         ))}
       </ul>

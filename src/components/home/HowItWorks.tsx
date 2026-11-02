@@ -14,7 +14,7 @@ function BriefMini() {
       <div className="h-2 w-[85%] rounded-full bg-ks-secondary" />
       <div className="h-2 w-[62%] rounded-full bg-ks-secondary" />
       <div className="mt-1 flex flex-wrap gap-1.5">
-        {["AI Engineer", "RAG", "Mission 6 mois"].map((c) => (
+        {["RPO Tech", "3 postes", "3 j / sem"].map((c) => (
           <span key={c} className="rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: p.soft, color: p.ink }}>
             {c}
           </span>
@@ -28,7 +28,7 @@ function BriefMini() {
 function ShortlistMini() {
   const rows = [
     { r: RECRUITERS[0], score: 94 },
-    { r: RECRUITERS[3], score: 88 },
+    { r: RECRUITERS[4], score: 88 },
   ];
   return (
     <div className="flex w-full flex-col gap-2">
@@ -78,7 +78,7 @@ export default function HowItWorks() {
     <section id="comment" className="relative isolate mx-auto mt-24 flex max-w-ks scroll-mt-24 flex-col items-center px-5 text-center md:mt-[140px] md:px-8 xl:px-0">
       <BoltWatermark className="-left-20 top-0 h-[420px] w-auto rotate-[-10deg]" />
       <h2 className="ks-reveal font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-        Un expert IA qualifié.
+        Un recruteur qualifié.
         <br />
         La flexibilité du freelance.
       </h2>

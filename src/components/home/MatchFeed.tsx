@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { RECRUITERS } from "@/content/home";
 import { palettes } from "@/lib/palettes";
-import { verticalOf } from "@/lib/verticals";
 import PersonAvatar from "./PersonAvatar";
 
 const STEP_MS = 2400; // un nouveau profil toutes les 2,4 s
@@ -10,8 +9,8 @@ const VISIBLE = 4;
 const SCORES = [94, 88, 91, 86, 93, 89, 90, 87, 92, 85, 95, 88];
 
 /**
- * Colonne droite de la démo de l'accueil : un fil de matching en continu, toutes fonctions
- * confondues. Indépendant du besoin tapé à gauche : il montre la plateforme qui travaille.
+ * Colonne droite de la démo de l'accueil : un fil de matching en continu, tous métiers
+ * confondus. Indépendant du besoin tapé à gauche : il montre le réseau qui travaille.
  */
 export default function MatchFeed() {
   const [tick, setTick] = useState(0);
@@ -56,7 +55,7 @@ export default function MatchFeed() {
                 <div className="flex items-center gap-2">
                   <span className="truncate text-[15px] font-semibold">{r.name}</span>
                   <span className="shrink-0 text-[12px] font-semibold" style={{ color: p.ink }}>
-                    {verticalOf(r.vertical).short}
+                    {r.domain}
                   </span>
                   <span className="hidden shrink-0 items-center gap-1 text-[12px] font-medium text-[#17663F] sm:flex">
                     <span className="h-1.5 w-1.5 rounded-full bg-ks-success" />

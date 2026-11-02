@@ -2,7 +2,7 @@
  * need-request — enregistre une demande de besoin déposée sans compte (parcours public /besoin)
  * et prévient Alex par email.
  *
- * Corps : { email, vertical, engagement, rhythm?, duration?, open_positions?, start_window, brief?, website? }
+ * Corps : { email, vertical, metier?, engagement, rhythm?, duration?, open_positions?, start_window, brief?, website? }
  * « website » est un champ piège invisible : rempli, la demande est ignorée (robot).
  * Limites : 3 demandes par heure pour un même email, 40 par heure en tout.
  */

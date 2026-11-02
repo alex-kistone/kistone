@@ -42,7 +42,7 @@ import { mergeImportedProfile, type ImportedProfile } from "@/lib/profileImport"
 import { METIERS, SECTEURS, normalizeMetiers } from "@/lib/taxonomy";
 import { functionErrorMessage } from "@/components/platform/admin/adv";
 import { LANGUAGES, MAX_CHOICES, MODELS } from "@/lib/jarvi";
-import { FULL_TIME_DAYS, isVertical, verticalOf, type Vertical } from "@/lib/verticals";
+import { FULL_TIME_DAYS, isActiveVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import { palettes } from "@/lib/palettes";
 
 /** Spécialités au plus, pour un département C-Level. */
@@ -164,7 +164,7 @@ const Profile = () => {
       setLinkedin(p.linkedin_url || "");
       if (!normalizeLinkedinUrl(p.linkedin_url)) setLinkedinGate(true);
       setJobTitle(p.job_title || "");
-      setSkills(isVertical(p.vertical) && p.vertical !== "rpo" ? p.skills || [] : normalizeMetiers(p.skills));
+      setSkills(isActiveVertical(p.vertical) && p.vertical !== "rpo" ? p.skills || [] : normalizeMetiers(p.skills));
       setClients(p.clients || []);
       setMobility(p.mobility || []);
       setTjm(p.tjm?.toString() || "");
@@ -185,7 +185,8 @@ const Profile = () => {
         setSectorOther(otherSector);
       }
       setRemotePreference(p.remote_preference || "");
-      setVertical(isVertical(p.vertical) ? p.vertical : "rpo");
+      // Un profil d'une famille fermée repasse en RPO : son prochain enregistrement met la base à jour
+      setVertical(isActiveVertical(p.vertical) ? p.vertical : "rpo");
       setSpecialties(p.specialties || []);
       setWeeklyCapacity(String(p.weekly_capacity ?? FULL_TIME_DAYS));
     } else {
@@ -417,7 +418,7 @@ const Profile = () => {
       <LinkedinRequiredDialog
         open={linkedinGate}
         firstVisit={firstVisit}
-        initialVertical={isVertical(searchParams.get("fonction")) ? (searchParams.get("fonction") as Vertical) : null}
+        initialVertical={isActiveVertical(searchParams.get("fonction")) ? (searchParams.get("fonction") as Vertical) : null}
         onSubmit={saveLinkedinUrl}
       />
       <main className="container mx-auto max-w-2xl px-4 py-12">
@@ -547,7 +548,7 @@ const Profile = () => {
               id="jobTitle"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              placeholder={isRpo ? "Ex : Tech Recruiter IA & data" : `Ex : ${vConf.short} senior`}
+              placeholder={isRpo ? "Ex : Tech Recruiter senior" : `Ex : ${vConf.short} senior`}
             />
           </div>
 
@@ -799,7 +800,7 @@ const Profile = () => {
                         updated[idx] = { ...updated[idx], profile_types: e.target.value };
                         setMissions(updated);
                       }}
-                      placeholder={isRpo ? "Ex : AI Engineers et data engineers" : "Ex : assistant RAG en production, 6 mois"}
+                      placeholder={isRpo ? "Ex : développeurs et data engineers" : "Ex : assistant RAG en production, 6 mois"}
                     />
                   </div>
                   <div className="space-y-1">

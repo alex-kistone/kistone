@@ -87,7 +87,7 @@ export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChang
     "",
     "Ce profil vous intéresse ? Écrivez-moi.",
     "",
-    `#freelance #IA #${v.short.replace(/\s+/g, "")} #kistone`,
+    `#freelance #recrutement #${v.short.replace(/\s+/g, "")} #kistone`,
   ].filter((l): l is string => typeof l === "string").join("\n").replace(/\n{3,}/g, "\n\n");
 
   return (

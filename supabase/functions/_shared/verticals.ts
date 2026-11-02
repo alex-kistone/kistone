@@ -91,13 +91,22 @@ export const VERTICALS: readonly VerticalConfig[] = [
   {
     id: "rpo", short: "RPO", label: "Tech Recruiter", group: "RPO", seeking: "un Tech Recruiter", pageSlug: "tech-recruiter",
     roles: "Tech Recruiter freelance",
-    description: "Des recruteurs tech et IA intégrés à vos équipes pour internaliser vos talents en CDI.",
+    description: "Des recruteurs freelance intégrés à vos équipes pour recruter en CDI.",
     palette: "sage", specialties: [], // métiers recrutés : METIERS (taxonomy.ts)
     jarvi: { metier: "Recruiter", projectId: "a28725c1-24c0-46b4-bb63-afd1854df1d9", specialtiesFieldId: "adc61fa4-ad68-4f12-983b-69afe9c03d4c" },
   },
 ];
 
 export const VERTICAL_IDS = VERTICALS.map((v) => v.id);
+
+/**
+ * Familles ouvertes dans le back office (admin, espaces client et freelance) : le RPO seul depuis
+ * le 2026-10-30. Les familles IA restent définies ci-dessus pour le site public et les données
+ * existantes ; quand une seule famille est ouverte, les écrans n'affichent plus de choix de famille.
+ */
+export const ACTIVE_VERTICALS: readonly VerticalConfig[] = VERTICALS.filter((v) => v.id === "rpo");
+export const ACTIVE_VERTICAL_IDS = ACTIVE_VERTICALS.map((v) => v.id);
+export const isActiveVertical = (id: unknown): id is Vertical => typeof id === "string" && (ACTIVE_VERTICAL_IDS as string[]).includes(id);
 /** Valeur par défaut des colonnes `vertical` en base. */
 export const DEFAULT_VERTICAL: Vertical = "rpo";
 

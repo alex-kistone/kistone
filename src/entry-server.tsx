@@ -22,13 +22,13 @@ export const LASTMOD: Record<string, string> = {
 
 /** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
 export const LLMS_PAGES = [
-  { path: "/", title: "Accueil", desc: "Réseau d'experts Data & IA : Engineers, Product et Chief Data Officers sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et des Tech Recruiters pour internaliser vos talents Data & IA." },
-  { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin (famille d'expert Data & IA ou Tech Recruiter, rythme, budget) pour recevoir un profil qualifié sous 48 h." },
+  { path: "/", title: "Accueil", desc: "Réseau de Freelance RPO : une communauté de 700+ recruteurs freelance sélectionnés et qualifiés, spécialisés par métier (Tech, Data, Product, Sales & Marketing, Finance, Industrie), le bon recruteur en 48 h." },
+  { path: "/besoin", title: "Partager un besoin", desc: "Décrire son besoin de recrutement (métiers, rythme, budget) pour recevoir un recruteur freelance qualifié sous 48 h." },
   ...ROLE_PAGES.map((r) => ({ path: rolePath(r), title: r.seoTitle, desc: r.seoDescription })),
   ...MODEL_PAGES.map((m) => ({ path: modelPath(m), title: m.seoTitle, desc: m.seoDescription })),
-  { path: "/pourquoi-kistone", title: "Pourquoi Kistone", desc: "La conviction d'Alexandre Guégo, fondateur : l'IA a totalement transformé la façon de travailler, et le freelance (mission, fractional, contract-to-hire) est le modèle pour accéder vite aux experts IA qualifiés." },
-  { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la communauté des freelances IA & RPO : missions qualifiées pour AI Engineers, AI Product, AI Leaders et Tech Recruiters, rémunération transparente payée chaque fin de mois, rythme au choix, contrat, CRA et facturation gérés. Inscription gratuite." },
-  { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur les projets IA, les formats d'intervention (mission freelance, fractional, contract-to-hire) et le recrutement des talents IA." },
+  { path: "/pourquoi-kistone", title: "Pourquoi Kistone", desc: "La conviction d'Alexandre Guégo, fondateur : l'IA transforme la fonction recrutement, le RPO complète l'équipe de manière ponctuelle et de nombreux recruteurs ont choisi le Freelance." },
+  { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la communauté des Freelance RPO : missions qualifiées pour recruteurs freelance, rémunération transparente payée chaque fin de mois, administratif géré." },
+  { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur le RPO freelance, la structuration de la fonction recrutement et le travail avec un recruteur freelance." },
   { path: COMPARISON_PATH, title: COMPARISON.seoTitle, desc: COMPARISON.seoDescription },
 ];
 

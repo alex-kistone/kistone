@@ -8,22 +8,22 @@ import BriefDemo from "@/components/home/BriefDemo";
 import FunctionsGrid from "@/components/home/FunctionsGrid";
 import PainSituations from "@/components/home/PainSituations";
 import RoleCatalog from "@/components/home/RoleCatalog";
-import SquadOffer from "@/components/home/SquadOffer";
+import RpoScope from "@/components/home/RpoScope";
+import RpoVsCabinet from "@/components/home/RpoVsCabinet";
 import HowItWorks from "@/components/home/HowItWorks";
 import WhyMarketplace from "@/components/home/WhyMarketplace";
-import ModelsTeaser from "@/components/home/ModelsTeaser";
 import FreelanceCTA from "@/components/home/FreelanceCTA";
 import ResourcesTeaser from "@/components/home/ResourcesTeaser";
 import FinalCTA from "@/components/home/FinalCTA";
 import "@/site/studio.css";
 
-/** Accueil : la plateforme freelance des experts IA, dans le style de la page /studio. */
+/** Accueil : le réseau de freelances RPO, dans le style de la page /studio. */
 export default function Home() {
   return (
     <SiteLayout>
       <SEO
-        title="Kistone · Réseau d'experts Data & IA"
-        description="Engineers, Product et Chief Data Officers freelance qualifiés : un premier profil en 48 h. Et des Tech Recruiters pour recruter vos talents Data & IA en CDI."
+        title="Kistone · Réseau de Freelance RPO"
+        description="Une communauté de 700+ recruteurs Freelance RPO sélectionnés et qualifiés, spécialisés par métier. Le bon recruteur en 48 h, facturé au jour, sans honoraires au placement."
         path="/"
         jsonLd={withIdentity({
           "@type": "FAQPage",
@@ -35,11 +35,11 @@ export default function Home() {
         <FunctionsGrid />
         <PainSituations />
         <BriefDemo />
+        <RpoScope />
+        <RpoVsCabinet />
         <RoleCatalog />
         <HowItWorks />
         <WhyMarketplace />
-        <SquadOffer />
-        <ModelsTeaser />
         <FreelanceCTA />
         <ResourcesTeaser />
         <HomeFaq />

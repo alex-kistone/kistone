@@ -13,7 +13,7 @@ export default function FinalCTA() {
       >
         <BoltWatermark className="-bottom-20 -left-10 h-[360px] w-auto rotate-[-14deg]" />
         <h2 id="final-cta-title" className="relative font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[72px]">
-          {FINAL_CTA.title.split("expert IA")[0]}<span className="ks-grad-text">expert IA</span>
+          {FINAL_CTA.title} <span className="ks-grad-text">{FINAL_CTA.titleHighlight}</span>
           <br />
           {FINAL_CTA.titleEnd}
         </h2>

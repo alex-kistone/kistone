@@ -5,7 +5,6 @@ import { ROUTES } from "@/content/site";
 import { BRIEFS } from "@/content/home";
 import MatchFeed from "./MatchFeed";
 import { saveHomeBrief } from "@/lib/homeBrief";
-import { detectVertical } from "@/lib/detectVertical";
 import { cn } from "@/lib/utils";
 
 const ROTATE_MS = 4800; // un nouvel exemple en filigrane toutes les 4,8 s
@@ -23,8 +22,8 @@ function SparkIcon() {
 /**
  * Démo du produit : un exemple de besoin s'affiche en filigrane dans la zone de saisie et change
  * au hasard, avec les critères que l'IA en extrait ; les profils correspondants défilent à côté.
- * Un onglet par famille. Le visiteur peut taper son propre besoin : « Découvrir les profils »
- * l'emmène sur /besoin avec la famille choisie et la fiche pré-remplie par l'IA.
+ * Un onglet par métier. Le visiteur peut taper son propre besoin : « Découvrir les profils »
+ * l'emmène sur /besoin avec la fiche pré-remplie par l'IA.
  */
 export default function BriefDemo() {
   const [index, setIndex] = useState(0);
@@ -64,22 +63,12 @@ export default function BriefDemo() {
   };
 
 
-  // Pendant la frappe, l'onglet suit la famille citée (« un AI Engineer… ») ; l'IA confirme sur /besoin
-  const write = (text: string) => {
-    setCustom(text);
-    const v = detectVertical(text);
-    const i = v ? BRIEFS.findIndex((b) => b.vertical === v) : -1;
-    if (i >= 0 && i !== index) setIndex(i);
-  };
-
-  // Avec un besoin tapé : fonction présélectionnée et fiche pré-remplie ; sinon, choix de la fonction
-  const needHref = custom.trim() ? `${ROUTES.recruit}?fonction=${brief.vertical}` : ROUTES.recruit;
   const keepBrief = () => {
     if (custom.trim()) saveHomeBrief(custom);
   };
   const submit = () => {
     keepBrief();
-    navigate(needHref);
+    navigate(ROUTES.recruit);
   };
 
   const own = custom.trim() !== "";
@@ -89,7 +78,7 @@ export default function BriefDemo() {
     <div className="px-5 md:px-8">
       <section
         ref={ref}
-        id="trouver-un-expert"
+        id="trouver-un-recruteur"
         aria-labelledby="marketplace-title"
         className="ks-reveal mx-auto mt-16 max-w-ks scroll-mt-24 overflow-hidden rounded-[28px] border border-[rgba(20,19,18,0.06)] bg-white shadow-ks-window md:mt-20 md:rounded-[36px]"
       >
@@ -107,7 +96,7 @@ export default function BriefDemo() {
               <h2 id="marketplace-title" className="font-ks-display text-[26px] font-semibold leading-[1.05] tracking-[-0.03em] sm:text-[34px]">
                 Décrivez votre besoin.
                 <br />
-                <span className="text-ks-subtle">On trouve le profil.</span>
+                <span className="text-ks-subtle">On trouve le recruteur.</span>
               </h2>
             </div>
 
@@ -149,7 +138,7 @@ export default function BriefDemo() {
                   id="home-brief"
                   value={custom}
                   onFocus={() => setPinned(true)}
-                  onChange={(e) => write(e.target.value)}
+                  onChange={(e) => setCustom(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
                   }}
@@ -161,7 +150,7 @@ export default function BriefDemo() {
               </div>
             </div>
 
-            <Cta href={needHref} onClick={keepBrief} arrow className="-mt-1 self-start">
+            <Cta href={ROUTES.recruit} onClick={keepBrief} arrow className="-mt-1 self-start">
               Découvrir les profils
             </Cta>
 

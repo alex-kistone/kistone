@@ -2,47 +2,46 @@ import type { ReactNode } from "react";
 import SEO from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
-import SmartLink from "@/components/site/SmartLink";
 import Highlight from "@/components/site/Highlight";
 import PageSection from "@/components/site/PageSection";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { FREELANCE_SPACE, FREELANCE_STRIKE } from "@/content/home";
-import { MODEL_PAGES, modelPath } from "@/content/models";
-import { ROLE_PAGES, rolePath } from "@/content/roles";
+import { FREELANCE_SPACE, FREELANCE_STRIKE, METIERS_RPO } from "@/content/home";
 import { palettes, type PaletteName } from "@/lib/palettes";
-import { verticalOf } from "@/lib/verticals";
 
 const JOIN = "/register?mode=signup";
 
-/** Ce qui change pour un Tech Recruiter (RPO) sur Kistone. */
+/** Ce qui change pour un recruteur freelance sur Kistone. */
 const RPO_POINTS = [
-  "Des missions pour recruter en CDI des profils Tech, Data/AI, Product, GTM ou Sales.",
+  "Des missions pour recruter en CDI des profils Tech, Data, Product, Sales & Marketing, Finance ou Industrie.",
   "Payé au jour, chaque fin de mois : plus de placement à courir ni d'honoraires à relancer.",
-  "Intégré aux équipes du client, seul ou aux côtés des experts IA que Kistone y place.",
+  "Intégré aux équipes du client, avec ses outils, ses managers et sa marque employeur.",
 ];
 
 /** Exemple de suivi de recrutements (illustration). */
 const RPO_PIPELINE = [
-  { role: "AI Engineer", client: "Scale-up SaaS", status: "Entretien client", bg: palettes.blue.soft, fg: palettes.blue.ink },
+  { role: "Développeur backend", client: "Scale-up SaaS", status: "Entretien client", bg: palettes.blue.soft, fg: palettes.blue.ink },
   { role: "Data engineer", client: "Fintech", status: "Offre acceptée", bg: "#E8F5EE", fg: "#17663F" },
-  { role: "Ingénieur cybersécurité", client: "ETI industrielle", status: "Sourcing", bg: palettes.sand.soft, fg: palettes.sand.ink },
-  { role: "Account executive", client: "Scale-up IA", status: "Short-list envoyée", bg: "#FFE3EC", fg: "#8F1747" },
+  { role: "Contrôleur de gestion", client: "ETI industrielle", status: "Sourcing", bg: palettes.sand.soft, fg: palettes.sand.ink },
+  { role: "Account executive", client: "Éditeur SaaS", status: "Short-list envoyée", bg: "#FFE3EC", fg: "#8F1747" },
 ];
 const LOGIN = "/register";
 
-/** Contenu de l'espace freelance : ce que fait réellement la plateforme, sans promesse chiffrée inventée. */
+/** Teinte de chaque métier dans la grille « Votre métier de spécialité ». */
+const METIER_TINTS: PaletteName[] = ["blue", "lilac", "teal", "apricot", "sage", "sand"];
+
+/** Contenu de l'espace freelance : ce que fait réellement Kistone, sans promesse chiffrée inventée. */
 const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName; visual: () => ReactNode }[] = [
   {
     tag: "Opportunités",
     title: "Des missions qui vous ressemblent",
-    text: "Fini les sollicitations au hasard. Vous recevez des besoins qualifiés dans votre famille et vos spécialités, avec un brief complet et un budget de référence avant tout échange : le contexte, le rythme, le lieu et le TJM. Vous vous positionnez en un clic sur ceux qui vous intéressent.",
+    text: "Fini les sollicitations au hasard. Vous recevez des besoins qualifiés sur vos métiers de spécialité, avec un brief complet et un budget de référence avant tout échange : le contexte, le rythme, le lieu et le TJM. Vous vous positionnez en un clic sur ceux qui vous intéressent.",
     palette: "sage",
     visual: () => (
       <ul className="flex w-full flex-col gap-2">
         {[
-          { t: "AI Engineer · Scale-up SaaS", m: "Temps plein · Paris hybride" },
-          { t: "Head of AI · ETI industrielle", m: "2 j / sem · Lyon" },
-          { t: "Tech Recruiter · Fintech", m: "3 j / sem · Recrutements Data/AI" },
+          { t: "RPO Tech · Scale-up SaaS", m: "Temps plein · Paris hybride" },
+          { t: "RPO Finance · ETI industrielle", m: "2 j / sem · Lyon" },
+          { t: "RPO Sales · Fintech", m: "3 j / sem · 4 recrutements" },
         ].map((o) => (
           <li key={o.t} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
             <span className="min-w-0">
@@ -63,10 +62,10 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
     visual: () => (
       <div className="w-full rounded-2xl bg-white p-5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
         <div className="flex items-center justify-between text-[13px] text-ks-subtle">
-          <span>Octobre · 12 jours × 900 € HT</span>
+          <span>Octobre · 12 jours × 450 € HT</span>
           <span className="rounded-full bg-[#E8F5EE] px-2.5 py-1 text-[11px] font-medium text-[#17663F]">CRA validé</span>
         </div>
-        <p className="mt-2 font-ks-display text-[40px] font-bold tracking-[-0.04em]">10 800 €<span className="text-[16px] font-medium text-ks-subtle"> HT</span></p>
+        <p className="mt-2 font-ks-display text-[40px] font-bold tracking-[-0.04em]">5 400 €<span className="text-[16px] font-medium text-ks-subtle"> HT</span></p>
         <p className="mt-3 flex items-center gap-2 text-[13px] font-medium text-[#17663F]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#2F9A63]" aria-hidden="true" />
           Payé intégralement en fin de mois
@@ -77,15 +76,15 @@ const BENEFITS: { tag: string; title: string; text: string; palette: PaletteName
   {
     tag: "Rythme",
     title: "Le rythme que vous choisissez",
-    text: "Une mission à temps plein le temps d'un projet, quelques jours par semaine auprès de plusieurs entreprises, ou une mission qui peut déboucher sur un recrutement : vous indiquez votre capacité, on vous propose ce qui s'y accorde.",
+    text: "Une mission à temps plein pour un plan de recrutement, ou quelques jours par semaine auprès de plusieurs entreprises : vous indiquez votre capacité, on vous propose ce qui s'y accorde.",
     palette: "apricot",
     visual: () => (
       <div className="flex w-full flex-col gap-2">
-        {MODEL_PAGES.map((m) => (
-          <SmartLink key={m.slug} href={modelPath(m)} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)] hover:bg-ks-bg">
-            <span className="text-[14px] font-semibold">{m.name}</span>
-            <span className="truncate text-[12px] text-ks-subtle">{m.facts[0]?.value}</span>
-          </SmartLink>
+        {[["Temps plein", "5 j / sem"], ["Temps partagé", "3 à 4 j / sem"], ["Quelques jours", "1 à 2 j / sem"]].map(([name, days]) => (
+          <div key={name} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-3.5 shadow-[0_8px_20px_-14px_rgba(60,40,20,0.35)]">
+            <span className="text-[14px] font-semibold">{name}</span>
+            <span className="truncate text-[12px] text-ks-subtle">{days}</span>
+          </div>
         ))}
       </div>
     ),
@@ -133,8 +132,8 @@ const STEPS = [
 ];
 
 const CRITERIA = [
-  "Des projets d'IA menés jusqu'en production, ou des produits IA lancés",
-  "Au moins 10 ans d'expérience pour les AI Leaders (5 ans pour les Tech Recruiters)",
+  "Au moins 5 ans d'expérience en recrutement",
+  "Des recrutements menés de bout en bout, de la chasse au closing",
   "Des réussites concrètes en startup, scale-up, PME ou grand groupe",
   "Une structure juridique pour facturer (société ou micro-entreprise)",
   "L'envie de travailler au sein des équipes de vos clients, avec leurs outils et leurs rituels",
@@ -143,7 +142,7 @@ const CRITERIA = [
 const FAQ = [
   { q: "L'inscription est-elle payante ?", a: "Non. L'inscription et l'utilisation de l'espace freelance sont gratuites." },
   { q: "Qui fixe le TJM ?", a: "Vous. Vous indiquez votre tarif journalier dans votre profil ; il peut être ajusté d'un commun accord selon la mission." },
-  { q: "Quels profils recherchez-vous ?", a: "Des AI Engineers (LLM, RAG, agents, MLOps), des AI Product (Product Managers IA, Product Owners, AI Designers), des AI Leaders (CTO, Head of AI, Chief AI Officer) et des Tech Recruiters, en mission, en fractional ou en contract-to-hire." },
+  { q: "Quels profils recherchez-vous ?", a: "Des recruteurs freelance spécialisés Tech, Data, Product, Sales & Marketing, Finance ou Industrie, disponibles à temps plein ou quelques jours par semaine." },
   { q: "Quels documents faut-il fournir ?", a: "Avant la première mission : vos informations de société (SIRET), une attestation URSSAF, une assurance responsabilité civile professionnelle et un RIB. Tout se dépose dans votre espace." },
   { q: "Comment suis-je payé ?", a: "Chaque mois, le client valide votre compte rendu d'activité ; vous déposez votre facture dans votre espace et Kistone la règle, sans relance de votre part." },
 ];
@@ -157,8 +156,8 @@ export default function FreelancesPage() {
   return (
     <SiteLayout>
       <SEO
-        title="Freelances IA & RPO : rejoignez la communauté Kistone"
-        description="AI Engineers, AI Product, AI Leaders et Tech Recruiters : missions qualifiées, paiement chaque mois, rythme au choix, facturation gérée. Inscription gratuite."
+        title="Freelance RPO : rejoignez la communauté Kistone"
+        description="Recruteurs freelance : missions RPO qualifiées, paiement chaque mois, rythme au choix, facturation gérée. Inscription gratuite."
         path="/freelances"
         image="/og/freelances.png"
         jsonLd={jsonLd}
@@ -169,10 +168,10 @@ export default function FreelancesPage() {
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[640px] w-auto rotate-[14deg] md:h-[760px]" />
         <div>
           <h1 className="font-ks-display text-[44px] font-bold leading-[1.02] tracking-[-0.048em] sm:text-[60px] lg:text-[68px]">
-            Rejoignez la communauté des <Highlight>freelances IA & RPO</Highlight>
+            Rejoignez la communauté des <Highlight>Freelance RPO</Highlight>
           </h1>
           <p className="mt-6 max-w-[620px] text-lg leading-[1.5] text-ks-soft md:text-xl">
-            AI Engineers, AI Product, AI Leaders ou Tech Recruiters : des missions qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
+            Vous êtes recruteur freelance ? Des missions RPO qualifiées, au rythme que vous choisissez. Une rémunération transparente, payée chaque fin de mois. L'administratif, on s'en occupe.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Cta href={JOIN} variant="studio" size="lg" arrow>Rejoindre Kistone</Cta>
@@ -184,13 +183,13 @@ export default function FreelancesPage() {
         </div>
       </section>
 
-      {/* Tech Recruiters : ce qui change pour eux */}
+      {/* Recruteurs : ce qui change pour eux */}
       <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
         <div className="grid items-center gap-8 rounded-[32px] p-6 md:p-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14" style={{ background: palettes.sage.tint }}>
           <div>
-            <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: palettes.sage.ink }}>Tech Recruiters · RPO</span>
+            <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: palettes.sage.ink }}>Recruteurs · RPO</span>
             <h2 className="mt-3 font-ks-display text-[30px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[40px]">
-              Tech Recruiter ? Recrutez les talents que tout le monde cherche.
+              Recrutez les talents que tout le monde cherche.
             </h2>
             <ul className="mt-6 flex flex-col gap-3 text-[16px] leading-[1.5] text-ks-ink-2">
               {RPO_POINTS.map((pt) => (
@@ -202,7 +201,7 @@ export default function FreelancesPage() {
                 </li>
               ))}
             </ul>
-            <div className="mt-8"><Cta href={`${JOIN}&fonction=rpo`} variant="studio" size="lg" arrow>Rejoindre en tant que Tech Recruiter</Cta></div>
+            <div className="mt-8"><Cta href={`${JOIN}&fonction=rpo`} variant="studio" size="lg" arrow>Rejoindre la communauté</Cta></div>
           </div>
           <ul className="flex flex-col gap-2" aria-hidden="true">
             {RPO_PIPELINE.map((r) => (
@@ -238,7 +237,7 @@ export default function FreelancesPage() {
         })}
       </div>
 
-      {/* Ce que la plateforme supprime */}
+      {/* Ce que Kistone supprime */}
       <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
         <div className="ks-reveal grid gap-4 rounded-3xl bg-ks-secondary p-[26px] md:grid-cols-2 md:gap-12 md:rounded-[28px] md:p-10 lg:p-12">
           <div>
@@ -259,17 +258,13 @@ export default function FreelancesPage() {
       </section>
 
       {/* Métiers */}
-      <PageSection title="Les métiers que nous recherchons" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
-        <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {ROLE_PAGES.map((r) => {
-            const v = verticalOf(r.vertical);
-            const p = palettes[v.palette];
+      <PageSection title="Votre métier de spécialité" bolt="-left-20 top-0 h-[320px] w-auto rotate-[-14deg]">
+        <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {METIERS_RPO.map((m, i) => {
+            const p = palettes[METIER_TINTS[i]];
             return (
-              <li key={r.slug}>
-                <SmartLink href={rolePath(r)} className="ks-lift flex h-full flex-col gap-1.5 rounded-[22px] p-5" style={{ background: p.tint }}>
-                  <span className="font-ks-display text-[20px] font-semibold tracking-[-0.02em]" style={{ color: p.ink }}>{r.role}</span>
-                  <span className="text-[14px] leading-[1.45] text-ks-ink-2">{v.description}</span>
-                </SmartLink>
+              <li key={m} className="rounded-[22px] p-5" style={{ background: p.tint }}>
+                <span className="font-ks-display text-[20px] font-semibold tracking-[-0.02em]" style={{ color: p.ink }}>Recruteur {m}</span>
               </li>
             );
           })}

@@ -43,7 +43,7 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     title: "Rejoignez la communauté des freelances RPO.",
     intro: "Je vous invite à rejoindre <strong style=\"color:#141312\">Kistone</strong> en tant que Tech Recruiter freelance. Les entreprises nous confient le recrutement de leurs talents tech et IA en CDI : nous leur présentons des recruteurs qualifiés, intégrés à leurs équipes, comme vous.",
     benefits: [
-      "Des missions RPO Freelance Tech, Data/AI, Product, GTM et Sales au sein de startups/scaleups, ETI et grands groupes",
+      "Des missions RPO Freelance Tech, Data/AI, Product, GTM, Sales, Finance et Industrie au sein de startups/scaleups, ETI et grands groupes",
       "Payé chaque fin de mois : espace admin automatisé (contrat, CRA, facturation)",
       "Le rythme que vous choisissez, le budget que vous fixez",
     ],
@@ -73,7 +73,7 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
     title: "Recrutez les talents que tout le monde cherche.",
     intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, le réseau des freelances RPO. Un Tech Recruiter freelance rejoint vos équipes pour recruter vos talents en CDI : nous vous présentons un premier profil qualifié sous 48 h.",
     benefits: [
-      "Des Tech Recruiters freelance spécialisés Tech, Data/AI, Product, GTM et Sales",
+      "Des Tech Recruiters freelance spécialisés Tech, Data/AI, Product, GTM, Sales, Finance et Industrie",
       "Intégrés à vos équipes, avec vos outils et votre marque employeur",
       "Facturé au jour, sans honoraires au placement : contrat, CRA et facturation gérés pour vous",
     ],

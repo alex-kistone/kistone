@@ -18,7 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
 import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
-import { isVertical, verticalOf, type Vertical } from "@/lib/verticals";
+import { isActiveVertical, verticalOf, type Vertical } from "@/lib/verticals";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
 import EnglishLevelField from "@/components/platform/EnglishLevelField";
@@ -84,7 +84,7 @@ const ClientEditNeed = () => {
       setContactEmail(need.contact_email);
       setJobTitle(need.job_title);
       setProfileTypes(normalizeMetiers(need.profile_types));
-      setVertical(isVertical(need.vertical) ? need.vertical : "rpo");
+      setVertical(isActiveVertical(need.vertical) ? need.vertical : "rpo");
       setSpecialties(need.specialties || []);
       setDays(String(need.days_per_week ?? 5));
       setSectors(need.sectors || []);

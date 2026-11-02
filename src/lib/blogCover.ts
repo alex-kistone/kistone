@@ -3,7 +3,7 @@
  * design-card-blog, référence : carte « TjM »), dessinée dans le navigateur (aucune IA, aucun
  * personnage) : fond crème et trois halos vifs dans les coins, grand éclair plein en filigrane à
  * droite, titre Outfit centré, barre dégradée, et en bas à gauche le logo « kistone » avec
- * « AI EXPERTS PLATFORM ». Cotes de la carte à 1200 × 800, rendue en @2x (2400 × 1600).
+ * « RPO FREELANCE PLATFORM ». Cotes de la carte à 1200 × 800, rendue en @2x (2400 × 1600).
  */
 import { BOLT_FILLED_PATH, coverLayout } from "./blogCoverLayout";
 
@@ -15,7 +15,7 @@ const W = 1200;
 const H = 800;
 const INK = "#141312";
 const CREAM = "#F5F1EA";
-const TAGLINE = "AI EXPERTS PLATFORM";
+const TAGLINE = "RPO FREELANCE PLATFORM";
 const LOGO_SRC = "/logos/logo-full-black.png";
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -94,7 +94,7 @@ export async function renderBlogCover(title: string): Promise<Blob> {
   ctx.roundRect(W / 2 - 48, layout.barY, 96, 6, 3);
   ctx.fill();
 
-  // Signature : logo « kistone » 66 px, filet, « AI EXPERTS PLATFORM »
+  // Signature : logo « kistone » 66 px, filet, « RPO FREELANCE PLATFORM »
   const logoH = 66;
   const logoW = (logo.width / logo.height) * logoH;
   const logoY = H - 56 - logoH;

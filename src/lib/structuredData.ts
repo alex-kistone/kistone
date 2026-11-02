@@ -39,9 +39,9 @@ export const organization = {
   url: BASE_URL,
   logo: `${BASE_URL}/logos/logo-full-black.png`,
   description:
-    "Réseau d'experts Data & IA : Engineers, Product et Chief Data Officers en mission, en fractional ou en contract-to-hire, et des Tech Recruiters (RPO) pour recruter les talents Data & IA en CDI.",
+    "Réseau de Freelance RPO : une communauté de 700+ recruteurs freelance sélectionnés et qualifiés, spécialisés par métier, intégrés aux équipes pour recruter en CDI.",
   areaServed: { "@type": "Country", name: "France" },
-  knowsAbout: ["Intelligence artificielle", "AI Engineer", "AI Product Manager", "Head of AI", "Chief AI Officer", "Fractional CTO", "Freelance", "RPO", "Recrutement tech"],
+  knowsAbout: ["RPO", "Recruitment Process Outsourcing", "Recrutement", "Recrutement tech", "Talent Acquisition", "Freelance"],
   founder: FOUNDER_REF,
   ...sameAs(KISTONE_PROFILES),
 };

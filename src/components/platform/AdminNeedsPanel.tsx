@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { VERTICALS } from "@/lib/verticals";
+import { ACTIVE_VERTICALS } from "@/lib/verticals";
 import { useSearchParams } from "react-router-dom";
 import { AlertTriangle, Building2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -109,17 +109,19 @@ const AdminNeedsPanel = () => {
               ))}
             </SelectContent>
           </Select>
+          {ACTIVE_VERTICALS.length > 1 && (
           <Select value={filters.vertical || ALL} onValueChange={(v) => setFilters({ vertical: v === ALL ? "" : v })}>
             <SelectTrigger className="h-9 min-w-0 text-sm sm:w-40" aria-label="Filtrer par fonction">
               <SelectValue placeholder="Fonction" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL}>Toutes les fonctions</SelectItem>
-              {VERTICALS.map((v) => (
+              {ACTIVE_VERTICALS.map((v) => (
                 <SelectItem key={v.id} value={v.id}>{v.short} · {v.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
+          )}
           <Select value={filters.client || ALL} onValueChange={(v) => setFilters({ client: v === ALL ? "" : v })}>
             <SelectTrigger className="h-9 min-w-0 text-sm sm:w-52" aria-label="Filtrer par client">
               <SelectValue placeholder="Client" />

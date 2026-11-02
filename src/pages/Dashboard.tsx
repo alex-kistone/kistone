@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { verticalOf } from "@/lib/verticals";
+import { ACTIVE_VERTICAL_IDS, verticalOf } from "@/lib/verticals";
 import { palettes } from "@/lib/palettes";
 import AppShell from "@/components/platform/AppShell";
 import ChatPanel from "@/components/platform/ChatPanel";
@@ -165,6 +165,7 @@ const Dashboard = () => {
     const { data, error } = await supabase
       .from("recruiter_profiles" as any)
       .select("*")
+      .in("vertical", ACTIVE_VERTICAL_IDS)
       .order("created_at", { ascending: false });
 
     if (error) {

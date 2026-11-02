@@ -15,10 +15,10 @@ export default function FreelanceCTA() {
         <div>
           <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">Je suis freelance</span>
           <h2 id="freelances-title" className="mt-4 font-ks-display text-[40px] font-bold leading-none tracking-[-0.045em] md:text-[56px]">
-            Des missions IA qualifiées. Zéro administratif.
+            Des missions RPO qualifiées. Zéro administratif.
           </h2>
           <p className="mt-[18px] max-w-[480px] text-[17px] leading-[1.55] text-ks-soft md:text-lg">
-            AI Engineer, AI Product, AI Leader ou Tech Recruiter : rejoignez la communauté. Contrat, KYC, CRA et facturation gérés pour vous, et un paiement intégral chaque fin de mois.
+            Recruteur freelance, quel que soit votre métier de spécialité : rejoignez la communauté. Contrat, KYC, CRA et facturation gérés pour vous, et un paiement intégral chaque fin de mois.
           </p>
           <Cta href={ROUTES.freelance} variant="dark" size="lg" arrow className="mt-7">
             Rejoindre la communauté

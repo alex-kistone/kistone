@@ -1,12 +1,61 @@
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Cta from "@/components/site/Cta";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { ROUTES } from "@/content/site";
 import { HERO, RECRUITERS, type Recruiter } from "@/content/home";
 import { palettes } from "@/lib/palettes";
-import { verticalOf } from "@/lib/verticals";
 import PersonAvatar from "./PersonAvatar";
+import { cn } from "@/lib/utils";
 
-/** Carte profil du bandeau : initiales teintées, poste, famille, rythme et disponibilité. */
+const STEP_MS = 2000;
+
+/** Les métiers en toutes lettres ; un trait rose glisse de l'un à l'autre. Rien d'autre ne bouge. */
+function FunctionsUnderline({ words }: { words: string[] }) {
+  const [index, setIndex] = useState(0);
+  const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
+  const refs = useRef<(HTMLLIElement | null)[]>([]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % words.length), STEP_MS);
+    return () => window.clearInterval(id);
+  }, [words.length]);
+
+  // Position du trait sous le mot actif (recalculée au chargement des polices et au redimensionnement)
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = refs.current[index];
+      if (el) setBar({ left: el.offsetLeft, width: el.offsetWidth });
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [index]);
+
+  return (
+    <div className="ks-reveal relative mt-6 inline-block pb-3 md:mt-8">
+      <ul className="flex items-baseline gap-3 font-ks-display text-[17px] font-semibold tracking-[-0.02em] sm:gap-9 sm:text-[28px]" aria-label="Métiers">
+        {words.map((w, i) => (
+          <li
+            key={w}
+            ref={(el) => (refs.current[i] = el)}
+            className={cn("transition-colors duration-300", i === index ? "text-ks-ink" : "text-[#8F8980]")}
+          >
+            {w}
+          </li>
+        ))}
+      </ul>
+      <span
+        className="absolute bottom-0 left-0 h-[3px] rounded-full bg-ks-pink transition-[transform,width] duration-500 ease-[cubic-bezier(.2,.7,.2,1)]"
+        style={bar ? { width: bar.width, transform: `translateX(${bar.left}px)` } : { width: 0 }}
+        aria-hidden="true"
+      />
+    </div>
+  );
+}
+
+/** Carte profil du bandeau : initiales teintées, poste, métier, rythme et disponibilité. */
 function ProfileCard({ r, hidden }: { r: Recruiter; hidden?: boolean }) {
   const p = palettes[r.palette];
   return (
@@ -22,7 +71,7 @@ function ProfileCard({ r, hidden }: { r: Recruiter; hidden?: boolean }) {
         </div>
       </div>
       <div className="flex items-center justify-between border-t border-[rgba(20,19,18,0.06)] pt-3 text-[13px]">
-        <span className="font-semibold" style={{ color: p.ink }}>{verticalOf(r.vertical).short}</span>
+        <span className="font-semibold" style={{ color: p.ink }}>{r.domain}</span>
         <span className="text-ks-soft">{r.xp} · {r.rhythm}</span>
         <span className="flex items-center gap-1.5 font-medium text-[#17663F]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#2F9A63]" aria-hidden="true" />
@@ -56,11 +105,9 @@ export default function Hero() {
           <br className="hidden sm:block" /> {HERO.titleBefore}<span className="ks-grad-text">{HERO.titleHighlight}</span>
         </h1>
 
-        <p className="ks-reveal mt-5 max-w-[720px] text-[17px] leading-normal text-ks-soft md:mt-7 md:text-xl">
-          {HERO.subtitle.split(new RegExp(`(${HERO.subtitleBold.join("|")})`)).map((part, i) =>
-            HERO.subtitleBold.includes(part) ? <strong key={i} className="font-semibold text-ks-ink">{part}</strong> : part,
-          )}
-        </p>
+        <FunctionsUnderline words={HERO.functions} />
+
+        <p className="ks-reveal mt-4 max-w-[720px] text-[17px] leading-normal text-ks-soft md:mt-5 md:text-xl">{HERO.subtitle}</p>
 
         <div className="ks-reveal mt-7 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:gap-3 md:mt-10">
           <Cta href={ROUTES.recruit} variant="studio" size="lg" arrow className="h-[54px] sm:h-14">
@@ -74,7 +121,7 @@ export default function Hero() {
       </section>
 
       {/* Profils d'illustration en boucle (60 s), pause au survol */}
-      <div className="ks-marquee mt-11 pb-6 pt-1 md:mt-[72px] md:pb-10 md:pt-2" aria-label="Exemples de profils d'experts Data & IA">
+      <div className="ks-marquee mt-11 pb-6 pt-1 md:mt-[72px] md:pb-10 md:pt-2" aria-label="Exemples de recruteurs Freelance RPO">
         <div className="ks-track ks-track-slow">
           {RECRUITERS.map((r) => <ProfileCard key={r.name} r={r} />)}
           {RECRUITERS.map((r) => <ProfileCard key={`${r.name}-dup`} r={r} hidden />)}

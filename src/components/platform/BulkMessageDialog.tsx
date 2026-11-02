@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ACTIVE_VERTICAL_IDS } from "@/lib/verticals";
 
 interface FreelanceProfile {
   id: string;
@@ -60,6 +61,7 @@ const BulkMessageDialog = ({ open, onOpenChange, adminId }: BulkMessageDialogPro
       const { data } = await supabase
         .from("recruiter_profiles")
         .select("id, user_id, first_name, last_name, email, photo_url, available, model, sectors")
+        .in("vertical", ACTIVE_VERTICAL_IDS)
         .order("first_name");
       setProfiles((data as FreelanceProfile[]) || []);
       setLoading(false);

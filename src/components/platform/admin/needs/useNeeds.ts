@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ACTIVE_VERTICAL_IDS } from "@/lib/verticals";
 import { buildNeedRow, type ClientNeed, type NeedRow, type ProfileSuggestion, type RecruiterProfile } from "./needsModel";
 
 const SUGGESTION_COLUMNS =
@@ -52,7 +53,7 @@ export function useNeeds({ clientUserId, withProfiles = false }: Options = {}) {
     const [suggestionsRes, missionsRes, profilesRes] = await Promise.all([
       suggestionsQuery,
       missionsQuery,
-      withProfiles ? supabase.from("recruiter_profiles").select(PROFILE_COLUMNS) : Promise.resolve(null),
+      withProfiles ? supabase.from("recruiter_profiles").select(PROFILE_COLUMNS).in("vertical", ACTIVE_VERTICAL_IDS) : Promise.resolve(null),
     ]);
     if (current !== requestId.current) return;
 

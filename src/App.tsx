@@ -16,7 +16,7 @@ import FreelancesPage from "./pages/FreelancesPage";
 import WhyKistone from "./pages/WhyKistone";
 import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
 import SessionGuard from "./components/SessionGuard";
-import { LEGACY_COMPARISON_SLUG } from "./content/comparison";
+import { LEGACY_COMPARISON_SLUGS } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 import CrispChat from "./components/CrispChat";
@@ -64,7 +64,7 @@ export const AppRoutes = () => (
     <Route path="/pourquoi-kistone" element={<WhyKistone />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path={COMPARISON_PATH} element={<ComparisonPage />} />
-    <Route path={`/ressources/${LEGACY_COMPARISON_SLUG}`} element={<Navigate to={COMPARISON_PATH} replace />} />
+    {LEGACY_COMPARISON_SLUGS.map((slug) => <Route key={slug} path={`/ressources/${slug}`} element={<Navigate to={COMPARISON_PATH} replace />} />)}
     <Route path="/ressources/:slug" element={<BlogPost />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />

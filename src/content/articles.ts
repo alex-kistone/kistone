@@ -42,14 +42,15 @@ export const STATIC_POSTS: BlogPost[] = [
     content: marcheIa2026,
     published_at: "2026-10-29T09:00:00.000Z",
   }),
-  // Le comparatif a sa propre page (/ressources/comparatif-plateformes-freelance-ia) ; cette entrée l'affiche dans la liste.
+  // Le comparatif a sa propre page (/ressources/comparatif-rpo-freelance) ; cette entrée l'affiche dans la liste.
   base({
     id: "static-comparatif-acteurs",
     slug: COMPARISON.slug,
     title: COMPARISON.title,
     excerpt: COMPARISON.lead,
     // Catégorie centrée sur la couverture, puis pastille verte en haut à gauche
-    tags: ["Comparatif", "Étude"],
+    tags: ["Comparatif", "RPO"],
+    vertical: "rpo",
     content: comparisonText(),
     published_at: `${COMPARISON.date}T11:00:00.000Z`,
   }),

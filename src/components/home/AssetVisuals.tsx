@@ -18,7 +18,7 @@ function QualifyVisual() {
           {[0, 1, 2, 3, 4].map((i) => <span key={i} className="ks-av-star inline-block" style={{ animationDelay: `${i * 0.18}s` }}>★</span>)}
         </span>
       </Row>
-      {["Parcours", "Projets IA en production", "Références"].map((c, i) => (
+      {["Parcours", "Recrutements réalisés", "Références"].map((c, i) => (
         <Row key={c}>
           <span>{c}</span>
           <span className="ks-av-tick flex h-4 w-4 items-center justify-center rounded-full bg-[#2F9A63]" style={{ animationDelay: `${i * 0.45}s` }}>
@@ -34,13 +34,13 @@ function MatchVisual() {
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="flex flex-wrap gap-1.5">
-        {["RAG", "Senior", "3 j / sem", "800 € / j"].map((c, i) => (
+        {["RPO Tech", "Senior", "3 j / sem", "550 € / j"].map((c, i) => (
           <span key={c} className="ks-av-chip rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#1E4F8F]" style={{ animationDelay: `${i * 0.25}s` }}>{c}</span>
         ))}
       </div>
       <Row className="flex-col items-stretch gap-1.5">
         <span className="flex items-center justify-between">
-          <span className="font-semibold text-ks-ink">Lina · AI Engineer</span>
+          <span className="font-semibold text-ks-ink">Julie · Recruteuse Tech</span>
           <span className="ks-av-score font-ks-display text-[15px] font-bold text-ks-ink">94 %</span>
         </span>
         <span className="h-1.5 rounded-full bg-[#EDF3FB]">
@@ -86,7 +86,7 @@ function FormatVisual() {
     <div className="flex w-full flex-col items-center gap-3">
       <div className="relative flex w-full rounded-full bg-white p-1 text-[11px] font-medium">
         <span className="ks-av-pick absolute inset-y-1 left-1 w-[calc((100%-8px)/3)] rounded-full bg-ks-dark" aria-hidden="true" />
-        {["Mission", "Fractional", "CtH"].map((f, i) => (
+        {["Temps plein", "3 j / sem", "2 j / sem"].map((f, i) => (
           <span key={f} className={`ks-av-label-${i} relative flex-1 py-1.5 text-center text-[#94471A]`}>{f}</span>
         ))}
       </div>

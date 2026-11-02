@@ -19,7 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { budgetError } from "@/lib/budget";
 import BudgetRangeField from "@/components/platform/BudgetRangeField";
 import NeedFunctionFields from "@/components/platform/NeedFunctionFields";
-import { isVertical, type Vertical } from "@/lib/verticals";
+import { isActiveVertical, type Vertical } from "@/lib/verticals";
 import { generateNeedTitle } from "@/lib/needTitle";
 import DesiredStartField from "@/components/platform/DesiredStartField";
 import MissionDurationField from "@/components/platform/MissionDurationField";
@@ -59,7 +59,7 @@ const ClientNewNeed = () => {
     let stored: string | null = null;
     try { stored = sessionStorage.getItem("kistone-fonction"); } catch { /* stockage indisponible */ }
     const f = searchParams.get("fonction") ?? stored;
-    return isVertical(f) ? f : "rpo";
+    return isActiveVertical(f) ? f : "rpo";
   });
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [days, setDays] = useState("5");

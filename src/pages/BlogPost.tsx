@@ -9,9 +9,8 @@ import PostCard from "@/components/blog/PostCard";
 import { useBlogPosts } from "@/components/blog/useBlogPosts";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { BLOG_PATH, formatDate, postPath, readingMinutes } from "@/lib/blog";
-import { ROLE_PAGES, rolePath } from "@/content/roles";
+import { RPO_ROLE_PAGES, rolePath } from "@/content/roles";
 import { ROUTES } from "@/content/site";
-import { verticalOf } from "@/lib/verticals";
 
 const BASE_URL = "https://kistone.fr";
 
@@ -40,7 +39,8 @@ export default function BlogPost() {
   }
 
   const url = `${BASE_URL}${postPath(post)}`;
-  const role = post.vertical ? ROLE_PAGES.find((r) => r.vertical === post.vertical) : null;
+  // Fiche liée pour les articles RPO ; les anciens articles IA renvoient simplement vers le dépôt de besoin
+  const role = post.vertical === "rpo" ? RPO_ROLE_PAGES[0] : null;
   const related = posts.filter((p) => p.id !== post.id && (!post.vertical || p.vertical === post.vertical)).slice(0, 3);
   const jsonLd = [
     {
@@ -116,13 +116,11 @@ export default function BlogPost() {
 
         <aside className="mt-14 rounded-[28px] bg-ks-dark px-7 py-10 text-ks-dark-fg md:px-10">
           <p className="font-ks-display text-[26px] font-bold leading-[1.1] tracking-[-0.03em] md:text-[32px]">
-            {role ? `Besoin d'un ${role.role} ?` : "Besoin d'un expert senior ?"}
+            Besoin d'un recruteur ?
           </p>
           <p className="mt-3 text-ks-dark-muted">Un premier profil qualifié sous 48 h, à temps plein ou quelques jours par semaine.</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Cta href={post.vertical ? `${ROUTES.recruit}?fonction=${post.vertical}` : ROUTES.recruit} arrow>
-              Partager mon besoin{post.vertical ? ` ${verticalOf(post.vertical).short}` : ""}
-            </Cta>
+            <Cta href={ROUTES.recruit} arrow>Partager mon besoin</Cta>
             {role && <Cta href={rolePath(role)} variant="ghost-dark">Le métier de {role.role}</Cta>}
           </div>
         </aside>

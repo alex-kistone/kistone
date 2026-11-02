@@ -57,7 +57,12 @@
     },
     {
       "source": "/ressources/comparatif-acteurs-fractional",
-      "destination": "/ressources/comparatif-plateformes-freelance-ia",
+      "destination": "/ressources/comparatif-rpo-freelance",
+      "permanent": true
+    },
+    {
+      "source": "/ressources/comparatif-plateformes-freelance-ia",
+      "destination": "/ressources/comparatif-rpo-freelance",
       "permanent": true
     },
     {

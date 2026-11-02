@@ -31,14 +31,14 @@ const TARGETS = {
   freelance: {
     button: "Inviter des freelances",
     title: "Inviter des freelances à rejoindre Kistone",
-    placeholder: "Ex : Nous avons échangé au meetup IA de jeudi, je pense que nos missions RAG vous plairont.",
-    audiences: ["ai", "rpo"] as InvitationAudience[],
+    placeholder: "Ex : Nous avons échangé au meetup RH de jeudi, je pense que nos missions RPO vous plairont.",
+    audiences: ["rpo"] as InvitationAudience[],
   },
   client: {
     button: "Inviter des clients",
     title: "Inviter des entreprises à découvrir Kistone",
-    placeholder: "Ex : Suite à notre échange sur votre projet d'assistant interne, voici le réseau dont je vous parlais.",
-    audiences: ["client_ai", "client_rpo"] as InvitationAudience[],
+    placeholder: "Ex : Suite à notre échange sur vos recrutements, voici le réseau dont je vous parlais.",
+    audiences: ["client_rpo"] as InvitationAudience[],
   },
 };
 

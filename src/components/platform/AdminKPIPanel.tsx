@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { ACTIVE_VERTICAL_IDS } from "@/lib/verticals";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { TrendingUp, Users, Briefcase, Euro, Target, Clock } from "lucide-react";
 
@@ -37,7 +38,7 @@ const AdminKPIPanel = () => {
       const [missionsRes, needsRes, profilesRes, timesheetsRes] = await Promise.all([
         supabase.from("missions").select("*"),
         supabase.from("client_needs").select("id, status, created_at"),
-        supabase.from("recruiter_profiles" as any).select("id, available"),
+        supabase.from("recruiter_profiles" as any).select("id, available").in("vertical", ACTIVE_VERTICAL_IDS),
         supabase.from("timesheets").select("total_days, mission_id, year, month, status"),
       ]);
 

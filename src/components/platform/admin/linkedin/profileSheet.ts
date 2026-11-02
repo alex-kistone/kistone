@@ -376,7 +376,7 @@ export async function drawProfileSheet(canvas: HTMLCanvasElement, spec: SheetSpe
     ctx.fillRect(X + lw + 22, fy + 8, 1.2, 28);
     setFont(ctx, "500 15px 'Geist Mono'", 2.8);
     ctx.fillStyle = C.mono;
-    ctx.fillText("AI EXPERTS PLATFORM", X + lw + 44, fy + 28);
+    ctx.fillText("RPO FREELANCE", X + lw + 44, fy + 28);
   } catch { /* logo indisponible */ }
   if (spec.ref) {
     setFont(ctx, "500 12px 'Geist Mono'", 2);

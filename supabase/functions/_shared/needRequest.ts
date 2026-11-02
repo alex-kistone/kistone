@@ -1,11 +1,21 @@
 /**
- * Demande de besoin déposée sans compte (parcours public /besoin, 6 étapes) :
- * fonction, modèle, rythme / durée / postes, démarrage, puis l'email.
+ * Demande de besoin déposée sans compte (parcours public /besoin) : métier à recruter, durée de
+ * la mission, démarrage, puis l'email. Le parcours RPO envoie toujours vertical « rpo » et
+ * engagement « mission » ; les autres valeurs restent pour relire les anciennes demandes.
  * Partagé entre le site (questionnaire, admin) et la fonction need-request (validation, email).
  */
 import { isVertical, verticalOf, type Vertical } from "./verticals.ts";
 
 export type Option<T extends string = string> = { value: T; label: string; hint?: string };
+
+/** Métiers proposés au client, un sous-ensemble de METIERS (taxonomy.ts). */
+export const NEED_METIERS: readonly Option[] = [
+  { value: "Tech", label: "Tech", hint: "Développement, data, produit" },
+  { value: "GTM", label: "GTM", hint: "Sales, marketing" },
+  { value: "Finance", label: "Finance" },
+  { value: "Industrie", label: "Industrie" },
+  { value: "Autres", label: "Autre" },
+];
 
 export type Engagement = "fractional" | "mission" | "cdi" | "unsure";
 export const ENGAGEMENTS: readonly Option<Engagement>[] = [
@@ -41,6 +51,8 @@ export const BRIEF_MAX = 4000;
 export interface NeedRequest {
   email: string;
   vertical: Vertical;
+  /** Absent des anciennes demandes. */
+  metier: string | null;
   engagement: Engagement;
   rhythm: string | null;
   duration: string | null;
@@ -70,6 +82,7 @@ export function parseNeedRequest(body: Record<string, unknown>): NeedRequest | s
   return {
     email,
     vertical: body.vertical,
+    metier: has(NEED_METIERS, body.metier) ? String(body.metier) : null,
     engagement,
     rhythm,
     duration,
@@ -80,11 +93,13 @@ export function parseNeedRequest(body: Record<string, unknown>): NeedRequest | s
 }
 
 /** Lignes du récapitulatif (questionnaire, admin, email). */
-export function needRequestLines(r: Pick<NeedRequest, "vertical" | "engagement" | "rhythm" | "duration" | "open_positions" | "start_window">): { label: string; value: string }[] {
-  const lines = [
-    { label: "Profil", value: verticalOf(r.vertical).seeking.replace(/^un /, "") },
-    { label: "Modèle", value: labelOf(ENGAGEMENTS, r.engagement) ?? "" },
-  ];
+export function needRequestLines(r: Pick<NeedRequest, "vertical" | "engagement" | "rhythm" | "duration" | "open_positions" | "start_window"> & { metier?: string | null }): { label: string; value: string }[] {
+  const lines = r.metier
+    ? [{ label: "Métier", value: labelOf(NEED_METIERS, r.metier) ?? r.metier }]
+    : [
+        { label: "Profil", value: verticalOf(r.vertical).seeking.replace(/^un /, "") },
+        { label: "Modèle", value: labelOf(ENGAGEMENTS, r.engagement) ?? "" },
+      ];
   if (r.engagement === "fractional") lines.push({ label: "Rythme", value: labelOf(RHYTHMS, r.rhythm) ?? "Pas encore sûr(e)" });
   if (r.engagement === "mission") lines.push({ label: "Durée", value: labelOf(DURATIONS, r.duration) ?? "Pas encore sûr(e)" });
   if (r.engagement === "cdi") lines.push({ label: "Postes ouverts", value: r.open_positions ?? "" });

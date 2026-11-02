@@ -1,28 +1,30 @@
 import { palettes, type PaletteName } from "@/lib/palettes";
-import type { Vertical } from "@/lib/verticals";
 
 // Contenus de l'accueil. Les [placeholders] restent tels quels en attendant le vrai contenu.
 
+/** Métiers sur lesquels les recruteurs sont spécialisés, tels que présentés sur l'accueil. */
+export const METIERS_RPO = ["Tech", "Data", "Product", "Sales & Marketing", "Finance", "Industrie"] as const;
+export type MetierRpo = (typeof METIERS_RPO)[number];
+
 export const HERO = {
-  // Plateforme freelance IA et RPO (jamais « management de transition »)
-  titleLead: "Réseau d'experts",
-  titleBefore: "",
-  titleHighlight: "Data & IA",
-  subtitle:
-    "Engineer, Product, Chief Data Officer, Tech Recruiter (RPO) sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire. Un premier profil en 48 h, l’administratif géré pour vous.",
-  // Mots du sous-titre mis en gras (les métiers)
-  subtitleBold: ["Engineer", "Product", "Chief Data Officer", "Tech Recruiter"],
+  // Réseau de recruteurs freelance (jamais « management de transition »)
+  titleLead: "Renforcez votre équipe",
+  titleBefore: "avec un ",
+  titleHighlight: "RPO Freelance",
+  // Un soulignement rose passe d'un métier à l'autre sous le titre
+  functions: ["Tech", "Sales", "Corporate", "Finance", "Industrie"],
+  subtitle: "Pas un cabinet, pas un collectif : une communauté de 700+ recruteurs indépendants, spécialisés, qualifiés.",
   primary: "Déposer un besoin",
   secondary: "Je suis freelance",
-  note: "Profils qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
+  note: "Recruteurs qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
 };
 
 export type Recruiter = {
   initials: string;
   name: string;
   role: string;
-  /** Famille (engineer, product, leader, rpo). */
-  vertical: string;
+  /** Métier de spécialité. */
+  domain: MetierRpo;
   rhythm: string;
   xp: string;
   palette: PaletteName;
@@ -30,95 +32,101 @@ export type Recruiter = {
   photo?: string;
 };
 
-// Profils fictifs, pour illustrer la plateforme en attendant les vrais.
+// Profils fictifs, pour illustrer le réseau en attendant les vrais.
 export const RECRUITERS: Recruiter[] = [
-  { initials: "LN", name: "Lina", role: "AI Engineer · RAG", vertical: "engineer", rhythm: "Temps plein", xp: "8 ans", palette: "blue", photo: "/people/lina.jpg" },
-  { initials: "HP", name: "Hugo", role: "LLM Engineer · agents", vertical: "engineer", rhythm: "Temps plein", xp: "6 ans", palette: "blue", photo: "/people/hugo.jpg" },
-  { initials: "CD", name: "Claire", role: "Product Manager IA", vertical: "product", rhythm: "Temps plein", xp: "9 ans", palette: "lilac", photo: "/people/camille.jpg" },
-  { initials: "MG", name: "Marc", role: "Head of AI", vertical: "leader", rhythm: "2 j / sem", xp: "14 ans", palette: "teal", photo: "/people/marc.jpg" },
-  { initials: "SK", name: "Sami", role: "MLOps Engineer", vertical: "engineer", rhythm: "4 j / sem", xp: "9 ans", palette: "blue", photo: "/people/sami.jpg" },
-  { initials: "JM", name: "Julie", role: "Tech Recruiter · IA & data", vertical: "rpo", rhythm: "Temps plein", xp: "9 ans", palette: "sage", photo: "/people/sarah.jpg" },
-  { initials: "YB", name: "Yanis", role: "Product Owner · produits LLM", vertical: "product", rhythm: "4 j / sem", xp: "7 ans", palette: "lilac", photo: "/people/yanis.jpg" },
-  { initials: "NR", name: "Nadia", role: "CTO · IA", vertical: "leader", rhythm: "3 j / sem", xp: "16 ans", palette: "teal", photo: "/people/nadia.jpg" },
-  { initials: "EL", name: "Emma", role: "AI Designer", vertical: "product", rhythm: "Temps plein", xp: "8 ans", palette: "lilac", photo: "/people/emma.jpg" },
-  { initials: "AT", name: "Adam", role: "Data engineer · IA", vertical: "engineer", rhythm: "Temps plein", xp: "7 ans", palette: "blue", photo: "/people/adam.jpg" },
-  { initials: "PV", name: "Paul", role: "Chief Data Officer", vertical: "leader", rhythm: "2 j / sem", xp: "18 ans", palette: "teal", photo: "/people/thomas.jpg" },
-  { initials: "TR", name: "Thomas", role: "Tech Recruiter", vertical: "rpo", rhythm: "3 j / sem", xp: "6 ans", palette: "sage", photo: "/people/thomas-r.jpg" },
+  { initials: "JM", name: "Julie", role: "Recruteuse Tech", domain: "Tech", rhythm: "Temps plein", xp: "9 ans", palette: "blue", photo: "/people/sarah.jpg" },
+  { initials: "HP", name: "Hugo", role: "Recruteur Data", domain: "Data", rhythm: "3 j / sem", xp: "6 ans", palette: "lilac", photo: "/people/hugo.jpg" },
+  { initials: "CD", name: "Claire", role: "Recruteuse Product", domain: "Product", rhythm: "Temps plein", xp: "8 ans", palette: "teal", photo: "/people/camille.jpg" },
+  { initials: "MG", name: "Marc", role: "Recruteur Sales · SaaS B2B", domain: "Sales & Marketing", rhythm: "3 j / sem", xp: "12 ans", palette: "apricot", photo: "/people/marc.jpg" },
+  { initials: "SK", name: "Sami", role: "Recruteur Tech · DevOps", domain: "Tech", rhythm: "4 j / sem", xp: "9 ans", palette: "blue", photo: "/people/sami.jpg" },
+  { initials: "LN", name: "Lina", role: "Recruteuse Data", domain: "Data", rhythm: "Temps plein", xp: "7 ans", palette: "lilac", photo: "/people/lina.jpg" },
+  { initials: "YB", name: "Yanis", role: "Recruteur Marketing", domain: "Sales & Marketing", rhythm: "4 j / sem", xp: "7 ans", palette: "apricot", photo: "/people/yanis.jpg" },
+  { initials: "NR", name: "Nadia", role: "Recruteuse Finance", domain: "Finance", rhythm: "3 j / sem", xp: "11 ans", palette: "sage", photo: "/people/nadia.jpg" },
+  { initials: "EL", name: "Emma", role: "Recruteuse Sales", domain: "Sales & Marketing", rhythm: "Temps plein", xp: "8 ans", palette: "apricot", photo: "/people/emma.jpg" },
+  { initials: "AT", name: "Adam", role: "Recruteur Industrie", domain: "Industrie", rhythm: "Temps plein", xp: "10 ans", palette: "sand", photo: "/people/adam.jpg" },
+  { initials: "PV", name: "Paul", role: "Recruteur Finance", domain: "Finance", rhythm: "2 j / sem", xp: "14 ans", palette: "sage", photo: "/people/thomas.jpg" },
+  { initials: "TR", name: "Thomas", role: "Recruteur Tech", domain: "Tech", rhythm: "3 j / sem", xp: "6 ans", palette: "blue", photo: "/people/thomas-r.jpg" },
 ];
 
 export const LOGOS = ["Maison Vérane", "Groupe Altor", "Solvée", "[Logo client]", "[Logo client]", "[Logo client]", "[Logo client]"];
 
 export const STEPS: { num: string; title: string; desc: string; link?: { label: string; href: string } }[] = [
-  { num: "Étape 01", title: "Partagez votre besoin", desc: "Quelques lignes suffisent : l'IA en extrait les critères (famille, stack, rythme, budget)." },
+  { num: "Étape 01", title: "Partagez votre besoin", desc: "Quelques lignes suffisent : l'IA en extrait les critères (métiers, nombre de postes, rythme, budget)." },
   {
     num: "Étape 02",
-    title: "Un référent IA le cadre avec vous",
-    desc: "30 minutes au téléphone pour préciser l'enjeu, le format et le budget. Puis un profil qualifié sous 48 h.",
+    title: "On le cadre avec vous",
+    desc: "30 minutes au téléphone pour préciser les postes, le rythme et le budget. Puis un recruteur qualifié sous 48 h.",
     link: { label: "Réserver 30 minutes", href: "https://calendar.app.google/BnK5vVcAjum7r3VW9" },
   },
-  { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, KYC et onboarding gérés : l'expert démarre, on suit la mission avec vous." },
+  { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, KYC et onboarding gérés : le recruteur rejoint vos équipes, on suit la mission avec vous." },
 ];
 
-/**
- * « Passer en production » : les situations qui amènent un client vers Kistone, chacune vers
- * la famille qui y répond. Le recrutement en CDI n'est jamais présenté comme un problème :
- * l'expert démarre et le Tech Recruiter accélère l'embauche, les deux ensemble.
- */
-/**
- * Les situations qui amènent un client : urgence, expertise pointue, stratégie, recrutements.
- * Chaque carte mène au dépôt de besoin, pré-rempli sur la famille qui y répond (sauf l'urgence).
- */
-export type PainCard = { tag: string; title: string; desc: string; cta: string; vertical?: Vertical; palette: PaletteName };
+/** Les situations qui amènent un client vers le RPO. Chaque carte mène au dépôt de besoin. */
+export type PainCard = { tag: string; title: string; desc: string; palette: PaletteName };
 
-export const PAIN: { titleA: string; titleB: string; subtitle: string; cards: PainCard[] } = {
-  titleA: "Urgent, pointu ou stratégique ?",
-  titleB: "Votre besoin a son expert.",
-  subtitle: "Les compétences IA sont rares, et les projets n'attendent pas.",
+export const PAIN: { titleA: string; titleB: string; subtitle: string; cta: string; cards: PainCard[] } = {
+  titleA: "Dans quelles situations",
+  titleB: "faire appel à un RPO ?",
+  subtitle: "Les bons profils sont rares, et vos postes n'attendent pas.",
+  cta: "Trouver un recruteur",
   cards: [
-    { tag: "Urgence projet", title: "Un projet IA qui ne peut pas attendre", desc: "Un premier profil qualifié sous 48 h, un démarrage en une semaine, le contrat et l'administratif gérés.", cta: "Partager mon besoin", palette: "sage" },
-    { tag: "Expertise pointue", title: "Une compétence IA introuvable en interne", desc: "LLM, RAG, agents, évaluation, MLOps : un AI Engineer qui maîtrise déjà le sujet et livre dès les premiers jours.", cta: "AI Engineer", vertical: "engineer", palette: "blue" },
-    { tag: "Stratégie & gouvernance", title: "Une IA sans cap ni pilote", desc: "Prioriser les cas d'usage, choisir les plateformes, poser la gouvernance : un AI Leader en fractional fixe le cap.", cta: "AI Leader", vertical: "leader", palette: "teal" },
-    { tag: "Recrutements en CDI", title: "Plan de recrutement important", desc: "Un Tech Recruiter démarre en mission RPO dès maintenant et accélère vos embauches en CDI.", cta: "Tech Recruiter", vertical: "rpo", palette: "apricot" },
+    { tag: "Urgence", title: "Un poste clé qui ne peut pas attendre", desc: "Un premier profil qualifié sous 48 h, un démarrage en une semaine, le contrat et l'administratif gérés.", palette: "sage" },
+    { tag: "Pic d'embauches", title: "Un plan de recrutement à tenir", desc: "Une levée de fonds ou un nouveau produit : vous devez recruter 5, 10 ou 20 personnes en quelques mois.", palette: "teal" },
+    { tag: "Profils pénuriques", title: "Vos annonces ne suffisent plus", desc: "Sur les profils rares, il faut chasser : un recruteur spécialisé de votre métier connaît le marché et va chercher les candidats.", palette: "blue" },
+    { tag: "Équipe Talent débordée", title: "Vos recruteurs sont à saturation", desc: "Un renfort rejoint votre équipe le temps qu'il faut, pour tenir vos délais sans perdre en qualité.", palette: "lilac" },
+    { tag: "Remplacement", title: "Un recruteur absent ou sur le départ", desc: "Congé, départ ou poste en cours d'embauche : vos recrutements continuent sans interruption.", palette: "sand" },
+    { tag: "Nouvelle activité", title: "Un site, une équipe, un marché à lancer", desc: "Un recruteur dédié construit l'équipe de départ, sans vous obliger à créer un poste en interne.", palette: "apricot" },
+  ],
+};
+
+/** Ce que fait le recruteur, du brief à la signature. */
+export const RPO_SCOPE = {
+  titleA: "Du brief à la signature.",
+  titleB: "Tout le recrutement, ou une partie.",
+  subtitle: "Vous lui confiez l'ensemble du processus ou seulement les étapes qui vous manquent.",
+  steps: [
+    { title: "Cadrage du poste", desc: "Avec le manager : missions, compétences clés, fourchette de salaire." },
+    { title: "Annonces et candidatures", desc: "Diffusion des offres, tri des candidatures entrantes, réponse aux candidats." },
+    { title: "Chasse", desc: "Approche directe sur LinkedIn et les communautés de votre métier, pour atteindre ceux qui ne postulent pas." },
+    { title: "Qualification", desc: "Entretiens de présélection, évaluation avec vos équipes et shortlist argumentée." },
+    { title: "Pilotage du process", desc: "Coordination des entretiens et suivi des indicateurs : délais, taux de conversion, sources." },
+    { title: "Offre et prise de poste", desc: "Négociation, closing et suivi du candidat jusqu'à son arrivée." },
+  ],
+};
+
+/** RPO freelance ou cabinet : ce qui change au quotidien. */
+export const RPO_VS_CABINET = {
+  titleA: "RPO freelance ou cabinet ?",
+  titleB: "Deux façons de recruter.",
+  subtitle: "Le cabinet vend un recrutement. Le RPO vous apporte du temps de recruteur, dans votre équipe.",
+  rows: [
+    { label: "Où il travaille", cabinet: "À l'extérieur de votre entreprise", rpo: "Dans votre équipe, avec vos outils et vos managers" },
+    { label: "Facturation", cabinet: "Des honoraires à chaque embauche, souvent 20 à 25 % du salaire annuel", rpo: "Au jour, sur les jours réalisés validés chaque mois, sans honoraires au placement" },
+    { label: "Périmètre", cabinet: "Un mandat, poste par poste", rpo: "L'ensemble de vos postes, ou seulement une partie" },
+    { label: "Rythme", cabinet: "Fixé par le mandat", rpo: "Temps plein ou quelques jours par semaine" },
+    { label: "Votre marque", cabinet: "Il approche les candidats pour le compte d'un client", rpo: "Il recrute en votre nom" },
+    { label: "Ce qui vous reste", cabinet: "Les recrues embauchées", rpo: "Les recrues, le vivier et le process construits" },
   ],
 };
 
 /**
- * Les besoins les plus fréquents : un rôle précis, qui pré-remplit le dépôt de besoin.
- * Le budget affiché et repris est celui de la famille (src/lib/indicativeBudget.ts).
+ * Les besoins les plus fréquents : un recruteur par métier, qui pré-remplit le dépôt de besoin.
+ * Le budget affiché et repris est celui du RPO (src/lib/indicativeBudget.ts).
  */
-export const ROLE_CATALOG: { role: string; vertical: Vertical }[] = [
-  { role: "LLM Engineer", vertical: "engineer" },
-  { role: "RAG Engineer", vertical: "engineer" },
-  { role: "AI Agents Engineer", vertical: "engineer" },
-  { role: "MLOps / LLMOps Engineer", vertical: "engineer" },
-  { role: "AI Product Manager", vertical: "product" },
-  { role: "Product Owner IA", vertical: "product" },
-  { role: "AI Designer", vertical: "product" },
-  { role: "Fractional CTO", vertical: "leader" },
-  { role: "Head of AI", vertical: "leader" },
-  { role: "Chief AI Officer", vertical: "leader" },
-  { role: "Tech Recruiter IA & data", vertical: "rpo" },
-  { role: "Recruiter GTM", vertical: "rpo" },
+export const ROLE_CATALOG: string[] = [
+  "Recruteur Tech",
+  "Recruteur Data",
+  "Recruteur Product",
+  "Recruteur Sales & Marketing",
+  "Recruteur Finance",
+  "Recruteur Industrie",
 ];
-
-/** La squad IA : plusieurs familles sur un même projet, coordonnées par Kistone. */
-export const SQUAD = {
-  label: "Squad IA",
-  title: "Une équipe IA complète, coordonnée par Kistone.",
-  text: "Un AI Leader quelques jours par semaine pour le cap, un AI Engineer pour construire, un AI Product pour l'adoption : composés pour votre projet, ils démarrent ensemble.",
-  members: [
-    { vertical: "leader" as Vertical, rhythm: "2 j / sem", role: "Fixe le cap et arbitre" },
-    { vertical: "engineer" as Vertical, rhythm: "Temps plein", role: "Construit et met en production" },
-    { vertical: "product" as Vertical, rhythm: "Temps plein", role: "Conçoit et fait adopter" },
-  ],
-  points: ["Un seul interlocuteur Kistone", "Des profils choisis pour travailler ensemble", "Contrats, CRA et facturation gérés par Kistone"],
-};
 
 export const ASSETS = [
-  { icon: "shield", title: "Profils sélectionnés et qualifiés", desc: "Parcours, projets IA et références évalués en entretien avant la première mission.", featured: true },
-  { icon: "pulse", title: "Matching sur vos critères", desc: "Stack, cas d'usage, séniorité, rythme et budget : seuls les profils pertinents remontent." },
+  { icon: "shield", title: "Recruteurs sélectionnés et qualifiés", desc: "Parcours, recrutements réalisés et références évalués en entretien avant la première mission.", featured: true },
+  { icon: "pulse", title: "Spécialisés par métier", desc: "Tech, Data, Product, Sales & Marketing, Finance, Industrie : un recruteur qui connaît vos profils." },
   { icon: "clock", title: "Réactivité", desc: "Un premier profil en 48 h et un démarrage en une semaine, pas en trois mois." },
-  { icon: "team", title: "Le bon format", desc: "Mission, fractional ou contract-to-hire : vous ajustez selon votre besoin." },
+  { icon: "team", title: "Intégré à votre équipe", desc: "Votre ATS, votre Slack, vos rituels. Il recrute en votre nom, à temps plein ou quelques jours par semaine." },
 ] as const;
 
 /** Espace freelance : ce que la plateforme supprime (les irritants du freelance). */
@@ -135,60 +143,33 @@ export const FREELANCE_STRIKE = {
 };
 
 export const FREELANCE_SPACE = [
-  { label: "Mission AI Engineer · Scale-up SaaS", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
-  { label: "CRA d'octobre · 18 jours", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
+  { label: "Mission RPO · Scale-up SaaS · 3 j/sem.", status: "En cours", bg: "#E8F5EE", fg: "#17663F" },
+  { label: "CRA d'octobre · 12 jours", status: "Validé par le client", bg: palettes.sand.soft, fg: palettes.sand.ink },
   { label: "Facture d'octobre", status: "Envoyée", bg: palettes.blue.soft, fg: palettes.blue.ink },
-  { label: "Mission RPO · 4 recrutements Data/AI", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
-];
-
-export const RESOURCES: { kind: string; title: string; meta: string; palette: PaletteName }[] = [
-  { kind: "Article", title: "[Titre d’article : RPO freelance vs cabinet]", meta: "Blog · [x] min de lecture", palette: "apricot" },
-  { kind: "Comparatif", title: "Trouver un expert IA freelance : les plateformes en France", meta: "Guide · 12 acteurs", palette: "lilac" },
-  { kind: "Guide", title: "[Titre de guide : staffer un projet IA]", meta: "Guide · PDF", palette: "teal" },
+  { label: "Nouvelle mission RPO · 4 recrutements Sales", status: "À consulter", bg: "#FFE3EC", fg: "#8F1747" },
 ];
 
 /**
  * Démo « brief → matching » : un besoin se tape tout seul, l'IA en extrait les critères,
- * puis les profils correspondants apparaissent. Un exemple par fonction (onglets).
- * Profils fictifs en attendant les vrais : la démo illustre le produit.
+ * puis les profils correspondants apparaissent. Un exemple par métier (onglets).
+ * Exemples fictifs en attendant les vrais : la démo illustre le produit.
  */
-export type Brief = { vertical: Vertical; domain: string; text: string; criteria: string[]; matches: { name: string; score: number }[] };
+export type Brief = { domain: MetierRpo; text: string; criteria: string[] };
 export const BRIEFS: Brief[] = [
-  {
-    vertical: "engineer",
-    domain: "AI Engineer",
-    text: "Notre POC d'assistant interne marche en démo : on cherche un AI Engineer pour industrialiser le RAG et le passer en production.",
-    criteria: ["RAG & recherche sémantique", "MLOps / LLMOps", "Mission 6 mois"],
-    matches: [{ name: "Lina", score: 95 }, { name: "Hugo", score: 88 }],
-  },
-  {
-    vertical: "product",
-    domain: "AI Product",
-    text: "Nous lançons un copilote pour nos clients : besoin d'un Product Manager IA pour prioriser les cas d'usage et piloter la roadmap.",
-    criteria: ["AI Product", "Discovery & cas d'usage IA", "Roadmap & priorisation"],
-    matches: [{ name: "Claire", score: 93 }, { name: "Yanis", score: 86 }],
-  },
-  {
-    vertical: "leader",
-    domain: "AI Leader",
-    text: "Le comité de direction veut une stratégie IA : on cherche un Head of AI 2 jours par semaine pour la feuille de route et la gouvernance.",
-    criteria: ["AI Leader", "2 j / sem", "Stratégie IA & GenAI", "Gouvernance & AI Act"],
-    matches: [{ name: "Marc", score: 94 }, { name: "Paul", score: 87 }],
-  },
-  {
-    vertical: "rpo",
-    domain: "Tech Recruiter",
-    text: "On veut internaliser notre équipe IA : un recruteur pour 4 AI Engineers en CDI, à Paris en hybride, dès que possible.",
-    criteria: ["Tech Recruiter", "Data/AI", "Paris · hybride", "4 postes"],
-    matches: [{ name: "Julie", score: 94 }, { name: "Thomas", score: 88 }],
-  },
+  { domain: "Tech", text: "Je cherche un recruteur pour 3 développeurs backend, à Paris en hybride, dès que possible.", criteria: ["RPO Tech", "Paris · hybride", "Dès que possible", "3 postes"] },
+  { domain: "Data", text: "On structure notre équipe data : un recruteur pour 2 data engineers et un data analyst, à Lyon.", criteria: ["RPO Data", "Lyon", "3 postes"] },
+  { domain: "Product", text: "Nous recrutons 2 Product Managers et un Product Designer pour accompagner notre nouvelle gamme.", criteria: ["RPO Product", "3 postes", "3 j / sem"] },
+  { domain: "Sales & Marketing", text: "Besoin d'un recruteur pour monter une équipe de 4 Account Executives en SaaS B2B, à partir de janvier.", criteria: ["RPO Sales", "SaaS B2B", "Janvier", "4 postes"] },
+  { domain: "Finance", text: "Un contrôleur de gestion et un comptable à recruter en PME, 2 jours par semaine nous suffiraient.", criteria: ["RPO Finance", "PME", "2 j / sem", "2 postes"] },
+  { domain: "Industrie", text: "Trois responsables de production à recruter sur nos sites de l'Ouest, avec un démarrage sous un mois.", criteria: ["RPO Industrie", "Grand Ouest", "Sous un mois", "3 postes"] },
 ];
 
 /** Cadre administratif : la liste se coche toute seule dans la carte sombre. */
 export const ADMIN_CHECKLIST = ["Contrat de mission signé", "KYC vérifié", "CRA validé chaque mois", "Facture unique émise"];
 
 export const FINAL_CTA = {
-  title: "Votre prochain expert IA",
+  title: "Votre prochain",
+  titleHighlight: "recruteur RPO",
   titleEnd: "est déjà disponible.",
   text: "Décrivez votre besoin en quelques lignes : vous recevez un premier profil qualifié sous 48 h.",
   primary: "Déposer un besoin",
@@ -202,27 +183,39 @@ export const FINAL_CTA = {
 export const HOME_FAQ: { q: string; a: string }[] = [
   {
     q: "Qu'est-ce que Kistone ?",
-    a: "Kistone est un réseau freelance d'experts IA. Il met en relation les entreprises avec des AI Engineers, des AI Product et des AI Leaders sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire, et avec des Tech Recruiters (RPO) pour recruter leurs talents IA en CDI.",
+    a: "Kistone est un réseau de freelances RPO. Il met en relation les entreprises avec une communauté de 700+ recruteurs freelance sélectionnés et qualifiés, spécialisés par métier, et intégrés à leurs équipes pour recruter en CDI.",
   },
   {
-    q: "Quels experts IA trouve-t-on sur Kistone ?",
-    a: "Trois familles : les AI Engineers (LLM, RAG, agents IA, MLOps et infrastructure IA), les AI Product (Product Managers IA, Product Owners de produits LLM, AI Designers) et les AI Leaders (CTO, Head of AI, Chief AI Officer). S'y ajoutent les Tech Recruiters, intégrés à vos équipes pour recruter en CDI.",
+    q: "Qu'est-ce que le RPO freelance ?",
+    a: "Le RPO (Recruitment Process Outsourcing) consiste à confier tout ou partie de vos recrutements à un recruteur externe qui travaille comme un membre de votre équipe : il utilise vos outils, parle au nom de votre entreprise et rend compte à vos managers.",
+  },
+  {
+    q: "Sur quels métiers vos recruteurs sont-ils spécialisés ?",
+    a: "Tech, Data, Product, Sales & Marketing, Finance, Industrie… Chaque recruteur est choisi pour sa connaissance de vos profils et de votre marché.",
   },
   {
     q: "En combien de temps recevez-vous un premier profil ?",
-    a: "Un premier profil qualifié vous est présenté sous 48 h après le partage de votre besoin.",
+    a: "Un premier profil qualifié vous est présenté sous 48 h après le partage de votre besoin ; le démarrage a lieu en général dans la semaine qui suit.",
   },
   {
-    q: "Combien coûte un expert IA freelance ?",
-    a: "Les experts sont facturés au jour, sans frais de recrutement. Budgets indicatifs HT par jour : AI Engineer 600 à 1 000 €, AI Product 500 à 800 €, AI Leader 1 000 à 1 600 €, Tech Recruiter 500 à 600 €, selon l'expérience et le périmètre.",
+    q: "Combien coûte un recruteur freelance ?",
+    a: "Il est facturé au jour, sans honoraires au placement : en général entre 500 et 600 € HT par jour, selon la spécialité et l'expérience. Vous ne payez que les jours réalisés, déclarés dans un CRA que vous validez chaque mois.",
   },
   {
-    q: "Mission, fractional ou contract-to-hire : quelle différence ?",
-    a: "En mission freelance, l'expert travaille à temps plein sur votre projet pour une durée définie. En fractional, un leader senior intervient quelques jours par semaine. En contract-to-hire, l'expert démarre en freelance avec la possibilité de le recruter ensuite.",
+    q: "Peut-on confier seulement une partie de nos recrutements ?",
+    a: "Oui. Vous choisissez le périmètre (un métier, une équipe, certains postes ou certaines étapes du processus) et le rythme : à temps plein ou quelques jours par semaine.",
   },
   {
-    q: "Comment les experts sont-ils sélectionnés ?",
-    a: "Chaque freelance est qualifié en entretien par l'équipe Kistone (parcours, projets IA réalisés, références) puis noté. Seuls les profils qui correspondent à votre besoin vous sont présentés.",
+    q: "Le recruteur utilise-t-il nos outils ?",
+    a: "Oui. Il travaille avec votre ATS, votre messagerie et vos rituels, et recrute au nom de votre entreprise. Le vivier construit pendant la mission reste chez vous.",
+  },
+  {
+    q: "Quelle différence avec un cabinet de recrutement ?",
+    a: "Le cabinet est payé au succès, poste par poste. Le recruteur freelance travaille au sein de votre équipe, sur l'ensemble de vos postes, et vous gardez le vivier et le process construits.",
+  },
+  {
+    q: "Comment les recruteurs sont-ils sélectionnés ?",
+    a: "Chaque freelance est qualifié en entretien par l'équipe Kistone (parcours, recrutements réalisés, références) puis noté. Seuls les profils qui correspondent à votre besoin vous sont présentés.",
   },
   {
     q: "Qui gère le contrat et la facturation ?",

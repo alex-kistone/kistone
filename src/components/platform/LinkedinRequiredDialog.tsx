@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { LINKEDIN_HINT, normalizeLinkedinUrl } from "@/lib/linkedin";
 import LinkedinUrlHowTo from "./LinkedinUrlHowTo";
 import { palettes } from "@/lib/palettes";
-import { VERTICALS, type Vertical } from "@/lib/verticals";
+import { ACTIVE_VERTICALS, type Vertical } from "@/lib/verticals";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -33,7 +33,7 @@ const LINKEDIN_OWN_PROFILE = "https://www.linkedin.com/in/";
 export default function LinkedinRequiredDialog({ open, firstVisit, initialVertical, onSubmit }: Props) {
   // Première visite : d'abord la fonction (RPO, DRH, CFO…), puis l'URL LinkedIn
   const [vertical, setVertical] = useState<Vertical | null>(initialVertical ?? null);
-  const [step, setStep] = useState<"vertical" | "linkedin">(firstVisit && !initialVertical ? "vertical" : "linkedin");
+  const [step, setStep] = useState<"vertical" | "linkedin">(firstVisit && !initialVertical && ACTIVE_VERTICALS.length > 1 ? "vertical" : "linkedin");
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -68,7 +68,7 @@ export default function LinkedinRequiredDialog({ open, firstVisit, initialVertic
           <DialogDescription>Quel est votre métier ? Votre profil et les missions proposées en dépendent.</DialogDescription>
         </DialogHeader>
         <div role="radiogroup" aria-label="Votre métier" className="grid grid-cols-2 gap-2.5">
-          {VERTICALS.map((v) => {
+          {ACTIVE_VERTICALS.map((v) => {
             const p = palettes[v.palette];
             const on = vertical === v.id;
             return (
@@ -96,7 +96,7 @@ export default function LinkedinRequiredDialog({ open, firstVisit, initialVertic
           </>
         ) : (
           <>
-        {firstVisit && !initialVertical && (
+        {firstVisit && !initialVertical && ACTIVE_VERTICALS.length > 1 && (
           <button type="button" onClick={() => setStep("vertical")} className="inline-flex items-center gap-1 self-start text-xs text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" /> Changer de fonction
           </button>

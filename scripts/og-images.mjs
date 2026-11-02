@@ -27,15 +27,18 @@ const T = {
 
 /** a = début du titre, b = fin en dégradé, items = vignette de droite (null = pas de vignette). */
 const IMAGES = [
-  { file: "default", a: "Votre prochain", b: "expert", c: "est déjà disponible.", label: "Réseau freelance IA & RPO", items: [["AI Engineer", T.blue], ["AI Product", T.lilac], ["AI Leader", T.teal], ["Tech Recruiter · RPO", T.sage]] },
+  { file: "default", a: "Votre prochain", b: "recruteur RPO", c: "est déjà disponible.", label: "Réseau de Freelance RPO", items: [["Tech", T.blue], ["Data", T.lilac], ["Product", T.teal], ["Sales & Marketing", T.sage]] },
   { file: "ai-engineer", a: "Recrutez un", b: "AI Engineer", c: "freelance.", label: "LLM · RAG · Agents · MLOps", tone: T.blue, items: ["LLM & IA générative", "RAG & recherche sémantique", "Agents IA", "MLOps / LLMOps"] },
   { file: "ai-product-manager", a: "Recrutez un", b: "AI Product Manager", c: "freelance.", label: "Product Manager IA · AI Designer", tone: T.lilac, items: ["Product Manager IA", "Product Owner produits LLM", "AI Designer / UX IA", "Discovery & cas d'usage IA"] },
   { file: "ai-leader", a: "Recrutez un", b: "AI Leader", c: "freelance.", label: "CTO · Head of AI · Chief AI Officer", tone: T.teal, items: ["CTO", "Head of AI", "Chief AI Officer", "Stratégie IA & GenAI"] },
-  { file: "tech-recruiter", a: "Un", b: "Tech Recruiter", c: "intégré à vos équipes.", label: "RPO · Recruter vos talents IA en CDI", tone: T.sage, items: ["Data/IA", "Engineering", "Product", "Infra/Cloud", "Cyber", "GTM"] },
+  { file: "tech-recruiter", a: "Un", b: "Recruteur Tech", c: "intégré à vos équipes.", label: "Engineering · Data/AI · Product · SI", tone: T.blue, items: ["Engineering", "Data/AI", "Product", "Système d'information"] },
+  { file: "recruteur-gtm", a: "Un", b: "Recruteur GTM", c: "intégré à vos équipes.", label: "Sales · Marketing", tone: T.sage, items: ["Sales", "Marketing"] },
+  { file: "head-of-ta", a: "Un", b: "Head of TA", c: "pour structurer votre recrutement.", label: "Process · Organisation · Outils", tone: T.lilac, items: ["Process", "Organisation", "Outils", "Pilotage"] },
+  { file: "recruteur-generaliste", a: "Un", b: "Recruteur généraliste", c: "intégré à vos équipes.", label: "Toutes fonctions", tone: T.sand, items: ["Tri de CV", "Entretiens structurés", "Scorecards"] },
   { file: "modeles", a: "Mission, fractional ou", b: "contract-to-hire", c: ".", label: "Les modèles d'intervention", items: [["Mission freelance", T.blue], ["Fractional", T.teal], ["Contract-to-hire", T.lilac]] },
-  { file: "freelances", a: "Rejoignez la communauté des", b: "freelances IA & RPO", c: ".", label: "Experts IA et Tech Recruiters", tone: T.sand, items: ["Missions qualifiées", "Rythme au choix", "Facturation gérée", "Paiement chaque fin de mois"] },
-  { file: "comparatif", a: "Expert IA freelance :", b: "le comparatif", c: "des plateformes.", label: "Ressources · Comparatif 2026", items: null },
-  { file: "pourquoi-kistone", a: "L'IA a changé le travail.", b: "Le freelance", c: "aussi.", label: "Pourquoi Kistone", items: null },
+  { file: "freelances", a: "Rejoignez la communauté des", b: "Freelance RPO", c: ".", label: "Recruteurs freelance", tone: T.sand, items: ["Missions qualifiées", "Rythme au choix", "Facturation gérée", "Paiement chaque fin de mois"] },
+  { file: "comparatif", a: "RPO freelance :", b: "le comparatif", c: "des acteurs.", label: "Ressources · Comparatif 2026", items: null },
+  { file: "pourquoi-kistone", a: "Bien recruter,", b: "un métier", c: "à part entière.", label: "Pourquoi Kistone", items: null },
 ];
 
 const bolt = (color, opacity) => `<svg viewBox="0 0 624 1024" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="22" stroke-linejoin="miter"><path d="M38 560 L488 18 L318 398"/><path d="M22 588 L346 416 L602 416 L280 588 Z"/><path d="M300 606 L132 1006 L590 444"/></svg>`;

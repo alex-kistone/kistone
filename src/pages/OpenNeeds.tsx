@@ -14,6 +14,7 @@ import { freelanceRate } from "@/lib/pricing";
 import { rhythmLabel } from "@/lib/verticals";
 import AppShell from "@/components/platform/AppShell";
 import SEO from "@/components/SEO";
+import { ACTIVE_VERTICAL_IDS } from "@/lib/verticals";
 
 interface OpenNeed {
   id: string;
@@ -78,6 +79,7 @@ const OpenNeeds = () => {
     const { data: needsData } = await supabase
       .from("client_needs_open" as any)
       .select("id, job_title, profile_types, budget_tjm_min, budget_tjm_max, mission_location, remote_policy, description, created_at, desired_start, duration_months, english_level, vertical, specialties, days_per_week")
+      .in("vertical", ACTIVE_VERTICAL_IDS)
       .order("created_at", { ascending: false });
 
     setNeeds((needsData as unknown as OpenNeed[]) || []);

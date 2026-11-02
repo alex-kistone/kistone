@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LEGACY_ROLE_SLUGS, ROLE_PAGES, rolePath } from "@/content/roles";
 import { LEGACY_MODEL_SLUGS, MODEL_PAGES, modelPath } from "@/content/models";
-import { LEGACY_COMPARISON_SLUG } from "@/content/comparison";
+import { LEGACY_COMPARISON_SLUGS } from "@/content/comparison";
 
 const root = join(__dirname, "../..");
 const vercel = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8")) as {
@@ -35,7 +35,7 @@ describe("vercel.json", () => {
     const target = (from: string) => vercel.redirects.find((r) => r.source === from)?.destination;
     for (const [from, to] of Object.entries(LEGACY_ROLE_SLUGS)) expect(target(`/recruter/${from}`)).toBe(to ? `/recruter/${to}` : "/");
     for (const [from, to] of Object.entries(LEGACY_MODEL_SLUGS)) expect(target(`/modeles/${from}`)).toBe(`/modeles/${to}`);
-    expect(target(`/ressources/${LEGACY_COMPARISON_SLUG}`)).toBe("/ressources/comparatif-plateformes-freelance-ia");
+    for (const slug of LEGACY_COMPARISON_SLUGS) expect(target(`/ressources/${slug}`)).toBe("/ressources/comparatif-rpo-freelance");
   });
 
   it("ne sert pas app.html aux adresses inconnues (vraie 404)", () => {

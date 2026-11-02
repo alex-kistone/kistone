@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { VERTICALS, verticalOf } from "@/lib/verticals";
+import { ACTIVE_VERTICALS, verticalOf } from "@/lib/verticals";
 import { renderBlogCover } from "@/lib/blogCover";
 import { formatDate, postPath, slugify, type BlogPost } from "@/lib/blog";
 import ArticleBody from "@/components/blog/ArticleBody";
@@ -294,7 +294,7 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Aucune en particulier</SelectItem>
-                  {VERTICALS.map((v) => <SelectItem key={v.id} value={v.id}>{v.short} · {v.label}</SelectItem>)}
+                  {ACTIVE_VERTICALS.map((v) => <SelectItem key={v.id} value={v.id}>{v.short} · {v.label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>

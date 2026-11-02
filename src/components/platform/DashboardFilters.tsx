@@ -21,7 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { type FullProfile } from "@/components/platform/ProfileDetailModal";
 import { METIERS } from "@/lib/taxonomy";
 import { JARVI_TECH_SPECIALTIES } from "@/lib/jarvi";
-import { VERTICALS } from "@/lib/verticals";
+import { ACTIVE_VERTICALS } from "@/lib/verticals";
 import { REMOTE_LABEL } from "@/components/platform/admin/needs/needsModel";
 
 const SKILLS_OPTIONS = METIERS;
@@ -53,7 +53,7 @@ const DashboardFilters = ({
 }: DashboardFiltersProps) => {
   const [modelFilter, setModelFilter] = useState("all");
   // Fonction (RPO, DRH, CFO, COO, CRO, CTO, CPO, CDO)
-  const [verticalFilter, setVerticalFilter] = useState("all");
+  const [verticalFilter, setVerticalFilter] = useState(ACTIVE_VERTICALS.length === 1 ? ACTIVE_VERTICALS[0].id : "all");
   const [mobilityFilter, setMobilityFilter] = useState("");
   const [tjmRange, setTjmRange] = useState<[number, number]>([0, 1500]);
   const [tjmActive, setTjmActive] = useState(false);
@@ -61,14 +61,14 @@ const DashboardFilters = ({
   const [skillsFilter, setSkillsFilter] = useState<string[]>([]);
   const specialtyGroups = useMemo(
     () =>
-      VERTICALS.filter((v) => verticalFilter === "all" || v.id === verticalFilter).map((v) => ({
+      ACTIVE_VERTICALS.filter((v) => verticalFilter === "all" || v.id === verticalFilter).map((v) => ({
         id: v.id,
         label: v.short,
         options: v.id === "rpo" ? [...SKILLS_OPTIONS] : [...v.specialties],
       })),
     [verticalFilter],
   );
-  const specialtyLabel = verticalFilter === "rpo" ? "Métiers RPO" : `Spécialités ${VERTICALS.find((v) => v.id === verticalFilter)?.short ?? ""}`;
+  const specialtyLabel = verticalFilter === "rpo" ? "Métiers RPO" : `Spécialités ${ACTIVE_VERTICALS.find((v) => v.id === verticalFilter)?.short ?? ""}`;
   // RPO : second filtre sur les spécialités tech saisies par l'admin (champ Jarvi « Spécialités RPO Tech »)
   const [techFilter, setTechFilter] = useState<string[]>([]);
   const [remoteFilter, setRemoteFilter] = useState("all");
@@ -269,8 +269,9 @@ const DashboardFilters = ({
       </div>
 
       {/* Premier niveau : la fonction (tous les CFO, tous les DRH…) */}
+      {ACTIVE_VERTICALS.length > 1 && (
       <div role="radiogroup" aria-label="Fonction" className="flex flex-wrap items-center gap-1.5">
-        {[{ id: "all", short: "Toutes" }, ...VERTICALS].map((v) => {
+        {[{ id: "all", short: "Toutes" }, ...ACTIVE_VERTICALS].map((v) => {
           const on = verticalFilter === v.id;
           const count = v.id === "all" ? profiles.length : profiles.filter((p) => ((p as { vertical?: string }).vertical ?? "rpo") === v.id).length;
           return (
@@ -287,6 +288,7 @@ const DashboardFilters = ({
           );
         })}
       </div>
+      )}
 
       {/* Row 2: Filter chips */}
       <div className="flex flex-wrap items-center gap-2">

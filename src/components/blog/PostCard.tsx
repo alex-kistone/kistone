@@ -43,7 +43,7 @@ function CoverTemplate({ category, badge }: { category: string; badge?: string }
         <rect x="552" y={layout.barY} width="96" height="6" rx="3" fill="url(#cv-bar)" />
         <image href="/logos/logo-full-black.png" x="60" y="678" width="299" height="66" />
         <rect x="385" y="690" width="1.5" height="42" fill="#141312" fillOpacity="0.25" />
-        <text x="413" y="712" dominantBaseline="middle" fill="#4A4640" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="22" letterSpacing="3.1">AI EXPERTS PLATFORM</text>
+        <text x="413" y="712" dominantBaseline="middle" fill="#4A4640" fontFamily="'Geist Mono', monospace" fontWeight="500" fontSize="22" letterSpacing="3.1">RPO FREELANCE PLATFORM</text>
       </svg>
       {badge ? (
         <span className="absolute left-[18px] top-[18px] flex h-7 items-center gap-[7px] rounded-full bg-white/85 px-3 text-xs font-medium text-[#1B6541]">

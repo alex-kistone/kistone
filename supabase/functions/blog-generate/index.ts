@@ -8,7 +8,7 @@
  * Secret : ANTHROPIC_API_KEY.
  */
 import { requireAdmin } from "../_shared/adminAuth.ts";
-import { VERTICALS, verticalOf } from "../_shared/verticals.ts";
+import { verticalOf } from "../_shared/verticals.ts";
 
 const MODEL = "claude-sonnet-5-5";
 const corsHeaders = {
@@ -26,15 +26,17 @@ const LENGTHS: Record<string, string> = {
 
 /** Pages du site vers lesquelles l'article peut renvoyer (maillage interne). */
 const INTERNAL_LINKS = [
-  ...VERTICALS.map((v) => `- /recruter/${v.pageSlug} : fiche de poste « ${v.label} » (${v.description})`),
-  "- /modeles/mission-freelance, /modeles/fractional, /modeles/contract-to-hire : les modèles d'intervention",
-  "- /besoin : formulaire pour partager un besoin et recevoir un profil sous 48 h",
+  "- /recruter/tech-recruiter : fiche de poste Recruteur Tech (Engineering, Data/AI, Product, système d'information)",
+  "- /recruter/recruteur-gtm : fiche de poste Recruteur GTM (Sales & Marketing)",
+  "- /recruter/recruteur-generaliste : fiche de poste Recruteur généraliste (toutes fonctions, tri de CV, entretiens structurés, scorecards)",
+  "- /recruter/head-of-ta : fiche de poste Head of TA (process, structuration de la fonction recrutement)",
+  "- /besoin : formulaire pour partager un besoin et recevoir un recruteur sous 48 h",
   "- /register : inscription des freelances",
 ].join("\n");
 
-const SYSTEM = `Tu es rédacteur en chef du blog de Kistone, réseau français d'experts IA freelance (sélectionnés et qualifiés, jamais une place de marché ouverte) : AI Engineers (LLM, RAG, agents, MLOps), AI Product (Product Managers IA, AI Designers) et AI Leaders (CTO, Head of AI, Chief AI Officer), sélectionnés et qualifiés, en mission, en fractional ou en contract-to-hire ; des Tech Recruiters freelance aident aussi les clients à internaliser leurs talents IA. Un premier profil est présenté sous 48 h, facturé au jour.
+const SYSTEM = `Tu es rédacteur en chef du blog de Kistone, réseau français de Freelance RPO (une communauté de 700+ recruteurs sélectionnés et qualifiés, jamais une place de marché ouverte) : Recruteurs Tech, Recruteurs GTM, Recruteurs généralistes et Head of TA, intégrés aux équipes de leurs clients, à temps plein ou quelques jours par semaine. Un premier profil est présenté sous 48 h, facturé au jour, sans honoraires au placement.
 
-Tu écris en français, pour des dirigeants et des équipes tech et produit de startups, scale-ups, PME et grands groupes, et pour des experts IA freelance. Les thèmes du blog : l'IA en entreprise (cas d'usage, mise en production, équipes, gouvernance), les métiers de l'IA, le freelance et le recrutement des talents IA.
+Tu écris en français, pour des dirigeants, des DRH et des équipes Talent de startups, scale-ups, PME et grands groupes, et pour des recruteurs freelance. Les thèmes du blog : le RPO, le recrutement par métier, la structuration de la fonction recrutement, les méthodes (tri de CV, entretiens structurés, scorecards), l'effet de l'IA sur le recrutement et le métier de recruteur freelance.
 
 Règles de rédaction SEO et GEO (moteurs de recherche et moteurs IA) :
 - Réponds à la question principale dès l'introduction, en 2 ou 3 phrases autonomes et citables.
@@ -44,7 +46,7 @@ Règles de rédaction SEO et GEO (moteurs de recherche et moteurs IA) :
 - Intègre naturellement les mots-clés demandés, sans bourrage.
 - N'invente aucun chiffre, aucune étude, aucune citation ni aucun client. Si tu donnes un ordre de grandeur (TJM, durée), présente-le comme indicatif.
 - Ajoute 2 à 4 liens internes Markdown pertinents parmi les pages du site listées, et termine par un appel à l'action vers /besoin ou /register selon le public.
-- N'emploie jamais l'expression « management de transition » : parle de mission, de fractional ou de temps plein.
+- N'emploie jamais l'expression « management de transition » : parle de mission, de temps plein ou de quelques jours par semaine.
 - Ne présente pas l'offre en opposition au CDI (« sans le CDI », « coût d'un CDI ») : mets en avant la flexibilité du freelance.
 - Dis « profils qualifiés » plutôt que « vérifiés ».
 - Pas de formule creuse (« dans un monde en constante évolution »), pas d'emoji.`;

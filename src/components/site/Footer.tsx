@@ -13,14 +13,14 @@ export default function Footer() {
         <div className="grid gap-12 lg:grid-cols-[480px_minmax(0,1fr)] lg:gap-20">
           <div>
             <h2 className="font-ks-display text-[36px] font-bold leading-[1.02] tracking-[-0.045em] md:text-[44px]">
-              Les experts <span className="ks-grad-text">IA</span> dont vous avez besoin.
+              Les recruteurs <span className="ks-grad-text">RPO</span> dont vous avez besoin.
             </h2>
             <div className="mt-7 flex flex-wrap gap-2.5">
-              <Cta href={ROUTES.recruit} variant="studio" className="h-[50px]">Trouver un expert IA</Cta>
+              <Cta href={ROUTES.recruit} variant="studio" className="h-[50px]">Trouver un recruteur</Cta>
               <Cta href={ROUTES.freelance} variant="ghost-dark" className="h-[50px]">Je suis freelance</Cta>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-8 text-[15px] sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 text-[15px] sm:grid-cols-3">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title} className="flex flex-col gap-3.5">
                 <span className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">{col.title}</span>

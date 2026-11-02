@@ -32,3 +32,26 @@ describe("needRequestLines", () => {
     expect(lines.map((l) => l.value)).toEqual(["Tech Recruiter", "Recrutement CDI", "2 postes", "Dans un mois"]);
   });
 });
+
+const rpo = { email: "A@test.kistone.invalid", vertical: "rpo", engagement: "mission", duration: "3-6m", start_window: "asap" };
+
+describe("demande RPO (parcours /besoin)", () => {
+  it("garde le métier et la durée", () => {
+    const r = parseNeedRequest({ ...rpo, metier: "Finance" });
+    expect(r).toMatchObject({ email: "a@test.kistone.invalid", metier: "Finance", duration: "3-6m" });
+  });
+
+  it("récapitule métier, durée et démarrage, sans profil ni modèle", () => {
+    const r = parseNeedRequest({ ...rpo, metier: "Autres" });
+    expect(typeof r).not.toBe("string");
+    if (typeof r === "string") return;
+    expect(needRequestLines(r).map((l) => l.value)).toEqual(["Autre", "3 à 6 mois", "Dès que possible"]);
+  });
+
+  it("écarte un métier inconnu et relit les anciennes demandes", () => {
+    const r = parseNeedRequest({ ...rpo, metier: "Cuisine" });
+    if (typeof r === "string") throw new Error(r);
+    expect(r.metier).toBeNull();
+    expect(needRequestLines(r).map((l) => l.label)).toEqual(["Profil", "Modèle", "Durée", "Démarrage"]);
+  });
+});

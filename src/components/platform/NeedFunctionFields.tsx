@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { METIERS } from "@/lib/taxonomy";
 import { palettes } from "@/lib/palettes";
-import { VERTICALS, verticalOf, type Vertical } from "@/lib/verticals";
+import { ACTIVE_VERTICALS, verticalOf, type Vertical } from "@/lib/verticals";
 import { cn } from "@/lib/utils";
 
 const RHYTHMS = [
@@ -33,8 +33,8 @@ type Props = {
 const toggle = (list: string[], value: string, on: boolean) => (on ? [...list, value] : list.filter((x) => x !== value));
 
 /**
- * Le « quoi » d'un besoin : la famille recherchée (AI Engineer, AI Product, AI Leader, RPO), puis les
- * métiers à recruter (RPO) ou les spécialités attendues (C-Level), et le rythme souhaité.
+ * Le « quoi » d'un besoin : la famille recherchée (masquée quand une seule est ouverte), puis les
+ * métiers à recruter (RPO) ou les spécialités attendues, et le rythme souhaité.
  */
 export default function NeedFunctionFields({ vertical, onVertical, profileTypes, onProfileTypes, specialties, onSpecialties, days, onDays, hideFunctionChoice }: Props) {
   const conf = verticalOf(vertical);
@@ -42,11 +42,11 @@ export default function NeedFunctionFields({ vertical, onVertical, profileTypes,
 
   return (
     <>
-      {!hideFunctionChoice && (
+      {!hideFunctionChoice && ACTIVE_VERTICALS.length > 1 && (
       <div className="space-y-3">
         <Label id="need-function-label">Profil recherché</Label>
         <div role="radiogroup" aria-labelledby="need-function-label" className="grid grid-cols-2 gap-2.5">
-          {VERTICALS.map((v) => {
+          {ACTIVE_VERTICALS.map((v) => {
             const p = palettes[v.palette];
             const on = v.id === vertical;
             return (

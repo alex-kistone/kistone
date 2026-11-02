@@ -1,24 +1,26 @@
 /**
- * Comparatif des plateformes pour trouver un expert IA freelance (Ressources).
- * Informations tirées des sites publics de chaque acteur (relevé du 16 octobre 2026 ; spécialistes
- * d'autres fonctions relevés le 12 octobre 2026) :
- * rester factuel et positif, mettre en avant les atouts de chacun. Les chiffres cités sont
- * ceux que les acteurs annoncent eux-mêmes. Jamais « management de transition ».
+ * Comparatif des acteurs du RPO en France (Ressources) : Kistone, réseau de recruteurs freelance,
+ * face aux cabinets de RPO et aux plateformes de freelances RH.
+ * Informations tirées des sites publics de chaque acteur (relevé du 31 octobre 2026) : rester
+ * factuel et positif, mettre en avant les atouts de chacun. Les chiffres cités sont ceux que les
+ * acteurs annoncent eux-mêmes. Le statut salarié des recruteurs de Solantis et GetPro n'est pas
+ * indiqué sur leurs sites : il vient de la connaissance du marché d'Alex, ce que la méthodologie
+ * de la page précise. Jamais « management de transition ».
  */
-export type Family = "specialist" | "selective" | "global" | "function" | "open";
+export type Family = "freelance" | "cabinet" | "rh";
 
 export const FAMILIES: Record<Family, { label: string; desc: string }> = {
-  specialist: { label: "Spécialiste des métiers de l'IA", desc: "Uniquement des profils IA et data : ingénieurs, produit, leadership, avec un matching dédié." },
-  selective: { label: "Plateforme sélective tech et data", desc: "Des freelances tech, data et IA présélectionnés, souvent pour les grands comptes." },
-  global: { label: "Réseau international sélectif", desc: "Un vivier mondial très sélectif, en anglais, souvent à distance." },
-  function: { label: "Spécialiste d'une autre fonction", desc: "Une expertise profonde sur une fonction de direction : RH, marketing et revenu, finance, leadership tech." },
-  open: { label: "Place de marché ou job board ouvert", desc: "Un très large vivier de freelances, en libre recherche, sur tous les métiers." },
+  freelance: { label: "Réseau de recruteurs freelance", desc: "Uniquement des recruteurs indépendants, sélectionnés et qualifiés, spécialisés par métier." },
+  cabinet: { label: "Cabinet de RPO", desc: "Un cabinet qui met à disposition ses propres recruteurs, salariés en CDI, avec sa méthode et ses outils." },
+  rh: { label: "Plateforme de freelances RH", desc: "Des consultants RH indépendants sur toute la fonction RH, dont le recrutement externalisé." },
 };
 
 export type Player = {
   name: string;
   url: string;
   family: Family;
+  /** Statut des recruteurs : la différence principale entre les acteurs. */
+  recruiters: string;
   /** Profils couverts, en une ligne. */
   scope: string;
   models: string;
@@ -31,199 +33,91 @@ export const PLAYERS: Player[] = [
   {
     name: "Kistone",
     url: "https://kistone.fr",
-    family: "specialist",
-    scope: "AI Engineer, AI Product, AI Leader, et Tech Recruiter pour recruter en CDI",
-    models: "Mission freelance, fractional, contract-to-hire, squad IA",
-    idealFor: "Les startups, scale-ups, PME et ETI qui veulent mettre l'IA en production avec un expert qualifié, vite, puis internaliser leurs talents",
-    summary: "Réseau français d'experts IA freelance, spécialiste des métiers de l'IA : AI Engineers, AI Product et AI Leaders sélectionnés et qualifiés en entretien, en mission, en fractional ou en contract-to-hire. Le matching combine l'IA et un échange humain de 30 minutes, et des Tech Recruiters freelance aident à recruter les talents IA en CDI.",
+    family: "freelance",
+    recruiters: "Recruteurs freelance",
+    scope: "Tech, Data, Product, Sales & Marketing, Finance, Industrie, et Head of TA",
+    models: "Au jour, à temps plein ou quelques jours par semaine, sans honoraires au placement",
+    idealFor: "Les entreprises qui veulent un recruteur spécialisé de leur métier, intégré à leurs équipes, au rythme de leurs recrutements",
+    summary: "Réseau de Freelance RPO : une communauté de 700+ recruteurs indépendants, sélectionnés et qualifiés, spécialisés par métier. Le recruteur rejoint l'équipe du client avec ses outils et ses managers ; Kistone gère le contrat, la conformité, le CRA et la facturation.",
     strengths: [
-      "Uniquement des métiers de l'IA, de l'ingénierie au leadership",
-      "Profils qualifiés en entretien et notés, présentés sous 48 h",
-      "Le recrutement en CDI des talents IA dans le même réseau (Tech Recruiters RPO)",
-      "Contrat, KYC, CRA et facturation gérés pour le client comme pour le freelance",
+      "Une niche : uniquement des recruteurs freelance",
+      "Un recruteur choisi pour sa spécialité, présenté sous 48 h",
+      "Le temps plein ou quelques jours par semaine, selon vos postes ouverts",
+      "Contrat, KYC, CRA et facturation gérés par Kistone",
     ],
   },
   {
-    name: "Koïno",
-    url: "https://www.koino.fr/",
-    family: "specialist",
-    scope: "IA et data (ML Engineers, AI Architects, data scientists et engineers), développeurs",
-    models: "Projets en taskforce, mise à disposition d'experts, recrutement, formation",
-    idealFor: "Les entreprises qui veulent confier un projet IA complet, avec pilotage et livrables, ou former leurs équipes",
-    summary: "Cabinet de conseil en IA et data qui combine conseil et développement, mise à disposition d'experts, recrutement et formation. Son site annonce des experts activables en 48 h et un diagnostic initial gratuit de 30 minutes.",
+    name: "Solantis",
+    url: "https://www.solantis.fr/",
+    family: "cabinet",
+    recruiters: "Recruteurs salariés en CDI",
+    scope: "IT et digital",
+    models: "Cellule de sourcing, délégation de recruteurs, externalisation complète ; tarifs non publiés",
+    idealFor: "Les entreprises IT et digitales qui veulent confier leurs recrutements à une équipe pilotée par un cabinet",
+    summary: "Cabinet spécialisé dans le RPO, actif dans le recrutement depuis 2010. Ses recruteurs sont intégrés aux équipes des clients, avec un chef de projet, des engagements de suivi (KPI et SLA) et une méthodologie propre.",
     strengths: [
-      "Une offre de bout en bout, du diagnostic au projet livré",
-      "Des experts activables en 48 h selon le site",
-      "Le recrutement et la formation des équipes en complément",
+      "Une expertise du RPO revendiquée depuis plus de 10 ans",
+      "Une spécialisation IT et digital",
+      "Une équipe dédiée, pilotée par un chef de projet",
+      "Des engagements suivis par indicateurs",
     ],
   },
   {
-    name: "Crème de la Crème",
-    url: "https://www.cremedelacreme.io/",
-    family: "selective",
-    scope: "IA, data, cloud, cyber, IT et digital (dont ML, AI et NLP Engineers, MLOps)",
-    models: "Freelance, portage, assistance technique, équipes (IA Factory), consulting",
-    idealFor: "Les grands comptes et scale-ups qui staffent des projets tech et IA, ou montent une équipe dédiée",
-    summary: "Plateforme française de freelances tech et digital créée en 2015. Selon son site, 10 % des candidats sont acceptés et trois profils disponibles sont présentés en 48 h ; elle propose aussi de constituer des équipes, dont une « IA Factory ».",
+    name: "GetPro",
+    url: "https://www.getpro.co/le-rpo",
+    family: "cabinet",
+    recruiters: "Recruteurs salariés en CDI",
+    scope: "Tech, cyber et IA, et recrutements go-to-market",
+    models: "Recruteurs à la demande, intégrés à l'équipe ; tarifs non publiés",
+    idealFor: "Les entreprises tech qui veulent augmenter rapidement leur capacité de recrutement avec un cabinet de chasse",
+    summary: "Cabinet de chasse spécialisé dans la tech et l'IA, actif depuis 2015, avec des bureaux à Paris et à Marseille. Son offre de RPO met à disposition des recruteurs intégrés à l'équipe du client, avec les outils, la méthode et un interlocuteur unique.",
     strengths: [
-      "Une sélection exigeante (10 % des candidats acceptés, selon le site)",
-      "Trois profils disponibles en 48 h",
-      "La possibilité de monter une équipe complète",
-      "Une forte habitude des grands comptes",
-    ],
-  },
-  {
-    name: "Comet",
-    url: "https://www.comet.co/",
-    family: "selective",
-    scope: "IA, tech, data et cyber",
-    models: "Missions freelances accompagnées, portage salarial",
-    idealFor: "Les grands groupes qui recrutent des experts tech, data ou IA indépendants avec un accompagnement du brief à la clôture",
-    summary: "Cabinet de conseil en technologie fondé sur des consultants indépendants, avec une communauté d'environ 50 000 experts selon son site, un matching algorithmique et des agents de talents. Il anime aussi Comet Explore, un laboratoire dédié à l'IA.",
-    strengths: [
-      "Une large communauté d'experts tech et data",
-      "Un accompagnement humain du brief à la fin de mission",
-      "Des agences à Paris, Lille, Lyon et Nantes",
-    ],
-  },
-  {
-    name: "LeHibou",
-    url: "https://www.lehibou.com/",
-    family: "selective",
-    scope: "Informatique (développement, cloud, big data, DevOps, SAP, PMO, DSI…)",
-    models: "Missions freelances IT, offres Corporate pour les grands comptes",
-    idealFor: "Les DSI et équipes tech qui staffent des projets informatiques, dont des projets data",
-    summary: "Plateforme de freelances spécialisée dans l'informatique, qui annonce plus de 140 000 profils IT, un matching combinant l'IA et des spécialistes, et des bureaux dans six grandes villes françaises.",
-    strengths: [
-      "Une très large communauté de consultants IT",
-      "Des profils rares grâce à l'IA et à des spécialistes du matching",
-      "Une présence locale dans six métropoles",
-    ],
-  },
-  {
-    name: "Toptal",
-    url: "https://www.toptal.com/artificial-intelligence",
-    family: "global",
-    scope: "IA, machine learning, NLP, vision, et l'ensemble des métiers tech",
-    models: "Freelance à l'heure, temps partiel ou temps plein, équipes",
-    idealFor: "Les entreprises à l'aise en anglais et à distance qui cherchent un profil très sélectionné à l'international",
-    summary: "Réseau international de freelances qui annonce retenir 3 % des candidats au terme d'un processus en plusieurs étapes (évaluation, revue technique, entretien, projet test), avec une mise en relation en moins de 24 h et une période d'essai.",
-    strengths: [
-      "Un processus de sélection détaillé et très exigeant",
-      "Une mise en relation rapide et une période d'essai",
-      "Un vivier mondial, sur tous les fuseaux horaires",
+      "Une culture de la chasse sur les profils tech",
+      "L'équipe, les outils et la méthode fournis par le cabinet",
+      "Un interlocuteur unique",
+      "Une capacité qui évolue selon les priorités",
     ],
   },
   {
     name: "Le Club des RH",
     url: "https://www.leclubdesrh.fr/",
-    family: "function",
-    scope: "Ressources humaines (DRH, paie, recrutement, formation…)",
-    models: "Temps partagé, intérim, régie, projet, RPO, audit, formation",
-    idealFor: "Les entreprises qui cherchent un expert RH pointu, du DRH à temps partagé à l'audit de paie",
-    summary: "Plateforme de consultants RH indépendants, couvrant plus de 30 métiers RH selon son site. Son offre va de l'audit et du conseil à l'externalisation (DRH à temps partagé, paie, RPO) et à la formation, via un organisme certifié Qualiopi.",
+    family: "rh",
+    recruiters: "Consultants RH indépendants",
+    scope: "Toute la fonction RH : recrutement, paie, SIRH, formation, relations sociales…",
+    models: "Au jour (TJM), mission en mode projet ou en régie, à temps plein ou partagé",
+    idealFor: "Les directions RH qui cherchent un expert sur toute la fonction RH, dont le RPO",
+    summary: "Plateforme de freelances RH, qui annonce plus de 2 500 consultants indépendants et plus de 30 métiers RH. Le RPO y est l'un des dispositifs proposés, à côté de la paie, du SIRH, de la formation ou du DRH à temps partagé.",
     strengths: [
-      "Une profondeur rare sur toute la fonction RH, de la paie à la QVCT",
-      "Une shortlist de 2 à 3 consultants sous 48 h",
-      "Un contrat tripartite, une facture unique et le suivi des temps en ligne",
-      "Une offre de formation certifiée Qualiopi",
-    ],
-  },
-  {
-    name: "Mateerz",
-    url: "https://mateerz.com/",
-    family: "function",
-    scope: "Marketing et revenu (CMO, CRO / CSO, growth)",
-    models: "Fractional, intérim, squads, agence hybride, recrutement",
-    idealFor: "Les startups et scale-ups B2B qui veulent structurer leur marketing ou leur machine commerciale",
-    summary: "Spécialiste du leadership marketing et revenu : CMO et CRO à temps partagé, mais aussi squads de freelances, agence hybride et go-to-market, avec des bureaux à Paris, Barcelone et Londres.",
-    strengths: [
-      "Une expertise très poussée sur le marketing, la croissance et le revenu",
-      "Une sélection exigeante des profils",
-      "Des formats complémentaires : du dirigeant seul à l'équipe d'exécution",
-      "Une présence internationale (Paris, Barcelone, Londres)",
-    ],
-  },
-  {
-    name: "CO-CTO",
-    url: "https://co-cto.fr/en",
-    family: "function",
-    scope: "Tech, produit et IA (CTO, CPO, Chief AI Officer)",
-    models: "Fractional, audit, due diligence, recrutement",
-    idealFor: "Les startups qui ont besoin d'un CTO senior, d'un audit technique ou d'une due diligence avant une levée",
-    summary: "Collectif de CTO, CPO et responsables IA (environ 700 selon son site), spécialisé dans l'accompagnement tech des startups et scale-ups : CTO à temps partagé, audit, due diligence technique et recrutement de CTO.",
-    strengths: [
-      "Une communauté de CTO très expérimentés (18 ans en moyenne selon son site)",
-      "Une forte expertise en audit et due diligence technique",
-      "Une couverture produit et IA en plus de la tech",
-    ],
-  },
-  {
-    name: "MyCFO",
-    url: "https://mycfo.fr/",
-    family: "function",
-    scope: "Finance et comptabilité",
-    models: "CFO à temps partagé, renfort, expertise comptable",
-    idealFor: "Les startups et PME qui veulent réunir pilotage financier et tenue comptable chez un même partenaire",
-    summary: "Cabinet de conseil financier et comptable implanté à Paris, Nice et près de Genève. Il propose des CFO à temps partagé aux startups et PME, et des renforts comptables et financiers aux ETI et grands groupes.",
-    strengths: [
-      "Finance et comptabilité réunies chez un même partenaire",
-      "Une expertise technique solide (normes françaises, IFRS, fiscalité, FP&A)",
-      "Une présence en France et en Suisse",
-    ],
-  },
-  {
-    name: "Malt",
-    url: "https://www.malt.fr/",
-    family: "open",
-    scope: "Tous les métiers freelances, dont une catégorie IA (consultants, AI et ML Engineers, MLOps)",
-    models: "Missions freelances de toutes durées, outils de gestion pour les grands comptes",
-    idealFor: "Les équipes qui recherchent elles-mêmes un freelance, IA ou non, parmi un très large choix",
-    summary: "Grande place de marché européenne du freelancing, qui revendique plus d'un million de freelances et plus de 20 000 projets d'IA en cours. Le client recherche et contacte lui-même les profils, avec contrats et paiements digitalisés.",
-    strengths: [
-      "Le plus large choix de profils, IA compris",
-      "Une recherche en libre-service, avec une recherche par IA",
-      "Paiements sécurisés, missions assurées et intégration aux outils achats",
-    ],
-  },
-  {
-    name: "Free-Work",
-    url: "https://www.free-work.com/fr/tech-it",
-    family: "open",
-    scope: "Métiers de l'informatique, dont l'IA et la data",
-    models: "Job board : missions freelance et emplois salariés",
-    idealFor: "Les recruteurs IT, ESN et clients finaux qui publient eux-mêmes une mission et trient les candidatures",
-    summary: "Job board de référence des métiers IT, issu de la fusion de Freelance-info et Carriere-info : missions freelance et offres d'emploi, CVthèque pour les recruteurs, et des repères de TJM et de salaires.",
-    strengths: [
-      "Une très large audience de professionnels IT",
-      "Missions freelance et emplois au même endroit",
-      "Des baromètres de TJM et de salaires utiles pour se situer",
+      "Une couverture complète de la fonction RH",
+      "Une shortlist sous 48 h",
+      "Un contrat tripartite et une facturation centralisée",
+      "Le suivi des jours en ligne",
     ],
   },
 ];
 
 export const COMPARISON = {
-  slug: "comparatif-plateformes-freelance-ia",
-  title: "Trouver un expert IA freelance : comparatif des plateformes en France",
-  seoTitle: "Expert IA freelance : comparatif des plateformes",
-  seoDescription: "Kistone, Koïno, Crème de la Crème, Malt, Toptal, Comet, LeHibou… Le comparatif 2026 des plateformes pour trouver un expert IA freelance, et comment choisir.",
-  date: "2026-10-16",
-  lead: "Spécialistes de l'IA, plateformes sélectives tech et data, réseaux internationaux, spécialistes d'autres fonctions, places de marché ouvertes : pour recruter un AI Engineer, un AI Product Manager ou un leader IA en freelance, l'offre s'est structurée. Voici une grille de lecture objective des principaux acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
-  answer: "Pour trouver un expert IA freelance, il existe quatre familles d'acteurs : les spécialistes des métiers de l'IA (comme Kistone), les plateformes sélectives tech et data, les réseaux internationaux sélectifs et les places de marché ou job boards ouverts. Pour les autres fonctions de direction (RH, marketing et revenu, finance), des spécialistes dédiés existent aussi. Le bon choix dépend du profil recherché (ingénierie, produit ou leadership), du niveau de sélection attendu, de l'urgence, de la langue de travail et de l'envie d'internaliser ensuite le talent.",
+  slug: "comparatif-rpo-freelance",
+  title: "RPO freelance ou cabinet : le comparatif des acteurs en France",
+  seoTitle: "RPO freelance : comparatif des acteurs en France",
+  seoDescription: "Kistone, Solantis, GetPro, Le Club des RH : recruteurs freelance ou salariés, métiers couverts, facturation. Le comparatif 2026 des acteurs du RPO en France.",
+  date: "2026-10-31",
+  lead: "Cabinets de RPO, plateformes de freelances RH, réseau spécialisé de recruteurs freelance : pour renforcer vos recrutements, l'offre s'est structurée. La différence principale tient au statut du recruteur. Voici une grille de lecture des acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
+  answer: "Le RPO en France se répartit en trois familles : les cabinets de RPO, comme Solantis et GetPro, dont les recruteurs sont salariés en CDI ; les plateformes de freelances RH, comme Le Club des RH, qui couvrent toute la fonction RH ; et les réseaux spécialisés de recruteurs freelance, comme Kistone, positionné sur cette seule niche. Le bon choix dépend du métier à recruter, du rythme et du cadre que vous attendez.",
   questions: [
-    { title: "Quel profil ?", desc: "Construire (AI Engineer), concevoir et faire adopter (AI Product) ou fixer le cap (AI Leader) : un spécialiste de l'IA connaît ces nuances." },
-    { title: "Quel niveau de sélection ?", desc: "Profils qualifiés en entretien et présentés par l'acteur, ou libre accès à un large vivier à évaluer vous-même." },
-    { title: "Quelle urgence ?", desc: "La plupart des acteurs sélectifs présentent des profils sous 48 h ; une place de marché ouverte permet de chercher soi-même immédiatement." },
-    { title: "Quelle langue et quelle proximité ?", desc: "Un vivier français, au bureau ou en hybride, ou un réseau international en anglais et à distance." },
-    { title: "Et après la mission ?", desc: "Contract-to-hire, recrutement en CDI, transfert de savoir-faire : vérifiez comment l'acteur vous aide à internaliser." },
+    { title: "Quel statut de recruteur ?", desc: "Un salarié du cabinet, encadré par sa méthode, ou un indépendant qui a choisi le freelance et enchaîne les missions." },
+    { title: "Quel métier ?", desc: "Certains acteurs sont centrés sur la tech. Si vous recrutez aussi en sales, en finance ou dans l'industrie, vérifiez qu'ils couvrent ces métiers." },
+    { title: "Quel rythme ?", desc: "Temps plein ou quelques jours par semaine : vérifiez que le format s'ajuste à vos postes ouverts." },
+    { title: "Quelle facturation ?", desc: "Demandez comment la mission est facturée, et ce qui reste à votre charge en cas de changement de périmètre." },
+    { title: "Que vous reste-t-il à la fin ?", desc: "Le vivier, les process et les outils construits pendant la mission doivent rester chez vous." },
   ],
   faq: [
-    { q: "Quelle différence entre une plateforme spécialisée IA et une plateforme tech généraliste ?", a: "Une plateforme spécialisée ne propose que des métiers de l'IA et sait évaluer ce qui compte pour ces profils : mise en production, évaluation des modèles, choix d'architecture. Une plateforme tech généraliste couvre un spectre plus large, de la data au cloud." },
-    { q: "Plateforme sélective ou place de marché ouverte ?", a: "Une plateforme sélective qualifie chaque profil et vous présente une sélection ; une place de marché ouverte donne accès à un très large vivier dans lequel vous recherchez et évaluez vous-même." },
-    { q: "Combien coûte un expert IA freelance ?", a: "Il est facturé au jour, et le TJM varie fortement selon la séniorité et la spécialité. Les missions d'AI Engineer publiées en octobre 2026 sur les job boards IT affichent souvent 600 à 900 € HT par jour ; les rôles de leadership IA se situent au-dessus." },
-    { q: "Peut-on recruter ensuite l'expert en CDI ?", a: "Oui, avec le contract-to-hire : la mission commence en freelance et peut se transformer en embauche. Certains acteurs, comme Kistone avec ses Tech Recruiters, aident aussi à recruter d'autres talents IA en CDI." },
+    { q: "Quelle différence entre un recruteur RPO freelance et un recruteur de cabinet ?", a: "Le recruteur de cabinet est salarié de son entreprise, qui le met à disposition avec sa méthode. Le recruteur freelance est indépendant : il a choisi ce mode d'exercice et travaille directement au sein de votre équipe, avec vos outils." },
+    { q: "Pourquoi passer par Kistone plutôt que de chercher un freelance soi-même ?", a: "Kistone sélectionne et qualifie les recruteurs, présente un profil adapté à votre métier sous 48 h, et gère le contrat, la conformité, le CRA et la facturation." },
+    { q: "Combien coûte un recruteur RPO freelance ?", a: "Chez Kistone, il est facturé au jour, en général entre 500 et 600 € HT, sans honoraires au placement. Un Head of TA se situe plutôt entre 800 et 1 000 € HT par jour." },
+    { q: "Le RPO remplace-t-il un cabinet de recrutement classique ?", a: "Pas toujours. Le cabinet classique est adapté à un poste isolé, facturé au succès. Le RPO convient mieux à plusieurs recrutements en parallèle, avec un recruteur intégré à votre équipe." },
   ],
 };
 
-/** Ancienne adresse du comparatif (acteurs du fractional, avant le pivot IA). */
-export const LEGACY_COMPARISON_SLUG = "comparatif-acteurs-fractional";
+/** Anciennes adresses du comparatif (acteurs du fractional, puis plateformes de freelances IA). */
+export const LEGACY_COMPARISON_SLUGS = ["comparatif-acteurs-fractional", "comparatif-plateformes-freelance-ia"];

@@ -11,3 +11,6 @@ export const INDICATIVE_BUDGET: Record<Vertical, [number, number]> = {
   leader: [1000, 1600],
   rpo: [500, 600],
 };
+
+/** Budget client indicatif d'un Head of TA (€ HT / jour), validé par Alex le 2026-10-31. */
+export const HEAD_OF_TA_BUDGET: [number, number] = [800, 1000];
