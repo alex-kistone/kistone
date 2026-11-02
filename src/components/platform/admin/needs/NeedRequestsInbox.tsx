@@ -10,6 +10,7 @@ type NeedRequestRow = {
   email: string;
   vertical: Vertical;
   metier: string | null;
+  budget: string | null;
   engagement: Engagement;
   rhythm: string | null;
   duration: string | null;

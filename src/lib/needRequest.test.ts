@@ -48,6 +48,14 @@ describe("demande RPO (parcours /besoin)", () => {
     expect(needRequestLines(r).map((l) => l.value)).toEqual(["Autre", "3 à 6 mois", "Dès que possible"]);
   });
 
+  it("garde le budget, y compris « pas encore sûr », et l'affiche au récapitulatif", () => {
+    const r = parseNeedRequest({ ...rpo, metier: "Tech", budget: "unsure" });
+    if (typeof r === "string") throw new Error(r);
+    expect(r.budget).toBe("unsure");
+    expect(needRequestLines(r).at(-1)).toEqual({ label: "Budget", value: "Pas encore sûr(e)" });
+    expect((parseNeedRequest({ ...rpo, metier: "Tech", budget: "1M€" }) as { budget: string | null }).budget).toBeNull();
+  });
+
   it("accepte Head of TA", () => {
     expect(parseNeedRequest({ ...rpo, metier: "Head of TA" })).toMatchObject({ metier: "Head of TA" });
   });

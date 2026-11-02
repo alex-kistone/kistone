@@ -1,6 +1,6 @@
 /**
  * Demande de besoin déposée sans compte (parcours public /besoin) : métier à recruter, durée de
- * la mission, démarrage, puis l'email. Le parcours RPO envoie toujours vertical « rpo » et
+ * la mission, démarrage, budget, puis l'email. Le parcours RPO envoie toujours vertical « rpo » et
  * engagement « mission » ; les autres valeurs restent pour relire les anciennes demandes.
  * Partagé entre le site (questionnaire, admin) et la fonction need-request (validation, email).
  */
@@ -46,6 +46,15 @@ export const STARTS: readonly Option[] = [
   { value: "unsure", label: "Pas encore sûr(e)" },
 ];
 
+/** Budget journalier HT, avec ses bornes pour le besoin client (null = non borné). */
+export const BUDGETS: readonly (Option & { min: number | null; max: number | null })[] = [
+  { value: "lt500", label: "Moins de 500 € HT / jour", min: null, max: 500 },
+  { value: "500-600", label: "500 à 600 € HT / jour", min: 500, max: 600 },
+  { value: "600-800", label: "600 à 800 € HT / jour", min: 600, max: 800 },
+  { value: "gt800", label: "Plus de 800 € HT / jour", hint: "Head of TA, recruteurs très seniors", min: 800, max: null },
+  { value: "unsure", label: "Pas encore sûr(e)", hint: "On en parle ensemble", min: null, max: null },
+];
+
 export const OPEN_POSITIONS_MAX = 300;
 export const BRIEF_MAX = 4000;
 
@@ -59,6 +68,8 @@ export interface NeedRequest {
   duration: string | null;
   open_positions: string | null;
   start_window: string;
+  /** Budget journalier (BUDGETS), absent des anciennes demandes. */
+  budget: string | null;
   /** Texte tapé sur l'accueil, s'il y en a un. */
   brief: string | null;
 }
@@ -89,12 +100,13 @@ export function parseNeedRequest(body: Record<string, unknown>): NeedRequest | s
     duration,
     open_positions: positions || null,
     start_window: String(body.start_window),
+    budget: has(BUDGETS, body.budget) ? String(body.budget) : null,
     brief: brief || null,
   };
 }
 
 /** Lignes du récapitulatif (questionnaire, admin, email). */
-export function needRequestLines(r: Pick<NeedRequest, "vertical" | "engagement" | "rhythm" | "duration" | "open_positions" | "start_window"> & { metier?: string | null }): { label: string; value: string }[] {
+export function needRequestLines(r: Pick<NeedRequest, "vertical" | "engagement" | "rhythm" | "duration" | "open_positions" | "start_window"> & { metier?: string | null; budget?: string | null }): { label: string; value: string }[] {
   const lines = r.metier
     ? [{ label: "Métier", value: labelOf(NEED_METIERS, r.metier) ?? r.metier }]
     : [
@@ -105,5 +117,6 @@ export function needRequestLines(r: Pick<NeedRequest, "vertical" | "engagement" 
   if (r.engagement === "mission") lines.push({ label: "Durée", value: labelOf(DURATIONS, r.duration) ?? "Pas encore sûr(e)" });
   if (r.engagement === "cdi") lines.push({ label: "Postes ouverts", value: r.open_positions ?? "" });
   lines.push({ label: "Démarrage", value: labelOf(STARTS, r.start_window) ?? "" });
+  if (r.budget) lines.push({ label: "Budget", value: labelOf(BUDGETS, r.budget) ?? r.budget });
   return lines;
 }

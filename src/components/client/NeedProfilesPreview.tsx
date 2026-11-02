@@ -69,7 +69,8 @@ export default function NeedProfilesPreview({ need }: { need: PendingNeed }) {
     need.budget_tjm_min || need.budget_tjm_max
       ? `${need.budget_tjm_min ?? "…"} – ${need.budget_tjm_max ?? "…"} € HT / jour`
       : null,
-    rhythmLabel(need.days_per_week),
+    // Rythme absent quand le besoin vient de /besoin, qui ne le demande pas
+    need.days_per_week ? rhythmLabel(need.days_per_week) : null,
     need.duration_months ? durationLabel(need.duration_months) : null,
     need.mission_location || null,
   ].filter(Boolean) as string[];

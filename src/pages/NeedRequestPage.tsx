@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, Pencil } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, CalendarDays, Loader2, Pencil, Users } from "lucide-react";
 import SEO from "@/components/SEO";
 import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
@@ -9,14 +9,15 @@ import { ArrowIcon } from "@/components/site/Cta";
 import { BOOKING_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { takeHomeBrief } from "@/lib/homeBrief";
-import { DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, type Option } from "@/lib/needRequest";
+import { BUDGETS, DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, type Option } from "@/lib/needRequest";
+import { pendingNeedFromRequest, savePendingNeed } from "@/lib/pendingNeed";
 import { cn } from "@/lib/utils";
 
-type Step = 1 | 2 | 3 | 4 | 5;
+type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
 /** Le parcours RPO : une mission de recruteur, dont le client précise le métier et la durée. */
 const REQUEST = { vertical: "rpo", engagement: "mission", rhythm: null, open_positions: null } as const;
-const TOTAL = 5;
+const TOTAL = 6;
 
 /** Ligne de choix : un clic répond et passe à l'étape suivante. */
 function Choice({ option, selected, onPick }: { option: Option; selected: boolean; onPick: () => void }) {
@@ -54,14 +55,19 @@ const primaryButton = "ks-btn ks-grad-border inline-flex h-14 items-center justi
 
 /**
  * Parcours public « Déposer un besoin » (/besoin), sans compte : métier, durée de la mission,
- * démarrage, récapitulatif avec l'email, puis confirmation et prise de rendez-vous.
- * La demande est enregistrée par la fonction need-request et traitée dans l'admin.
+ * démarrage, budget, récapitulatif avec l'email. La demande est alors enregistrée (fonction
+ * need-request, email à Alex), puis le client choisit : réserver un appel, ou voir les profils
+ * qui correspondent et créer son compte (le besoin suit dans le parcours /client).
  */
 const NeedRequestPage = () => {
   const [step, setStep] = useState<Step>(1);
   const [metier, setMetier] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | null>(null);
   const [start, setStart] = useState<string | null>(null);
+  const [budget, setBudget] = useState<string | null>(null);
+  // Écran final : l'agenda s'ouvre quand le client choisit « Prendre rendez-vous »
+  const [booking, setBooking] = useState(false);
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState(""); // champ piège pour les robots
   const [brief] = useState(() => takeHomeBrief());
@@ -74,7 +80,7 @@ const NeedRequestPage = () => {
 
   const go = (next: Step) => { setError(null); setStep(next); };
   const after = (current: Step) => {
-    if (editing) { setEditing(false); return go(4); }
+    if (editing) { setEditing(false); return go(5); }
     go((current + 1) as Step);
   };
   const back = () => go((step - 1) as Step);
@@ -86,7 +92,7 @@ const NeedRequestPage = () => {
     setSending(true);
     setError(null);
     const { error: fnError } = await supabase.functions.invoke("need-request", {
-      body: { ...REQUEST, email: email.trim(), metier, duration, start_window: start, brief, website },
+      body: { ...REQUEST, email: email.trim(), metier, duration, start_window: start, budget, brief, website },
     });
     setSending(false);
     if (fnError) {
@@ -98,23 +104,30 @@ const NeedRequestPage = () => {
       setError(message);
       return;
     }
-    go(5);
+    go(6);
   };
 
-  const recap = metier && duration && start ? needRequestLines({ ...REQUEST, metier, duration, start_window: start }) : [];
-  const recapStep: Record<string, Step> = { Métier: 1, Durée: 2, Démarrage: 3 };
+  // « Voir les profils » : le besoin passe au parcours avec compte, qui affiche les profils correspondants
+  const seeProfiles = () => {
+    if (!start) return;
+    savePendingNeed(pendingNeedFromRequest({ metier, duration, start_window: start, budget, brief }));
+    navigate("/client");
+  };
+
+  const recap = metier && duration && start && budget ? needRequestLines({ ...REQUEST, metier, duration, start_window: start, budget }) : [];
+  const recapStep: Record<string, Step> = { Métier: 1, Durée: 2, Démarrage: 3, Budget: 4 };
 
   return (
     <div className="ks-site relative isolate min-h-screen overflow-x-clip bg-background">
       <SEO
         title="Déposer un besoin : le bon recruteur freelance sous 48 h"
-        description="Tech, Data, Product, Sales & Marketing, Finance, Industrie : décrivez votre besoin en trois questions et réservez 30 minutes pour le préciser. Gratuit et sans engagement."
+        description="Tech, Data, Product, Sales & Marketing, Finance, Industrie : décrivez votre besoin en quatre questions et réservez 30 minutes pour le préciser. Gratuit et sans engagement."
         path="/besoin"
       />
       <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
       <Header />
       <main className="container mx-auto max-w-3xl px-4 py-10 md:py-16">
-        {step < 5 && (
+        {step < 6 && (
           <div className="mb-10 flex items-center justify-between">
             {step > 1 ? (
               <button type="button" onClick={back} className="inline-flex items-center gap-2 text-sm font-medium text-ks-soft hover:text-ks-ink">
@@ -158,6 +171,15 @@ const NeedRequestPage = () => {
         )}
 
         {step === 4 && (
+          <>
+            <StepTitle title="Quel budget journalier ?" lead="Une fourchette suffit : elle nous aide à vous présenter les bons profils." />
+            <ul className="mt-10 space-y-3">
+              {BUDGETS.map((o) => <Choice key={o.value} option={o} selected={budget === o.value} onPick={() => { setBudget(o.value); after(4); }} />)}
+            </ul>
+          </>
+        )}
+
+        {step === 5 && (
           <form onSubmit={submit} noValidate>
             <StepTitle title="Votre besoin, en bref" lead="Vérifiez vos réponses et indiquez votre email professionnel pour enregistrer votre besoin." />
             <div className="mt-10 rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white p-6">
@@ -207,24 +229,47 @@ const NeedRequestPage = () => {
           </form>
         )}
 
-        {step === 5 && (
+        {step === 6 && (
           <div className="pt-6">
             <p className="font-ks-mono text-xs uppercase tracking-[0.14em]"><span className="ks-grad-text">Besoin enregistré</span></p>
             <div className="mt-4">
               <StepTitle
-                title={<>Merci, on s'en occupe. <Highlight>Parlons-en 30 minutes.</Highlight></>}
-                lead="Choisissez un créneau avec Alexandre pour préciser le contexte et les compétences clés. Vous recevez ensuite un premier profil qualifié sous 48 h."
+                title={<>Merci. <Highlight>Comment voulez-vous continuer ?</Highlight></>}
+                lead="Parlez-en avec Alexandre, ou découvrez tout de suite les recruteurs qui correspondent à votre besoin."
               />
             </div>
-            {/* Agenda Calendly intégré (iframe simple : pas de script tiers, autorisé par frame-src) */}
-            <div className="mt-10 overflow-hidden rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white">
-              <iframe
-                src={`${BOOKING_URL}?embed_type=Inline&embed_domain=kistone.fr&hide_gdpr_banner=1`}
-                title="Réserver un appel de 30 minutes avec Alexandre"
-                className="block h-[1050px] w-full md:h-[720px]"
-                loading="lazy"
-              />
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              <div className="flex flex-col gap-4 rounded-[24px] border border-[rgba(20,19,18,0.08)] bg-white p-6">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ks-muted"><CalendarDays className="h-5 w-5" aria-hidden="true" /></span>
+                <div>
+                  <h2 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">Prendre rendez-vous</h2>
+                  <p className="mt-1.5 text-[15px] leading-[1.55] text-ks-soft">Besoin d'aide pour cadrer le poste ? 30 minutes avec Alexandre pour préciser le contexte et les compétences clés.</p>
+                </div>
+                <button type="button" onClick={() => setBooking(true)} className={cn(primaryButton, "mt-auto h-12")} aria-expanded={booking}>
+                  Réserver un appel <ArrowIcon />
+                </button>
+              </div>
+              <div className="flex flex-col gap-4 rounded-[24px] border border-[rgba(20,19,18,0.08)] bg-white p-6">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ks-muted"><Users className="h-5 w-5" aria-hidden="true" /></span>
+                <div>
+                  <h2 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">Voir les profils</h2>
+                  <p className="mt-1.5 text-[15px] leading-[1.55] text-ks-soft">Découvrez les recruteurs qui correspondent à votre besoin et créez votre espace pour recevoir vos profils qualifiés.</p>
+                </div>
+                <button type="button" onClick={seeProfiles} className="mt-auto inline-flex h-12 items-center justify-center gap-2.5 rounded-full border border-[rgba(20,19,18,0.12)] bg-white px-7 text-base font-semibold text-ks-ink hover:bg-ks-muted">
+                  Voir les profils <ArrowIcon />
+                </button>
+              </div>
             </div>
+            {booking && (
+              /* Agenda Calendly intégré (iframe simple : pas de script tiers, autorisé par frame-src) */
+              <div className="mt-6 overflow-hidden rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white">
+                <iframe
+                  src={`${BOOKING_URL}?embed_type=Inline&embed_domain=kistone.fr&hide_gdpr_banner=1`}
+                  title="Réserver un appel de 30 minutes avec Alexandre"
+                  className="block h-[1050px] w-full md:h-[720px]"
+                />
+              </div>
+            )}
             <p className="mt-6 text-sm text-ks-soft">
               Pas le temps maintenant ? Nous vous écrivons à {email.trim()} pour convenir d'un moment.{" "}
               <Link to="/" className="font-medium text-ks-ink underline underline-offset-2">Retour à l'accueil</Link>
