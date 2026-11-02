@@ -14,6 +14,7 @@ export const NEED_METIERS: readonly Option[] = [
   { value: "GTM", label: "GTM", hint: "Sales, marketing" },
   { value: "Finance", label: "Finance" },
   { value: "Industrie", label: "Industrie" },
+  { value: "Head of TA", label: "Head of TA", hint: "Structurer la fonction recrutement" },
   { value: "Autres", label: "Autre" },
 ];
 

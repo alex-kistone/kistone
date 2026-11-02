@@ -48,6 +48,10 @@ describe("demande RPO (parcours /besoin)", () => {
     expect(needRequestLines(r).map((l) => l.value)).toEqual(["Autre", "3 à 6 mois", "Dès que possible"]);
   });
 
+  it("accepte Head of TA", () => {
+    expect(parseNeedRequest({ ...rpo, metier: "Head of TA" })).toMatchObject({ metier: "Head of TA" });
+  });
+
   it("écarte un métier inconnu et relit les anciennes demandes", () => {
     const r = parseNeedRequest({ ...rpo, metier: "Cuisine" });
     if (typeof r === "string") throw new Error(r);
