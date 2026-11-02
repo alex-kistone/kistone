@@ -4,7 +4,7 @@ import Cta from "@/components/site/Cta";
 import Highlight from "@/components/site/Highlight";
 import SmartLink from "@/components/site/SmartLink";
 import PageSection from "@/components/site/PageSection";
-import { Mail, Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { PinkGlow } from "@/components/site/PinkGlow";
 import { BOOKING_URL } from "@/content/site";
@@ -13,7 +13,6 @@ import { RPO_ROLE_PAGES, rolePath } from "@/content/roles";
 /** Commission par mission pourvue (programme d'apport d'affaires d'Alex). */
 const COMMISSION = "1 500 €";
 const EMAIL = "aguego@kistone.fr";
-const PHONE = "+33 7 78 31 11 62";
 
 const STEPS = [
   "Vous nous mettez en relation avec le bon interlocuteur.",
@@ -23,8 +22,8 @@ const STEPS = [
 
 const WAYS = [
   { title: "Un email avec moi en copie", desc: "Vous présentez Kistone à votre contact et me mettez en copie. Je prends le relais." },
-  { title: "Mes coordonnées partagées", desc: "Vous transmettez mon numéro ou mon email à la personne qui a un besoin." },
-  { title: "Un appel « de votre part »", desc: "Votre contact m'appelle en citant votre nom." },
+  { title: "Mes coordonnées partagées", desc: "Vous transmettez mon email à la personne qui a un besoin." },
+  { title: "Un appel « de votre part »", desc: "Votre contact réserve un appel avec moi en citant votre nom." },
 ];
 
 /**
@@ -133,22 +132,13 @@ export default function ReferralPage() {
               « Vous ouvrez la porte. Je qualifie le besoin et présente les profils. »
             </p>
 
-            <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+            <ul className="mt-8 grid max-w-[420px] gap-3">
               <li>
                 <a href={`mailto:${EMAIL}?subject=${encodeURIComponent("Apport d'affaires")}`} className="group flex items-center gap-3.5 rounded-2xl border border-[rgba(245,241,234,0.12)] bg-[rgba(245,241,234,0.05)] px-4 py-3.5 transition-colors hover:bg-[rgba(245,241,234,0.1)]">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(245,241,234,0.1)]"><Mail className="h-[18px] w-[18px]" aria-hidden="true" /></span>
                   <span className="min-w-0">
                     <span className="block font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-dark-muted">Email</span>
                     <span className="block truncate font-semibold">{EMAIL}</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href={`tel:${PHONE.replace(/\s/g, "")}`} className="group flex items-center gap-3.5 rounded-2xl border border-[rgba(245,241,234,0.12)] bg-[rgba(245,241,234,0.05)] px-4 py-3.5 transition-colors hover:bg-[rgba(245,241,234,0.1)]">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(245,241,234,0.1)]"><Phone className="h-[18px] w-[18px]" aria-hidden="true" /></span>
-                  <span className="min-w-0">
-                    <span className="block font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-dark-muted">Téléphone</span>
-                    <span className="block truncate font-semibold">{PHONE}</span>
                   </span>
                 </a>
               </li>
