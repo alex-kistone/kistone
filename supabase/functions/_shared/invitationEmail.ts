@@ -19,7 +19,7 @@ type Template = {
 
 const FREELANCE_NOTE = "Inscription gratuite, une dizaine de minutes.";
 const FREELANCE_SECONDARY = { label: "Découvrir l'espace freelance", href: "/freelances?utm_source=invitation" };
-const BOOKING_URL = "https://calendar.app.google/BnK5vVcAjum7r3VW9";
+const BOOKING_URL = "https://calendly.com/alexandre-kistone/30mins-meetup";
 
 export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
   ai: {

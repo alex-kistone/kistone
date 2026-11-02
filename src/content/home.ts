@@ -56,7 +56,7 @@ export const STEPS: { num: string; title: string; desc: string; link?: { label: 
     num: "Étape 02",
     title: "On le cadre avec vous",
     desc: "30 minutes au téléphone pour préciser les postes, le rythme et le budget. Puis un recruteur qualifié sous 48 h.",
-    link: { label: "Réserver 30 minutes", href: "https://calendar.app.google/BnK5vVcAjum7r3VW9" },
+    link: { label: "Réserver 30 minutes", href: "https://calendly.com/alexandre-kistone/30mins-meetup" },
   },
   { num: "Étape 03", title: "Démarrage en 1 semaine", desc: "Contrat, KYC et onboarding gérés : le recruteur rejoint vos équipes, on suit la mission avec vous." },
 ];

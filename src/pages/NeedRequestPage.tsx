@@ -6,7 +6,7 @@ import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
 import { ArrowIcon } from "@/components/site/Cta";
-import { BOOKING_EMBED_URL } from "@/content/site";
+import { BOOKING_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { takeHomeBrief } from "@/lib/homeBrief";
 import { DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, type Option } from "@/lib/needRequest";
@@ -213,13 +213,13 @@ const NeedRequestPage = () => {
             <div className="mt-4">
               <StepTitle
                 title={<>Merci, on s'en occupe. <Highlight>Parlons-en 30 minutes.</Highlight></>}
-                lead="Choisissez un créneau avec Alexandre pour préciser le contexte et les compétences clés. Vous recevez ensuite un premier profil qualifié sous 48 h."
+                lead="Choisissez un créneau avec Alexandre pour préciser le contexte et les compétences clés. Vous recevez ensuite un premier profil qualifié sous 48 h."
               />
             </div>
-            {/* Agenda Google intégré (iframe autorisée par frame-src) */}
+            {/* Agenda Calendly intégré (iframe simple : pas de script tiers, autorisé par frame-src) */}
             <div className="mt-10 overflow-hidden rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white">
               <iframe
-                src={BOOKING_EMBED_URL}
+                src={`${BOOKING_URL}?embed_type=Inline&embed_domain=kistone.fr&hide_gdpr_banner=1`}
                 title="Réserver un appel de 30 minutes avec Alexandre"
                 className="block h-[1050px] w-full md:h-[720px]"
                 loading="lazy"
