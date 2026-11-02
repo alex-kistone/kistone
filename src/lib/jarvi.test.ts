@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { JARVI_FIELDS, toJarviFields } from "./jarvi";
+import { JARVI_FIELDS, jarviLocation, toJarviFields } from "./jarvi";
 
 const JARVI_SPECIALITES = ["Corporate", "Data", "Finance", "GTM", "Immobilier", "Product", "Tech"];
 
@@ -23,6 +23,12 @@ describe("toJarviFields", () => {
     expect(fields[JARVI_FIELDS.notes]).toBe("Très bon sourcing");
     expect(fields[JARVI_FIELDS.specialitesTech]).toEqual(["Engineering"]);
     expect(fields[JARVI_FIELDS.autresLangues]).toEqual(["Anglais (intermédiaire)", "Français (natif)"]);
+  });
+
+  it("envoie la ville saisie par l'admin comme localisation du profil, jamais vide", () => {
+    expect(jarviLocation({ admin_location: " Lyon, Rhône, France " })).toBe("Lyon, Rhône, France");
+    expect(jarviLocation({ admin_location: "  " })).toBeNull();
+    expect(jarviLocation({})).toBeNull();
   });
 
   it("ajoute l'anglais noté par l'admin même s'il n'est pas déclaré", () => {

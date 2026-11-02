@@ -17,7 +17,7 @@
  * virgules) ; à confirmer au premier essai réel.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { JARVI_PROJECTS, JARVI_SPECIALITES, toJarviFields } from "../_shared/jarvi.ts";
+import { JARVI_PROJECTS, JARVI_SPECIALITES, jarviLocation, toJarviFields } from "../_shared/jarvi.ts";
 
 const API = "https://functions.prod.jarvi.tech/v1/public-api/rest/v2";
 const corsHeaders = {
@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
       availability_date: p.availability_date, sectors: p.sectors ?? [], mobility: p.mobility ?? [],
       remote_preference: p.remote_preference, has_linkedin_license: p.has_linkedin_license, languages: Array.isArray(p.languages) ? p.languages : [],
       admin_rating: p.admin_rating, admin_english_rating: p.admin_english_rating,
-      admin_comments: p.admin_comments, tech_specialties: p.tech_specialties,
+      admin_comments: p.admin_comments, tech_specialties: p.tech_specialties, admin_location: p.admin_location,
     }, JARVI_SPECIALITES);
 
     const payload: Record<string, string> = {
@@ -105,6 +105,7 @@ Deno.serve(async (req) => {
       ...(p.email ? { emailAddresses: p.email } : {}),
       ...(p.phone ? { phoneNumbers: p.phone } : {}),
       ...(p.job_title ? { currentPosition: p.job_title } : {}),
+      ...(jarviLocation(p) ? { location: jarviLocation(p)! } : {}),
       ...(jarviId ? { id: jarviId } : {}),
     };
     for (const [fieldId, value] of Object.entries(fields)) payload[fieldId] = asJarviValue(value);

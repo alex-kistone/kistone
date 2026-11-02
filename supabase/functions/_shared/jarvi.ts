@@ -95,6 +95,8 @@ export interface PlatformProfileForJarvi {
   admin_english_rating?: number | null;
   admin_comments?: string | null;
   tech_specialties?: string[] | null;
+  /** Ville du freelance saisie par l'admin (« Lyon, Rhône, France »). */
+  admin_location?: string | null;
 }
 
 /** Niveau d'anglais retenu (1 à 5) : la note de l'admin prime sur la déclaration du freelance. */
@@ -103,6 +105,14 @@ export function englishLevel(p: Pick<PlatformProfileForJarvi, "languages" | "adm
   const english = (p.languages ?? []).find((l) => l.language === "Anglais");
   return english ? ENGLISH_RATING[english.level] ?? null : null;
 }
+
+/**
+ * Localisation principale du profil Jarvi (champ standard « Location », sans UUID) : la ville
+ * saisie par l'admin, que Jarvi géocode (« Lyon, Rhône, France »). Rien quand elle est vide, pour
+ * ne pas effacer la localisation tirée de LinkedIn.
+ */
+export const jarviLocation = (p: Pick<PlatformProfileForJarvi, "admin_location">): string | null =>
+  p.admin_location?.trim() || null;
 
 /** Valeurs Jarvi du champ « Spécialités RPO » : identiques aux métiers de la plateforme. */
 export { METIERS as JARVI_SPECIALITES } from "./taxonomy.ts";

@@ -741,6 +741,7 @@ export type Database = {
           previous_companies: string[]
           vertical: string
           admin_comments: string | null
+          admin_location: string | null
           admin_rating: number | null
           availability_date: string | null
           available: boolean | null
@@ -789,6 +790,7 @@ export type Database = {
           previous_companies?: string[]
           vertical?: string
           admin_comments?: string | null
+          admin_location?: string | null
           admin_rating?: number | null
           availability_date?: string | null
           available?: boolean | null
@@ -837,6 +839,7 @@ export type Database = {
           previous_companies?: string[]
           vertical?: string
           admin_comments?: string | null
+          admin_location?: string | null
           admin_rating?: number | null
           availability_date?: string | null
           available?: boolean | null

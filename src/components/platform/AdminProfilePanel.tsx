@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { JARVI_TECH_SPECIALTIES } from "@/lib/jarvi";
+import CityInput from "@/components/platform/admin/CityInput";
 
 /** Même liste que le champ Jarvi « Spécialités RPO Tech » (synchro 1 pour 1). */
 const TECH_SPECIALTIES = JARVI_TECH_SPECIALTIES;
@@ -54,6 +55,7 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
   const [rating, setRating] = useState(0);
   const [englishRating, setEnglishRating] = useState(0);
   const [techSpecialties, setTechSpecialties] = useState<string[]>([]);
+  const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -65,7 +67,7 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
     setLoading(true);
     const { data, error } = await supabase
       .from("recruiter_profiles" as any)
-      .select("admin_comments, admin_rating, admin_english_rating, tech_specialties")
+      .select("admin_comments, admin_rating, admin_english_rating, tech_specialties, admin_location")
       .eq("id", profileId)
       .single();
 
@@ -75,6 +77,7 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
       setRating(d.admin_rating || 0);
       setEnglishRating(d.admin_english_rating || 0);
       setTechSpecialties(d.tech_specialties || []);
+      setLocation(d.admin_location || "");
     }
     setLoading(false);
   };
@@ -88,6 +91,7 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
         admin_rating: rating,
         admin_english_rating: englishRating || null,
         tech_specialties: techSpecialties,
+        admin_location: location.trim() || null,
       } as any)
       .eq("id", profileId);
 
@@ -156,6 +160,13 @@ const AdminProfilePanel = ({ profileId, profileName, open, onClose, onSaved }: A
                   </Badge>
                 ))}
               </div>
+            </div>
+
+            {/* Ville du freelance : localisation principale du profil Jarvi */}
+            <div>
+              <Label htmlFor="admin-location" className="mb-2 block text-sm font-medium">Location</Label>
+              <CityInput id="admin-location" value={location} onChange={setLocation} />
+              <p className="mt-1 text-xs text-muted-foreground">Ville où vit le freelance : elle remplace la localisation du profil dans Jarvi.</p>
             </div>
 
             {/* Comments */}
