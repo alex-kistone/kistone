@@ -8,6 +8,7 @@
  */
 
 import { englishLevel } from "./jarvi.ts";
+import { mobilityCovers } from "./locations.ts";
 import { clientPrice } from "./pricing.ts";
 import { METIER_ALIASES, METIER_FAMILIES, type Vertical } from "./taxonomy.ts";
 import { FULL_TIME_DAYS, rhythmLabel } from "./verticals.ts";
@@ -303,7 +304,9 @@ export function scoreRecruiter(need: Need, r: Recruiter, onMission: boolean, com
   const sectorsRatio = overlap(r.sectors ?? [], need.sectors);
   const locationRatio = need.remote_policy === "full-remote"
     ? 1
-    : Math.max(overlap(r.mobility ?? [], [need.mission_location]), mentionedIn(r.mobility ?? [], need.mission_location));
+    : (r.mobility ?? []).some((m) => mobilityCovers(m, need.mission_location ?? ""))
+      ? 1
+      : Math.max(overlap(r.mobility ?? [], [need.mission_location]), mentionedIn(r.mobility ?? [], need.mission_location));
 
   const rating = r.admin_rating ?? 0;
   const quality = MAX.quality * (RATING_WEIGHT[rating] ?? RATING_WEIGHT[0]);
