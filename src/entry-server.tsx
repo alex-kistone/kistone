@@ -9,7 +9,7 @@ import { STATIC_POSTS } from "./content/articles";
 import { BlogDataContext, type BlogPost } from "./lib/blog";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
-export const PRERENDER_ROUTES = ["/", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), "/freelances", "/pourquoi-kistone", "/ressources", COMPARISON_PATH,
+export const PRERENDER_ROUTES = ["/", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), "/freelances", "/pourquoi-kistone", "/apport-affaires", "/ressources", COMPARISON_PATH,
   // Articles écrits dans le code (le comparatif a déjà sa page ci-dessus)
   ...STATIC_POSTS.filter((p) => p.slug !== COMPARISON.slug).map((p) => `/ressources/${p.slug}`)];
 

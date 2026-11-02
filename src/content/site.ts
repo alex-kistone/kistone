@@ -57,6 +57,7 @@ export const FOOTER_COLUMNS = [
       { label: "Comment ça marche", href: "/#comment" },
       { label: "Partager un besoin", href: "/besoin" },
       { label: "Devenir freelance", href: "/freelances" },
+      { label: "Apport d'affaires", href: "/apport-affaires" },
     ],
   },
   {

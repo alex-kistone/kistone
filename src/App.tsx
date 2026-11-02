@@ -13,6 +13,7 @@ import RolePage from "./pages/RolePage";
 import BlogIndex from "./pages/BlogIndex";
 import FreelancesPage from "./pages/FreelancesPage";
 import WhyKistone from "./pages/WhyKistone";
+import ReferralPage from "./pages/ReferralPage";
 import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
 import SessionGuard from "./components/SessionGuard";
 import { LEGACY_COMPARISON_SLUGS } from "./content/comparison";
@@ -61,6 +62,7 @@ export const AppRoutes = () => (
     <Route path="/modeles/*" element={<Navigate to="/" replace />} />
     <Route path="/freelances" element={<FreelancesPage />} />
     <Route path="/pourquoi-kistone" element={<WhyKistone />} />
+    <Route path="/apport-affaires" element={<ReferralPage />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path={COMPARISON_PATH} element={<ComparisonPage />} />
     {LEGACY_COMPARISON_SLUGS.map((slug) => <Route key={slug} path={`/ressources/${slug}`} element={<Navigate to={COMPARISON_PATH} replace />} />)}
