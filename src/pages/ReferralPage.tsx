@@ -4,7 +4,9 @@ import Cta from "@/components/site/Cta";
 import Highlight from "@/components/site/Highlight";
 import SmartLink from "@/components/site/SmartLink";
 import PageSection from "@/components/site/PageSection";
+import { Mail, Phone } from "lucide-react";
 import { BoltWatermark } from "@/components/brand/Bolt";
+import { PinkGlow } from "@/components/site/PinkGlow";
 import { BOOKING_URL } from "@/content/site";
 import { RPO_ROLE_PAGES, rolePath } from "@/content/roles";
 
@@ -100,25 +102,62 @@ export default function ReferralPage() {
         </ul>
       </PageSection>
 
-      {/* Contact */}
+      {/* Contact : photo, coordonnées cliquables, prise de rendez-vous */}
       <section className="mx-auto mt-24 max-w-ks px-5 md:mt-32 md:px-8 xl:px-0">
-        <div className="relative isolate overflow-hidden rounded-[32px] bg-ks-dark px-7 py-12 text-ks-dark-fg md:px-14 md:py-16">
+        <div className="relative isolate grid items-center gap-10 overflow-hidden rounded-[36px] bg-ks-dark p-7 text-ks-dark-fg shadow-[0_24px_50px_-28px_rgba(20,19,18,0.5)] md:p-12 lg:grid-cols-[320px_1fr] lg:gap-14 lg:p-14">
+          <PinkGlow className="-right-24 -top-24 h-[420px] w-[420px]" strength={0.4} />
           <BoltWatermark tone="light" className="-bottom-24 -right-10 h-[420px] w-auto rotate-[14deg]" />
-          <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Votre contact</p>
-          <h2 className="mt-3 font-ks-display text-[32px] font-bold leading-[1.05] tracking-[-0.04em] md:text-[44px]">Alexandre Guégo</h2>
-          <p className="mt-1 text-ks-dark-muted">Fondateur de Kistone</p>
-          <dl className="mt-8 grid gap-5 text-[16px] sm:grid-cols-2">
-            <div>
-              <dt className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Email</dt>
-              <dd className="mt-1"><a href={`mailto:${EMAIL}`} className="font-semibold hover:underline">{EMAIL}</a></dd>
+
+          <figure className="relative mx-auto w-full max-w-[300px] lg:mx-0">
+            {/* Cadre en dégradé de la charte autour de la photo */}
+            <div className="rounded-[30px] p-[3px] ks-grad-bg">
+              <img
+                src="/team/alexandre-guego.jpg"
+                alt="Alexandre Guégo, fondateur de Kistone"
+                width={733}
+                height={1100}
+                loading="lazy"
+                className="aspect-[4/5] w-full rounded-[27px] object-cover object-top"
+              />
             </div>
-            <div>
-              <dt className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-dark-muted">Téléphone</dt>
-              <dd className="mt-1"><a href={`tel:${PHONE.replace(/\s/g, "")}`} className="font-semibold hover:underline">{PHONE}</a></dd>
+            <figcaption className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-ks-ink shadow-[0_12px_30px_-12px_rgba(0,0,0,0.5)]">
+              <span className="h-2 w-2 rounded-full ks-grad-bg" aria-hidden="true" />
+              Fondateur de Kistone
+            </figcaption>
+          </figure>
+
+          <div className="relative">
+            <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] ks-grad-text">Votre contact</p>
+            <h2 className="mt-3 font-ks-display text-[36px] font-bold leading-[1.02] tracking-[-0.045em] md:text-[52px]">Alexandre Guégo</h2>
+            <p className="mt-6 max-w-[520px] font-ks-display text-[20px] font-semibold leading-[1.35] tracking-[-0.02em] md:text-[22px]">
+              « Vous ouvrez la porte. Je qualifie le besoin et présente les profils. »
+            </p>
+
+            <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+              <li>
+                <a href={`mailto:${EMAIL}?subject=${encodeURIComponent("Apport d'affaires")}`} className="group flex items-center gap-3.5 rounded-2xl border border-[rgba(245,241,234,0.12)] bg-[rgba(245,241,234,0.05)] px-4 py-3.5 transition-colors hover:bg-[rgba(245,241,234,0.1)]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(245,241,234,0.1)]"><Mail className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                  <span className="min-w-0">
+                    <span className="block font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-dark-muted">Email</span>
+                    <span className="block truncate font-semibold">{EMAIL}</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href={`tel:${PHONE.replace(/\s/g, "")}`} className="group flex items-center gap-3.5 rounded-2xl border border-[rgba(245,241,234,0.12)] bg-[rgba(245,241,234,0.05)] px-4 py-3.5 transition-colors hover:bg-[rgba(245,241,234,0.1)]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(245,241,234,0.1)]"><Phone className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                  <span className="min-w-0">
+                    <span className="block font-ks-mono text-[10px] uppercase tracking-[0.14em] text-ks-dark-muted">Téléphone</span>
+                    <span className="block truncate font-semibold">{PHONE}</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Cta href={BOOKING_URL} variant="studio-fill" size="lg" arrow>Réserver 30 minutes</Cta>
+              <span className="text-[14px] text-ks-dark-muted">Un échange rapide pour présenter votre contact.</span>
             </div>
-          </dl>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Cta href={BOOKING_URL} size="lg" arrow>Réserver 30 minutes</Cta>
           </div>
         </div>
       </section>
