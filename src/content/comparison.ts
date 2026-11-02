@@ -1,18 +1,20 @@
 /**
  * Comparatif des acteurs du RPO en France (Ressources) : Kistone, réseau de recruteurs freelance,
- * face aux cabinets de RPO et aux plateformes de freelances RH.
- * Informations tirées des sites publics de chaque acteur (relevé du 31 octobre 2026) : rester
+ * face aux cabinets de RPO, aux plateformes de freelances RH et aux plateformes freelance généralistes.
+ * Informations tirées des sites publics de chaque acteur (relevé du 31 octobre 2026, LeHibou et
+ * Malt le 2 novembre 2026) : rester
  * factuel et positif, mettre en avant les atouts de chacun. Les chiffres cités sont ceux que les
  * acteurs annoncent eux-mêmes. Le statut salarié des recruteurs de Solantis et GetPro n'est pas
  * indiqué sur leurs sites : il vient de la connaissance du marché d'Alex, ce que la méthodologie
  * de la page précise. Jamais « management de transition ».
  */
-export type Family = "freelance" | "cabinet" | "rh";
+export type Family = "freelance" | "cabinet" | "rh" | "generalist";
 
 export const FAMILIES: Record<Family, { label: string; desc: string }> = {
   freelance: { label: "Réseau de recruteurs freelance", desc: "Uniquement des recruteurs indépendants, sélectionnés et qualifiés, spécialisés par métier." },
   cabinet: { label: "Cabinet de RPO", desc: "Un cabinet qui met à disposition ses propres recruteurs, salariés en CDI, avec sa méthode et ses outils." },
   rh: { label: "Plateforme de freelances RH", desc: "Des consultants RH indépendants sur toute la fonction RH, dont le recrutement externalisé." },
+  generalist: { label: "Plateforme freelance généraliste", desc: "Un très large vivier de freelances, tous métiers ou centré sur l'IT, où le recrutement est une compétence parmi d'autres." },
 };
 
 export type Player = {
@@ -94,16 +96,48 @@ export const PLAYERS: Player[] = [
       "Le suivi des jours en ligne",
     ],
   },
+  {
+    name: "Malt",
+    url: "https://www.malt.fr/",
+    family: "generalist",
+    recruiters: "Freelances de tous métiers, en libre accès",
+    scope: "Tous les métiers, dont une catégorie « responsables du recrutement de talents »",
+    models: "Missions freelances de toute durée, recherchées et contactées par le client lui-même",
+    idealFor: "Les entreprises qui veulent chercher elles-mêmes un recruteur freelance parmi un très large choix",
+    summary: "Grande plateforme européenne du freelancing, qui annonce plus d'un million de freelances. Le client recherche et contacte lui-même les profils, avec un outil de gestion des freelances pour les contrats, les paiements et la conformité. Les recruteurs y figurent parmi tous les autres métiers.",
+    strengths: [
+      "Le plus large vivier de freelances",
+      "Une recherche en libre-service, avec une recherche par IA",
+      "Un outil de gestion des freelances pour les achats et la conformité",
+      "Des projets assurés, selon son site",
+    ],
+  },
+  {
+    name: "LeHibou",
+    url: "https://www.lehibou.com/",
+    family: "generalist",
+    recruiters: "Freelances IT, pas de recruteurs",
+    scope: "Informatique, tech, IA et cybersécurité",
+    models: "Missions freelances IT, avec un account manager dédié",
+    idealFor: "Les DSI et équipes tech qui cherchent un expert informatique en mission plutôt qu'un recruteur",
+    summary: "Plateforme de freelances informatiques qui annonce plus de 180 000 experts IT et IA dans six pays européens, un matching en 48 h et un remplacement garanti sous 5 jours ouvrés. Son offre porte sur les missions IT, pas sur le recrutement : elle répond à un autre besoin que le RPO.",
+    strengths: [
+      "Une très large communauté d'experts IT (plus de 180 000 selon son site)",
+      "Un matching en 48 h, avec un account manager dédié",
+      "Un remplacement garanti sous 5 jours ouvrés",
+      "Une présence dans six pays européens",
+    ],
+  },
 ];
 
 export const COMPARISON = {
   slug: "comparatif-rpo-freelance",
   title: "RPO freelance ou cabinet : le comparatif des acteurs en France",
   seoTitle: "RPO freelance : comparatif des acteurs en France",
-  seoDescription: "Kistone, Solantis, GetPro, Le Club des RH : recruteurs freelance ou salariés, métiers couverts, facturation. Le comparatif 2026 des acteurs du RPO en France.",
-  date: "2026-10-31",
-  lead: "Cabinets de RPO, plateformes de freelances RH, réseau spécialisé de recruteurs freelance : pour renforcer vos recrutements, l'offre s'est structurée. La différence principale tient au statut du recruteur. Voici une grille de lecture des acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
-  answer: "Le RPO en France se répartit en trois familles : les cabinets de RPO, comme Solantis et GetPro, dont les recruteurs sont salariés en CDI ; les plateformes de freelances RH, comme Le Club des RH, qui couvrent toute la fonction RH ; et les réseaux spécialisés de recruteurs freelance, comme Kistone, positionné sur cette seule niche. Le bon choix dépend du métier à recruter, du rythme et du cadre que vous attendez.",
+  seoDescription: "Kistone, Solantis, GetPro, Le Club des RH, Malt, LeHibou : recruteurs freelance ou salariés, métiers couverts, facturation. Le comparatif 2026 des acteurs du RPO en France.",
+  date: "2026-11-02",
+  lead: "Cabinets de RPO, plateformes de freelances RH, plateformes freelance généralistes, réseau spécialisé de recruteurs freelance : pour renforcer vos recrutements, l'offre s'est structurée. La différence principale tient au statut du recruteur. Voici une grille de lecture des acteurs, de leurs atouts et des besoins auxquels chacun répond le mieux.",
+  answer: "Pour renforcer vos recrutements en France, quatre familles d'acteurs coexistent : les cabinets de RPO, comme Solantis et GetPro, dont les recruteurs sont salariés en CDI ; les plateformes de freelances RH, comme Le Club des RH, qui couvrent toute la fonction RH ; les plateformes freelance généralistes, comme Malt ou LeHibou, où le recrutement est une compétence parmi d'autres ; et les réseaux spécialisés de recruteurs freelance, comme Kistone, positionné sur cette seule niche. Le bon choix dépend du métier à recruter, du rythme et du cadre que vous attendez.",
   questions: [
     { title: "Quel statut de recruteur ?", desc: "Un salarié du cabinet, encadré par sa méthode, ou un indépendant qui a choisi le freelance et enchaîne les missions." },
     { title: "Quel métier ?", desc: "Certains acteurs sont centrés sur la tech. Si vous recrutez aussi en sales, en finance ou dans l'industrie, vérifiez qu'ils couvrent ces métiers." },
@@ -115,6 +149,7 @@ export const COMPARISON = {
     { q: "Quelle différence entre un recruteur RPO freelance et un recruteur de cabinet ?", a: "Le recruteur de cabinet est salarié de son entreprise, qui le met à disposition avec sa méthode. Le recruteur freelance est indépendant : il a choisi ce mode d'exercice et travaille directement au sein de votre équipe, avec vos outils." },
     { q: "Pourquoi passer par Kistone plutôt que de chercher un freelance soi-même ?", a: "Kistone sélectionne et qualifie les recruteurs, présente un profil adapté à votre métier sous 48 h, et gère le contrat, la conformité, le CRA et la facturation." },
     { q: "Combien coûte un recruteur RPO freelance ?", a: "Chez Kistone, il est facturé au jour, en général entre 500 et 600 € HT, sans honoraires au placement. Un Head of TA se situe plutôt entre 800 et 1 000 € HT par jour." },
+    { q: "Plateforme freelance généraliste ou réseau spécialisé ?", a: "Sur une plateforme généraliste, vous cherchez et évaluez vous-même les profils parmi un très large vivier. Un réseau spécialisé ne propose que des recruteurs, déjà qualifiés, et vous présente ceux qui correspondent à votre métier." },
     { q: "Le RPO remplace-t-il un cabinet de recrutement classique ?", a: "Pas toujours. Le cabinet classique est adapté à un poste isolé, facturé au succès. Le RPO convient mieux à plusieurs recrutements en parallèle, avec un recruteur intégré à votre équipe." },
   ],
 };

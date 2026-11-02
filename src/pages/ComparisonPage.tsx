@@ -17,13 +17,15 @@ const FAMILY_TONE: Record<Family, string> = {
   freelance: "bg-[#E8E2F6] text-[#4B35A0]",
   cabinet: "bg-[#DDE8F5] text-[#1E4F8F]",
   rh: "bg-[#F5ECCB] text-[#6E5208]",
+  generalist: "bg-[#D5EDEA] text-[#16615C]",
 };
 
-/** Pastille de couleur de chaque famille (cartes « Trois familles d'acteurs »). */
+/** Pastille de couleur de chaque famille (cartes « Quatre familles d'acteurs »). */
 const FAMILY_DOT: Record<Family, string> = {
   freelance: "bg-[#7357D6]",
   cabinet: "bg-[#3D7BD0]",
   rh: "bg-[#C99A12]",
+  generalist: "bg-[#1F8F87]",
 };
 
 const anchor = (name: string) => name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-");
@@ -79,9 +81,9 @@ export default function ComparisonPage() {
           </div>
         </header>
 
-        {/* Les trois familles */}
-        <PageSection title="Trois familles d'acteurs">
-          <ul className="mt-10 grid gap-4 md:grid-cols-3">
+        {/* Les quatre familles */}
+        <PageSection title="Quatre familles d'acteurs">
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {(Object.keys(FAMILIES) as Family[]).map((f) => (
               <li key={f} className="flex flex-col rounded-[24px] bg-white p-6 shadow-ks-card">
                 <span className={cn("h-2.5 w-2.5 rounded-full", FAMILY_DOT[f])} aria-hidden="true" />
