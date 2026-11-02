@@ -2,7 +2,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LEGACY_ROLE_SLUGS, ROLE_PAGES, rolePath } from "@/content/roles";
-import { LEGACY_MODEL_SLUGS, MODEL_PAGES, modelPath } from "@/content/models";
 import { LEGACY_COMPARISON_SLUGS } from "@/content/comparison";
 
 const root = join(__dirname, "../..");
@@ -21,9 +20,9 @@ const rewritten = (path: string) => vercel.rewrites.some((r) => r.destination ==
 describe("vercel.json", () => {
   it("sert app.html pour toutes les routes de l'application non pré-rendues", () => {
     const routes = [...app.matchAll(/<Route path="([^"*]+)"/g)].map((m) => m[1]);
-    const prerendered = new Set(["/", "/besoin", "/privacy", "/freelances", "/pourquoi-kistone", "/ressources", ...ROLE_PAGES.map(rolePath), ...MODEL_PAGES.map(modelPath)]);
+    const prerendered = new Set(["/", "/besoin", "/privacy", "/freelances", "/pourquoi-kistone", "/ressources", ...ROLE_PAGES.map(rolePath)]);
     expect(entry).toContain('"/besoin"');
-    const dynamicPublic = ["/recruter/:slug", "/modeles/:slug"]; // slugs connus pré-rendus, anciens slugs redirigés
+    const dynamicPublic = ["/recruter/:slug"]; // slugs connus pré-rendus, anciens slugs redirigés
     const missing = routes
       .filter((r) => !prerendered.has(r) && !dynamicPublic.includes(r))
       .map((r) => r.replace(/:\w+/g, "x"))
@@ -34,7 +33,7 @@ describe("vercel.json", () => {
   it("redirige en 301 toutes les anciennes adresses", () => {
     const target = (from: string) => vercel.redirects.find((r) => r.source === from)?.destination;
     for (const [from, to] of Object.entries(LEGACY_ROLE_SLUGS)) expect(target(`/recruter/${from}`)).toBe(to ? `/recruter/${to}` : "/");
-    for (const [from, to] of Object.entries(LEGACY_MODEL_SLUGS)) expect(target(`/modeles/${from}`)).toBe(`/modeles/${to}`);
+    expect(target("/modeles/:path*")).toBe("/"); // les anciennes pages modèles renvoient à l'accueil
     for (const slug of LEGACY_COMPARISON_SLUGS) expect(target(`/ressources/${slug}`)).toBe("/ressources/comparatif-rpo-freelance");
   });
 

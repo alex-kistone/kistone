@@ -157,8 +157,6 @@ export const FREELANCE_SPACE = [
 export type Brief = { domain: MetierRpo; text: string; criteria: string[] };
 export const BRIEFS: Brief[] = [
   { domain: "Tech", text: "Je cherche un recruteur pour 3 développeurs backend, à Paris en hybride, dès que possible.", criteria: ["RPO Tech", "Paris · hybride", "Dès que possible", "3 postes"] },
-  { domain: "Data", text: "On structure notre équipe data : un recruteur pour 2 data engineers et un data analyst, à Lyon.", criteria: ["RPO Data", "Lyon", "3 postes"] },
-  { domain: "Product", text: "Nous recrutons 2 Product Managers et un Product Designer pour accompagner notre nouvelle gamme.", criteria: ["RPO Product", "3 postes", "3 j / sem"] },
   { domain: "Sales & Marketing", text: "Besoin d'un recruteur pour monter une équipe de 4 Account Executives en SaaS B2B, à partir de janvier.", criteria: ["RPO Sales", "SaaS B2B", "Janvier", "4 postes"] },
   { domain: "Finance", text: "Un contrôleur de gestion et un comptable à recruter en PME, 2 jours par semaine nous suffiraient.", criteria: ["RPO Finance", "PME", "2 j / sem", "2 postes"] },
   { domain: "Industrie", text: "Trois responsables de production à recruter sur nos sites de l'Ouest, avec un démarrage sous un mois.", criteria: ["RPO Industrie", "Grand Ouest", "Sous un mois", "3 postes"] },

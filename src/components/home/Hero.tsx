@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Cta from "@/components/site/Cta";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import { ROUTES } from "@/content/site";
@@ -22,7 +22,7 @@ function FunctionsUnderline({ words }: { words: string[] }) {
   }, [words.length]);
 
   // Position du trait sous le mot actif (recalculée au chargement des polices et au redimensionnement)
-  useLayoutEffect(() => {
+  useEffect(() => {
     const measure = () => {
       const el = refs.current[index];
       if (el) setBar({ left: el.offsetLeft, width: el.offsetWidth });
@@ -47,7 +47,7 @@ function FunctionsUnderline({ words }: { words: string[] }) {
         ))}
       </ul>
       <span
-        className="absolute bottom-0 left-0 h-[3px] rounded-full bg-ks-pink transition-[transform,width] duration-500 ease-[cubic-bezier(.2,.7,.2,1)]"
+        className="absolute bottom-0 left-0 h-[3px] rounded-full bg-ks-pink transition-[transform,width] duration-500 [transition-timing-function:cubic-bezier(.2,.7,.2,1)]"
         style={bar ? { width: bar.width, transform: `translateX(${bar.left}px)` } : { width: 0 }}
         aria-hidden="true"
       />

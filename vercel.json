@@ -17,17 +17,17 @@
     },
     {
       "source": "/recruter/fractional-cto",
-      "destination": "/recruter/ai-leader",
+      "destination": "/recruter/tech-recruiter",
       "permanent": true
     },
     {
       "source": "/recruter/fractional-cdo",
-      "destination": "/recruter/ai-leader",
+      "destination": "/recruter/tech-recruiter",
       "permanent": true
     },
     {
       "source": "/recruter/fractional-cpo",
-      "destination": "/recruter/ai-product-manager",
+      "destination": "/recruter/tech-recruiter",
       "permanent": true
     },
     {
@@ -51,8 +51,28 @@
       "permanent": true
     },
     {
-      "source": "/modeles/interim-transition",
-      "destination": "/modeles/mission-freelance",
+      "source": "/recruter/ai-engineer",
+      "destination": "/recruter/tech-recruiter",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/ai-product-manager",
+      "destination": "/recruter/tech-recruiter",
+      "permanent": true
+    },
+    {
+      "source": "/recruter/ai-leader",
+      "destination": "/recruter/tech-recruiter",
+      "permanent": true
+    },
+    {
+      "source": "/modeles",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/modeles/:path*",
+      "destination": "/",
       "permanent": true
     },
     {

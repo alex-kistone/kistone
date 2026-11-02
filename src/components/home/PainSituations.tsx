@@ -1,5 +1,5 @@
 import Cta from "@/components/site/Cta";
-import SectionHeader, { Section, TwoPartTitle } from "@/components/site/SectionHeader";
+import SectionHeader, { Section } from "@/components/site/SectionHeader";
 import { BOOKING_URL, ROUTES } from "@/content/site";
 import { PAIN } from "@/content/home";
 import { palettes } from "@/lib/palettes";
@@ -10,7 +10,16 @@ import { palettes } from "@/lib/palettes";
 export default function PainSituations() {
   return (
     <Section id="situations">
-      <SectionHeader title={<TwoPartTitle a={PAIN.titleA} b={PAIN.titleB} />} subtitle={PAIN.subtitle} />
+      <SectionHeader
+        title={
+          <>
+            {PAIN.titleA} <br className="hidden md:block" />
+            {/* « RPO » en dégradé, seul mot mis en avant du titre */}
+            {PAIN.titleB.split("RPO").flatMap((part, i) => (i === 0 ? [part] : [<span key={i} className="ks-grad-text">RPO</span>, part]))}
+          </>
+        }
+        subtitle={PAIN.subtitle}
+      />
       <ul className="mt-8 grid gap-4 md:mt-14 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
         {PAIN.cards.map((c) => {
           const p = palettes[c.palette];
