@@ -70,10 +70,10 @@ export const INVITATION_TEMPLATES: Record<InvitationAudience, Template> = {
   client_rpo: {
     subject: "Invitation à découvrir Kistone, le réseau des freelances RPO",
     label: "Invitation · RPO",
-    title: "Recrutez les talents que tout le monde cherche.",
-    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, le réseau des freelances RPO. Un Tech Recruiter freelance rejoint vos équipes pour recruter vos talents en CDI : nous vous présentons un premier profil qualifié sous 48 h.",
+    title: "Renforcez votre équipe Talent Acquisition",
+    intro: "Je vous invite à découvrir <strong style=\"color:#141312\">Kistone</strong>, le réseau des freelances RPO. Un Recruiter freelance rejoint vos équipes pour recruter vos talents en CDI : nous vous présentons un premier profil qualifié sous 48 h.",
     benefits: [
-      "Des Tech Recruiters freelance spécialisés Tech, Data/AI, Product, GTM, Sales, Finance et Industrie",
+      "Des recruteurs spécialisés Tech, Data/AI, Product, GTM, Sales, Finance et Industrie",
       "Intégrés à vos équipes, avec vos outils et votre marque employeur",
       "Facturé au jour, sans honoraires au placement : contrat, CRA et facturation gérés pour vous",
     ],
