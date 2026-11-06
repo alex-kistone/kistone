@@ -1,23 +1,22 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, CalendarDays, Loader2, Pencil, Users } from "lucide-react";
+import { ArrowLeft, Loader2, Pencil } from "lucide-react";
 import SEO from "@/components/SEO";
 import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
 import { ArrowIcon } from "@/components/site/Cta";
-import { BOOKING_URL } from "@/content/site";
 import { supabase } from "@/integrations/supabase/client";
 import { takeHomeBrief } from "@/lib/homeBrief";
 import { BUDGETS, DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, type Option } from "@/lib/needRequest";
 import { pendingNeedFromRequest, savePendingNeed } from "@/lib/pendingNeed";
 import { cn } from "@/lib/utils";
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 /** Le parcours RPO : une mission de recruteur, dont le client précise le métier et la durée. */
 const REQUEST = { vertical: "rpo", engagement: "mission", rhythm: null, open_positions: null } as const;
-const TOTAL = 6;
+const TOTAL = 5;
 
 /** Ligne de choix : un clic répond et passe à l'étape suivante. */
 function Choice({ option, selected, onPick }: { option: Option; selected: boolean; onPick: () => void }) {
@@ -65,8 +64,6 @@ const NeedRequestPage = () => {
   const [duration, setDuration] = useState<string | null>(null);
   const [start, setStart] = useState<string | null>(null);
   const [budget, setBudget] = useState<string | null>(null);
-  // Écran final : l'agenda s'ouvre quand le client choisit « Prendre rendez-vous »
-  const [booking, setBooking] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState(""); // champ piège pour les robots
@@ -104,13 +101,9 @@ const NeedRequestPage = () => {
       setError(message);
       return;
     }
-    go(6);
-  };
-
-  // « Voir les profils » : le besoin passe au parcours avec compte, qui affiche les profils correspondants
-  const seeProfiles = () => {
-    if (!start) return;
-    savePendingNeed(pendingNeedFromRequest({ metier, duration, start_window: start, budget, brief }));
+    // Le besoin passe au parcours avec compte, qui affiche tout de suite les profils correspondants
+    // (la prise de rendez-vous reste proposée sous les profils)
+    if (start) savePendingNeed(pendingNeedFromRequest({ metier, duration, start_window: start, budget, brief }));
     navigate("/client");
   };
 
@@ -127,18 +120,16 @@ const NeedRequestPage = () => {
       <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
       <Header />
       <main className="container mx-auto max-w-3xl px-4 py-10 md:py-16">
-        {step < 6 && (
-          <div className="mb-10 flex items-center justify-between">
-            {step > 1 ? (
-              <button type="button" onClick={back} className="inline-flex items-center gap-2 text-sm font-medium text-ks-soft hover:text-ks-ink">
-                <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Retour
-              </button>
-            ) : <span />}
-            <span className="font-ks-mono text-xs uppercase tracking-[0.14em] text-ks-subtle" aria-live="polite">
-              Étape {step} sur {TOTAL}
-            </span>
-          </div>
-        )}
+        <div className="mb-10 flex items-center justify-between">
+          {step > 1 ? (
+            <button type="button" onClick={back} className="inline-flex items-center gap-2 text-sm font-medium text-ks-soft hover:text-ks-ink">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Retour
+            </button>
+          ) : <span />}
+          <span className="font-ks-mono text-xs uppercase tracking-[0.14em] text-ks-subtle" aria-live="polite">
+            Étape {step} sur {TOTAL}
+          </span>
+        </div>
 
         {step === 1 && (
           <>
@@ -227,54 +218,6 @@ const NeedRequestPage = () => {
               Vous êtes freelance ? <Link to="/freelances" className="font-medium text-ks-ink underline underline-offset-2">Rejoindre la communauté</Link>
             </p>
           </form>
-        )}
-
-        {step === 6 && (
-          <div className="pt-6">
-            <p className="font-ks-mono text-xs uppercase tracking-[0.14em]"><span className="ks-grad-text">Besoin enregistré</span></p>
-            <div className="mt-4">
-              <StepTitle
-                title={<>Merci. <Highlight>Comment voulez-vous continuer ?</Highlight></>}
-                lead="Parlez-en avec Alexandre, ou découvrez tout de suite les recruteurs qui correspondent à votre besoin."
-              />
-            </div>
-            <div className="mt-10 grid gap-4 md:grid-cols-2">
-              <div className="flex flex-col gap-4 rounded-[24px] border border-[rgba(20,19,18,0.08)] bg-white p-6">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ks-muted"><CalendarDays className="h-5 w-5" aria-hidden="true" /></span>
-                <div>
-                  <h2 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">Prendre rendez-vous</h2>
-                  <p className="mt-1.5 text-[15px] leading-[1.55] text-ks-soft">Besoin d'aide pour cadrer le poste ? 30 minutes avec Alexandre pour préciser le contexte et les compétences clés.</p>
-                </div>
-                <button type="button" onClick={() => setBooking(true)} className={cn(primaryButton, "mt-auto h-12")} aria-expanded={booking}>
-                  Réserver un appel <ArrowIcon />
-                </button>
-              </div>
-              <div className="flex flex-col gap-4 rounded-[24px] border border-[rgba(20,19,18,0.08)] bg-white p-6">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ks-muted"><Users className="h-5 w-5" aria-hidden="true" /></span>
-                <div>
-                  <h2 className="font-ks-display text-[22px] font-semibold tracking-[-0.02em]">Voir les profils</h2>
-                  <p className="mt-1.5 text-[15px] leading-[1.55] text-ks-soft">Découvrez les recruteurs qui correspondent à votre besoin et créez votre espace pour recevoir vos profils qualifiés.</p>
-                </div>
-                <button type="button" onClick={seeProfiles} className="mt-auto inline-flex h-12 items-center justify-center gap-2.5 rounded-full border border-[rgba(20,19,18,0.12)] bg-white px-7 text-base font-semibold text-ks-ink hover:bg-ks-muted">
-                  Voir les profils <ArrowIcon />
-                </button>
-              </div>
-            </div>
-            {booking && (
-              /* Agenda Calendly intégré (iframe simple : pas de script tiers, autorisé par frame-src) */
-              <div className="mt-6 overflow-hidden rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white">
-                <iframe
-                  src={`${BOOKING_URL}?embed_type=Inline&embed_domain=kistone.fr&hide_gdpr_banner=1`}
-                  title="Réserver un appel de 30 minutes avec Alexandre"
-                  className="block h-[1050px] w-full md:h-[720px]"
-                />
-              </div>
-            )}
-            <p className="mt-6 text-sm text-ks-soft">
-              Pas le temps maintenant ? Nous vous écrivons à {email.trim()} pour convenir d'un moment.{" "}
-              <Link to="/" className="font-medium text-ks-ink underline underline-offset-2">Retour à l'accueil</Link>
-            </p>
-          </div>
         )}
       </main>
     </div>
