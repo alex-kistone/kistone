@@ -28,15 +28,14 @@ describe("isFreeEmail", () => {
   });
 });
 
-describe("tarification (+20 %)", () => {
-  it("prix client = TJM freelance + 20 %, arrondi à l'euro supérieur", () => {
-    expect(clientPrice(500)).toBe(600);
-    expect(clientPrice(550)).toBe(660); // pas 661 malgré 550 × 1,2 = 660,000…01
-    expect(clientPrice(333)).toBe(400); // 399,6 → 400
+describe("tarification (prix coûtant)", () => {
+  it("prix client = TJM freelance, sans marge", () => {
+    expect(clientPrice(500)).toBe(500);
+    expect(clientPrice(550)).toBe(550);
   });
-  it("le freelance voit le budget client sans la marge", () => {
-    expect(freelanceRate(600)).toBe(500);
-    expect(freelanceRate(800)).toBe(666);
+  it("le freelance voit le budget client tel quel", () => {
+    expect(freelanceRate(600)).toBe(600);
+    expect(freelanceRate(800)).toBe(800);
     expect(clientPrice(freelanceRate(800))).toBeLessThanOrEqual(800);
   });
 });

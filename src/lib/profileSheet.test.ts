@@ -38,7 +38,7 @@ describe("fiche profil", () => {
     expect(f.name).toBe("Leïla");
     expect(f.clients).toBe("Veepee | Tech, IA & corporate | 29 recrutements ; 1 an de mission");
     expect(f.others).toBe("AWS | \nAXA | ");
-    expect(f.tjm).toBe("600 €");
+    expect(f.tjm).toBe("500 €");
     expect(f.english).toBe("Bilingue");
     expect(f.specialties).toBe("Tech, Data/AI, Cyber");
     expect(f.sectors).toBe("Télécom");

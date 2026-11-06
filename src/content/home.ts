@@ -14,7 +14,7 @@ export const HERO = {
   // Un soulignement rose passe d'un métier à l'autre sous le titre
   functions: ["Tech", "Sales", "Corporate", "Finance", "Industrie"],
   subtitle: "Pas un cabinet, pas un collectif : une communauté de 700+ recruteurs indépendants, spécialisés, qualifiés.",
-  primary: "Déposer un besoin",
+  primary: "Accéder aux profils",
   secondary: "Je suis freelance",
   note: "Recruteurs qualifiés · Premier profil sous 48 h · Contrat, KYC et facturation inclus",
 };

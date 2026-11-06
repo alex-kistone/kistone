@@ -217,7 +217,7 @@ Ces profils ont DÉJÀ passé un filtre déterministe : budget, disponibilité e
 ${analysis}
 
 Règles :
-- "tarif" = tarif recruteur + ${MARGIN_PCT} % de marge Kistone : c'est le TJM présenté au client. Dans les raisons, écris « Tarif de X €/j » : jamais « tarif client », « prix client », et le tarif du recruteur (tjm_recruteur) ne doit jamais apparaître.
+- "tarif" = tarif recruteur${MARGIN_PCT ? ` + ${MARGIN_PCT} % de marge Kistone` : " (prix coûtant, sans marge Kistone)"} : c'est le TJM présenté au client. Dans les raisons, écris « Tarif de X €/j » : jamais « tarif client », « prix client », et le tarif du recruteur (tjm_recruteur) ne doit jamais apparaître.
 - note_admin : 0 = non noté (ignore ce critère), 2 = pas convaincant, à proposer en dernier recours, 3 = correct, 4 = top profil à favoriser, 5 = top profil prioritaire, à placer en tête dès qu'il est pertinent pour le besoin. Critère lourd.
 - avis_interne : appréciation interne sur le profil, déterminante. Tiens-en compte fortement (points forts, réserves, défaut rédhibitoire pour ce type de besoin → écarte le profil).
 - niveau_anglais : 1 (débutant) à 5 (natif) ; si le besoin demande de l'anglais, un niveau inférieur à 3 est pénalisant. C'est le niveau du profil : ne dis jamais qu'il a été évalué, vérifié, corrigé ou déclaré. Dans les raisons, exprime-le en mots (« anglais courant », « bon niveau d'anglais »), jamais avec un chiffre ou une échelle (pas de « niveau 4 », « 4/5 »).
@@ -237,7 +237,7 @@ Règles :
 - Anglais requis : ${need.english_level ? ["", "débutant", "intermédiaire", "avancé", "courant", "natif ou bilingue"][need.english_level] : "non précisé"}
 - Durée de mission : ${need.duration_months ? `${need.duration_months} mois${need.duration_months >= 12 ? " ou plus" : ""}` : "non précisée"}
 - Arrivée souhaitée : ${need.desired_start ? `le ${need.desired_start}` : "dès que possible"} (aujourd'hui : ${new Date().toISOString().slice(0, 10)})
-- Budget : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (marge incluse, à comparer au champ "tarif"). Un tarif jusqu'à 20 % au-dessus du budget reste acceptable et négociable : ne l'écarte pas pour ce seul motif, signale-le simplement.
+- Budget : ${need.budget_tjm_min ?? "?"} à ${need.budget_tjm_max ?? "?"} €/jour (à comparer au champ "tarif"). Un tarif jusqu'à 20 % au-dessus du budget reste acceptable et négociable : ne l'écarte pas pour ce seul motif, signale-le simplement.
 - Description : ${need.description || "aucune"}
 
 PROFILS PRÉ-QUALIFIÉS
