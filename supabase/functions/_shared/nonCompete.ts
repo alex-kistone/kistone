@@ -62,3 +62,31 @@ export function nonCompeteMatch(email: string, today = new Date()): NonCompeteMa
   for (const [name, company] of EXACT_GENERIC) if (main === name) return { company, certain: false };
   return null;
 }
+
+const LEGAL_SUFFIXES = new Set(["sa", "sas", "sasu", "sarl", "se", "group", "groupe", "france", "inc", "ltd", "gmbh"]);
+
+/**
+ * Entreprise sous clause d'après son nom et, si connu, son domaine (offres d'emploi du radar).
+ * Une marque est reconnue en début de mot (« Back Market », « VINCI Energies ») mais pas au
+ * milieu d'un autre nom (« Pickering » n'est pas Kering) ; un nom générique doit être exact.
+ */
+export function nonCompeteCompany(name: string | null | undefined, domain?: string | null, today = new Date()): NonCompeteMatch | null {
+  if (today.toISOString().slice(0, 10) > NON_COMPETE_UNTIL) return null;
+  if (domain) {
+    const host = domain.replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, "");
+    const byDomain = nonCompeteMatch(`x@${host}`, today);
+    if (byDomain) return byDomain;
+  }
+  const words = (name ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").trim().split(" ").filter(Boolean);
+  if (!words.length) return null;
+  const core = words.filter((w) => !LEGAL_SUFFIXES.has(w));
+  const whole = (core.length ? core : words).join("");
+  if (ALLOWED.includes(whole)) return null;
+  // Concaténations commençant à chaque mot : « back market » → « back », « backmarket », « market »
+  const starts = words.map((_, i) => words.slice(i).join(""));
+  if (starts.some((s) => s.startsWith("bpifrance")) || whole === "bpi") return { company: "BPI France", certain: false };
+  for (const [mark, company] of SUBSTRING_MARKS) if (starts.some((s) => s.startsWith(mark))) return { company, certain: true };
+  for (const [generic, company] of EXACT_GENERIC) if (whole === generic) return { company, certain: false };
+  return null;
+}
