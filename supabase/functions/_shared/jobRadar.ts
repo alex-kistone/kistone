@@ -3,9 +3,9 @@
  * Indeed et les sites carrières via l'agrégateur TheirStack. Idée d'Alex (2026-11-06) : là où
  * une entreprise recrute en CDI, il y a souvent de la place pour un recruteur freelance.
  *
- * Les offres sont collectées une fois par jour pour toute la communauté (fonction
- * job-radar-refresh, table job_radar_offers), puis classées ici pour chaque freelance selon son
- * profil : métiers, secteurs, mobilité, préférence de remote. Pas d'API Deno ici : le front
+ * Le freelance lance lui-même sa recherche (fonction job-radar-refresh ; une seule dans la version
+ * gratuite). Les offres trouvées lui sont rattachées (job_radar_user_offers), puis classées ici
+ * selon son profil : métiers, secteurs, mobilité, préférence de remote. Pas d'API Deno ici : le front
  * l'importe tel quel via src/lib/jobRadar.ts.
  */
 import { mobilityCovers } from "./locations.ts";
@@ -28,6 +28,19 @@ export const RADAR_QUERIES: { metier: string; titles: string[] }[] = [
   { metier: "Finance", titles: ["comptable", "contrôleur de gestion", "contrôleuse de gestion", "fp&a", "financial analyst", "trésorier", "finance"] },
   { metier: "Industrie", titles: ["ingénieur production", "ingénieur méthodes", "technicien maintenance", "responsable qualité", "ingénieur procédés", "responsable production"] },
 ];
+
+/** Métiers du freelance retenus pour le radar (Autres et Head of TA n'ont pas de recherche). */
+export const radarMetiers = (skills: string[] | null | undefined) =>
+  normalizeMetiers(skills).filter((m) => m !== "Autres" && m !== "Head of TA");
+
+/** Recherches d'un freelance : les offres de recruteur, plus ses métiers (tous s'il n'en a aucun). */
+export function radarQueriesFor(skills: string[] | null | undefined) {
+  const metiers = radarMetiers(skills);
+  return metiers.length ? RADAR_QUERIES.filter((q) => q.metier === RECRUITER_SIGNAL || metiers.includes(q.metier)) : RADAR_QUERIES;
+}
+
+/** Recherches offertes dans la version gratuite. */
+export const FREE_RADAR_RUNS = 1;
 
 /** Exclus de toutes les recherches : ni stage, ni alternance, ni mission freelance. */
 export const RADAR_TITLE_EXCLUDE = ["stage", "stagiaire", "alternance", "alternant", "alternante", "apprenti", "apprentie", "intern", "internship", "freelance"];
@@ -148,7 +161,7 @@ const offerPlaces = (o: RadarOffer) => [o.location ?? "", ...o.cities].filter(Bo
  * sauf offre en remote ; un freelance flexible ou full remote voit tout, les plus proches d'abord.
  */
 export function rankRadar(profile: RadarProfile, offers: RadarOffer[], today = new Date()): RadarCompany[] {
-  const skills = normalizeMetiers(profile.skills).filter((m) => m !== "Autres" && m !== "Head of TA");
+  const skills = radarMetiers(profile.skills);
   const mobility = (profile.mobility ?? []).filter(Boolean);
   const sectors = new Set(profile.sectors ?? []);
   const local = profile.remote_preference === "on-site" || profile.remote_preference === "hybrid";

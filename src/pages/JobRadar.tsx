@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowUpRight, Building2, MapPin, Radar, UserSearch } from "lucide-react";
+import { ArrowUpRight, Building2, Loader2, MapPin, Radar, UserSearch } from "lucide-react";
 import AppShell from "@/components/platform/AppShell";
+import { functionErrorMessage } from "@/components/platform/admin/adv";
+import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { rankRadar, sourceLabel, type RadarCompany, type RadarOffer, type RadarProfile } from "@/lib/jobRadar";
-import { normalizeMetiers } from "@/lib/taxonomy";
+import { FREE_RADAR_RUNS, radarMetiers, rankRadar, sourceLabel, type RadarCompany, type RadarOffer, type RadarProfile } from "@/lib/jobRadar";
 import { cn } from "@/lib/utils";
 
 const OFFERS_SHOWN = 4;
@@ -95,13 +96,30 @@ function CompanyCard({ company }: { company: RadarCompany }) {
   );
 }
 
+interface RadarRun { ran_at: string; status: string; offers_found: number }
+
 const JobRadar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<RadarProfile | null>(null);
   const [offers, setOffers] = useState<RadarOffer[]>([]);
+  const [runs, setRuns] = useState<RadarRun[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [runError, setRunError] = useState<string | null>(null);
   const [onlyRecruiter, setOnlyRecruiter] = useState(false);
   const [metier, setMetier] = useState<string | null>(null);
+
+  // Offres des recherches du freelance, et ses recherches (pour la limite de la version gratuite)
+  const loadResults = useCallback(async (userId: string) => {
+    const [{ data: links }, { data: runRows }] = await Promise.all([
+      supabase.from("job_radar_user_offers" as never).select("job_radar_offers(*)").eq("user_id", userId).limit(3000),
+      supabase.from("job_radar_runs" as never).select("ran_at, status, offers_found").eq("user_id", userId).order("ran_at", { ascending: false }),
+    ]);
+    const rows = ((links as unknown as { job_radar_offers: RadarOffer | null }[]) ?? []).map((l) => l.job_radar_offers).filter((o): o is RadarOffer => !!o);
+    setOffers(rows);
+    setRuns((runRows as unknown as RadarRun[]) ?? []);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -114,23 +132,43 @@ const JobRadar = () => {
         .maybeSingle();
       if (!p) { navigate("/profile"); return; }
       setProfile(p as RadarProfile);
-      const { data } = await supabase
-        .from("job_radar_offers" as never)
-        .select("*")
-        .order("date_posted", { ascending: false })
-        .limit(3000);
-      setOffers((data as unknown as RadarOffer[]) ?? []);
+      const { data: admin } = await supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" });
+      setIsAdmin(!!admin);
+      await loadResults(session.user.id);
       setLoading(false);
     })();
-  }, [navigate]);
+  }, [navigate, loadResults]);
+
+  const usedRuns = runs.filter((r) => r.status !== "failed");
+  const canRun = isAdmin || usedRuns.length < FREE_RADAR_RUNS;
+  const lastRun = usedRuns[0] ?? null;
+
+  const runSearch = async () => {
+    setRunning(true);
+    setRunError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("job-radar-refresh");
+      if (error) throw new Error(await functionErrorMessage(error));
+      if (data?.error) throw new Error(data.error);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "";
+      setRunError(!message || /failed to send a request|failed to fetch/i.test(message)
+        ? "Le radar est momentanément indisponible. Réessayez dans quelques instants."
+        : message);
+    } finally {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) await loadResults(session.user.id);
+      setRunning(false);
+    }
+  };
 
   const companies = useMemo(() => (profile ? rankRadar(profile, offers) : []), [profile, offers]);
-  const skills = useMemo(() => normalizeMetiers(profile?.skills).filter((m) => m !== "Autres" && m !== "Head of TA"), [profile]);
+  const skills = useMemo(() => radarMetiers(profile?.skills), [profile]);
   const visible = companies.filter((c) =>
     (!onlyRecruiter || c.recruiterOffers.length > 0) &&
     (!metier || c.metierCounts.some((m) => m.metier === metier)),
   );
-  const updated = offers.reduce<string | null>((max, o) => (!max || o.fetched_at > max ? o.fetched_at : max), null);
+  const longDate = (d: string) => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
 
   const filterButton = (active: boolean) =>
     cn("h-9 rounded-full border px-4 text-sm font-medium transition-colors", active ? "border-foreground bg-foreground text-background" : "border-border bg-card hover:bg-muted");
@@ -143,18 +181,50 @@ const JobRadar = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Radar CDI</h1>
           <p className="mt-1 text-muted-foreground">
-            Les entreprises qui recrutent en CDI dans vos métiers, repérées chaque jour sur LinkedIn, Indeed et les sites carrières.
+            Les entreprises qui recrutent en CDI dans vos métiers, repérées sur LinkedIn, Indeed et les sites carrières.
             Là où une entreprise recrute en CDI, il y a souvent de la place pour un recruteur freelance.
           </p>
-          {updated && <p className="mt-2 text-xs text-muted-foreground">Mis à jour le {new Date(updated).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</p>}
         </div>
+
+        {!loading && (
+          <Card className="mb-6">
+            <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm">
+                {canRun ? (
+                  <>
+                    <p className="font-medium">
+                      {isAdmin ? "Lancez une recherche sur les offres des 14 derniers jours." : "Votre version gratuite comprend une recherche."}
+                    </p>
+                    <p className="mt-1 text-muted-foreground">
+                      Elle porte sur vos métiers ({skills.length ? skills.join(", ") : "tous les métiers"}) et sur les entreprises qui cherchent un recruteur.{" "}
+                      <Link to="/profile" className="font-medium text-foreground underline underline-offset-2">Vérifiez votre profil</Link> avant de la lancer.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium">Votre recherche gratuite a été faite le {lastRun ? longDate(lastRun.ran_at) : "—"}.</p>
+                    <p className="mt-1 text-muted-foreground">Une nouvelle recherche sera bientôt disponible.</p>
+                  </>
+                )}
+                {runError && <p className="mt-2 text-destructive" role="alert">{runError}</p>}
+              </div>
+              {canRun && (
+                <Button onClick={runSearch} disabled={running} className="shrink-0">
+                  {running ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> Recherche en cours…</> : "Lancer ma recherche"}
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {loading ? (
           <div className="py-20 text-center text-muted-foreground">Chargement...</div>
         ) : offers.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
             <Radar className="mb-3 h-10 w-10 text-muted-foreground" aria-hidden="true" />
-            <p className="text-muted-foreground">Le radar se remplit chaque matin. Revenez demain pour découvrir les premières entreprises.</p>
+            <p className="text-muted-foreground">
+              {running ? "Recherche en cours, cela prend environ une minute." : lastRun ? "Aucune entreprise trouvée pour vos métiers lors de cette recherche." : "Lancez votre recherche pour découvrir les entreprises qui recrutent dans vos métiers."}
+            </p>
           </div>
         ) : (
           <>
