@@ -170,7 +170,7 @@ export const FINAL_CTA = {
   titleHighlight: "recruteur RPO",
   titleEnd: "est déjà disponible.",
   text: "Décrivez votre besoin en quelques lignes : vous recevez un premier profil qualifié sous 48 h.",
-  primary: "Déposer un besoin",
+  primary: "Accéder aux profils",
   secondary: "Je suis freelance",
 };
 
