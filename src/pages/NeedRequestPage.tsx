@@ -120,7 +120,7 @@ const NeedRequestPage = () => {
   return (
     <div className="ks-site relative isolate min-h-screen overflow-x-clip bg-background">
       <SEO
-        title="Accéder aux profils : le bon recruteur freelance sous 48 h"
+        title="Accédez aux profils : le bon recruteur freelance sous 48 h"
         description="Tech, Data, Product, Sales & Marketing, Finance, Industrie : décrivez votre besoin en quatre questions, puis accédez aux profils correspondants ou réservez 30 minutes pour le préciser. Gratuit et sans engagement."
         path="/besoin"
       />
@@ -181,7 +181,7 @@ const NeedRequestPage = () => {
 
         {step === 5 && (
           <form onSubmit={submit} noValidate>
-            <StepTitle title="Votre besoin, en bref" lead="Vérifiez vos réponses et indiquez votre email professionnel pour enregistrer votre besoin." />
+            <StepTitle title="Votre besoin, en bref" lead="Vérifiez vos réponses et indiquez votre email professionnel pour accéder aux profils." />
             <div className="mt-10 rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white p-6">
               <p className="font-ks-mono text-xs uppercase tracking-[0.14em] text-ks-subtle">Votre besoin</p>
               <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
@@ -213,7 +213,7 @@ const NeedRequestPage = () => {
               />
               <button type="submit" disabled={sending} className={primaryButton}>
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-                Enregistrer mon besoin {!sending && <ArrowIcon />}
+                Accédez aux profils {!sending && <ArrowIcon />}
               </button>
             </div>
             {/* Champ piège : invisible pour les humains, rempli par les robots */}

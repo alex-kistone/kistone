@@ -147,7 +147,7 @@ export default function ComparisonPage() {
                 <p className="mt-2 text-[14px] text-ks-soft"><strong className="font-semibold text-ks-ink">Intervention :</strong> {p.models}</p>
                 {p.name === "Kistone" ? (
                   <div className="mt-6 flex flex-wrap gap-3">
-                    <Cta href={ROUTES.recruit} variant="studio" arrow>Accéder aux profils</Cta>
+                    <Cta href={ROUTES.recruit} variant="studio" arrow>Accédez aux profils</Cta>
                     <Cta href={ROUTES.freelance} variant="secondary">Rejoindre en tant que freelance</Cta>
                   </div>
                 ) : (
