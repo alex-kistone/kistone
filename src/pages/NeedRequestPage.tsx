@@ -120,8 +120,8 @@ const NeedRequestPage = () => {
   return (
     <div className="ks-site relative isolate min-h-screen overflow-x-clip bg-background">
       <SEO
-        title="Déposer un besoin : le bon recruteur freelance sous 48 h"
-        description="Tech, Data, Product, Sales & Marketing, Finance, Industrie : décrivez votre besoin en quatre questions et réservez 30 minutes pour le préciser. Gratuit et sans engagement."
+        title="Accéder aux profils : le bon recruteur freelance sous 48 h"
+        description="Tech, Data, Product, Sales & Marketing, Finance, Industrie : décrivez votre besoin en quatre questions, puis accédez aux profils correspondants ou réservez 30 minutes pour le préciser. Gratuit et sans engagement."
         path="/besoin"
       />
       <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
