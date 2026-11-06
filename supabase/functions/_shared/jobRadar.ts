@@ -58,13 +58,20 @@ export interface RadarOffer {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Json = any;
 const str = (v: Json): string | null => (typeof v === "string" && v.trim() ? v.trim() : null);
+/** Offres publiées sans nom d'entreprise : inexploitables pour un freelance. */
+const HIDDEN_COMPANY = /^(anonymous|anonyme|confidential|confidentiel|confidentielle|entreprise confidentielle|undisclosed)$/i;
+/** TheirStack tronque parfois le lieu court (« Île-de- ») : on prend alors le lieu complet. */
+const placeOf = (job: Json): string | null => {
+  const short = str(job.short_location);
+  return short && !/[-,]$/.test(short) ? short : str(job.location) ?? short;
+};
 
 /** Offre TheirStack → ligne de job_radar_offers (null si l'offre est inexploitable). */
 export function offerFromTheirStack(job: Json, metier: string, fetchedAt: string): RadarOffer | null {
   const company = job?.company_object ?? {};
   const name = str(job?.company) ?? str(company.name);
   const url = str(job?.final_url) ?? str(job?.url) ?? str(job?.source_url);
-  if (job?.id == null || !name || !url || !str(job?.job_title)) return null;
+  if (job?.id == null || !name || HIDDEN_COMPANY.test(name) || !url || !str(job?.job_title)) return null;
   const employees = Number(company.employee_count);
   return {
     id: String(job.id),
@@ -76,7 +83,7 @@ export function offerFromTheirStack(job: Json, metier: string, fetchedAt: string
     company_industry: str(company.industry),
     company_employees: Number.isFinite(employees) && employees > 0 ? Math.round(employees) : null,
     company_funding: str(company.funding_stage),
-    location: str(job.short_location) ?? str(job.location),
+    location: placeOf(job),
     cities: Array.isArray(job.cities) ? job.cities.filter((c: Json) => typeof c === "string") : [],
     remote: job.remote === true,
     hybrid: job.hybrid === true,

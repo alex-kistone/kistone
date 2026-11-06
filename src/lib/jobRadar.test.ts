@@ -86,6 +86,8 @@ describe("radar CDI : lecture des offres TheirStack", () => {
     }, RECRUITER_SIGNAL, "2026-11-06T06:00:00Z");
     expect(row).toMatchObject({ id: "42", url: "https://jobs.acme.fr/1", location: "Paris", date_posted: "2026-11-05", hybrid: true, company_employees: 120 });
     expect(offerFromTheirStack({ id: 1, job_title: "X" }, "Tech", "")).toBeNull();
+    expect(offerFromTheirStack({ id: 2, job_title: "X", company: "Anonymous", url: "https://x" }, "Tech", "")).toBeNull();
+    expect(offerFromTheirStack({ id: 3, job_title: "X", company: "Y", url: "https://x", short_location: "Île-de-", location: "Île-de-France, France" }, "Tech", "")?.location).toBe("Île-de-France, France");
     expect(sourceLabel(row!.source_url)).toBe("LinkedIn");
   });
 });
