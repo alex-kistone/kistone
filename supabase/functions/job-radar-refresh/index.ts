@@ -11,7 +11,7 @@
  *
  * Accès : en-tête x-cron-secret égal au secret CRON_SECRET, ou un admin connecté.
  * Secret requis : THEIRSTACK_API_KEY. Réglage facultatif : JOB_RADAR_PER_QUERY (défaut 10).
- * Corps (admin) : { maxAgeDays?: number, perQuery?: number, dryRun?: boolean }.
+ * Corps facultatif : { maxAgeDays?: number, perQuery?: number, dryRun?: boolean }.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { offerFromTheirStack, RADAR_QUERIES, RADAR_TITLE_EXCLUDE, type RadarOffer } from "../_shared/jobRadar.ts";
@@ -38,7 +38,6 @@ Deno.serve(async (req) => {
   const db = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
   const cronSecret = Deno.env.get("CRON_SECRET");
-  let isAdmin = false;
   if (!(cronSecret && req.headers.get("x-cron-secret") === cronSecret)) {
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
     const { data: { user } } = token
@@ -46,14 +45,14 @@ Deno.serve(async (req) => {
       : { data: { user: null } };
     const { data } = user ? await db.rpc("has_role", { _user_id: user.id, _role: "admin" }) : { data: false };
     if (!data) return json({ error: "Accès refusé" }, 401);
-    isAdmin = true;
   }
 
   const apiKey = Deno.env.get("THEIRSTACK_API_KEY");
   if (!apiKey) return json({ error: "Secret THEIRSTACK_API_KEY absent : radar non configuré." }, 503);
 
   try {
-    const body = isAdmin ? await req.json().catch(() => ({})) : {};
+    // Appelants de confiance seulement (cron ou admin) : les options sont donc acceptées
+    const body = await req.json().catch(() => ({}));
     // Première collecte : la semaine écoulée ; ensuite, les offres de la veille et du jour
     const { count: stored } = await db.from("job_radar_offers").select("id", { count: "exact", head: true });
     const maxAgeDays = clamp(body.maxAgeDays, 0, 30, stored ? 1 : 7);
