@@ -130,9 +130,10 @@ const JobRadar = () => {
         .select("skills, sectors, mobility, remote_preference")
         .eq("user_id", session.user.id)
         .maybeSingle();
-      if (!p) { navigate("/profile"); return; }
-      setProfile(p as RadarProfile);
       const { data: admin } = await supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" });
+      // Un admin sans fiche freelance voit le radar sur tous les métiers
+      if (!p && !admin) { navigate("/profile"); return; }
+      setProfile((p as RadarProfile) ?? { skills: null, sectors: null, mobility: null, remote_preference: null });
       setIsAdmin(!!admin);
       await loadResults(session.user.id);
       setLoading(false);
