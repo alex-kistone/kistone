@@ -43,7 +43,7 @@ export function radarQueriesFor(skills: string[] | null | undefined) {
 export const FREE_RADAR_RUNS = 1;
 
 /** Exclus de toutes les recherches : ni stage, ni alternance, ni mission freelance. */
-export const RADAR_TITLE_EXCLUDE = ["stage", "stagiaire", "alternance", "alternant", "alternante", "apprenti", "apprentie", "intern", "internship", "freelance"];
+export const RADAR_TITLE_EXCLUDE = ["stage", "stagiaire", "alternance", "alternant", "alternante", "apprenti", "apprentie", "intern", "internship", "freelance", "duoday"];
 
 /** Une offre telle que stockée dans job_radar_offers. */
 export interface RadarOffer {
@@ -76,7 +76,9 @@ const HIDDEN_COMPANY = /^(anonymous|anonyme|confidential|confidentiel|confidenti
 /** TheirStack tronque parfois le lieu court (« Île-de- ») : on prend alors le lieu complet. */
 const placeOf = (job: Json): string | null => {
   const short = str(job.short_location);
-  return short && !/[-,]$/.test(short) ? short : str(job.location) ?? short;
+  const place = short && !/[-,]$/.test(short) ? short : str(job.location) ?? short;
+  // TheirStack coupe « Île-de-France » même dans le lieu complet
+  return place?.replace(/Île-de-(?=$|,)/, "Île-de-France") ?? null;
 };
 
 /** Offre TheirStack → ligne de job_radar_offers (null si l'offre est inexploitable). */

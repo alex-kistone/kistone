@@ -88,6 +88,7 @@ describe("radar CDI : lecture des offres TheirStack", () => {
     expect(offerFromTheirStack({ id: 1, job_title: "X" }, "Tech", "")).toBeNull();
     expect(offerFromTheirStack({ id: 2, job_title: "X", company: "Anonymous", url: "https://x" }, "Tech", "")).toBeNull();
     expect(offerFromTheirStack({ id: 3, job_title: "X", company: "Y", url: "https://x", short_location: "Île-de-", location: "Île-de-France, France" }, "Tech", "")?.location).toBe("Île-de-France, France");
+    expect(offerFromTheirStack({ id: 4, job_title: "X", company: "Y", url: "https://x", short_location: "Paris, Île-de-", location: "Paris, Île-de-" }, "Tech", "")?.location).toBe("Paris, Île-de-France");
     expect(sourceLabel(row!.source_url)).toBe("LinkedIn");
   });
 });

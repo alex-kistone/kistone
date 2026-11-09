@@ -164,7 +164,8 @@ Deno.serve(async (req) => {
       const cutoff = new Date(Date.now() - KEEP_DAYS * 86_400_000).toISOString().slice(0, 10);
       await db.from("job_radar_offers").delete().lt("date_posted", cutoff);
     }
-    await finish({ status: "done", credits_used: returned, offers_found: rows.size });
+    // Erreurs partielles (crédits épuisés, limite de débit…) : gardées pour comprendre un résultat maigre
+    await finish({ status: "done", credits_used: returned, offers_found: rows.size, error: errors.length ? errors.join(" | ").slice(0, 1000) : null });
 
     return json({
       maxAgeDays,
