@@ -35,7 +35,6 @@ const ClientOnboarding = lazy(() => import("./pages/ClientOnboarding"));
 const ClientEditNeed = lazy(() => import("./pages/ClientEditNeed"));
 const ClientProfile = lazy(() => import("./pages/ClientProfile"));
 const OpenNeeds = lazy(() => import("./pages/OpenNeeds"));
-const JobRadar = lazy(() => import("./pages/JobRadar"));
 
 const queryClient = new QueryClient();
 
@@ -58,7 +57,6 @@ export const AppRoutes = () => (
     <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
     <Route path="/client/profile" element={<ClientProfile />} />
     <Route path="/open-needs" element={<OpenNeeds />} />
-    <Route path="/radar" element={<JobRadar />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
     <Route path="/recruter/:slug" element={<RolePage />} />
     <Route path="/modeles/*" element={<Navigate to="/" replace />} />

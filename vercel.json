@@ -98,7 +98,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(register|profile|dashboard|login|forgot-password|reset-password|open-needs|radar|client)",
+      "source": "/(register|profile|dashboard|login|forgot-password|reset-password|open-needs|client)",
       "destination": "/app.html"
     },
     {

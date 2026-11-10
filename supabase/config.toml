@@ -12,9 +12,6 @@ verify_jwt = false
 [functions.remind-signup]
 verify_jwt = false
 
-[functions.job-radar-refresh]
-verify_jwt = false
-
 [functions.notify-dispatch]
 verify_jwt = false
 

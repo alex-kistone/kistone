@@ -9,7 +9,6 @@ import {
   ShieldCheck,
   MessageSquare,
   Newspaper,
-  Radar,
   Receipt,
   Search,
   Sparkles,
@@ -41,7 +40,6 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
   freelance: [
     { label: "Mon profil", path: "/profile", icon: UserRound },
     { label: "Mes opportunités", path: "/open-needs", icon: Search },
-    { label: "Radar CDI", path: "/radar", icon: Radar },
     { label: "Mes missions & CRA", path: "/profile", tab: "missions", icon: CalendarCheck },
     { label: "Mon administratif", path: "/profile", tab: "admin", icon: ShieldCheck },
   ],
