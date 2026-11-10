@@ -56,7 +56,7 @@ export function englishLevelOf(p: SheetFreelance): number {
   return en ? LEVELS[en.level] ?? 0 : 0;
 }
 
-export function availabilityOf(p: SheetFreelance): { value: string; badge: string; available: boolean } {
+export function availabilityOf(p: Pick<SheetFreelance, "available" | "availability_date">): { value: string; badge: string; available: boolean } {
   if (p.available !== false) return { value: "Immédiate", badge: "Dispo immédiatement", available: true };
   if (!p.availability_date) return { value: "À confirmer", badge: "Disponibilité à confirmer", available: false };
   const d = new Date(p.availability_date);
@@ -95,9 +95,10 @@ function missionKpis(m: NonNullable<SheetFreelance["missions"]>[number], rpo: bo
 
 /**
  * Valeurs de départ d'une fiche. `anonymous` : carte LinkedIn publique (métier à la place du
- * prénom, missions sans nom de client, pas d'autres clients).
+ * prénom, missions sans nom de client, pas d'autres clients). `freelancePrice` : TJM du
+ * freelance tel quel (carte qu'il publie lui-même) au lieu du prix client.
  */
-export function initialSheetFields(p: SheetFreelance, anonymous: boolean): SheetFields {
+export function initialSheetFields(p: SheetFreelance, anonymous: boolean, freelancePrice = false): SheetFields {
   const v = verticalOf(p.vertical);
   const rpo = v.id === "rpo";
   const missions = (p.missions ?? []).filter((m) => (m.client_name ?? "").trim() || (m.profile_types ?? "").trim());
@@ -122,7 +123,7 @@ export function initialSheetFields(p: SheetFreelance, anonymous: boolean): Sheet
     others: others.join("\n"),
     english: ENGLISH[level] ?? "",
     englishLevel: level,
-    tjm: p.tjm ? `${clientPrice(p.tjm)} €` : "Sur demande",
+    tjm: p.tjm ? `${freelancePrice ? p.tjm : clientPrice(p.tjm)} €` : "Sur demande",
     availability: dispo.value,
     availabilityNote: [place, p.remote_preference ? REMOTE[p.remote_preference] : ""].filter(Boolean).join(" · "),
   };

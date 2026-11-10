@@ -106,6 +106,10 @@
       "destination": "/app.html"
     },
     {
+      "source": "/profil/:id",
+      "destination": "/app.html"
+    },
+    {
       "source": "/ressources/:slug",
       "destination": "/app.html"
     }

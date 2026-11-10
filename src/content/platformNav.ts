@@ -6,6 +6,7 @@ import {
   FilePlus2,
   GitBranch,
   LayoutDashboard,
+  Megaphone,
   ShieldCheck,
   MessageSquare,
   Newspaper,
@@ -39,6 +40,7 @@ export const SPACE_LABEL: Record<PlatformRole, string> = {
 export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
   freelance: [
     { label: "Mon profil", path: "/profile", icon: UserRound },
+    { label: "Promouvoir mon profil", path: "/profile", tab: "share", icon: Megaphone },
     { label: "Mes opportunités", path: "/open-needs", icon: Search },
     { label: "Mes missions & CRA", path: "/profile", tab: "missions", icon: CalendarCheck },
     { label: "Mon administratif", path: "/profile", tab: "admin", icon: ShieldCheck },

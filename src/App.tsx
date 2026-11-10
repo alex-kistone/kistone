@@ -25,6 +25,7 @@ import CrispChat from "./components/CrispChat";
 // publiques ne téléchargent pas tout le code de l'application.
 const FreelancerAuth = lazy(() => import("./pages/FreelancerAuth"));
 const Profile = lazy(() => import("./pages/Profile"));
+const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
@@ -61,6 +62,7 @@ export const AppRoutes = () => (
     <Route path="/recruter/:slug" element={<RolePage />} />
     <Route path="/modeles/*" element={<Navigate to="/" replace />} />
     <Route path="/freelances" element={<FreelancesPage />} />
+    <Route path="/profil/:id" element={<PublicProfile />} />
     <Route path="/pourquoi-kistone" element={<WhyKistone />} />
     <Route path="/apport-affaires" element={<ReferralPage />} />
     <Route path="/ressources" element={<BlogIndex />} />
