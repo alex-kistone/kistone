@@ -37,6 +37,7 @@ export default function Footer() {
           <Logo tone="dark" className="h-[44px]" />
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <SmartLink href={ROUTES.login} className="hover:text-ks-dark-fg">Se connecter</SmartLink>
+            <SmartLink href="/cgu" className="hover:text-ks-dark-fg">CGU</SmartLink>
             <SmartLink href="/privacy" className="hover:text-ks-dark-fg">Confidentialité</SmartLink>
             <button type="button" onClick={openConsentBanner} className="hover:text-ks-dark-fg">Gérer les cookies</button>
             <span>© 2026 Kistone. Tous droits réservés.</span>

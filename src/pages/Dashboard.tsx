@@ -1,3 +1,4 @@
+import MeetingRequestsList from "@/components/platform/MeetingRequestsList";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Linkedin, Calendar, LogOut, Trash2, MessageCircle, Building2, Star, Settings2, CheckCircle2, FileText, Users, Receipt, Briefcase, BarChart3, Send, X, MessageSquare, Sparkles, Bot, ShieldCheck, Check } from "lucide-react";
@@ -59,6 +60,7 @@ const ADMIN_TITLES: Record<string, string> = {
   timesheets: "CRA",
   invoices: "Factures",
   treasury: "Trésorerie",
+  meetings: "Visios",
   messages: "Messages",
   assistant: "Assistant",
 };
@@ -544,6 +546,10 @@ const Dashboard = () => {
 
           <TabsContent value="assistant">
             <AdminSupportPanel />
+          </TabsContent>
+
+          <TabsContent value="meetings">
+            {activeTab === "meetings" && <MeetingRequestsList mode="admin" />}
           </TabsContent>
 
           <TabsContent value="messages">

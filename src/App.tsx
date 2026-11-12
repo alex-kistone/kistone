@@ -9,6 +9,7 @@ import ClientNewNeed from "./pages/ClientNewNeed";
 import NeedRequestPage from "./pages/NeedRequestPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 import RolePage from "./pages/RolePage";
 import BlogIndex from "./pages/BlogIndex";
 import FreelancesPage from "./pages/FreelancesPage";
@@ -26,6 +27,8 @@ import CrispChat from "./components/CrispChat";
 const FreelancerAuth = lazy(() => import("./pages/FreelancerAuth"));
 const Profile = lazy(() => import("./pages/Profile"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
+const ClientFreelanceSearch = lazy(() => import("./pages/ClientFreelanceSearch"));
+const ClientMeetings = lazy(() => import("./pages/ClientMeetings"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
@@ -57,8 +60,11 @@ export const AppRoutes = () => (
     <Route path="/client/new-need" element={<ClientNewNeed />} />
     <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
     <Route path="/client/profile" element={<ClientProfile />} />
+    <Route path="/client/profils" element={<ClientFreelanceSearch />} />
+    <Route path="/client/visios" element={<ClientMeetings />} />
     <Route path="/open-needs" element={<OpenNeeds />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
+    <Route path="/cgu" element={<Terms />} />
     <Route path="/recruter/:slug" element={<RolePage />} />
     <Route path="/modeles/*" element={<Navigate to="/" replace />} />
     <Route path="/freelances" element={<FreelancesPage />} />

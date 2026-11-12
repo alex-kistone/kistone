@@ -37,6 +37,8 @@ import { useUnreadCount } from "@/hooks/useChat";
 import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
 import ProfilePromoteSection from "@/components/platform/freelance/ProfilePromoteSection";
+import MeetingRequestsList from "@/components/platform/MeetingRequestsList";
+import { useTermsAccepted } from "@/lib/terms";
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
 import ProfileImport from "@/components/platform/ProfileImport";
@@ -99,8 +101,10 @@ const Profile = () => {
   // Informations société : gérées par « Mon dossier » ; lues ici pour la liste de complétion
   // Onglet piloté par le menu latéral (?tab=missions | admin)
   const [searchParams] = useSearchParams();
+  // Les CGU s'acceptent avant de créer le profil : la fenêtre LinkedIn attend leur acceptation
+  const termsAccepted = useTermsAccepted();
   const tabParam = searchParams.get("tab");
-  const requestedTab: "profile" | "missions" | "admin" | "share" = tabParam === "missions" || tabParam === "admin" || tabParam === "share" ? tabParam : "profile";
+  const requestedTab: "profile" | "missions" | "admin" | "share" | "visios" = tabParam === "missions" || tabParam === "admin" || tabParam === "share" || tabParam === "visios" ? tabParam : "profile";
   // Missions et dossier n'existent qu'une fois le profil créé
   const activeTab = existingId ? requestedTab : "profile";
   const [optimizing, setOptimizing] = useState(false);
@@ -418,7 +422,7 @@ const Profile = () => {
     <div className="min-h-screen bg-background lg:pl-[248px]">
       <AppShell role="freelance" />
       <LinkedinRequiredDialog
-        open={linkedinGate}
+        open={linkedinGate && termsAccepted === true}
         firstVisit={firstVisit}
         initialVertical={isActiveVertical(searchParams.get("fonction")) ? (searchParams.get("fonction") as Vertical) : null}
         onSubmit={saveLinkedinUrl}
@@ -432,11 +436,13 @@ const Profile = () => {
               </span>
             )}
             <h1 className="text-3xl font-bold">
-              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon administratif" : activeTab === "share" ? "Promouvoir mon profil" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
+              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon administratif" : activeTab === "share" ? "Promouvoir mon profil" : activeTab === "visios" ? "Mes visios" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
             </h1>
             <p className="mt-1 text-muted-foreground">
               {activeTab === "missions"
                 ? "Vos missions en cours et vos comptes rendus d'activité."
+                : activeTab === "visios"
+                ? "Les entreprises qui vous proposent une visio : choisissez un créneau ou déclinez."
                 : activeTab === "share"
                 ? "Votre page publique Kistone et votre fiche, à partager sur LinkedIn."
                 : activeTab === "admin"
@@ -451,6 +457,8 @@ const Profile = () => {
 
         {activeTab === "missions" && userId ? (
           <FreelanceMissionsSection userId={userId} />
+        ) : activeTab === "visios" && userId ? (
+          <MeetingRequestsList mode="freelance" />
         ) : activeTab === "share" && userId ? (
           <ProfilePromoteSection userId={userId} />
         ) : activeTab === "admin" && userId ? (
