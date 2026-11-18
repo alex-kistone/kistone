@@ -180,7 +180,7 @@ const FreelancerAuth = () => {
         <p className="mb-8 text-center text-muted-foreground">
           {isLogin
             ? "Connectez-vous pour gérer votre profil."
-            : "Managers de transition : créez votre compte, puis votre profil en quelques minutes."}
+            : "Créez votre compte pour intégrer notre base de freelances."}
         </p>
 
         {/* Google */}
@@ -253,9 +253,9 @@ const FreelancerAuth = () => {
           </Button>
           {!isLogin && (
             <p className="text-center text-xs leading-relaxed text-muted-foreground">
-              Vous accepterez nos <Link to="/cgu" className="underline hover:text-foreground">CGU</Link> à la création de votre
-              profil : les associés du cabinet peuvent le présenter à leurs clients ; vos coordonnées ne sont transmises
-              qu'avec votre accord. <Link to="/privacy" className="underline hover:text-foreground">En savoir plus</Link>
+              Une fois votre profil qualifié par Kistone, un extrait anonymisé (prénom et initiale, poste, expérience,
+              spécialités, disponibilité) peut apparaître sur nos pages publiques.{" "}
+              <Link to="/privacy" className="underline hover:text-foreground">En savoir plus</Link>
             </p>
           )}
         </form>

@@ -1,12 +1,14 @@
-import { TrHeader } from "@/components/transition/TrLayout";
+import Navbar from "@/components/site/Navbar";
+import "@/site/site.css";
 
 /**
- * En-tête des pages hors site (connexion, inscription, dépôt de besoin) : celui du site du
- * cabinet. `display: contents` applique le style .tr sans casser le sticky.
+ * En-tête des pages de la plateforme : exactement celui de la landing.
+ * La déconnexion se fait depuis chaque espace (client, freelance, admin).
+ * `display: contents` applique le scope .ks-site sans casser le sticky.
  */
 const KistoneHeader = () => (
-  <div className="tr contents">
-    <TrHeader />
+  <div className="ks-site contents">
+    <Navbar />
   </div>
 );
 

@@ -26,7 +26,7 @@ serve(async (req) => {
 
     const profileContext = [
       profile.firstName && profile.lastName ? `Nom : ${profile.firstName} ${profile.lastName}` : "",
-      profile.jobTitle ? `Métier : ${profile.jobTitle}` : "",
+      profile.jobTitle ? `Intitulé : ${profile.jobTitle}` : "",
       profile.skills?.length ? `Compétences : ${profile.skills.join(", ")}` : "",
       profile.sectors?.length ? `Secteurs : ${profile.sectors.join(", ")}` : "",
       profile.clients?.length ? `Clients : ${profile.clients.join(", ")}` : "",
@@ -41,15 +41,14 @@ serve(async (req) => {
       profile.currentIntro ? `Présentation actuelle : "${profile.currentIntro}"` : "",
     ].filter(Boolean).join("\n");
 
-    const systemPrompt = `Tu es un expert en personal branding pour les managers de transition (dirigeants et cadres supérieurs indépendants : direction générale, finance, RH, opérations, commerce, marketing, juridique, RSE, DSI, recrutement).
-À partir du texte libre du manager (souvent écrit en vrac) et de son métier, tu rédiges sa présentation professionnelle en français, à la première personne.
+    const systemPrompt = `Tu es un expert en personal branding pour les recruteurs freelances.
+Tu dois rédiger une présentation professionnelle percutante en français, à la première personne.
 La présentation doit :
-- Être concise (4 à 6 phrases)
-- Mettre en avant les postes de direction occupés, les situations traversées (crise, transformation, croissance, retournement…) et les résultats concrets
-- Reprendre fidèlement les faits donnés : ne JAMAIS inventer d'entreprise, de chiffre, de diplôme ni de résultat
-- Avoir un ton sobre, professionnel et humain
+- Être concise (3-5 phrases max)
+- Mettre en avant l'expertise et les résultats concrets
+- Avoir un ton professionnel mais humain
+- Mentionner les secteurs et spécialités si pertinents
 - Ne PAS répéter le nom de la personne
-- Ne PAS mentionner le TJM
 - Ne PAS inclure de formule de politesse ou de CTA
 
 Réponds UNIQUEMENT avec le texte de la présentation, sans guillemets ni préfixe.`;

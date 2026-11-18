@@ -2,16 +2,13 @@
  * need-request — enregistre une demande de besoin déposée sans compte (parcours public /besoin)
  * et prévient Alex par email.
  *
- * Deux formes :
- * - demande de rappel du site (kind « callback ») : { name, company, phone, fonction, message?, source?, page? } ;
- * - ancien questionnaire /besoin : { email, vertical, metier?, budget?, engagement, rhythm?, duration?, open_positions?, start_window, brief? }.
+ * Corps : { email, vertical, metier?, budget?, engagement, rhythm?, duration?, open_positions?, start_window, brief?, website? }
  * « website » est un champ piège invisible : rempli, la demande est ignorée (robot).
- * Limites : 3 demandes par heure pour un même email ou téléphone, 40 par heure en tout.
+ * Limites : 3 demandes par heure pour un même email, 40 par heure en tout.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { APP_URL, esc, layout, sendEmail } from "../_shared/email.ts";
 import { needRequestLines, parseNeedRequest } from "../_shared/needRequest.ts";
-import { fonctionLabel, parseCallbackRequest } from "../_shared/fonctions.ts";
 
 const NOTIFY_TO = "aguego@kistone.fr";
 
@@ -31,41 +28,11 @@ Deno.serve(async (req) => {
   // Robot : on répond comme si tout allait bien, sans rien enregistrer
   if (String((body as Record<string, unknown>).website ?? "").trim()) return json({ ok: true });
 
-  const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const hourAgo = new Date(Date.now() - 3_600_000).toISOString();
-  const tooMany = json({ error: "Trop de demandes en peu de temps. Réessayez dans une heure." }, 429);
-
-  if ((body as Record<string, unknown>).kind === "callback") {
-    const cb = parseCallbackRequest(body as Record<string, unknown>);
-    if (typeof cb === "string") return json({ error: cb }, 400);
-    const [{ count: byPhone }, { count: total }] = await Promise.all([
-      db.from("need_requests").select("id", { count: "exact", head: true }).eq("phone", cb.phone).gte("created_at", hourAgo),
-      db.from("need_requests").select("id", { count: "exact", head: true }).gte("created_at", hourAgo),
-    ]);
-    if ((byPhone ?? 0) >= 3 || (total ?? 0) >= 40) return tooMany;
-    const { error } = await db.from("need_requests").insert({ kind: "callback", ...cb });
-    if (error) return json({ error: "Enregistrement impossible." }, 500);
-    const fn = fonctionLabel(cb.fonction) ?? cb.fonction;
-    await sendEmail({
-      to: [NOTIFY_TO],
-      subject: `Demande de rappel : ${fn} · ${cb.company}`,
-      html: layout({
-        title: "Demande de rappel",
-        paragraphs: [
-          [`<strong>Nom</strong> : ${esc(cb.contact_name)}`, `<strong>Entreprise</strong> : ${esc(cb.company)}`,
-            `<strong>Téléphone</strong> : ${esc(cb.phone)}`, `<strong>Fonction recherchée</strong> : ${esc(fn)}`].join("<br>"),
-          ...(cb.brief ? [`<strong>Situation</strong> :<br>${esc(cb.brief).replace(/\n/g, "<br>")}`] : []),
-          ...(cb.source ? [`<em>${esc(cb.source)}</em>`] : []),
-        ],
-        cta: { label: "Voir les demandes", href: `${APP_URL}/dashboard?tab=needs` },
-      }),
-    }).catch(() => null);
-    return json({ ok: true });
-  }
-
   const parsed = parseNeedRequest(body as Record<string, unknown>);
   if (typeof parsed === "string") return json({ error: parsed }, 400);
 
+  const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const hourAgo = new Date(Date.now() - 3_600_000).toISOString();
   const [{ count: byEmail }, { count: total }] = await Promise.all([
     db.from("need_requests").select("id", { count: "exact", head: true }).eq("email", parsed.email).gte("created_at", hourAgo),
     db.from("need_requests").select("id", { count: "exact", head: true }).gte("created_at", hourAgo),

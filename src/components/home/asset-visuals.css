@@ -1,0 +1,37 @@
+/* Illustrations animées des cartes du bento « Pourquoi Kistone » (accueil).
+   État par défaut = état final : sans animation (prefers-reduced-motion), tout est lisible. */
+
+/* 1. Qualification : les étoiles puis les critères s'allument, en boucle (7 s) */
+.ks-av-star { animation: ks-av-star 7s ease infinite; }
+@keyframes ks-av-star { 0%, 6% { opacity: .25; transform: scale(.7); } 12%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: .25; transform: scale(.7); } }
+.ks-av-tick { animation: ks-av-tick 7s ease infinite; }
+@keyframes ks-av-tick { 0%, 30% { opacity: 0; transform: scale(.4); } 38%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: scale(.4); } }
+
+/* 2. Matching : les critères arrivent, puis la barre se remplit et le score apparaît (6 s) */
+.ks-av-chip { animation: ks-av-chip 6s cubic-bezier(.2,.7,.2,1) infinite; }
+@keyframes ks-av-chip { 0%, 4% { opacity: 0; transform: translateY(6px); } 12%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: translateY(6px); } }
+.ks-av-bar { transform-origin: left; animation: ks-av-bar 6s cubic-bezier(.2,.7,.2,1) infinite; }
+@keyframes ks-av-bar { 0%, 38% { transform: scaleX(0); } 62%, 90% { transform: scaleX(1); } 97%, 100% { transform: scaleX(0); } }
+.ks-av-score { animation: ks-av-score 6s ease infinite; }
+@keyframes ks-av-score { 0%, 58% { opacity: 0; } 64%, 90% { opacity: 1; } 97%, 100% { opacity: 0; } }
+
+/* 3. Réactivité : la frise avance, chaque étape s'allume à son passage (6 s) */
+.ks-av-track { transform-origin: left; animation: ks-av-track 6s ease-in-out infinite; }
+@keyframes ks-av-track { 0%, 8% { transform: scaleX(0); } 70%, 90% { transform: scaleX(1); } 97%, 100% { transform: scaleX(0); } }
+.ks-av-node { animation: ks-av-node 6s ease infinite; }
+@keyframes ks-av-node { 0% { background: #fff; transform: scale(.8); } 4%, 90% { background: #2F9A63; transform: none; } 97%, 100% { background: #fff; transform: scale(.8); } }
+.ks-av-step { animation: ks-av-step 6s ease infinite; }
+@keyframes ks-av-step { 0% { opacity: .4; } 4%, 90% { opacity: 1; } 97%, 100% { opacity: .4; } }
+
+/* 4. Format : le sélecteur passe de Mission à Fractional puis CtH, les jours suivent (9 s) */
+.ks-av-pick { transform: translateX(100%); animation: ks-av-pick 9s cubic-bezier(.6,0,.2,1) infinite; }
+@keyframes ks-av-pick { 0%, 28% { transform: translateX(0); } 34%, 61% { transform: translateX(100%); } 67%, 95% { transform: translateX(200%); } 100% { transform: translateX(0); } }
+.ks-av-label-0 { animation: ks-av-label-0 9s ease infinite; }
+.ks-av-label-1 { color: #fff; animation: ks-av-label-1 9s ease infinite; }
+.ks-av-label-2 { animation: ks-av-label-2 9s ease infinite; }
+@keyframes ks-av-label-0 { 0%, 28% { color: #fff; } 33%, 96% { color: #94471A; } 100% { color: #fff; } }
+@keyframes ks-av-label-1 { 0%, 30% { color: #94471A; } 34%, 61% { color: #fff; } 66%, 100% { color: #94471A; } }
+@keyframes ks-av-label-2 { 0%, 63% { color: #94471A; } 67%, 95% { color: #fff; } 100% { color: #94471A; } }
+/* Jours travaillés : tous en mission et en contract-to-hire, deux en fractional */
+.ks-av-day-off { background: #fff; color: #94471A; animation: ks-av-day 9s ease infinite; }
+@keyframes ks-av-day { 0%, 28% { background: #E07A3A; color: #fff; } 34%, 61% { background: #fff; color: #94471A; } 67%, 95% { background: #E07A3A; color: #fff; } 100% { background: #E07A3A; color: #fff; } }

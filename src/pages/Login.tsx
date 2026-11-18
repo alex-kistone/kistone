@@ -177,15 +177,15 @@ const Login = () => {
   const tabs: { key: UserType; label: string; icon: typeof Building2; desc: string }[] = [
     {
       key: "client",
-      label: "Je cherche un manager",
+      label: "Je recrute",
       icon: Building2,
-      desc: "Suivez vos missions, CRA et factures.",
+      desc: "Trouvez le Tech Recruiter freelance qu'il vous faut.",
     },
     {
       key: "recruiter",
-      label: "Je suis manager",
+      label: "Je suis freelance",
       icon: Users,
-      desc: "Gérez votre profil, vos missions et vos CRA.",
+      desc: "Accédez à des missions RPO et développez votre activité.",
     },
   ];
 
