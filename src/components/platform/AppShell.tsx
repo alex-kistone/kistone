@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import NotificationBell from "@/components/platform/NotificationBell";
+import TermsGate from "@/components/platform/TermsGate";
 import { DEFAULT_TAB, PLATFORM_NAV, SPACE_LABEL, type NavItem, type PlatformRole } from "@/content/platformNav";
 
 /** Largeur du menu latéral : les pages décalent leur contenu d'autant (lg:pl-[248px]). */
@@ -107,6 +108,7 @@ export default function AppShell({ role }: { role: PlatformRole }) {
 
   return (
     <>
+      <TermsGate role={role} />
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] border-r border-border bg-card px-3 py-5 lg:block">
         <SidebarBody role={role} email={email} onSignOut={signOut} bell />
       </aside>

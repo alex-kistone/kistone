@@ -6,6 +6,7 @@ const Footer = () => (
       <span>© {new Date().getFullYear()} Kistone. Tous droits réservés.</span>
       <div className="flex gap-4">
         <Link to="/privacy" className="hover:text-foreground transition-colors">Politique de confidentialité</Link>
+        <Link to="/cgu" className="hover:text-foreground transition-colors">CGU</Link>
       </div>
     </div>
   </footer>

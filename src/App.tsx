@@ -6,18 +6,11 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ClientNewNeed from "./pages/ClientNewNeed";
-import NeedRequestPage from "./pages/NeedRequestPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RolePage from "./pages/RolePage";
-import BlogIndex from "./pages/BlogIndex";
-import FreelancesPage from "./pages/FreelancesPage";
-import WhyKistone from "./pages/WhyKistone";
-import ReferralPage from "./pages/ReferralPage";
-import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
+import ExpertisePage from "./pages/ExpertisePage";
+import Terms from "./pages/Terms";
 import SessionGuard from "./components/SessionGuard";
-import { LEGACY_COMPARISON_SLUGS } from "./content/comparison";
-import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 import CrispChat from "./components/CrispChat";
 
@@ -52,21 +45,19 @@ export const AppRoutes = () => (
     <Route path="/client" element={<ClientAuth />} />
     <Route path="/client/onboarding" element={<ClientOnboarding />} />
     <Route path="/client/dashboard" element={<ClientDashboard />} />
-    <Route path="/besoin" element={<NeedRequestPage />} />
     <Route path="/client/new-need" element={<ClientNewNeed />} />
     <Route path="/client/edit-need/:id" element={<ClientEditNeed />} />
     <Route path="/client/profile" element={<ClientProfile />} />
     <Route path="/open-needs" element={<OpenNeeds />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
-    <Route path="/recruter/:slug" element={<RolePage />} />
-    <Route path="/modeles/*" element={<Navigate to="/" replace />} />
-    <Route path="/freelances" element={<FreelancesPage />} />
-    <Route path="/pourquoi-kistone" element={<WhyKistone />} />
-    <Route path="/apport-affaires" element={<ReferralPage />} />
-    <Route path="/ressources" element={<BlogIndex />} />
-    <Route path={COMPARISON_PATH} element={<ComparisonPage />} />
-    {LEGACY_COMPARISON_SLUGS.map((slug) => <Route key={slug} path={`/ressources/${slug}`} element={<Navigate to={COMPARISON_PATH} replace />} />)}
-    <Route path="/ressources/:slug" element={<BlogPost />} />
+    <Route path="/cgu" element={<Terms />} />
+    <Route path="/expertises/:slug" element={<ExpertisePage />} />
+    {/* Anciennes pages du site RPO (les redirections permanentes sont dans vercel.json) */}
+    <Route path="/besoin" element={<Navigate to="/#contact" replace />} />
+    <Route path="/freelances" element={<Navigate to="/register" replace />} />
+    {["/recruter/*", "/modeles/*", "/pourquoi-kistone", "/apport-affaires", "/ressources/*"].map((path) => (
+      <Route key={path} path={path} element={<Navigate to="/" replace />} />
+    ))}
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>

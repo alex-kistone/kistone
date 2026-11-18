@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
-import { Archive, Check, Inbox, Mail } from "lucide-react";
+import { Archive, Check, Inbox, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { needRequestLines, type Engagement } from "@/lib/needRequest";
 import type { Vertical } from "@/lib/verticals";
+import { fonctionLabel } from "@/lib/fonctions";
 
 type NeedRequestRow = {
   id: string;
+  kind: "need" | "callback";
   email: string;
   vertical: Vertical;
+  contact_name: string | null;
+  company: string | null;
+  phone: string | null;
+  fonction: string | null;
+  source: string | null;
   metier: string | null;
   budget: string | null;
   engagement: Engagement;
@@ -24,7 +31,8 @@ type NeedRequestRow = {
 const fmt = (d: string) => new Date(d).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
 
 /**
- * Demandes déposées sans compte sur /besoin (email + 4 réponses), en tête de l'onglet Besoins.
+ * Demandes déposées sans compte, en tête de l'onglet Besoins : demandes de rappel du site
+ * (nom, entreprise, téléphone, fonction) et anciennes demandes du questionnaire /besoin (email).
  * Seules les demandes nouvelles sont affichées ; « Traitée » ou « Archiver » les retire de la liste.
  */
 const NeedRequestsInbox = () => {
@@ -53,25 +61,45 @@ const NeedRequestsInbox = () => {
     <section aria-labelledby="need-requests-title" className="rounded-xl border border-border bg-card p-4">
       <h2 id="need-requests-title" className="mb-3 flex items-center gap-2 text-sm font-semibold">
         <Inbox className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-        Demandes reçues sans compte ({rows.length})
+        Demandes reçues sur le site ({rows.length})
       </h2>
       <ul className="divide-y divide-border">
         {rows.map((r) => (
           <li key={r.id} className="flex flex-col gap-3 py-3 first:pt-0 last:pb-0 md:flex-row md:items-start md:justify-between">
-            <div className="min-w-0 space-y-1 text-sm">
-              <p className="font-medium">
-                <a href={`mailto:${r.email}`} className="underline underline-offset-2">{r.email}</a>
-                <span className="ml-2 text-xs font-normal text-muted-foreground">{fmt(r.created_at)}</span>
-              </p>
-              <p className="text-muted-foreground">
-                {needRequestLines(r).map((l) => `${l.label} : ${l.value}`).join(" · ")}
-              </p>
-              {r.brief && <p className="whitespace-pre-line text-muted-foreground">« {r.brief} »</p>}
-            </div>
+            {r.kind === "callback" ? (
+              <div className="min-w-0 space-y-1 text-sm">
+                <p className="font-medium">
+                  Rappel : {r.contact_name} · {r.company}
+                  <span className="ml-2 text-xs font-normal text-muted-foreground">{fmt(r.created_at)}</span>
+                </p>
+                <p className="text-muted-foreground">
+                  Fonction : {fonctionLabel(r.fonction) ?? r.fonction} · <a href={`tel:${r.phone}`} className="underline underline-offset-2">{r.phone}</a>
+                </p>
+                {r.brief && <p className="whitespace-pre-line text-muted-foreground">« {r.brief} »</p>}
+                {r.source && <p className="text-xs text-muted-foreground">{r.source}</p>}
+              </div>
+            ) : (
+              <div className="min-w-0 space-y-1 text-sm">
+                <p className="font-medium">
+                  <a href={`mailto:${r.email}`} className="underline underline-offset-2">{r.email}</a>
+                  <span className="ml-2 text-xs font-normal text-muted-foreground">{fmt(r.created_at)}</span>
+                </p>
+                <p className="text-muted-foreground">
+                  {needRequestLines(r).map((l) => `${l.label} : ${l.value}`).join(" · ")}
+                </p>
+                {r.brief && <p className="whitespace-pre-line text-muted-foreground">« {r.brief} »</p>}
+              </div>
+            )}
             <div className="flex shrink-0 gap-2">
-              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
-                <a href={`mailto:${r.email}?subject=${encodeURIComponent("Votre besoin sur Kistone")}`}><Mail className="h-3.5 w-3.5" aria-hidden="true" /> Écrire</a>
-              </Button>
+              {r.kind === "callback" ? (
+                <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+                  <a href={`tel:${r.phone}`}><Phone className="h-3.5 w-3.5" aria-hidden="true" /> Appeler</a>
+                </Button>
+              ) : (
+                <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+                  <a href={`mailto:${r.email}?subject=${encodeURIComponent("Votre besoin sur Kistone")}`}><Mail className="h-3.5 w-3.5" aria-hidden="true" /> Écrire</a>
+                </Button>
+              )}
               <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={() => setStatus(r.id, "done")}>
                 <Check className="h-3.5 w-3.5" aria-hidden="true" /> Traitée
               </Button>

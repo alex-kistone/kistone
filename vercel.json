@@ -11,58 +11,33 @@
       "permanent": true
     },
     {
-      "source": "/recruter/fractional-rpo",
-      "destination": "/recruter/tech-recruiter",
+      "source": "/besoin",
+      "destination": "/#contact",
       "permanent": true
     },
     {
-      "source": "/recruter/fractional-cto",
-      "destination": "/recruter/tech-recruiter",
+      "source": "/freelances",
+      "destination": "/register",
       "permanent": true
     },
     {
-      "source": "/recruter/fractional-cdo",
-      "destination": "/recruter/tech-recruiter",
-      "permanent": true
-    },
-    {
-      "source": "/recruter/fractional-cpo",
-      "destination": "/recruter/tech-recruiter",
-      "permanent": true
-    },
-    {
-      "source": "/recruter/fractional-drh",
+      "source": "/pourquoi-kistone",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/recruter/fractional-cfo",
+      "source": "/apport-affaires",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/recruter/fractional-coo",
+      "source": "/recruter",
       "destination": "/",
       "permanent": true
     },
     {
-      "source": "/recruter/fractional-cro",
+      "source": "/recruter/:path*",
       "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/recruter/ai-engineer",
-      "destination": "/recruter/tech-recruiter",
-      "permanent": true
-    },
-    {
-      "source": "/recruter/ai-product-manager",
-      "destination": "/recruter/tech-recruiter",
-      "permanent": true
-    },
-    {
-      "source": "/recruter/ai-leader",
-      "destination": "/recruter/tech-recruiter",
       "permanent": true
     },
     {
@@ -76,23 +51,13 @@
       "permanent": true
     },
     {
-      "source": "/ressources/comparatif-acteurs-fractional",
-      "destination": "/ressources/comparatif-rpo-freelance",
+      "source": "/ressources",
+      "destination": "/",
       "permanent": true
     },
     {
-      "source": "/ressources/comparatif-plateformes-freelance-ia",
-      "destination": "/ressources/comparatif-rpo-freelance",
-      "permanent": true
-    },
-    {
-      "source": "/ressources/freelancing-en-france-2016-2026",
-      "destination": "/ressources",
-      "permanent": true
-    },
-    {
-      "source": "/ressources/fractional-leaders-10-ans-freelancing-france",
-      "destination": "/ressources",
+      "source": "/ressources/:path*",
+      "destination": "/",
       "permanent": true
     }
   ],
@@ -103,10 +68,6 @@
     },
     {
       "source": "/client/:path*",
-      "destination": "/app.html"
-    },
-    {
-      "source": "/ressources/:slug",
       "destination": "/app.html"
     }
   ],
