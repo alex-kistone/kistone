@@ -87,11 +87,11 @@ export function clearPendingNeed() {
 
 /**
  * Enregistre le besoin en attente pour ce client (entreprise et contact repris de son profil).
- * Renvoie true si un besoin a été créé. Sans brouillon, ne fait rien.
+ * Renvoie l'id du besoin créé (null sinon). Sans brouillon, ne fait rien.
  */
-export async function submitPendingNeed(userId: string, email: string): Promise<boolean> {
+export async function submitPendingNeed(userId: string, email: string): Promise<string | null> {
   const draft = loadPendingNeed();
-  if (!draft) return false;
+  if (!draft) return null;
   const { data: profile } = await supabase
     .from("client_profiles" as never)
     .select("company_name, first_name, last_name, email")
@@ -99,14 +99,14 @@ export async function submitPendingNeed(userId: string, email: string): Promise<
     .maybeSingle();
   const p = profile as { company_name?: string; first_name?: string; last_name?: string; email?: string } | null;
   const { saved_at: _ignored, ...need } = draft as PendingNeed & { saved_at?: number };
-  const { error } = await supabase.from("client_needs" as never).insert({
+  const { data: created, error } = await supabase.from("client_needs" as never).insert({
     ...need,
     user_id: userId,
     company_name: p?.company_name ?? "",
     contact_name: `${p?.first_name ?? ""} ${p?.last_name ?? ""}`.trim(),
     contact_email: p?.email || email,
-  } as never);
-  if (error) return false;
+  } as never).select("id").single();
+  if (error || !created) return null;
   clearPendingNeed();
-  return true;
+  return (created as { id: string }).id;
 }

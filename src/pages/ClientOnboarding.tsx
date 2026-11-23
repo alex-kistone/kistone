@@ -69,9 +69,10 @@ const ClientOnboarding = () => {
       return;
     }
     // Besoin qualifié avant l'inscription : il est enregistré maintenant, sinon étape 2 (premier besoin)
-    if (await submitPendingNeed(userId, email)) {
-      toast({ title: "Besoin envoyé !", description: "L'équipe Kistone revient vers vous rapidement." });
-      navigate("/client/dashboard");
+    // Le besoin de sa recherche est créé, puis le matching se lance sur le tableau de bord
+    const needId = await submitPendingNeed(userId, email);
+    if (needId) {
+      navigate(`/client/dashboard?match=${needId}`);
       return;
     }
     navigate("/client/new-need?onboarding=1");

@@ -273,7 +273,7 @@ const ClientDashboard = () => {
   const [selectedProfile, setSelectedProfile] = useState<AnonymizedProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState<string | null>(null);
   // Onglet piloté par le menu latéral (?tab=missions)
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const activeTab: "needs" | "missions" | "invoices" = tabParam === "missions" || tabParam === "invoices" ? tabParam : "needs";
 
@@ -381,6 +381,17 @@ const ClientDashboard = () => {
       setMatchingNeedId(null);
     }
   };
+
+  // Besoin qui vient d'être déposé (?match=…) : le matching se lance tout seul, une fois
+  const matchParam = searchParams.get("match");
+  useEffect(() => {
+    if (!matchParam || !needs.some((n) => n.id === matchParam)) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete("match");
+    setSearchParams(next, { replace: true });
+    handleMatch(matchParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchParam, needs]);
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase

@@ -114,10 +114,9 @@ const ClientAuth = () => {
       // Première connexion : onboarding (coordonnées puis premier besoin). Client déjà installé :
       // le besoin qualifié avant la connexion est enregistré tout de suite.
       const home = await clientHomePath(session.user.id);
-      if (home === "/client/dashboard" && (await submitPendingNeed(session.user.id, session.user.email ?? ""))) {
-        toast({ title: "Besoin envoyé !", description: "L'équipe Kistone revient vers vous rapidement." });
-      }
-      navigate(home);
+      // Le besoin de sa recherche est créé et son matching se lance à l'arrivée sur le tableau de bord
+      const needId = home === "/client/dashboard" ? await submitPendingNeed(session.user.id, session.user.email ?? "") : null;
+      navigate(needId ? `/client/dashboard?match=${needId}` : home);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

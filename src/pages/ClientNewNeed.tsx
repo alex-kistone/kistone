@@ -127,7 +127,7 @@ const ClientNewNeed = () => {
       description: description || null,
     });
     try {
-      const { error } = await supabase
+      const { data: created, error } = await supabase
         .from("client_needs" as any)
         .insert({
           user_id: userId,
@@ -148,12 +148,14 @@ const ClientNewNeed = () => {
           english_level: englishLevel,
           description: description || null,
           sectors,
-        });
+        })
+        .select("id")
+        .single();
 
       if (error) throw error;
 
-      toast({ title: "Besoin déposé !", description: "Votre besoin a été enregistré avec succès." });
-      navigate("/client/dashboard");
+      // Le matching du nouveau besoin se lance à l'arrivée sur le tableau de bord
+      navigate(`/client/dashboard?match=${(created as unknown as { id: string }).id}`);
     } catch (err: any) {
       toast({ title: "Erreur", description: err.message, variant: "destructive" });
     } finally {
