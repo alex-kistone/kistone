@@ -31,6 +31,8 @@ const AI_WEIGHT = 0.6;
 const MODEL = "claude-sonnet-5-5";
 const ENGLISH_LEVEL_LABELS = ["", "débutant", "intermédiaire", "avancé", "courant", "natif"];
 const SHORTLIST_SIZE = 12;
+/** Profils gardés quand le client lance le matching de son besoin (décision d'Alex, 2026-11-23). */
+const CLIENT_RESULTS = 5;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -113,7 +115,9 @@ Deno.serve(async (req) => {
         match_reasons: ai?.reasons?.length ? ai.reasons : s.notes.slice(0, 3),
         rule_score: s.score,
       };
-    }).sort((a, b) => b.match_score - a.match_score);
+    }).sort((a, b) => b.match_score - a.match_score)
+      // Le client voit les 5 meilleurs ; l'admin garde les 12 pour son analyse
+      .slice(0, isAdmin ? SHORTLIST_SIZE : CLIENT_RESULTS);
 
     // On ne rejoue que les suggestions non traitées : celles qui ont avancé dans
     // le pipeline (shortlistée, entretien, validée) sont de l'historique métier.
