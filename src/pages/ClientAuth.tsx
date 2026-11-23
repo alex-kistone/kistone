@@ -212,7 +212,7 @@ const ClientAuth = () => {
           {pendingNeed
             ? isLogin
               ? "Connectez-vous pour envoyer votre besoin et recevoir vos profils qualifiés."
-              : "Créez votre compte pour recevoir ces profils et échanger avec votre référent Kistone. Gratuit et sans engagement."
+              : "Créez un compte pour accéder aux profils et échanger avec votre référent Kistone. Gratuit et sans engagement."
             : isLogin
             ? "Connectez-vous pour gérer vos besoins en recrutement."
             : "Inscrivez-vous pour déposer vos besoins en recrutement."}
