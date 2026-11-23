@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { budgetError } from "./budget";
 import { isFreeEmail } from "./emailDomains";
-import { clientPrice, freelanceRate } from "./pricing";
+import { clientPrice, freelanceNet, freelanceRate } from "./pricing";
 
 describe("budgetError", () => {
   it("exige un min strictement inférieur au max", () => {
@@ -37,5 +37,12 @@ describe("tarification (prix coûtant)", () => {
     expect(freelanceRate(600)).toBe(600);
     expect(freelanceRate(800)).toBe(800);
     expect(clientPrice(freelanceRate(800))).toBeLessThanOrEqual(800);
+  });
+});
+
+describe("freelanceNet", () => {
+  it("déduit la marge annoncée de 20 % (600 € client → 500 € freelance)", () => {
+    expect(freelanceNet(600)).toBe(500);
+    expect(freelanceNet(700)).toBe(583);
   });
 });

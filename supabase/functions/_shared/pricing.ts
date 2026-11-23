@@ -11,3 +11,12 @@ export const clientPrice = (freelanceTjm: number) => Math.ceil((freelanceTjm * (
 
 /** TJM freelance correspondant à un budget client (affiché aux freelances), arrondi à l'euro inférieur. */
 export const freelanceRate = (clientBudget: number) => Math.floor((clientBudget * 100) / (100 + MARGIN_PCT));
+
+/**
+ * Marge annoncée aux freelances (onboarding, « Mes opportunités ») : 20 % sur leur TJM, négociée
+ * mission par mission par Alex (décision du 2026-11-23). MARGIN_PCT reste à 0 dans les calculs.
+ */
+export const ANNOUNCED_MARGIN_PCT = 20;
+
+/** Net freelance d'un budget client, marge annoncée déduite (600 € client → 500 €), à l'euro inférieur. */
+export const freelanceNet = (clientBudget: number) => Math.floor((clientBudget * 100) / (100 + ANNOUNCED_MARGIN_PCT));
