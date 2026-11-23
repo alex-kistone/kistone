@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, Pencil } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Loader2, MailCheck, Pencil } from "lucide-react";
 import SEO from "@/components/SEO";
 import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { takeHomeBrief } from "@/lib/homeBrief";
 import { BUDGETS, DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, type Option } from "@/lib/needRequest";
 import { pendingNeedFromRequest, savePendingNeed } from "@/lib/pendingNeed";
+import { FREE_EMAIL_MESSAGE, isFreeEmail } from "@/lib/emailDomains";
 import { cn } from "@/lib/utils";
 
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -64,8 +65,9 @@ const NeedRequestPage = () => {
   const [duration, setDuration] = useState<string | null>(null);
   const [start, setStart] = useState<string | null>(null);
   const [budget, setBudget] = useState<string | null>(null);
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  // Lien de connexion envoyé à cette adresse : remplace le formulaire
+  const [sentTo, setSentTo] = useState<string | null>(null);
   const [website, setWebsite] = useState(""); // champ piège pour les robots
   const [brief] = useState(() => takeHomeBrief());
   const [sending, setSending] = useState(false);
@@ -83,28 +85,56 @@ const NeedRequestPage = () => {
   const back = () => go((step - 1) as Step);
   const edit = (target: Step) => { setEditing(true); go(target); };
 
+  /**
+   * Lien de connexion (magic link) : crée le compte client ou connecte un client existant. Le
+   * client choisit ensuite son mot de passe à l'étape des coordonnées (?via=link).
+   */
+  const sendLink = async (address: string) => {
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email: address,
+      options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/client?via=link` },
+    });
+    if (!otpError) return null;
+    return /rate|seconds/i.test(otpError.message)
+      ? "Un lien vient déjà de vous être envoyé : patientez une minute avant d'en demander un autre."
+      : otpError.message;
+  };
+
+  /** Continuer avec Google : le besoin attend dans le navigateur, repris après la connexion. */
+  const google = async () => {
+    if (start) savePendingNeed(pendingNeedFromRequest({ metier, duration, start_window: start, budget, brief }));
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/client`, queryParams: { prompt: "select_account" } },
+    });
+  };
+
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    if (!isEmail(email.trim())) { setError("Indiquez une adresse email valide."); return; }
+    const address = email.trim().toLowerCase();
+    if (!isEmail(address)) { setError("Indiquez une adresse email valide."); return; }
+    if (isFreeEmail(address)) { setError(FREE_EMAIL_MESSAGE); return; }
     setSending(true);
     setError(null);
     const { error: fnError } = await supabase.functions.invoke("need-request", {
-      body: { ...REQUEST, email: email.trim(), metier, duration, start_window: start, budget, brief, website },
+      body: { ...REQUEST, email: address, metier, duration, start_window: start, budget, brief, website },
     });
-    setSending(false);
     if (fnError) {
       let message = "Enregistrement impossible. Réessayez dans un instant.";
       try {
         const body = await (fnError as { context?: Response }).context?.json();
         if (body?.error) message = body.error;
       } catch { /* réponse illisible */ }
+      setSending(false);
       setError(message);
       return;
     }
-    // Le besoin passe au parcours avec compte, qui affiche tout de suite les profils correspondants
-    // (la prise de rendez-vous reste proposée sous les profils)
+    // Le besoin attend dans le navigateur : il est créé, puis matché, une fois le compte ouvert
     if (start) savePendingNeed(pendingNeedFromRequest({ metier, duration, start_window: start, budget, brief }));
-    navigate("/client");
+    const linkError = await sendLink(address);
+    setSending(false);
+    if (linkError) { setError(linkError); return; }
+    setSentTo(address);
   };
 
   const recap = metier && duration && start && budget ? needRequestLines({ ...REQUEST, metier, duration, start_window: start, budget }) : [];
@@ -170,7 +200,38 @@ const NeedRequestPage = () => {
           </>
         )}
 
-        {step === 5 && (
+        {step === 5 && sentTo && (
+          <div className="mx-auto max-w-xl text-center">
+            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-[16px] bg-ks-pink-100">
+              <MailCheck className="h-6 w-6" strokeWidth={1.8} aria-hidden="true" />
+            </div>
+            <StepTitle title="Ouvrez votre boîte mail" />
+            <p className="mt-4 text-[17px] leading-relaxed text-ks-soft">
+              Un lien vient de partir à <strong className="text-ks-ink">{sentTo}</strong>. Cliquez dessus pour créer votre accès : vous choisirez
+              votre mot de passe, et l'analyse des profils pour votre besoin démarrera aussitôt.
+            </p>
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <button type="button" onClick={google} className="inline-flex h-12 items-center justify-center gap-3 rounded-full border border-[rgba(20,19,18,0.12)] bg-white px-6 font-medium hover:bg-[#FBF8F3]">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                </svg>
+                Ou continuer avec Google
+              </button>
+              <p className="text-sm text-ks-soft">
+                Rien reçu ? Regardez dans vos spams,{" "}
+                <button type="button" className="underline underline-offset-2" onClick={async () => { const e = await sendLink(sentTo); setError(e); }}>renvoyez le lien</button>
+                {" "}ou{" "}
+                <button type="button" className="underline underline-offset-2" onClick={() => { setSentTo(null); setError(null); }}>changez d'adresse</button>.
+              </p>
+              {error && <p role="alert" className="text-sm font-medium text-destructive">{error}</p>}
+            </div>
+          </div>
+        )}
+
+        {step === 5 && !sentTo && (
           <form onSubmit={submit} noValidate>
             <StepTitle title="Votre besoin, en bref" lead="Vérifiez vos réponses et indiquez votre email professionnel pour accéder aux profils." />
             <div className="mt-10 rounded-[20px] border border-[rgba(20,19,18,0.08)] bg-white p-6">

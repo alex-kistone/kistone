@@ -30,7 +30,25 @@ const verifyUrl = (tokenHash: string, type: string, redirectTo: string) =>
 /** Espace concerné, déduit de l'adresse de retour (/client = espace client). */
 const space = (redirectTo: string) => (/\/client(\b|\/|$)/.test(redirectTo) ? "client" : "freelance");
 
+/** Lien envoyé depuis /besoin (?via=link) : il crée l'accès client et lance l'analyse des profils. */
+const fromNeed = (redirectTo: string) => /[?&]via=link\b/.test(redirectTo);
+
+function needAccess(link: string) {
+  return {
+    subject: "Accédez à vos profils Kistone",
+    html: layout({
+      title: "Vos profils vous attendent",
+      paragraphs: [
+        "Cliquez sur le bouton ci-dessous pour créer votre accès Kistone. Vous choisirez votre mot de passe, puis l'analyse des profils pour votre besoin démarrera aussitôt.",
+        "Ce lien ne sert qu'une fois. Vous n'êtes pas à l'origine de cette demande ? Ignorez simplement cet email.",
+      ],
+      cta: { label: "Accéder aux profils", href: link },
+    }) + footer(),
+  };
+}
+
 function render(type: string, d: EmailData, link: string, code: string) {
+  if ((type === "signup" || type === "magiclink") && fromNeed(d.redirect_to)) return needAccess(link);
   const codeLine = `Vous pouvez aussi saisir ce code : <strong>${esc(code)}</strong>`;
   switch (type) {
     case "signup":

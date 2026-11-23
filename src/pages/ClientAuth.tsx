@@ -33,6 +33,10 @@ const ClientAuth = () => {
     if (f) try { sessionStorage.setItem("kistone-fonction", f); } catch { /* stockage indisponible */ }
   }, [searchParams]);
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
+  // Arrivée par le lien de connexion de /besoin : le mot de passe se choisit à l'étape des coordonnées
+  useEffect(() => {
+    if (searchParams.get("via") === "link") try { sessionStorage.setItem("kistone-set-password", "1"); } catch { /* stockage indisponible */ }
+  }, [searchParams]);
   // Adresse à qui le lien de confirmation vient d'être envoyé : remplace le formulaire
   const [sentTo, setSentTo] = useState<string | null>(null);
   const confirmRedirect = `${window.location.origin}/client`;

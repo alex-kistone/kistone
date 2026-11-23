@@ -24,6 +24,10 @@ const ClientOnboarding = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
+  // Compte créé par le lien de connexion (/besoin) : le client choisit ici son mot de passe
+  const [askPassword] = useState(() => { try { return sessionStorage.getItem("kistone-set-password") === "1"; } catch { return false; } });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   // Besoin saisi avant l'inscription : cette étape est alors la dernière avant l'envoi
   const [pendingNeed] = useState(() => loadPendingNeed());
 
@@ -53,7 +57,16 @@ const ClientOnboarding = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
+    if (askPassword) {
+      if (password.length < 8) { toast({ title: "Mot de passe trop court", description: "8 caractères au minimum.", variant: "destructive" }); return; }
+      if (password !== confirmPassword) { toast({ title: "Mots de passe différents", description: "Les deux saisies ne correspondent pas.", variant: "destructive" }); return; }
+    }
     setSaving(true);
+    if (askPassword) {
+      const { error: pwError } = await supabase.auth.updateUser({ password });
+      if (pwError) { setSaving(false); toast({ title: "Mot de passe non enregistré", description: pwError.message, variant: "destructive" }); return; }
+      try { sessionStorage.removeItem("kistone-set-password"); } catch { /* stockage indisponible */ }
+    }
     // Le dossier (KYC) peut avoir créé la ligne : upsert sur user_id
     const { error } = await supabase.from("client_profiles" as never).upsert({
       user_id: userId,
@@ -120,6 +133,19 @@ const ClientOnboarding = () => {
               <Label htmlFor="companyName">Nom de l'entreprise</Label>
               <Input id="companyName" autoComplete="organization" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
             </div>
+
+            {askPassword && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="password">Choisissez un mot de passe</Label>
+                  <Input id="password" type="password" autoComplete="new-password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirmez le mot de passe</Label>
+                  <Input id="confirmPassword" type="password" autoComplete="new-password" minLength={8} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                </div>
+              </div>
+            )}
 
             <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={saving}>
               {saving ? "Enregistrement..." : pendingNeed ? "Envoyer mon besoin" : "Continuer"}
