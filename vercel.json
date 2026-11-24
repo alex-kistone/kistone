@@ -6,6 +6,16 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/ressources/marche-ia-2026-chiffres",
+      "destination": "/ressources",
+      "permanent": true
+    },
+    {
+      "source": "/ressources/comment-qualifier-un-expert-ia-freelance-et-eviter-les-faux-experts",
+      "destination": "/ressources",
+      "permanent": true
+    },
+    {
       "source": "/studio",
       "destination": "/",
       "permanent": true
