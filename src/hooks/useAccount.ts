@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase, hasStoredSession } from "@/integrations/supabase/lazy";
 
 /**
  * Session courante et espace de l'utilisateur : admin → /dashboard,
  * freelance (profil recruteur) → /profile, sinon client → /client/dashboard.
+ * Sans session enregistrée (la plupart des visiteurs), le SDK Supabase n'est pas chargé.
  */
 export function useAccount() {
   const [session, setSession] = useState<Session | null>(null);
@@ -13,12 +14,20 @@ export function useAccount() {
   const [spacePath, setSpacePath] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setReady(true);
+    if (!hasStoredSession()) { setReady(true); return; }
+    let alive = true;
+    let unsubscribe = () => {};
+    getSupabase().then((supabase) => {
+      if (!alive) return;
+      supabase.auth.getSession().then(({ data }) => {
+        if (!alive) return;
+        setSession(data.session);
+        setReady(true);
+      });
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+      unsubscribe = () => subscription.unsubscribe();
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    return () => subscription.unsubscribe();
+    return () => { alive = false; unsubscribe(); };
   }, []);
 
   useEffect(() => {
@@ -26,6 +35,8 @@ export function useAccount() {
     let cancelled = false;
     const userId = session.user.id;
     (async () => {
+      const supabase = await getSupabase();
+      if (cancelled) return;
       const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
       if (cancelled) return;
       if (isAdmin) { setSpacePath("/dashboard"); return; }
@@ -35,7 +46,7 @@ export function useAccount() {
     return () => { cancelled = true; };
   }, [session]);
 
-  const signOut = () => supabase.auth.signOut();
+  const signOut = async () => { await (await getSupabase()).auth.signOut(); };
 
   // Tant que le rôle n'est pas résolu, /login redirige de lui-même vers le bon espace
   return { loggedIn: Boolean(session), ready, spacePath: spacePath ?? "/login", signOut };

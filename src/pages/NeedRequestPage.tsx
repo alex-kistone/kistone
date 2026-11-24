@@ -6,7 +6,7 @@ import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
 import Highlight from "@/components/site/Highlight";
 import { ArrowIcon } from "@/components/site/Cta";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazy";
 import { takeHomeBrief } from "@/lib/homeBrief";
 import { BUDGETS, DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, type Option } from "@/lib/needRequest";
 import { pendingNeedFromRequest, savePendingNeed } from "@/lib/pendingNeed";
@@ -95,6 +95,7 @@ const NeedRequestPage = () => {
    * client choisit ensuite son mot de passe à l'étape des coordonnées (?via=link).
    */
   const sendLink = async (address: string) => {
+    const supabase = await getSupabase();
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email: address,
       options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/client?via=link` },
@@ -108,6 +109,7 @@ const NeedRequestPage = () => {
   /** Continuer avec Google : le besoin attend dans le navigateur, repris après la connexion. */
   const google = async () => {
     if (start) savePendingNeed(pendingNeedFromRequest({ metier, duration, start_window: start, budget, brief }));
+    const supabase = await getSupabase();
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/client`, queryParams: { prompt: "select_account" } },
@@ -121,6 +123,7 @@ const NeedRequestPage = () => {
     if (isFreeEmail(address)) { setError(FREE_EMAIL_MESSAGE); return; }
     setSending(true);
     setError(null);
+    const supabase = await getSupabase();
     const { error: fnError } = await supabase.functions.invoke("need-request", {
       body: { ...REQUEST, email: address, metier, duration, start_window: start, budget, brief, website },
     });

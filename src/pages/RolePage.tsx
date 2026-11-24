@@ -10,7 +10,7 @@ import { BoltWatermark } from "@/components/brand/Bolt";
 import { LEGACY_ROLE_SLUGS, ROLE_PAGES, RPO_ROLE_PAGES, ROLES_UPDATED, roleBySlug, rolePath, type RolePage as Role } from "@/content/roles";
 import { formatDate } from "@/lib/blog";
 import { ROUTES } from "@/content/site";
-import { supabase } from "@/integrations/supabase/client";
+import { restRpc } from "@/integrations/supabase/lazy";
 import { palettes } from "@/lib/palettes";
 import { rhythmLabel, verticalOf } from "@/lib/verticals";
 import { cn } from "@/lib/utils";
@@ -31,7 +31,7 @@ function useProfiles(role: Role): Shown[] {
   const [real, setReal] = useState<Shown[]>([]);
   useEffect(() => {
     let alive = true;
-    supabase.rpc("list_featured_freelances" as never, { _vertical: role.vertical, _limit: 12 } as never).then(({ data }) => {
+    restRpc<Featured[]>("list_featured_freelances", { _vertical: role.vertical, _limit: 12 }).then((data) => {
       if (!alive || !Array.isArray(data)) return;
       const matching = (data as Featured[]).filter((f) => !role.metiers || (f.specialties ?? []).some((s) => role.metiers!.includes(s)));
       setReal(matching.slice(0, 4).map((f) => ({

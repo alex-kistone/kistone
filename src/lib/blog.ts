@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { restSelect } from "@/integrations/supabase/lazy";
 
 /** Article du blog (Ressources). Contenu en Markdown. */
 export type BlogPost = {
@@ -50,12 +50,8 @@ export function useInitialPosts(): BlogPost[] | null {
 }
 
 export async function fetchPublishedPosts(): Promise<BlogPost[]> {
-  const { data } = await supabase
-    .from("blog_posts" as never)
-    .select("*")
-    .eq("status", "published")
-    .order("published_at", { ascending: false });
-  return (data as BlogPost[] | null) ?? [];
+  // API REST directe : les pages publiques ne chargent pas le SDK Supabase
+  return (await restSelect<BlogPost[]>("blog_posts?status=eq.published&order=published_at.desc&select=*")) ?? [];
 }
 
 /** Adresse d'article : minuscules sans accents, mots séparés par des tirets. */

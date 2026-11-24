@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/lazy";
 import { BUDGETS, NEED_METIERS, labelOf, type NeedRequest } from "@/lib/needRequest";
 
 /**
@@ -92,6 +92,7 @@ export function clearPendingNeed() {
 export async function submitPendingNeed(userId: string, email: string): Promise<string | null> {
   const draft = loadPendingNeed();
   if (!draft) return null;
+  const supabase = await getSupabase();
   const { data: profile } = await supabase
     .from("client_profiles" as never)
     .select("company_name, first_name, last_name, email")
