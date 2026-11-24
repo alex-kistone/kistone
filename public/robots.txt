@@ -28,6 +28,12 @@ User-agent: CCBot
 # Espaces de connexion (aucune valeur dans les résultats)
 Disallow: /client
 Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /open-needs
+Disallow: /forgot-password
+Disallow: /reset-password
 
 # Tout le reste est ouvert
 Allow: /
