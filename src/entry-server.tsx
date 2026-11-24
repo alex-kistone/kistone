@@ -6,10 +6,13 @@ import { ROLE_PAGES, ROLES_UPDATED, rolePath } from "./content/roles";
 import { COMPARISON_PATH } from "./pages/ComparisonPage";
 import { COMPARISON } from "./content/comparison";
 import { STATIC_POSTS } from "./content/articles";
+import { PRICING, PRICING_PATH, PRICING_READY } from "./content/pricing";
 import { BlogDataContext, type BlogPost } from "./lib/blog";
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
 export const PRERENDER_ROUTES = ["/", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), "/freelances", "/pourquoi-kistone", "/apport-affaires", "/ressources", COMPARISON_PATH,
+  // Page des tarifs : publiée seulement une fois la grille remplie (src/content/pricing.ts)
+  ...(PRICING_READY ? [PRICING_PATH] : []),
   // Articles écrits dans le code (le comparatif a déjà sa page ci-dessus)
   ...STATIC_POSTS.filter((p) => p.slug !== COMPARISON.slug).map((p) => `/ressources/${p.slug}`)];
 
@@ -20,6 +23,7 @@ export const PRERENDER_ROUTES = ["/", "/besoin", "/privacy", ...ROLE_PAGES.map(r
 export const LASTMOD: Record<string, string> = {
   ...Object.fromEntries(ROLE_PAGES.map((r) => [rolePath(r), ROLES_UPDATED])),
   [COMPARISON_PATH]: COMPARISON.date,
+  ...(PRICING_READY ? { [PRICING_PATH]: PRICING.date } : {}),
 };
 
 /** Pages décrites dans llms.txt (résumé du site pour les moteurs IA), générées au build. */
@@ -31,6 +35,7 @@ export const LLMS_PAGES = [
   { path: "/freelances", title: "Espace freelance", desc: "Rejoindre la communauté des Freelance RPO : missions qualifiées pour recruteurs freelance, rémunération transparente payée chaque fin de mois, administratif géré." },
   { path: "/ressources", title: "Ressources", desc: "Analyses et guides sur le RPO freelance, la structuration de la fonction recrutement et le travail avec un recruteur freelance." },
   { path: COMPARISON_PATH, title: COMPARISON.seoTitle, desc: COMPARISON.seoDescription },
+  ...(PRICING_READY ? [{ path: PRICING_PATH, title: PRICING.seoTitle, desc: PRICING.seoDescription }] : []),
 ];
 
 /**

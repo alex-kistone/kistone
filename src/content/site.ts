@@ -15,6 +15,7 @@ export const ROUTES = {
 };
 
 import { RPO_ROLE_PAGES, rolePath } from "./roles";
+import { PRICING_PATH, PRICING_READY } from "./pricing";
 
 /** Les fiches de poste (/recruter/…), dans le menu et le pied de page. */
 const ROLE_ITEMS = RPO_ROLE_PAGES.map((r, i) => ({
@@ -39,6 +40,7 @@ export const MENUS: Menu[] = [
     items: [
       { title: "Blog & articles", desc: "RPO freelance, recrutement, marché des talents.", href: "/ressources", dot: "#1F8F87" },
       { title: "Comparatif du RPO", desc: "Recruteurs freelance ou cabinet : qui fait quoi en France.", href: "/ressources/comparatif-rpo-freelance", dot: "#1F2A44" },
+      ...(PRICING_READY ? [{ title: "Tarifs", desc: "TJM d'un recruteur freelance par fonction et séniorité.", href: PRICING_PATH, dot: "#C99A12" }] : []),
       { title: "Guides", desc: "Méthodes pour structurer et piloter vos recrutements.", href: "/#ressources", dot: "#E07A3A" },
     ],
   },
@@ -64,6 +66,7 @@ export const FOOTER_COLUMNS = [
     title: "Ressources",
     links: [
       { label: "Blog", href: "/ressources" },
+      ...(PRICING_READY ? [{ label: "Tarifs", href: PRICING_PATH }] : []),
       { label: "Guides", href: "/#ressources" },
     ],
   },

@@ -15,6 +15,8 @@ import FreelancesPage from "./pages/FreelancesPage";
 import WhyKistone from "./pages/WhyKistone";
 import ReferralPage from "./pages/ReferralPage";
 import ComparisonPage, { COMPARISON_PATH } from "./pages/ComparisonPage";
+import PricingPage from "./pages/PricingPage";
+import { PRICING_PATH } from "./content/pricing";
 import SessionGuard from "./components/SessionGuard";
 import { LEGACY_COMPARISON_SLUGS } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
@@ -65,6 +67,7 @@ export const AppRoutes = () => (
     <Route path="/apport-affaires" element={<ReferralPage />} />
     <Route path="/ressources" element={<BlogIndex />} />
     <Route path={COMPARISON_PATH} element={<ComparisonPage />} />
+    <Route path={PRICING_PATH} element={<PricingPage />} />
     {LEGACY_COMPARISON_SLUGS.map((slug) => <Route key={slug} path={`/ressources/${slug}`} element={<Navigate to={COMPARISON_PATH} replace />} />)}
     <Route path="/ressources/:slug" element={<BlogPost />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
