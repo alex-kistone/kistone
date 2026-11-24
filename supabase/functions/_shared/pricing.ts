@@ -21,3 +21,10 @@ export const ANNOUNCED_MARGIN_PCT = 20;
 
 /** Net freelance d'un budget client, part Kistone déduite (80 % du budget), à l'euro inférieur. */
 export const freelanceNet = (clientBudget: number) => Math.floor((clientBudget * (100 - ANNOUNCED_MARGIN_PCT)) / 100);
+
+/**
+ * Prix client selon la répartition annoncée : le TJM du freelance représente 80 % du prix
+ * (500 € → 625 €), à l'euro supérieur. Outils admin uniquement (création de mission, fiche
+ * LinkedIn freelance) ; toujours modifiable à la main.
+ */
+export const announcedClientPrice = (freelanceTjm: number) => Math.ceil((freelanceTjm * 100) / (100 - ANNOUNCED_MARGIN_PCT));

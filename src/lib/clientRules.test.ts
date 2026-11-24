@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { budgetError } from "./budget";
 import { isFreeEmail } from "./emailDomains";
-import { clientPrice, freelanceNet, freelanceRate } from "./pricing";
+import { announcedClientPrice, clientPrice, freelanceNet, freelanceRate } from "./pricing";
 
 describe("budgetError", () => {
   it("exige un min strictement inférieur au max", () => {
@@ -37,6 +37,15 @@ describe("tarification (prix coûtant)", () => {
     expect(freelanceRate(600)).toBe(600);
     expect(freelanceRate(800)).toBe(800);
     expect(clientPrice(freelanceRate(800))).toBeLessThanOrEqual(800);
+  });
+});
+
+describe("announcedClientPrice", () => {
+  it("fait du TJM freelance 80 % du prix client (500 € → 625 €), à l'euro supérieur", () => {
+    expect(announcedClientPrice(500)).toBe(625);
+    expect(announcedClientPrice(480)).toBe(600);
+    expect(announcedClientPrice(550)).toBe(688);
+    expect(freelanceNet(announcedClientPrice(480))).toBe(480);
   });
 });
 

@@ -1,4 +1,4 @@
-import { clientPrice } from "@/lib/pricing";
+import { announcedClientPrice } from "@/lib/pricing";
 import { rhythmLabel, verticalOf } from "@/lib/verticals";
 import type { SheetClient, SheetKpi, SheetSpec } from "./profileSheet";
 
@@ -122,7 +122,7 @@ export function initialSheetFields(p: SheetFreelance, anonymous: boolean): Sheet
     others: others.join("\n"),
     english: ENGLISH[level] ?? "",
     englishLevel: level,
-    tjm: p.tjm ? `${clientPrice(p.tjm)} €` : "Sur demande",
+    tjm: p.tjm ? `${announcedClientPrice(p.tjm)} €` : "Sur demande",
     availability: dispo.value,
     availabilityNote: [place, p.remote_preference ? REMOTE[p.remote_preference] : ""].filter(Boolean).join(" · "),
   };

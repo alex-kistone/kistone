@@ -146,7 +146,7 @@ export default function FreelanceLinkedInCardDialog({ profile, open, onOpenChang
                 Afficher la photo du profil
               </label>
             )}
-            <p className="text-xs text-muted-foreground">Le TJM affiché est le prix client (TJM du freelance + 20 %), modifiable.</p>
+            <p className="text-xs text-muted-foreground">Le TJM affiché est le prix client (TJM du freelance = 80 % du prix, part Kistone 20 %), modifiable.</p>
             {leaks.length > 0 && (
               <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 Attention : « {leaks.join(", ")} » apparaît dans la carte. Retirez-le pour garder le profil anonyme.

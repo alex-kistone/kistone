@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { clientPrice } from "@/lib/pricing";
+import { announcedClientPrice } from "@/lib/pricing";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CreateMissionDialogProps {
@@ -48,9 +48,9 @@ const CreateMissionDialog = ({
   const [missionTitle, setMissionTitle] = useState(`${needTitle} - ${companyName}`);
   const [location, setLocation] = useState(missionLocation);
   const [tjmRecruiter, setTjmRecruiter] = useState(recruiterTjm || 0);
-  // Prix client = TJM freelance + 20 % (arrondi à l'euro supérieur), ajustable par l'admin
+  // Prix client proposé : le TJM freelance représente 80 % du prix (part Kistone 20 %), ajustable par l'admin
   const [tjmClientOverride, setTjmClientOverride] = useState<number | null>(null);
-  const tjmClient = tjmClientOverride ?? clientPrice(tjmRecruiter);
+  const tjmClient = tjmClientOverride ?? announcedClientPrice(tjmRecruiter);
   const margin = tjmClient - tjmRecruiter;
 
   const handleSubmit = async () => {
