@@ -6,6 +6,7 @@
  * Usage : npm run build (enchaîne build client, build SSR et ce script).
  */
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { JSDOM } from "jsdom";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -39,8 +40,11 @@ const template = readFileSync(join(dist, "index.html"), "utf8");
 // Gabarit vierge pour les espaces connectés : servi tel quel pour toute route non pré-rendue.
 writeFileSync(join(dist, "app.html"), template);
 
+// HTML rendu de chaque page, réutilisé pour llms-full.txt
+const rendered = new Map();
 for (const route of ROUTES) {
   const { html, head } = render(route, posts);
+  rendered.set(route, html);
   const page = template
     .replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, head)
     .replace('<div id="root"></div>', `<div id="root" data-prerendered="${route}">${html}</div>${withData(route) ? dataScript : ""}`);
@@ -82,10 +86,48 @@ ${LLMS_PAGES.map((p) => `- [${p.title}](${SITE}${p.path}): ${p.desc}`).join("\n"
 ${posts.length ? `\n## Articles\n\n${posts.map((p) => `- [${p.title}](${SITE}/ressources/${p.slug}): ${p.seo_description || p.excerpt}`).join("\n")}\n` : ""}
 ## Optional
 
+- [Texte complet des pages clés](${SITE}/llms-full.txt): offres, comparatif et articles en texte intégral.
 - [Politique de confidentialité](${SITE}/privacy): traitement des données personnelles.
 `;
 writeFileSync(join(dist, "llms.txt"), llms);
 console.log("llms.txt");
+
+// Texte intégral des pages clés (offres, comparatif, articles) pour les moteurs IA : llms-full.txt
+// Blocs exclus : profils d'exemple (fictifs, jamais à citer), éléments décoratifs, navigation, formulaires
+const SKIP = ".ks-marquee, #profils, [aria-hidden='true'], [data-llms-skip], nav, header, footer, form, button, svg, script, style, img";
+const BLOCK = new Set(["P", "DIV", "SECTION", "ARTICLE", "ASIDE", "UL", "OL", "TABLE", "TR", "DL", "DETAILS", "SUMMARY", "BLOCKQUOTE", "MAIN"]);
+/** HTML pré-rendu → texte Markdown simple (titres, listes, paragraphes). */
+function htmlToText(html) {
+  const { document, Node } = new JSDOM(`<body>${html}</body>`).window;
+  document.querySelectorAll(SKIP).forEach((el) => el.remove());
+  const out = [];
+  const walk = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) { out.push(node.textContent.replace(/\s+/g, " ")); return; }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const tag = node.tagName;
+    const h = /^H([1-4])$/.exec(tag);
+    if (h) { out.push(`\n\n${"#".repeat(Number(h[1]) + 1)} ${node.textContent.replace(/\s+/g, " ").trim()}\n\n`); return; }
+    if (tag === "LI") out.push("\n- ");
+    else if (tag === "DT" || tag === "TH" || tag === "TD") out.push(" ");
+    else if (tag === "BR") out.push("\n");
+    else if (BLOCK.has(tag)) out.push("\n\n");
+    node.childNodes.forEach(walk);
+    if (tag === "DT") out.push(" :");
+    else if (tag === "TD" || tag === "TH") out.push(" |");
+    else if (tag === "DD") out.push("\n");
+    else if (BLOCK.has(tag)) out.push("\n\n");
+    else out.push(" ");
+  };
+  walk(document.body);
+  return out.join("").replace(/[ \t]+/g, " ").replace(/ ([,.)])/g, "$1").replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").replace(/^(-.*)\n\n(?=- )/gm, "$1\n").trim();
+}
+const FULL_PAGES = LLMS_PAGES.filter((p) => p.path !== "/besoin" && !p.path.startsWith("/ressources/") || p.path === "/ressources/comparatif-rpo-freelance");
+const fullSections = [
+  ...FULL_PAGES.filter((p) => rendered.has(p.path)).map((p) => `# ${p.title}\n\nSource : ${SITE}${p.path}\n\n${htmlToText(rendered.get(p.path))}`),
+  ...posts.map((p) => `# ${p.title}\n\nSource : ${SITE}/ressources/${p.slug}\n\n${p.content}`),
+];
+writeFileSync(join(dist, "llms-full.txt"), `# Kistone : texte intégral des pages clés\n\n${llms.split("\n## Pages")[0].replace(/^# Kistone\n\n/, "")}\n\n${fullSections.join("\n\n---\n\n")}\n`);
+console.log(`llms-full.txt (${fullSections.length} pages)`);
 
 // IndexNow : prévient Bing (qui alimente aussi la recherche de ChatGPT), Yandex, Seznam… des pages
 // du site à chaque build de production. La clé est publique par nature : fichier public/<clé>.txt.

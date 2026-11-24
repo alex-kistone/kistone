@@ -35,6 +35,10 @@ const IMAGES = [
   { file: "freelances", a: "Rejoignez la communauté des", b: "Freelance RPO", c: ".", label: "Recruteurs freelance", tone: T.sand, items: ["Missions qualifiées", "Rythme au choix", "Facturation gérée", "Paiement chaque fin de mois"] },
   { file: "comparatif", a: "RPO freelance :", b: "le comparatif", c: "des acteurs.", label: "Ressources · Comparatif 2026", items: null },
   { file: "pourquoi-kistone", a: "Bien recruter,", b: "un métier", c: "à part entière.", label: "Pourquoi Kistone", items: null },
+  { file: "accueil", a: "Un recruteur", b: "sur-demande", c: "intégré à vos équipes.", label: "Réseau de Freelance RPO", items: [["Tech", T.blue], ["Sales & Marketing", T.sage], ["Finance", T.sand], ["Industrie", T.teal]] },
+  { file: "besoin", a: "Accédez aux", b: "profils", c: "en quatre questions.", label: "Premier recruteur sous 48 h", tone: T.lilac, items: ["Métier", "Durée", "Démarrage", "Budget"] },
+  { file: "ressources", a: "Réussir vos", b: "recrutements", c: ".", label: "Ressources · Guides RPO", items: null },
+  { file: "apport-affaires", a: "Programme", b: "d'apport d'affaires", c: ".", label: "Présentez-nous une entreprise", items: null },
 ];
 
 const bolt = (color, opacity) => `<svg viewBox="0 0 624 1024" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="22" stroke-linejoin="miter"><path d="M38 560 L488 18 L318 398"/><path d="M22 588 L346 416 L602 416 L280 588 Z"/><path d="M300 606 L132 1006 L590 444"/></svg>`;

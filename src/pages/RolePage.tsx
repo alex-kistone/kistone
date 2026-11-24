@@ -185,7 +185,7 @@ function RoleContent({ role }: { role: Role }) {
         <aside aria-label="En bref" className="mt-12 grid gap-6 rounded-[24px] border border-[rgba(20,19,18,0.06)] bg-white p-6 shadow-ks-card md:grid-cols-[1.4fr_1fr] md:gap-10 md:p-8">
           <div>
             <p className="font-ks-mono text-[11px] uppercase tracking-[0.14em] text-ks-subtle">En bref</p>
-            <p className="mt-3 text-[16px] leading-[1.6] text-ks-ink-2">{role.definition[0]}</p>
+            <p className="mt-3 text-[16px] leading-[1.6] text-ks-ink-2">{role.summary}</p>
           </div>
           <dl className="grid grid-cols-2 gap-x-6 gap-y-4 text-[14px] md:grid-cols-1 lg:grid-cols-2">
             <div><dt className="text-ks-subtle">Budget indicatif</dt><dd className="mt-0.5 font-semibold">{role.rate[0]} – {role.rate[1]} € HT / jour</dd></div>

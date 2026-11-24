@@ -30,6 +30,8 @@ export type RolePage = {
   seoDescription: string;
   rate: [number, number];
   when: { title: string; desc: string }[];
+  /** Définition propre au métier (≈ 50 mots), en tête de page « En bref » : reprise telle quelle par les moteurs IA. */
+  summary: string;
   definition: string[];
   missions: string[];
   skills: string[];
@@ -52,6 +54,7 @@ export const ROLE_PAGES: RolePage[] = [
     longName: "recruteur tech freelance (RPO)",
     h1: "Un Recruteur Tech freelance, intégré à vos équipes",
     highlight: "Recruteur Tech",
+    summary: "Un Recruteur Tech freelance (RPO) est un recruteur indépendant spécialisé sur les métiers Engineering, Data/AI, Product et système d'information, qui rejoint votre équipe pour recruter en CDI : il utilise vos outils et recrute en votre nom. Il est facturé au jour, sans honoraires au placement, auprès des CTO de startups comme des DSI de grands comptes.",
     lead: "Un recruteur spécialisé sur les métiers Engineering, Data/AI, Product et système d'information, aux côtés des CTO de startups et des DSI de grands comptes. Facturé au jour, sans honoraires au placement.",
     seoTitle: "Recruteur Tech freelance (RPO) : Engineering & Data",
     seoDescription: "Recruteur Tech freelance (RPO) intégré à vos équipes pour recruter en CDI vos profils Engineering, Data/AI, Product et SI. Facturé au jour, sans honoraires au placement.",
@@ -105,6 +108,7 @@ export const ROLE_PAGES: RolePage[] = [
     longName: "recruteur GTM freelance (RPO)",
     h1: "Un Recruteur GTM freelance, intégré à vos équipes",
     highlight: "Recruteur GTM",
+    summary: "Un Recruteur GTM freelance (RPO) est un recruteur indépendant spécialisé sur les fonctions Sales & Marketing, qui rejoint votre équipe pour construire vos équipes commerciales et marketing en CDI : il utilise vos outils et recrute en votre nom. Il est facturé au jour, sans honoraires au placement.",
     lead: "Un recruteur spécialisé sur les fonctions Sales & Marketing, pour construire vos équipes commerciales et marketing. Facturé au jour, sans honoraires au placement.",
     seoTitle: "Recruteur GTM freelance (RPO) : Sales & Marketing",
     seoDescription: "Recruteur GTM freelance (RPO) intégré à vos équipes pour recruter en CDI vos fonctions Sales & Marketing. Facturé au jour, sans honoraires au placement.",
@@ -157,6 +161,7 @@ export const ROLE_PAGES: RolePage[] = [
     longName: "recruteur généraliste freelance (RPO)",
     h1: "Un Recruteur généraliste freelance, intégré à vos équipes",
     highlight: "Recruteur généraliste",
+    summary: "Un Recruteur généraliste freelance (RPO) est un recruteur indépendant capable d'intervenir sur toutes vos fonctions, avec une méthode structurée : tri de CV, entretiens structurés, scorecards. Il rejoint votre équipe pour recruter en CDI, utilise vos outils et recrute en votre nom. Il est facturé au jour, sans honoraires au placement.",
     lead: "Un recruteur capable d'intervenir sur n'importe quelle fonction, avec une méthode solide : tri de CV, entretiens structurés, scorecards. Facturé au jour, sans honoraires au placement.",
     seoTitle: "Recruteur généraliste freelance : toutes fonctions",
     seoDescription: "Recruteur généraliste freelance (RPO) pour recruter sur toutes vos fonctions, avec une méthode structurée : tri de CV, entretiens structurés, scorecards. Facturé au jour.",
@@ -211,6 +216,7 @@ export const ROLE_PAGES: RolePage[] = [
     longName: "Head of Talent Acquisition freelance",
     h1: "Un Head of TA freelance, pour structurer votre recrutement",
     highlight: "Head of TA",
+    summary: "Un Head of Talent Acquisition freelance est un responsable du recrutement indépendant qui met en place vos process et structure la fonction recrutement, à temps plein ou quelques jours par semaine. Il intervient au sein de votre équipe et est facturé au jour, sans honoraires au placement.",
     lead: "Un Head of Talent Acquisition à temps plein ou quelques jours par semaine, pour mettre en place vos process et structurer la fonction recrutement. Facturé au jour, sans honoraires au placement.",
     seoTitle: "Head of TA freelance : structurer le recrutement",
     seoDescription: "Head of Talent Acquisition freelance pour mettre en place vos process de recrutement et structurer la fonction, à temps plein ou quelques jours par semaine. Facturé au jour.",

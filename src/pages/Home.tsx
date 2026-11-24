@@ -25,6 +25,7 @@ export default function Home() {
         title="Recruteur freelance RPO : 700+ recruteurs qualifiés | Kistone"
         description="Une communauté de 700+ recruteurs Freelance RPO sélectionnés et qualifiés, spécialisés par métier. Le bon recruteur en 48 h, facturé au jour, sans honoraires au placement."
         path="/"
+        image="/og/accueil.png"
         jsonLd={withIdentity({
           "@type": "FAQPage",
           mainEntity: HOME_FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),

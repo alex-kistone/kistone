@@ -42,6 +42,7 @@ export default function BlogIndex() {
         title="Ressources : RPO freelance et recrutement"
         description="Guides Kistone pour réussir vos recrutements : RPO freelance ou cabinet, structurer la fonction recrutement, travailler avec un recruteur freelance."
         path={BLOG_PATH}
+        image="/og/ressources.png"
         jsonLd={jsonLd}
       />
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">

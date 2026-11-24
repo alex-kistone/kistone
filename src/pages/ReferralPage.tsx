@@ -37,6 +37,7 @@ export default function ReferralPage() {
         title="Programme d'apport d'affaires"
         description={`Vous connaissez une entreprise qui cherche un recruteur freelance ? Présentez-nous : si la mission est pourvue, vous touchez ${COMMISSION}.`}
         path="/apport-affaires"
+        image="/og/apport-affaires.png"
       />
 
       {/* Promesse et commission */}

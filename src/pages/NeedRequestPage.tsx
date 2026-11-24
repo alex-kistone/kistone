@@ -151,6 +151,7 @@ const NeedRequestPage = () => {
         title="Partager un besoin de recrutement"
         description="Décrivez votre besoin de recrutement en quatre questions (Tech, Data, Product, Sales, Finance, Industrie) : un recruteur freelance qualifié sous 48 h. Gratuit."
         path="/besoin"
+        image="/og/besoin.png"
       />
       <BoltWatermark strokeWidth={14} className="-right-48 top-32 h-[820px] w-auto rotate-[14deg]" />
       <Header />
