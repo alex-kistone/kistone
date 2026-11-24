@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { freelanceRate } from "@/lib/pricing";
+import { freelanceNet } from "@/lib/pricing";
 import { verticalOf } from "@/lib/verticals";
 import { durationLabel } from "@/components/platform/MissionDurationField";
 import { remoteLabel } from "./needsModel";
@@ -47,8 +47,9 @@ function missionPitch(need: CardNeed): string {
 }
 
 function tjmRange(need: CardNeed): string {
-  const lo = need.budget_tjm_min ? freelanceRate(need.budget_tjm_min) : null;
-  const hi = need.budget_tjm_max ? freelanceRate(need.budget_tjm_max) : null;
+  // Net freelance : 80 % du budget client, comme dans « Mes opportunités »
+  const lo = need.budget_tjm_min ? freelanceNet(need.budget_tjm_min) : null;
+  const hi = need.budget_tjm_max ? freelanceNet(need.budget_tjm_max) : null;
   if (lo && hi) return `${lo} – ${hi} €`;
   if (hi) return `Jusqu'à ${hi} €`;
   if (lo) return `À partir de ${lo} €`;
@@ -140,7 +141,7 @@ export default function LinkedInCardDialog({ need, open, onOpenChange }: { need:
               <div className="space-y-1.5"><Label htmlFor="li-tjm">TJM freelance</Label><Input id="li-tjm" value={f.tjm} onChange={set("tjm")} /></div>
             </div>
             <div className="space-y-1.5"><Label htmlFor="li-cta">Appel à l'action</Label><Input id="li-cta" value={f.cta} onChange={set("cta")} /></div>
-            <p className="text-xs text-muted-foreground">Le TJM affiché est celui du freelance (budget client hors marge Kistone).</p>
+            <p className="text-xs text-muted-foreground">Le TJM affiché est celui du freelance : 80 % du budget client (part Kistone 20 %), modifiable.</p>
             {leaks.length > 0 && (
               <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 Attention : « {leaks.join(", ")} » apparaît dans la carte. Retirez-le pour garder le besoin anonyme.
