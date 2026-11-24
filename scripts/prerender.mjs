@@ -67,11 +67,14 @@ console.log(`sitemap.xml (${ROUTES.length} pages)`);
 // Résumé du site pour les moteurs IA (https://llmstxt.org)
 const llms = `# Kistone
 
-> Réseau freelance d'experts IA. Kistone met en relation les entreprises avec des experts IA freelance sélectionnés et qualifiés, en mission, en fractional (quelques jours par semaine) ou en contract-to-hire : AI Engineers (LLM, RAG, agents, MLOps), AI Product (Product Managers IA, AI Designers) et AI Leaders (CTO, Head of AI, Chief AI Officer). Des Tech Recruiters freelance aident aussi les clients à internaliser leurs talents IA en CDI.
+> Réseau de Freelance RPO (Recruitment Process Outsourcing). Kistone met en relation les entreprises avec une communauté de 700+ recruteurs freelance sélectionnés et qualifiés, spécialisés par métier (Tech, Data, Product, Sales & Marketing, Finance, Industrie), qui rejoignent leurs équipes pour recruter en CDI, à temps plein ou quelques jours par semaine. Pas un cabinet : pas d'honoraires au placement.
 
-- Un premier profil présélectionné sous 48 h, un démarrage en une semaine en général.
-- Facturation au jour (TJM), sans frais de recrutement ; contrat, conformité, CRA et facturation gérés par Kistone.
-- Les freelances sont sélectionnés et qualifiés en entretien (parcours, projets IA, références) et notés.
+- Un premier profil qualifié sous 48 h après le partage du besoin, un démarrage en général dans la semaine qui suit.
+- Facturation au jour (TJM), en général entre 500 et 600 € HT par jour selon la spécialité et l'expérience, sur les jours réalisés déclarés dans un CRA validé chaque mois par le client.
+- Chaque recruteur est qualifié en entretien par l'équipe Kistone (parcours, recrutements réalisés, références) puis noté ; seuls les profils qui correspondent au besoin sont présentés.
+- Kistone gère le contrat, la conformité (KYC), le suivi des jours (CRA) et la facturation ; le freelance est payé chaque fin de mois.
+- Le recruteur s'intègre aux outils et rituels du client (ATS, Slack) et recrute en son nom : sourcing, tri, entretiens, pilotage du process.
+- Fondateur : Alexandre Guégo.
 
 ## Pages
 
