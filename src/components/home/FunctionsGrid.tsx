@@ -52,7 +52,7 @@ export default function FunctionsGrid() {
   return (
     <Section id="fonctions">
       <SectionHeader
-        title={<TwoPartTitle a="Un recruteur sur-demande" b="intégré à vos équipes" />}
+        title={<TwoPartTitle a={<>Un recruteur <span className="ks-grad-text">sur-demande</span></>} b="intégré à vos équipes" />}
       />
       <RpoTile />
     </Section>

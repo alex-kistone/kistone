@@ -17,7 +17,7 @@ export default function SectionHeader({ title, subtitle }: Props) {
 }
 
 /** Deux temps d'un titre : retour à la ligne en desktop, à la suite en mobile. */
-export function TwoPartTitle({ a, b }: { a: string; b: string }) {
+export function TwoPartTitle({ a, b }: { a: ReactNode; b: ReactNode }) {
   return (
     <>
       {a} <br className="hidden md:block" />
