@@ -34,6 +34,10 @@ export type SheetSpec = {
   tjm: string;
   availability: { value: string; note: string };
   ref?: string;
+  /** Remplace la tuile TJM (carte publiée par le freelance : renvoi vers Kistone, sans tarif). */
+  contactTile?: { label: string; value: string; note: string };
+  /** Mention du pied de page, à droite du logo (« RPO FREELANCE » par défaut). */
+  footer?: string;
 };
 
 export const SHEET_W = 900;
@@ -345,6 +349,19 @@ export async function drawProfileSheet(canvas: HTMLCanvasElement, spec: SheetSpe
   }
   const x2 = X + w1 + 15;
   card(ctx, x2, r3, w2, r3h);
+  if (spec.contactTile) {
+    const t = spec.contactTile;
+    label(ctx, t.label, x2 + 23, r3 + 30);
+    let size = 34;
+    setFont(ctx, `700 ${size}px Outfit`, -1.2);
+    while (ctx.measureText(t.value).width > w2 - 46 && size > 20) setFont(ctx, `700 ${--size}px Outfit`, -1.2);
+    const w = ctx.measureText(t.value).width;
+    ctx.fillStyle = gradient(ctx, x2 + 23, x2 + 23 + Math.max(w, 80));
+    ctx.fillText(t.value, x2 + 23, r3 + 80);
+    setFont(ctx, "400 15px Geist");
+    ctx.fillStyle = C.muted;
+    wrap(ctx, t.note, w2 - 46, 2).forEach((l, i) => ctx.fillText(l, x2 + 23, r3 + 106 + i * 18));
+  } else {
   label(ctx, "TJM", x2 + 23, r3 + 30);
   setFont(ctx, "700 40px Outfit", -1.6);
   const tjmW = ctx.measureText(spec.tjm).width;
@@ -354,6 +371,7 @@ export async function drawProfileSheet(canvas: HTMLCanvasElement, spec: SheetSpe
     setFont(ctx, "400 15px Geist");
     ctx.fillStyle = C.muted;
     ctx.fillText("HT / jour", x2 + 23, r3 + 112);
+  }
   }
   const x3 = x2 + w2 + 15;
   card(ctx, x3, r3, w3, r3h);
@@ -376,7 +394,7 @@ export async function drawProfileSheet(canvas: HTMLCanvasElement, spec: SheetSpe
     ctx.fillRect(X + lw + 22, fy + 8, 1.2, 28);
     setFont(ctx, "500 15px 'Geist Mono'", 2.8);
     ctx.fillStyle = C.mono;
-    ctx.fillText("RPO FREELANCE", X + lw + 44, fy + 28);
+    ctx.fillText((spec.footer ?? "RPO freelance").toUpperCase(), X + lw + 44, fy + 28);
   } catch { /* logo indisponible */ }
   if (spec.ref) {
     setFont(ctx, "500 12px 'Geist Mono'", 2);

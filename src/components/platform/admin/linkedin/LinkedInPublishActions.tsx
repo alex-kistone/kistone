@@ -16,20 +16,22 @@ type Props = {
   fileName: string;
   /** Vrai quand la carte n'est pas anonyme : tous les boutons sont bloqués. */
   blocked: boolean;
+  /** Publication directe via l'API LinkedIn de l'admin ; faux pour un freelance (publication assistée seule). */
+  allowDirect?: boolean;
 };
 
 /**
  * Boutons d'une carte LinkedIn : publication directe via l'API (compte LinkedIn de l'admin),
  * publication assistée (image copiée, fenêtre de post ouverte), image PNG et texte du post.
  */
-export default function LinkedInPublishActions({ canvasRef, open, postText, altText, fileName, blocked }: Props) {
+export default function LinkedInPublishActions({ canvasRef, open, postText, altText, fileName, blocked, allowDirect = true }: Props) {
   const { toast } = useToast();
   const [li, setLi] = useState<{ configured: boolean; connected: boolean; name: string | null } | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !allowDirect) return;
     const check = () =>
       supabase.functions.invoke("linkedin-auth", { body: { action: "status" } }).then(({ data }) => {
         if (data && !data.error) setLi({ configured: !!data.configured, connected: !!data.connected, name: data.name ?? null });
@@ -38,7 +40,7 @@ export default function LinkedInPublishActions({ canvasRef, open, postText, altT
     // Après l'autorisation dans un autre onglet, l'état se met à jour au retour sur celui-ci
     window.addEventListener("focus", check);
     return () => window.removeEventListener("focus", check);
-  }, [open]);
+  }, [open, allowDirect]);
 
   const connectLinkedin = async () => {
     const { data, error } = await supabase.functions.invoke("linkedin-auth", { body: { action: "start" } });

@@ -36,6 +36,7 @@ import ChatPanel from "@/components/platform/ChatPanel";
 import { useUnreadCount } from "@/hooks/useChat";
 import { Badge } from "@/components/ui/badge";
 import FreelanceMissionsSection from "@/components/platform/FreelanceMissionsSection";
+import LinkedInShareSection from "@/components/platform/freelance/LinkedInShareSection";
 import KycDossierPanel from "@/components/platform/KycDossierPanel";
 import ProfileCompletionChecklist from "@/components/platform/ProfileCompletionChecklist";
 import ProfileImport from "@/components/platform/ProfileImport";
@@ -99,7 +100,7 @@ const Profile = () => {
   // Onglet piloté par le menu latéral (?tab=missions | admin)
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const requestedTab: "profile" | "missions" | "admin" = tabParam === "missions" || tabParam === "admin" ? tabParam : "profile";
+  const requestedTab: "profile" | "missions" | "admin" | "share" = tabParam === "missions" || tabParam === "admin" || tabParam === "share" ? tabParam : "profile";
   // Missions et dossier n'existent qu'une fois le profil créé
   const activeTab = existingId ? requestedTab : "profile";
   const [optimizing, setOptimizing] = useState(false);
@@ -422,22 +423,24 @@ const Profile = () => {
         initialVertical={isActiveVertical(searchParams.get("fonction")) ? (searchParams.get("fonction") as Vertical) : null}
         onSubmit={saveLinkedinUrl}
       />
-      <main className="container mx-auto max-w-2xl px-4 py-12">
+      <main className={`container mx-auto px-4 py-12 ${activeTab === "share" ? "max-w-5xl" : "max-w-2xl"}`}>
         <div className="mb-8 flex items-center justify-between">
           <div>
-            {existingId && activeTab !== "missions" && activeTab !== "admin" && (
+            {existingId && activeTab === "profile" && (
               <span className="mb-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: palettes[vConf.palette].tint, color: palettes[vConf.palette].ink }}>
                 Profil {vConf.short}
               </span>
             )}
             <h1 className="text-3xl font-bold">
-              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon administratif" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
+              {activeTab === "missions" ? "Mes missions & CRA" : activeTab === "admin" ? "Mon administratif" : activeTab === "share" ? "Ma fiche LinkedIn" : existingId && !firstVisit ? "Mon profil" : "Complétez votre profil"}
             </h1>
             <p className="mt-1 text-muted-foreground">
               {activeTab === "missions"
                 ? "Vos missions en cours et vos comptes rendus d'activité."
                 : activeTab === "admin"
                 ? "Les informations et documents administratifs de votre société."
+                : activeTab === "share"
+                ? "Partagez votre fiche sur LinkedIn pour faire savoir que vous êtes disponible, avec un lien vers Kistone."
                 : existingId && !firstVisit
                 ? "Modifiez vos informations à tout moment."
                 : "Renseignez vos informations pour intégrer le réseau Kistone."}
@@ -450,6 +453,8 @@ const Profile = () => {
           <FreelanceMissionsSection userId={userId} />
         ) : activeTab === "admin" && userId ? (
           <KycDossierPanel party="freelance" userId={userId} email={email} />
+        ) : activeTab === "share" && userId ? (
+          <LinkedInShareSection userId={userId} />
         ) : (
         <>
         {existingId && (

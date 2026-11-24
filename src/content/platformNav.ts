@@ -6,6 +6,7 @@ import {
   FilePlus2,
   GitBranch,
   LayoutDashboard,
+  Linkedin,
   ShieldCheck,
   MessageSquare,
   Newspaper,
@@ -42,6 +43,7 @@ export const PLATFORM_NAV: Record<PlatformRole, NavItem[]> = {
     { label: "Mes opportunités", path: "/open-needs", icon: Search },
     { label: "Mes missions & CRA", path: "/profile", tab: "missions", icon: CalendarCheck },
     { label: "Mon administratif", path: "/profile", tab: "admin", icon: ShieldCheck },
+    { label: "Ma fiche LinkedIn", path: "/profile", tab: "share", icon: Linkedin },
   ],
   client: [
     { label: "Déposer un besoin", path: "/client/new-need", icon: FilePlus2 },
