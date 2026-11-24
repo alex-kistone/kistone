@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import ClientNewNeed from "./pages/ClientNewNeed";
 import NeedRequestPage from "./pages/NeedRequestPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -38,6 +37,7 @@ const ClientOnboarding = lazy(() => import("./pages/ClientOnboarding"));
 const ClientEditNeed = lazy(() => import("./pages/ClientEditNeed"));
 const ClientProfile = lazy(() => import("./pages/ClientProfile"));
 const OpenNeeds = lazy(() => import("./pages/OpenNeeds"));
+const ClientNewNeed = lazy(() => import("./pages/ClientNewNeed"));
 
 const queryClient = new QueryClient();
 

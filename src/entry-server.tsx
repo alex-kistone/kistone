@@ -8,6 +8,11 @@ import { COMPARISON } from "./content/comparison";
 import { STATIC_POSTS } from "./content/articles";
 import { PRICING, PRICING_PATH, PRICING_READY } from "./content/pricing";
 import { BlogDataContext, type BlogPost } from "./lib/blog";
+import ArticleBody from "./components/blog/ArticleBody";
+import { provideArticleBody } from "./components/blog/LazyArticleBody";
+
+// Pré-rendu : corps d'article rendu directement (chargé à la demande dans le navigateur)
+provideArticleBody(ArticleBody);
 
 /** Pages publiques pré-rendues au build (à compléter à chaque nouvelle page du site). */
 export const PRERENDER_ROUTES = ["/", "/besoin", "/privacy", ...ROLE_PAGES.map(rolePath), "/freelances", "/pourquoi-kistone", "/apport-affaires", "/ressources", COMPARISON_PATH,

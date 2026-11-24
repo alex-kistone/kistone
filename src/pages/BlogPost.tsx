@@ -4,7 +4,7 @@ import { ARTICLE_AUTHOR, ARTICLE_PUBLISHER } from "@/lib/structuredData";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import SmartLink from "@/components/site/SmartLink";
-import ArticleBody from "@/components/blog/ArticleBody";
+import ArticleBody from "@/components/blog/LazyArticleBody";
 import PostCard from "@/components/blog/PostCard";
 import { useBlogPosts } from "@/components/blog/useBlogPosts";
 import { BoltWatermark } from "@/components/brand/Bolt";
