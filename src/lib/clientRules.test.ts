@@ -41,8 +41,9 @@ describe("tarification (prix coûtant)", () => {
 });
 
 describe("freelanceNet", () => {
-  it("déduit la marge annoncée de 20 % (600 € client → 500 € freelance)", () => {
-    expect(freelanceNet(600)).toBe(500);
-    expect(freelanceNet(700)).toBe(583);
+  it("garde 80 % du budget client pour le freelance (600 € client → 480 € freelance)", () => {
+    expect(freelanceNet(600)).toBe(480);
+    expect(freelanceNet(700)).toBe(560);
+    expect(freelanceNet(555)).toBe(444);
   });
 });

@@ -202,7 +202,7 @@ const OpenNeeds = () => {
                       {(need.budget_tjm_min || need.budget_tjm_max) && (
                         <span className="flex items-center gap-1">
                           <Euro className="h-3.5 w-3.5" />
-                          {/* Budget client ramené au net freelance (marge Kistone de 20 % déduite) */}
+                          {/* Budget client ramené au net freelance (80 % du budget, part Kistone de 20 % déduite) */}
                           {need.budget_tjm_min ? freelanceNet(need.budget_tjm_min) : "?"} - {need.budget_tjm_max ? freelanceNet(need.budget_tjm_max) : "?"} € HT/j net
                         </span>
                       )}

@@ -13,10 +13,11 @@ export const clientPrice = (freelanceTjm: number) => Math.ceil((freelanceTjm * (
 export const freelanceRate = (clientBudget: number) => Math.floor((clientBudget * 100) / (100 + MARGIN_PCT));
 
 /**
- * Marge annoncée aux freelances (onboarding, « Mes opportunités ») : 20 % sur leur TJM, négociée
- * mission par mission par Alex (décision du 2026-11-23). MARGIN_PCT reste à 0 dans les calculs.
+ * Part Kistone annoncée (onboarding freelance, « Mes opportunités », page Tarifs) : 20 % du TJM
+ * payé par le client, 80 % pour le freelance (décision d'Alex, 2026-11-24 ; avant : + 20 % sur le
+ * TJM freelance). Négociée mission par mission par Alex : MARGIN_PCT reste à 0 dans les calculs.
  */
 export const ANNOUNCED_MARGIN_PCT = 20;
 
-/** Net freelance d'un budget client, marge annoncée déduite (600 € client → 500 €), à l'euro inférieur. */
-export const freelanceNet = (clientBudget: number) => Math.floor((clientBudget * 100) / (100 + ANNOUNCED_MARGIN_PCT));
+/** Net freelance d'un budget client, part Kistone déduite (80 % du budget), à l'euro inférieur. */
+export const freelanceNet = (clientBudget: number) => Math.floor((clientBudget * (100 - ANNOUNCED_MARGIN_PCT)) / 100);

@@ -561,12 +561,12 @@ const Profile = () => {
             <div className="space-y-2">
               <Label htmlFor="tjm">TJM (€ HT/jour) *</Label>
               <Input id="tjm" type="number" value={tjm} onChange={(e) => setTjm(e.target.value)} placeholder="450" required />
-              {/* Transparence sur la rémunération de Kistone (décision d'Alex, 2026-11-23) */}
+              {/* Transparence sur la rémunération de Kistone (décision d'Alex, 80 / 20 depuis le 2026-11-24) */}
               <div className="rounded-lg bg-muted/60 p-3 text-xs leading-relaxed text-muted-foreground">
                 <p className="font-medium text-foreground">Le TJM que vous percevez</p>
                 <p className="mt-1">
-                  Kistone applique une marge de 20 % sur votre TJM, facturée au client en plus. Exemple : pour un TJM client de 600 € HT,
-                  vous percevez 500 € HT et Kistone 100 € HT.
+                  Le TJM indiqué ici est celui que vous percevez. Sur le TJM payé par le client, 80 % vous reviennent et 20 % rémunèrent
+                  Kistone : recherche des missions, contrat, conformité, facturation et paiement chaque fin de mois.
                 </p>
               </div>
             </div>
