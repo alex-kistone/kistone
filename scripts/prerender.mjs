@@ -87,4 +87,21 @@ ${posts.length ? `\n## Articles\n\n${posts.map((p) => `- [${p.title}](${SITE}/re
 writeFileSync(join(dist, "llms.txt"), llms);
 console.log("llms.txt");
 
+// IndexNow : prévient Bing (qui alimente aussi la recherche de ChatGPT), Yandex, Seznam… des pages
+// du site à chaque build de production. La clé est publique par nature : fichier public/<clé>.txt.
+const INDEXNOW_KEY = "4e287fcc4907cccc0d3a79d1f35196e6";
+if (process.env.VERCEL_ENV === "production") {
+  try {
+    const res = await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({ host: "kistone.fr", key: INDEXNOW_KEY, keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`, urlList: ROUTES.map((r) => `${SITE}${r}`) }),
+      signal: AbortSignal.timeout(10000),
+    });
+    console.log(`IndexNow : ${ROUTES.length} pages signalées (${res.status})`);
+  } catch (e) {
+    console.warn(`IndexNow : signalement impossible (${e.message})`);
+  }
+}
+
 rmSync(join(root, "dist-ssr"), { recursive: true, force: true });

@@ -1,23 +1,48 @@
-import SEO from "@/components/SEO";
+import SEO, { BASE_URL } from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import Highlight from "@/components/site/Highlight";
 import PostCard from "@/components/blog/PostCard";
 import { useBlogPosts } from "@/components/blog/useBlogPosts";
 import { BoltWatermark } from "@/components/brand/Bolt";
-import { BLOG_PATH } from "@/lib/blog";
+import { BLOG_PATH, postPath } from "@/lib/blog";
 import { ROUTES } from "@/content/site";
 
 /** /ressources : les articles RPO d'abord, puis les autres, du plus récent au plus ancien. */
 export default function BlogIndex() {
   const { posts: all, loading } = useBlogPosts();
   const posts = [...all.filter((p) => p.vertical === "rpo"), ...all.filter((p) => p.vertical !== "rpo")];
+  // Données structurées : page de blog et liste des articles, pour Google et les moteurs IA
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Ressources Kistone : RPO freelance et recrutement",
+      url: `${BASE_URL}${BLOG_PATH}`,
+      inLanguage: "fr-FR",
+      isPartOf: { "@id": `${BASE_URL}/#website` },
+      publisher: { "@id": `${BASE_URL}/#organization` },
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: posts.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `${BASE_URL}${postPath(p)}`, name: p.title })),
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: `${BASE_URL}/` },
+        { "@type": "ListItem", position: 2, name: "Ressources", item: `${BASE_URL}${BLOG_PATH}` },
+      ],
+    },
+  ];
   return (
     <SiteLayout>
       <SEO
         title="Ressources : RPO freelance et recrutement"
         description="Guides Kistone pour réussir vos recrutements : RPO freelance ou cabinet, structurer la fonction recrutement, travailler avec un recruteur freelance."
         path={BLOG_PATH}
+        jsonLd={jsonLd}
       />
       <section className="relative isolate mx-auto max-w-ks px-5 pt-12 md:px-8 md:pt-[72px] xl:px-0">
         <BoltWatermark strokeWidth={14} className="-right-24 -top-24 h-[620px] w-auto rotate-[14deg]" />

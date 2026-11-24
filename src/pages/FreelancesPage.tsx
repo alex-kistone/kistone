@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import SEO from "@/components/SEO";
+import SEO, { BASE_URL } from "@/components/SEO";
 import SiteLayout from "@/components/site/SiteLayout";
 import Cta from "@/components/site/Cta";
 import Highlight from "@/components/site/Highlight";
@@ -148,11 +148,31 @@ const FAQ = [
 ];
 
 export default function FreelancesPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-  };
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Freelance RPO : rejoignez la communauté Kistone",
+      url: `${BASE_URL}/freelances`,
+      inLanguage: "fr-FR",
+      audience: { "@type": "Audience", audienceType: "Recruteurs freelance" },
+      isPartOf: { "@id": `${BASE_URL}/#website` },
+      publisher: { "@id": `${BASE_URL}/#organization` },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: `${BASE_URL}/` },
+        { "@type": "ListItem", position: 2, name: "Espace freelance", item: `${BASE_URL}/freelances` },
+      ],
+    },
+  ];
   return (
     <SiteLayout>
       <SEO

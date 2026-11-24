@@ -193,6 +193,13 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
     set("cover_url", supabase.storage.from("blog-images").getPublicUrl(path).data.publicUrl);
   };
 
+  /** Relance le build Vercel : les pages du blog, le sitemap et llms.txt sont pré-rendus. */
+  const rebuildSite = async () => {
+    const { error } = await supabase.functions.invoke("site-rebuild");
+    if (error) toast({ title: "Mise à jour du site non lancée", description: "Le changement sera visible sur kistone.fr au prochain déploiement.", variant: "destructive" });
+    else toast({ title: "Mise à jour du site lancée", description: "Visible sur kistone.fr d'ici quelques minutes." });
+  };
+
   const save = async (status: Draft["status"]) => {
     const slug = slugify(draft.slug || draft.title);
     if (!draft.title.trim() || !slug) {
@@ -224,15 +231,21 @@ function Editor({ draft, setDraft, brief, setBrief, onClose }: {
       return;
     }
     const saved = data as BlogPost;
+    const wasPublished = draft.status === "published";
     setDraft({ ...draft, ...saved, image_prompt: draft.image_prompt, cover_category: draft.cover_category });
-    toast({ title: status === "published" ? "Article publié" : "Brouillon enregistré" });
+    toast({ title: status === "published" ? "Article publié" : wasPublished ? "Article dépublié" : "Brouillon enregistré" });
+    // Publication, modification d'un article en ligne ou dépublication : le site public doit être reconstruit
+    if (status === "published" || wasPublished) rebuildSite();
   };
 
   const remove = async () => {
     if (!draft.id || !window.confirm("Supprimer définitivement cet article ?")) return;
     const { error } = await supabase.from("blog_posts" as never).delete().eq("id", draft.id);
     if (error) toast({ title: "Suppression impossible", description: error.message, variant: "destructive" });
-    else onClose();
+    else {
+      if (draft.status === "published") rebuildSite();
+      onClose();
+    }
   };
 
   const setFaq = (i: number, k: "q" | "a", v: string) => set("faq", draft.faq.map((f, j) => (j === i ? { ...f, [k]: v } : f)));
