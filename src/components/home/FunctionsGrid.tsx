@@ -52,8 +52,7 @@ export default function FunctionsGrid() {
   return (
     <Section id="fonctions">
       <SectionHeader
-        title={<TwoPartTitle a="Un recruteur spécialisé." b="Sur chacun de vos métiers." />}
-        subtitle="Intégré à vos équipes, pour recruter en CDI."
+        title={<TwoPartTitle a="Un recruteur sur-demande" b="intégré à vos équipes" />}
       />
       <RpoTile />
     </Section>
