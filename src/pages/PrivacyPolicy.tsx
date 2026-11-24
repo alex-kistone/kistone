@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
         </Button>
 
         <h1 className="mb-2 text-3xl font-bold text-foreground">Politique de Confidentialité</h1>
-        <p className="mb-8 text-sm text-muted-foreground">Dernière mise à jour : 12 octobre 2026</p>
+        <p className="mb-8 text-sm text-muted-foreground">Dernière mise à jour : 24 novembre 2026</p>
 
         <div className="prose prose-sm max-w-none space-y-8 text-foreground/90">
           <section>
@@ -72,7 +72,7 @@ const PrivacyPolicy = () => {
               <li>Nos équipes internes (recrutement, administration)</li>
               <li>Les clients de la Plateforme (dans le cadre du matching, sous forme anonymisée puis nominative après accord)</li>
               <li>Les visiteurs du site, pour les seuls profils freelances qualifiés (voir ci-dessous)</li>
-              <li>Nos sous-traitants techniques (hébergement, envoi d'emails, messagerie instantanée Crisp pour répondre à vos questions sur le site)</li>
+              <li>Nos sous-traitants techniques (hébergement, envoi d'emails, messagerie instantanée Crisp pour répondre à vos questions sur le site, Google Analytics pour la mesure d'audience)</li>
             </ul>
             <p>Nous ne vendons jamais vos données à des tiers.</p>
             <p>
@@ -116,7 +116,7 @@ const PrivacyPolicy = () => {
             <p>La Plateforme utilise des cookies pour :</p>
             <ul className="list-disc pl-6 space-y-1">
               <li><strong>Cookies essentiels</strong> : authentification, sécurité, préférences de session</li>
-              <li><strong>Cookies analytiques</strong> : mesure d'audience anonymisée (soumis à votre consentement)</li>
+              <li><strong>Cookies analytiques (Google Analytics, via Google Tag Manager)</strong> : mesure d'audience du site, pages vues et parcours de navigation (soumis à votre consentement ; Google Analytics ne se charge pas si vous refusez, aucun cookie publicitaire)</li>
               <li><strong>Cookies du chat Crisp</strong> : conserver votre conversation avec l'équipe Kistone (soumis à votre consentement ; le chat ne se charge pas si vous refusez)</li>
             </ul>
             <p>Vous pouvez modifier votre choix à tout moment avec le lien « Gérer les cookies » en bas de chaque page du site.</p>

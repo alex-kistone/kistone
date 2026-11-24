@@ -35,7 +35,7 @@ const CookieConsent = () => {
     >
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
         <p className="text-center text-sm leading-[1.5] text-ks-soft sm:text-left">
-          Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre accord, ceux du chat Crisp pour vous répondre.{" "}
+          Nous utilisons des cookies essentiels au fonctionnement du site et, avec votre accord, ceux du chat Crisp pour vous répondre et de Google Analytics pour mesurer l'audience.{" "}
           <Link to="/privacy" className="font-medium text-ks-ink underline underline-offset-2 hover:text-black">
             En savoir plus
           </Link>

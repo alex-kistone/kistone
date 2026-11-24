@@ -22,6 +22,7 @@ import { LEGACY_COMPARISON_SLUGS } from "./content/comparison";
 import BlogPost from "./pages/BlogPost";
 import CookieConsent from "./components/platform/CookieConsent";
 import CrispChat from "./components/CrispChat";
+import GoogleTagManager from "./components/GoogleTagManager";
 
 // Espaces connectés (freelance, client, admin) : chargés à la demande, pour que les pages
 // publiques ne téléchargent pas tout le code de l'application.
@@ -94,6 +95,7 @@ const App = () => (
       <AppRoutes />
       <CookieConsent />
       <CrispChat />
+      <GoogleTagManager />
     </BrowserRouter>
   </AppProviders>
 );
