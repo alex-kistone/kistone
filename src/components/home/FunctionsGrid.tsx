@@ -21,7 +21,7 @@ function RpoTile() {
           Le Recruitment Process Outsourcing confie tout ou partie de vos recrutements à un recruteur spécialisé de vos métiers, qui travaille au sein de votre équipe, avec vos outils et votre marque employeur. Facturé au jour, sans honoraires au placement : {min} – {max} € HT / jour.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-2">
-          <Cta href={ROUTES.recruit} variant="studio-fill" arrow>Je recherche un recruteur</Cta>
+          <Cta href={ROUTES.recruit} variant="studio-fill" arrow>Accédez aux profils</Cta>
         </div>
         <p className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-[15px]">
           <span className="text-ks-dark-muted">Fiches de poste :</span>

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, MailCheck, Pencil } from "lucide-react";
+import { ArrowLeft, Check, Loader2, MailCheck, Pencil } from "lucide-react";
 import SEO from "@/components/SEO";
 import Header from "@/components/KistoneHeader";
 import { BoltWatermark } from "@/components/brand/Bolt";
@@ -12,6 +12,11 @@ import { BUDGETS, DURATIONS, NEED_METIERS, STARTS, isEmail, needRequestLines, ty
 import { pendingNeedFromRequest, savePendingNeed } from "@/lib/pendingNeed";
 import { FREE_EMAIL_MESSAGE, isFreeEmail } from "@/lib/emailDomains";
 import { cn } from "@/lib/utils";
+import { BOOKING_URL } from "@/content/site";
+import { PRICING_PATH, PRICING_READY } from "@/content/pricing";
+
+/** Réassurance affichée à chaque étape (promesses déjà annoncées sur le site). */
+const REASSURANCE = ["Un premier recruteur qualifié sous 48 h", "Gratuit et sans engagement", "Facturé au jour, sans honoraires au placement"];
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -279,6 +284,25 @@ const NeedRequestPage = () => {
               Vous êtes freelance ? <Link to="/freelances" className="font-medium text-ks-ink underline underline-offset-2">Rejoindre la communauté</Link>
             </p>
           </form>
+        )}
+
+        {!sentTo && (
+          <aside aria-label="Ce qui vous attend" className="mt-14 rounded-[24px] bg-white p-6 shadow-ks-card">
+            <ul className="grid gap-3 text-[15px] text-ks-ink-2 sm:grid-cols-3">
+              {REASSURANCE.map((r) => (
+                <li key={r} className="flex items-start gap-2.5">
+                  <span className="ks-grad-bg mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md" aria-hidden="true"><Check className="h-3.5 w-3.5 text-white" strokeWidth={3} /></span>
+                  {r}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-5 border-t border-[rgba(20,19,18,0.08)] pt-4 text-sm text-ks-soft">
+              Une question avant de commencer ?{" "}
+              <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-ks-ink underline underline-offset-2">Réservez 30 minutes avec Alexandre</a>
+              {/* Lien vers les tarifs une fois la page publiée (grille remplie) */}
+              {PRICING_READY && <>{" "}· <Link to={PRICING_PATH} className="font-medium text-ks-ink underline underline-offset-2">Voir les tarifs</Link></>}
+            </p>
+          </aside>
         )}
       </main>
     </div>

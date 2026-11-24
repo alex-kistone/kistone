@@ -63,7 +63,7 @@ export default function WhyKistone() {
           </div>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Cta href={BOOKING_URL} variant="studio" size="lg" arrow>Échangeons 30 minutes</Cta>
-            <Cta href={ROUTES.recruit} size="lg" variant="secondary">Partager un besoin</Cta>
+            <Cta href={ROUTES.recruit} size="lg" variant="secondary">Accédez aux profils</Cta>
           </div>
         </div>
 

@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <SiteLayout>
       <SEO
-        title="Kistone · Réseau de Freelance RPO"
+        title="Recruteur freelance RPO : 700+ recruteurs qualifiés | Kistone"
         description="Une communauté de 700+ recruteurs Freelance RPO sélectionnés et qualifiés, spécialisés par métier. Le bon recruteur en 48 h, facturé au jour, sans honoraires au placement."
         path="/"
         jsonLd={withIdentity({

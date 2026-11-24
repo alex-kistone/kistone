@@ -53,7 +53,7 @@ export const ROLE_PAGES: RolePage[] = [
     h1: "Un Recruteur Tech freelance, intégré à vos équipes",
     highlight: "Recruteur Tech",
     lead: "Un recruteur spécialisé sur les métiers Engineering, Data/AI, Product et système d'information, aux côtés des CTO de startups et des DSI de grands comptes. Facturé au jour, sans honoraires au placement.",
-    seoTitle: "Recruteur Tech freelance (RPO) : Engineering, Data, Product, SI",
+    seoTitle: "Recruteur Tech freelance (RPO) : Engineering & Data",
     seoDescription: "Recruteur Tech freelance (RPO) intégré à vos équipes pour recruter en CDI vos profils Engineering, Data/AI, Product et SI. Facturé au jour, sans honoraires au placement.",
     rate: INDICATIVE_BUDGET.rpo,
     when: [
@@ -158,7 +158,7 @@ export const ROLE_PAGES: RolePage[] = [
     h1: "Un Recruteur généraliste freelance, intégré à vos équipes",
     highlight: "Recruteur généraliste",
     lead: "Un recruteur capable d'intervenir sur n'importe quelle fonction, avec une méthode solide : tri de CV, entretiens structurés, scorecards. Facturé au jour, sans honoraires au placement.",
-    seoTitle: "Recruteur généraliste freelance (RPO) : toutes fonctions",
+    seoTitle: "Recruteur généraliste freelance : toutes fonctions",
     seoDescription: "Recruteur généraliste freelance (RPO) pour recruter sur toutes vos fonctions, avec une méthode structurée : tri de CV, entretiens structurés, scorecards. Facturé au jour.",
     rate: INDICATIVE_BUDGET.rpo,
     when: [
@@ -212,7 +212,7 @@ export const ROLE_PAGES: RolePage[] = [
     h1: "Un Head of TA freelance, pour structurer votre recrutement",
     highlight: "Head of TA",
     lead: "Un Head of Talent Acquisition à temps plein ou quelques jours par semaine, pour mettre en place vos process et structurer la fonction recrutement. Facturé au jour, sans honoraires au placement.",
-    seoTitle: "Head of TA freelance : structurer votre fonction recrutement",
+    seoTitle: "Head of TA freelance : structurer le recrutement",
     seoDescription: "Head of Talent Acquisition freelance pour mettre en place vos process de recrutement et structurer la fonction, à temps plein ou quelques jours par semaine. Facturé au jour.",
     rate: HEAD_OF_TA_BUDGET,
     when: [

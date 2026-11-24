@@ -22,7 +22,7 @@ const NotFound = () => (
       <p className="mt-5 max-w-[620px] text-lg leading-[1.5] text-ks-soft">Elle a peut-être changé d'adresse. Voici où trouver ce que vous cherchez.</p>
       <div className="mt-8 flex flex-wrap gap-3">
         <Cta href="/" variant="studio" size="lg" arrow>Retour à l'accueil</Cta>
-        <Cta href={ROUTES.recruit} size="lg" variant="secondary">Partager un besoin</Cta>
+        <Cta href={ROUTES.recruit} size="lg" variant="secondary">Accédez aux profils</Cta>
       </div>
       <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-2 text-[15px] font-medium">
         {RPO_ROLE_PAGES.map((r) => (

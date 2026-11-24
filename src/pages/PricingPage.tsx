@@ -279,7 +279,7 @@ export default function PricingPage() {
             Décrivez vos postes, votre rythme et votre budget : un premier recruteur qualifié vous est présenté sous 48 h, avec son tarif.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Cta href={ROUTES.recruit} variant="studio" arrow>Partager un besoin</Cta>
+            <Cta href={ROUTES.recruit} variant="studio" arrow>Accédez aux profils</Cta>
             <Cta href={BOOKING_URL} variant="secondary">Réserver 30 minutes</Cta>
           </div>
         </PageSection>

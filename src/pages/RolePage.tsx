@@ -177,7 +177,7 @@ function RoleContent({ role }: { role: Role }) {
         </h1>
         <p className="mt-6 max-w-[760px] text-lg leading-[1.5] text-ks-soft md:text-xl">{role.lead}</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <Cta href={needHref} variant="studio" size="lg" arrow>Partager mon besoin {v.short}</Cta>
+          <Cta href={needHref} variant="studio" size="lg" arrow>Accédez aux profils {v.short}</Cta>
           <Cta href="#profils" size="lg" variant="secondary">Voir les profils</Cta>
         </div>
 
@@ -284,7 +284,7 @@ function RoleContent({ role }: { role: Role }) {
             Votre {role.role} en quelques jours, pas en quelques mois.
           </h2>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Cta href={needHref} size="lg" arrow>Partager mon besoin {v.short}</Cta>
+            <Cta href={needHref} size="lg" arrow>Accédez aux profils {v.short}</Cta>
             <Cta href={ROUTES.freelance} size="lg" variant="ghost-dark">Je suis {v.short} freelance</Cta>
           </div>
           <nav aria-label="Autres métiers" className="mt-12 border-t border-[rgba(245,241,234,0.12)] pt-6">

@@ -57,7 +57,7 @@ export const FOOTER_COLUMNS = [
       { label: "Trouver un recruteur", href: "/#trouver-un-recruteur" },
       { label: "Pourquoi Kistone", href: "/pourquoi-kistone" },
       { label: "Comment ça marche", href: "/#comment" },
-      { label: "Partager un besoin", href: "/besoin" },
+      { label: "Accédez aux profils", href: "/besoin" },
       { label: "Devenir freelance", href: "/freelances" },
       { label: "Apport d'affaires", href: "/apport-affaires" },
     ],

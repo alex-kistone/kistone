@@ -120,7 +120,7 @@ export default function BlogPost() {
           </p>
           <p className="mt-3 text-ks-dark-muted">Un premier profil qualifié sous 48 h, à temps plein ou quelques jours par semaine.</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Cta href={ROUTES.recruit} arrow>Partager mon besoin</Cta>
+            <Cta href={ROUTES.recruit} arrow>Accédez aux profils</Cta>
             {role && <Cta href={rolePath(role)} variant="ghost-dark">Le métier de {role.role}</Cta>}
           </div>
         </aside>

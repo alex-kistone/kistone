@@ -68,7 +68,7 @@ export const PAIN: { titleA: string; titleB: string; subtitle: string; cta: stri
   titleA: "Dans quelles situations",
   titleB: "faire appel à un RPO ?",
   subtitle: "Les bons profils sont rares, et vos recrutements n'attendent pas.",
-  cta: "Trouver un recruteur",
+  cta: "Accédez aux profils",
   cards: [
     { tag: "Urgence", title: "Un poste clé qui ne peut pas attendre", desc: "Un premier profil qualifié sous 48 h, un démarrage en une semaine, le contrat et l'administratif gérés.", palette: "sage" },
     { tag: "Pic d'embauches", title: "Un plan de recrutement à tenir", desc: "Une levée de fonds ou un nouveau produit : vous devez recruter 5, 10 ou 20 personnes en quelques mois.", palette: "teal" },

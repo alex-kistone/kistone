@@ -18,7 +18,7 @@ export default function Footer() {
               Les recruteurs <span className="ks-grad-text">RPO</span> dont vous avez besoin.
             </h2>
             <div className="mt-7 flex flex-wrap gap-2.5">
-              <Cta href={ROUTES.recruit} variant="studio" className="h-[50px]">Trouver un recruteur</Cta>
+              <Cta href={ROUTES.recruit} variant="studio" className="h-[50px]">Accédez aux profils</Cta>
               <Cta href={ROUTES.freelance} variant="ghost-dark" className="h-[50px]">Je suis freelance</Cta>
             </div>
           </div>

@@ -58,7 +58,7 @@ export default function BlogIndex() {
           <div className="mt-14 rounded-[28px] bg-white p-10 text-center shadow-ks-card">
             <p className="font-ks-display text-[24px] font-semibold">Premiers articles très bientôt.</p>
             <p className="mt-2 text-ks-soft">En attendant, décrivez votre besoin : un premier recruteur vous est présenté sous 48 h.</p>
-            <div className="mt-6"><Cta href={ROUTES.recruit} variant="studio" arrow>Partager un besoin</Cta></div>
+            <div className="mt-6"><Cta href={ROUTES.recruit} variant="studio" arrow>Accédez aux profils</Cta></div>
           </div>
         ) : (
           <ul className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

@@ -6,6 +6,12 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "kistone.vercel.app" }],
+      "destination": "https://kistone.fr/:path*",
+      "permanent": true
+    },
+    {
       "source": "/ressources/marche-ia-2026-chiffres",
       "destination": "/ressources",
       "permanent": true
