@@ -67,7 +67,7 @@ export type PainCard = { tag: string; title: string; desc: string; palette: Pale
 export const PAIN: { titleA: string; titleB: string; subtitle: string; cta: string; cards: PainCard[] } = {
   titleA: "Dans quelles situations",
   titleB: "faire appel à un RPO ?",
-  subtitle: "Les bons profils sont rares, et vos postes n'attendent pas.",
+  subtitle: "Les bons profils sont rares, et vos recrutements n'attendent pas.",
   cta: "Trouver un recruteur",
   cards: [
     { tag: "Urgence", title: "Un poste clé qui ne peut pas attendre", desc: "Un premier profil qualifié sous 48 h, un démarrage en une semaine, le contrat et l'administratif gérés.", palette: "sage" },
