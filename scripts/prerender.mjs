@@ -67,7 +67,7 @@ console.log(`sitemap.xml (${ROUTES.length} pages)`);
 // Résumé du site pour les moteurs IA (https://llmstxt.org)
 const llms = `# Kistone
 
-> Réseau de Freelance RPO (Recruitment Process Outsourcing). Kistone met en relation les entreprises avec une communauté de 700+ recruteurs freelance sélectionnés et qualifiés, spécialisés par métier (Tech, Data, Product, Sales & Marketing, Finance, Industrie), qui rejoignent leurs équipes pour recruter en CDI, à temps plein ou quelques jours par semaine. Pas un cabinet : pas d'honoraires au placement.
+> Kistone met en relation des entreprises avec un réseau de recruteurs Freelance RPO (Recruitment Process Outsourcing) : 700+ recruteurs freelance sélectionnés et qualifiés, spécialisés par métier (Tech, Data, Product, Sales & Marketing, Finance, Industrie), qui rejoignent les équipes du client pour recruter en CDI, à temps plein ou quelques jours par semaine. Pas un cabinet : pas d'honoraires au placement.
 
 - Un premier profil qualifié sous 48 h après le partage du besoin, un démarrage en général dans la semaine qui suit.
 - Facturation au jour (TJM), en général entre 500 et 600 € HT par jour selon la spécialité et l'expérience, sur les jours réalisés déclarés dans un CRA validé chaque mois par le client.
