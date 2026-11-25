@@ -39,7 +39,7 @@ function defaultBody(p: SheetFreelance, f: SheetFields): string {
  * « Ma fiche LinkedIn » (espace freelance) : le freelance publie sa fiche sur son propre LinkedIn,
  * avec la mention « Retrouvez-moi sur Kistone » et un lien vers kistone.fr. Pas de page publique :
  * la fiche fait connaître Kistone à son réseau. Prénom et photo, missions sans nom de client,
- * pas de TJM (le tarif se discute avec Kistone).
+ * TJM client (TJM du freelance = 80 % du prix, comme facturé par Kistone), modifiable.
  */
 export default function LinkedInShareSection({ userId }: { userId: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -68,7 +68,6 @@ export default function LinkedInShareSection({ userId }: { userId: string }) {
     if (!profile || !fields) return null;
     return {
       ...sheetSpec(profile, fields, true, withPhoto),
-      contactTile: { label: "Me contacter", value: "kistone.fr", note: "Retrouvez-moi sur Kistone" },
       footer: "Retrouvez-moi sur kistone.fr",
     };
   }, [profile, fields, withPhoto]);
@@ -95,8 +94,7 @@ export default function LinkedInShareSection({ userId }: { userId: string }) {
         <CardHeader>
           <CardTitle className="text-lg">Ma fiche</CardTitle>
           <CardDescription>
-            Pré-remplie depuis votre profil, modifiable ici sans changer votre profil. Vos missions sont décrites sans nom de client,
-            et votre TJM n'apparaît pas : la fiche renvoie vers Kistone.
+            Pré-remplie depuis votre profil, modifiable ici sans changer votre profil. Vos missions sont décrites sans nom de client.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -121,6 +119,13 @@ export default function LinkedInShareSection({ userId }: { userId: string }) {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5"><Label htmlFor="sh-en">Anglais</Label><Input id="sh-en" value={fields.english} onChange={set("english")} placeholder="Courant" /></div>
               <div className="space-y-1.5"><Label htmlFor="sh-enl">Niveau (0 à 5)</Label><Input id="sh-enl" type="number" min={0} max={5} value={fields.englishLevel} onChange={set("englishLevel")} /></div>
+              <div className="col-span-2 space-y-1.5">
+                <Label htmlFor="sh-tjm">TJM client (€ HT / jour)</Label>
+                <Input id="sh-tjm" value={fields.tjm} onChange={set("tjm")} placeholder="Sur demande" />
+                <p className="text-xs text-muted-foreground">
+                  Le tarif payé par le client : votre TJM en représente 80 %, la part Kistone 20 %. Écrivez « Sur demande » pour ne pas l'afficher.
+                </p>
+              </div>
               <div className="space-y-1.5"><Label htmlFor="sh-dispo">Disponibilité</Label><Input id="sh-dispo" value={fields.availability} onChange={set("availability")} /></div>
               <div className="space-y-1.5"><Label htmlFor="sh-note">Lieu et télétravail</Label><Input id="sh-note" value={fields.availabilityNote} onChange={set("availabilityNote")} placeholder="Île-de-France · remote flexible" /></div>
             </div>
